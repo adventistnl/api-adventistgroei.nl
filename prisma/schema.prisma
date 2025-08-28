@@ -12,3 +12,529 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+// Enums
+enum LanguagePreference {
+  en
+  nl
+}
+
+enum EventTargetType {
+  institution
+  region
+  department
+  church
+  user
+}
+
+enum EventType {
+  show
+  evangelism
+}
+
+enum EventRegistrationStatus {
+  paid
+  pendent
+  reserved
+  approved
+  canceled
+}
+
+enum PermissionResolverName {
+  getAllUsers
+  deleteUser
+}
+
+// Models
+model Institution {
+  id                  String             @id @default(uuid())
+  name                String
+  denomination        String
+  language_preference LanguagePreference
+  contact_id          String?            @unique
+  contact             Contact?           @relation(fields: [contact_id], references: [id])
+  created_at          DateTime           @default(now())
+  updated_at          DateTime           @updatedAt
+  created_by          String
+  updated_by          String
+  is_deleted          Boolean            @default(false)
+  deleted_at          DateTime?
+  deleted_by          String?
+  regions             Region[]
+  churches            Church[]
+  departments         Department[]
+  users               User[]
+  communications      Communication[]
+  notifications       Notification[]
+  settings            Setting[]
+  mission_projects    MissionProject[]
+  direct_messages     DirectMessage[]
+  subsidy_requests    SubsidyRequest[]
+}
+
+model Region {
+  id               String      @id @default(uuid())
+  institution_id   String
+  institution      Institution @relation(fields: [institution_id], references: [id])
+  name             String
+  parent_region_id String?
+  parent_region    Region?     @relation("ParentRegion", fields: [parent_region_id], references: [id])
+  children         Region[]    @relation("ParentRegion")
+  contact_id       String?
+  contact          Contact?    @relation(fields: [contact_id], references: [id])
+  created_at       DateTime    @default(now())
+  updated_at       DateTime    @updatedAt
+  created_by       String
+  updated_by       String
+  is_deleted       Boolean     @default(false)
+  deleted_at       DateTime?
+  deleted_by       String?
+  churches         Church[]
+}
+
+model Church {
+  id               String           @id @default(uuid())
+  institution_id   String
+  institution      Institution      @relation(fields: [institution_id], references: [id])
+  name             String
+  region_id        String
+  region           Region           @relation(fields: [region_id], references: [id])
+  contact_id       String?
+  contact          Contact?         @relation(fields: [contact_id], references: [id])
+  created_at       DateTime         @default(now())
+  updated_at       DateTime         @updatedAt
+  created_by       String
+  updated_by       String
+  is_deleted       Boolean          @default(false)
+  deleted_at       DateTime?
+  deleted_by       String?
+  departments      Department[]
+  users            User[]
+  subsidy_requests SubsidyRequest[]
+}
+
+model Department {
+  id               String           @id @default(uuid())
+  institution_id   String
+  institution      Institution      @relation(fields: [institution_id], references: [id])
+  church_id        String
+  church           Church           @relation(fields: [church_id], references: [id])
+  name             String
+  description      String
+  annual_budget    Decimal
+  contact_id       String?
+  contact          Contact?         @relation(fields: [contact_id], references: [id])
+  created_at       DateTime         @default(now())
+  updated_at       DateTime         @updatedAt
+  created_by       String
+  updated_by       String
+  is_deleted       Boolean          @default(false)
+  deleted_at       DateTime?
+  deleted_by       String?
+  subsidy_statuses SubsidyStatus[]
+  mission_projects MissionProject[]
+  annual_reports   AnnualReport[]
+  subsidy_requests SubsidyRequest[]
+}
+
+model Contact {
+  id          String       @id @default(uuid())
+  name        String
+  phone       String
+  mobile      String
+  email       String
+  country     String
+  city        String
+  address     String
+  postal_code String
+  website     String
+  notes       String
+  is_primary  Boolean
+  created_at  DateTime     @default(now())
+  updated_at  DateTime     @updatedAt
+  created_by  String
+  updated_by  String
+  is_deleted  Boolean      @default(false)
+  deleted_at  DateTime?
+  deleted_by  String?
+  Institution Institution?
+  Region      Region[]
+  Church      Church[]
+  Department  Department[]
+  User        User[]
+  Event       Event[]
+}
+
+model User {
+  id                        String                   @id @default(uuid())
+  institution_id            String
+  institution               Institution              @relation(fields: [institution_id], references: [id])
+  church_id                 String
+  church                    Church                   @relation(fields: [church_id], references: [id])
+  name                      String
+  email                     String                   @unique
+  password                  String
+  language_preference       LanguagePreference
+  contact_id                String?
+  contact                   Contact?                 @relation(fields: [contact_id], references: [id])
+  created_at                DateTime                 @default(now())
+  updated_at                DateTime                 @updatedAt
+  created_by                String
+  updated_by                String
+  is_deleted                Boolean                  @default(false)
+  deleted_at                DateTime?
+  deleted_by                String?
+  user_roles                UserRole[]
+  direct_messages           DirectMessage[]          @relation("SenderMessages")
+  direct_message_recipients DirectMessageRecipient[] @relation("RecipientMessages")
+  notifications             Notification[]
+  event_registrations       EventRegistration[]
+  event_recipients          EventRecipient[]
+  communications            Communication[]          @relation("AuthorCommunications")
+  SubsidyRequest            SubsidyRequest[]
+  SubsidyStatus             SubsidyStatus[]
+}
+
+model Role {
+  id                        String                   @id @default(uuid())
+  name                      String
+  description               String
+  key_code                  String
+  created_at                DateTime                 @default(now())
+  updated_at                DateTime                 @updatedAt
+  created_by                String
+  updated_by                String
+  is_deleted                Boolean                  @default(false)
+  deleted_at                DateTime?
+  deleted_by                String?
+  user_roles                UserRole[]
+  role_permissions          RolePermission[]
+  direct_message_recipients DirectMessageRecipient[]
+}
+
+model Permission {
+  id               String                 @id @default(uuid())
+  name             String
+  description      String
+  key_code         String
+  resolver_name    PermissionResolverName @unique
+  created_at       DateTime               @default(now())
+  updated_at       DateTime               @updatedAt
+  created_by       String
+  updated_by       String
+  is_deleted       Boolean                @default(false)
+  deleted_at       DateTime?
+  deleted_by       String?
+  role_permissions RolePermission[]
+}
+
+model RolePermission {
+  id            String     @id @default(uuid())
+  role_id       String
+  role          Role       @relation(fields: [role_id], references: [id])
+  permission_id String
+  permission    Permission @relation(fields: [permission_id], references: [id])
+  created_at    DateTime   @default(now())
+  updated_at    DateTime   @updatedAt
+  created_by    String
+  updated_by    String
+  is_deleted    Boolean    @default(false)
+  deleted_at    DateTime?
+  deleted_by    String?
+}
+
+model UserRole {
+  id         String    @id @default(uuid())
+  user_id    String
+  user       User      @relation(fields: [user_id], references: [id])
+  role_id    String
+  role       Role      @relation(fields: [role_id], references: [id])
+  created_at DateTime  @default(now())
+  updated_at DateTime  @updatedAt
+  created_by String
+  updated_by String
+  is_deleted Boolean   @default(false)
+  deleted_at DateTime?
+  deleted_by String?
+}
+
+model SubsidyRequest {
+  id                    String            @id @default(uuid())
+  institution_id        String
+  institution           Institution       @relation(fields: [institution_id], references: [id])
+  requester_id          String
+  requester             User              @relation(fields: [requester_id], references: [id])
+  department_project_id String
+  department            Department        @relation(fields: [department_project_id], references: [id])
+  church_id             String
+  church                Church            @relation(fields: [church_id], references: [id])
+  description           String
+  total_budget          Decimal
+  subsidy_statuses_id   String
+  subsidy_status        SubsidyStatus     @relation(fields: [subsidy_statuses_id], references: [id])
+  created_at            DateTime          @default(now())
+  updated_at            DateTime          @updatedAt
+  created_by            String
+  updated_by            String
+  is_deleted            Boolean           @default(false)
+  deleted_at            DateTime?
+  deleted_by            String?
+  subsidy_activities    SubsidyActivity[]
+}
+
+model SubsidyActivity {
+  id                 String           @id @default(uuid())
+  subsidy_request_id String
+  subsidy_request    SubsidyRequest   @relation(fields: [subsidy_request_id], references: [id])
+  name               String
+  description        String
+  budget_amount      Decimal
+  created_at         DateTime         @default(now())
+  updated_at         DateTime         @updatedAt
+  created_by         String
+  updated_by         String
+  is_deleted         Boolean          @default(false)
+  deleted_at         DateTime?
+  deleted_by         String?
+  subsidy_receipts   SubsidyReceipt[]
+}
+
+model SubsidyReceipt {
+  id                    String          @id @default(uuid())
+  subsidy_activities_id String
+  subsidy_activity      SubsidyActivity @relation(fields: [subsidy_activities_id], references: [id])
+  file_path             String
+  amount                Decimal
+  approved              Boolean
+  created_at            DateTime        @default(now())
+  updated_at            DateTime        @updatedAt
+  created_by            String
+  updated_by            String
+  is_deleted            Boolean         @default(false)
+  deleted_at            DateTime?
+  deleted_by            String?
+}
+
+model SubsidyStatus {
+  id               String           @id @default(uuid())
+  department_id    String
+  department       Department       @relation(fields: [department_id], references: [id])
+  assigned_to      String
+  assigned_user    User             @relation(fields: [assigned_to], references: [id])
+  name             String
+  description      String
+  order            Int
+  created_at       DateTime         @default(now())
+  updated_at       DateTime         @updatedAt
+  created_by       String
+  updated_by       String
+  is_deleted       Boolean          @default(false)
+  deleted_at       DateTime?
+  deleted_by       String?
+  subsidy_requests SubsidyRequest[]
+}
+
+model AnnualReport {
+  id              String     @id @default(uuid())
+  department_id   String
+  department      Department @relation(fields: [department_id], references: [id])
+  text            String
+  file_path       String
+  submission_date DateTime
+  created_at      DateTime   @default(now())
+  updated_at      DateTime   @updatedAt
+  created_by      String
+  updated_by      String
+  is_deleted      Boolean    @default(false)
+  deleted_at      DateTime?
+  deleted_by      String?
+}
+
+model Event {
+  id                      String              @id @default(uuid())
+  target_type             EventTargetType
+  target_id               String?
+  title                   String
+  description             String
+  contact_id              String
+  contact                 Contact             @relation(fields: [contact_id], references: [id])
+  type                    EventType
+  language_preference     LanguagePreference
+  max_participants        Int
+  ticket_amount           Decimal
+  subscription_expires_at DateTime
+  created_at              DateTime            @default(now())
+  updated_at              DateTime            @updatedAt
+  created_by              String
+  updated_by              String
+  is_deleted              Boolean             @default(false)
+  deleted_at              DateTime?
+  deleted_by              String?
+  event_recipients        EventRecipient[]
+  event_registrations     EventRegistration[]
+}
+
+model EventRecipient {
+  id          String          @id @default(uuid())
+  event_id    String
+  event       Event           @relation(fields: [event_id], references: [id])
+  target_type EventTargetType
+  target_id   String
+  created_at  DateTime        @default(now())
+  updated_at  DateTime        @updatedAt
+  created_by  String
+  updated_by  String
+  is_deleted  Boolean         @default(false)
+  deleted_at  DateTime?
+  deleted_by  String?
+  User        User?           @relation(fields: [userId], references: [id])
+  userId      String?
+}
+
+model EventRegistration {
+  id         String                  @id @default(uuid())
+  user_id    String
+  user       User                    @relation(fields: [user_id], references: [id])
+  event_id   String
+  event      Event                   @relation(fields: [event_id], references: [id])
+  status     EventRegistrationStatus
+  created_at DateTime                @default(now())
+  updated_at DateTime                @updatedAt
+  created_by String
+  updated_by String
+  is_deleted Boolean                 @default(false)
+  deleted_at DateTime?
+  deleted_by String?
+}
+
+model Communication {
+  id                       String                   @id @default(uuid())
+  institution_id           String
+  institution              Institution              @relation(fields: [institution_id], references: [id])
+  title                    String
+  content                  String
+  type                     String
+  priority                 String
+  status                   String
+  language_preference      LanguagePreference
+  schedule_at              DateTime
+  published_at             DateTime
+  author_id                String
+  author                   User                     @relation("AuthorCommunications", fields: [author_id], references: [id])
+  created_at               DateTime                 @default(now())
+  updated_at               DateTime                 @updatedAt
+  created_by               String
+  updated_by               String
+  is_deleted               Boolean                  @default(false)
+  deleted_at               DateTime?
+  deleted_by               String?
+  communication_recipients CommunicationRecipient[]
+}
+
+model CommunicationRecipient {
+  id               String          @id @default(uuid())
+  communication_id String
+  communication    Communication   @relation(fields: [communication_id], references: [id])
+  target_type      EventTargetType
+  target_id        String?
+  created_at       DateTime        @default(now())
+  updated_at       DateTime        @updatedAt
+  created_by       String
+  updated_by       String
+  is_deleted       Boolean         @default(false)
+  deleted_at       DateTime?
+  deleted_by       String?
+}
+
+model DirectMessage {
+  id                        String                   @id @default(uuid())
+  institution_id            String
+  institution               Institution              @relation(fields: [institution_id], references: [id])
+  sender_id                 String
+  sender                    User                     @relation("SenderMessages", fields: [sender_id], references: [id])
+  title                     String
+  content                   String
+  status                    String
+  sent_at                   DateTime
+  created_at                DateTime                 @default(now())
+  updated_at                DateTime                 @updatedAt
+  created_by                String
+  updated_by                String
+  is_deleted                Boolean                  @default(false)
+  deleted_at                DateTime?
+  deleted_by                String?
+  direct_message_recipients DirectMessageRecipient[]
+}
+
+model DirectMessageRecipient {
+  id                String        @id @default(uuid())
+  direct_message_id String
+  direct_message    DirectMessage @relation(fields: [direct_message_id], references: [id])
+  recipient_user_id String
+  recipient_user    User          @relation("RecipientMessages", fields: [recipient_user_id], references: [id])
+  recipient_role_id String
+  recipient_role    Role          @relation(fields: [recipient_role_id], references: [id])
+  read_at           DateTime
+  sent_at           DateTime
+  created_at        DateTime      @default(now())
+  updated_at        DateTime      @updatedAt
+  created_by        String
+  updated_by        String
+  is_deleted        Boolean       @default(false)
+  deleted_at        DateTime?
+  deleted_by        String?
+}
+
+model MissionProject {
+  id                  String             @id @default(uuid())
+  department_id       String
+  department          Department         @relation(fields: [department_id], references: [id])
+  title               String
+  description         String
+  budget              Decimal
+  media_link          String
+  language_preference LanguagePreference
+  created_at          DateTime           @default(now())
+  updated_at          DateTime           @updatedAt
+  created_by          String
+  updated_by          String
+  is_deleted          Boolean            @default(false)
+  deleted_at          DateTime?
+  deleted_by          String?
+  Institution         Institution?       @relation(fields: [institutionId], references: [id])
+  institutionId       String?
+}
+
+model Notification {
+  id             String      @id @default(uuid())
+  institution_id String
+  institution    Institution @relation(fields: [institution_id], references: [id])
+  user_id        String
+  user           User        @relation(fields: [user_id], references: [id])
+  type           String
+  message        String
+  read_status    Boolean
+  created_at     DateTime    @default(now())
+  updated_at     DateTime    @updatedAt
+  created_by     String
+  updated_by     String
+  is_deleted     Boolean     @default(false)
+  deleted_at     DateTime?
+  deleted_by     String?
+}
+
+model Setting {
+  id             String      @id @default(uuid())
+  institution_id String
+  institution    Institution @relation(fields: [institution_id], references: [id])
+  key            String
+  value          String
+  description    String
+  created_at     DateTime    @default(now())
+  updated_at     DateTime    @updatedAt
+  created_by     String
+  updated_by     String
+  is_deleted     Boolean     @default(false)
+  deleted_at     DateTime?
+  deleted_by     String?
+}
