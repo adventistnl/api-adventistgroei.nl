@@ -3,6 +3,7 @@ import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import * as Services from './services';
 import * as Resolvers from './schemas';
+import { RepositoriesModule } from './repositories/repositories.module';
 
 @Module({
   imports: [
@@ -13,6 +14,7 @@ import * as Resolvers from './schemas';
       introspection: true,
       autoSchemaFile: true,
     }),
+    RepositoriesModule,
   ],
   providers: [...Object.values(Services), ...Object.values(Resolvers)],
 })

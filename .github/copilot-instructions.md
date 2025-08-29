@@ -25,6 +25,8 @@
 - Segurança e proteção de dados são prioridade em qualquer implementação.
 - Exporte todos os services e resolvers via `index.ts` nas respectivas pastas.
 - Evite qualquer lógica de negócio nos resolvers; mantenha tudo nos services.
+- sempre que criar novos services e resolvers, utilize padrão da aplicação, adicionando a importação deles em `src/schemas/index.ts` e `src/services/index.ts`.
+- nunca esquça de tipar corretamente, principalmente a entrada e saída de dados nos services, resolvers e repositories.
 
 ## Comandos Essenciais
 
