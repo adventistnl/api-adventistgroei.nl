@@ -41,8 +41,7 @@ enum EventRegistrationStatus {
 }
 
 enum PermissionResolverName {
-  getAllUsers
-  deleteUser
+  users
 }
 
 // Models
@@ -139,16 +138,17 @@ model Department {
 
 model Contact {
   id          String       @id @default(uuid())
-  name        String
-  phone       String
-  mobile      String
-  email       String
-  country     String
-  city        String
-  address     String
-  postal_code String
-  website     String
-  notes       String
+  name        String?
+  phone       String?
+  mobile      String?
+  email       String?
+  country     String?
+  city        String?
+  address     String?
+  full_address String?
+  postal_code String?
+  website     String?
+  notes       String?
   is_primary  Boolean
   created_at  DateTime     @default(now())
   updated_at  DateTime     @updatedAt
