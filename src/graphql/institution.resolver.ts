@@ -6,9 +6,9 @@ import {
   InstitutionCreateDto,
   InstitutionUpdateDto,
 } from '../dto/institution.dto';
-import { Permission } from 'src/middlewares/permissions.decorator';
+import { Permission } from '../middlewares/permissions.decorator';
 import { UseGuards } from '@nestjs/common';
-import { PermissionsGuard } from 'src/middlewares/permissions.guard';
+import { PermissionsGuard } from '../middlewares/permissions.guard';
 
 @Resolver(() => InstitutionModel)
 @UseGuards(PermissionsGuard)

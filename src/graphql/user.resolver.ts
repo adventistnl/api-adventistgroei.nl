@@ -3,8 +3,8 @@ import { UserService } from '../services/user.service';
 import { UserModel } from '../models/user.model';
 import { UserCreateDto } from '../dto/user-create.dto';
 import { UseGuards } from '@nestjs/common';
-import { PermissionsGuard } from 'src/middlewares/permissions.guard';
-import { Permission } from 'src/middlewares/permissions.decorator';
+import { PermissionsGuard } from '../middlewares/permissions.guard';
+import { Permission } from '../middlewares/permissions.decorator';
 
 @Resolver(() => UserModel)
 @UseGuards(PermissionsGuard)
