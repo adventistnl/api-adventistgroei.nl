@@ -1,6 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { InstitutionRepository } from '../repositories/institution.repository';
-import { InstitutionCreateDto } from '../dto/institution-create.dto';
+import {
+  InstitutionCreateDto,
+  InstitutionUpdateDto,
+} from '../dto/institution.dto';
 import { Institution } from '@prisma/client';
 
 @Injectable()
@@ -12,6 +15,17 @@ export class InstitutionService {
     userId: string,
   ): Promise<Institution> {
     return await this.institutionRepository.create(data, userId);
+  }
+
+  async updateInstitution(
+    data: InstitutionUpdateDto,
+    userId: string,
+  ): Promise<Institution> {
+    return await this.institutionRepository.update(data, userId);
+  }
+
+  async deleteInstitution(id: string, userId: string): Promise<Institution> {
+    return await this.institutionRepository.softDelete(id, userId);
   }
 
   async getInstitutions(): Promise<Institution[]> {

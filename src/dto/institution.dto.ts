@@ -1,4 +1,4 @@
-import { InputType, Field } from '@nestjs/graphql';
+import { InputType, Field, PartialType } from '@nestjs/graphql';
 import { LanguagePreference } from '@prisma/client';
 
 @InputType()
@@ -13,11 +13,17 @@ export class InstitutionCreateDto {
   language_preference: LanguagePreference;
 
   @Field({ nullable: true })
-  email: string;
+  email?: string;
 
   @Field({ nullable: true })
-  full_address: string;
+  full_address?: string;
 
   @Field({ nullable: true })
-  country: string;
+  country?: string;
+}
+
+@InputType()
+export class InstitutionUpdateDto extends PartialType(InstitutionCreateDto) {
+  @Field()
+  id: string;
 }

@@ -7,10 +7,10 @@ import { PermissionsGuard } from 'src/middlewares/permissions.guard';
 import { Permission } from 'src/middlewares/permissions.decorator';
 
 @Resolver(() => UserModel)
+@UseGuards(PermissionsGuard)
 export class UserResolver {
   constructor(private readonly userService: UserService) {}
 
-  @UseGuards(PermissionsGuard)
   @Permission()
   @Query(() => [UserModel])
   async users(): Promise<UserModel[]> {
@@ -18,11 +18,13 @@ export class UserResolver {
     return users;
   }
 
+  @Permission()
   @Query(() => UserModel, { nullable: true })
   async user(@Args('id') id: string): Promise<UserModel | null> {
     return await this.userService.findById(id);
   }
 
+  @Permission()
   @Mutation(() => UserModel)
   async createUser(@Args('data') data: UserCreateDto): Promise<UserModel> {
     return await this.userService.create(data);
