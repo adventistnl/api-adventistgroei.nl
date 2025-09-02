@@ -42,6 +42,25 @@ enum EventRegistrationStatus {
 
 enum PermissionResolverName {
   users
+  user
+  createUser
+  updateUser
+  deleteUser
+  createInstitution
+  institutions
+  institution
+  updateInstitution
+  deleteInstitution
+  regions
+  region
+  createRegion
+  updateRegion
+  deleteRegion
+  churches
+  church
+  createChurch
+  updateChurch
+  deleteChurch
 }
 
 // Models

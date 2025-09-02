@@ -1,13 +1,14 @@
-import { InputType, Field, registerEnumType } from '@nestjs/graphql';
+import { InputType, Field, PartialType } from '@nestjs/graphql';
 import { LanguagePreference } from '@prisma/client';
+import { ContactCreateDto } from './contact.dto';
 
 @InputType()
 export class UserCreateDto {
   @Field()
   institution_id: string;
 
-  @Field()
-  church_id: string;
+  @Field({ nullable: true })
+  church_id?: string;
 
   @Field()
   name: string;
@@ -21,10 +22,15 @@ export class UserCreateDto {
   @Field(() => LanguagePreference)
   language_preference: LanguagePreference;
 
+  @Field(() => ContactCreateDto, { nullable: true })
+  contact?: ContactCreateDto;
+}
+
+@InputType()
+export class UserUpdateDto extends PartialType(UserCreateDto) {
+  @Field()
+  id: string;
+
   @Field({ nullable: true })
   contact_id?: string;
 }
-
-registerEnumType(LanguagePreference, {
-  name: 'LanguagePreference',
-});

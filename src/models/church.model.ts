@@ -1,30 +1,18 @@
-import { ObjectType, Field, registerEnumType } from '@nestjs/graphql';
-import { LanguagePreference } from '@prisma/client';
-
-registerEnumType(LanguagePreference, {
-  name: 'LanguagePreference',
-  description: 'Idioma preferencial do usuário',
-});
+import { ObjectType, Field } from '@nestjs/graphql';
 
 @ObjectType()
-export class UserModel {
+export class ChurchModel {
   @Field()
   id: string;
 
   @Field()
   institution_id: string;
 
-  @Field({ nullable: true })
-  church_id?: string;
-
   @Field()
   name: string;
 
   @Field()
-  email: string;
-
-  @Field(() => LanguagePreference)
-  language_preference: LanguagePreference;
+  region_id: string;
 
   @Field(() => String, { nullable: true })
   contact_id?: string | null;

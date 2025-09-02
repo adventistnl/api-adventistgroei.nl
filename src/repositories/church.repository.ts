@@ -1,19 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../services/prisma.service';
-import {
-  InstitutionCreateDto,
-  InstitutionUpdateDto,
-} from '../dto/institution.dto';
-import { Institution } from '@prisma/client';
+import { ChurchCreateDto, ChurchUpdateDto } from '../dto/church.dto';
+import { Church } from '@prisma/client';
 
 @Injectable()
-export class InstitutionRepository {
+export class ChurchRepository {
   constructor(private readonly prisma: PrismaService) {}
 
-  async create(
-    data: InstitutionCreateDto,
-    userId: string,
-  ): Promise<Institution> {
+  async create(data: ChurchCreateDto, userId: string): Promise<Church> {
     let contactId: string | null = null;
     if (data.contact) {
       const contact = await this.prisma.contact.create({
@@ -26,11 +20,11 @@ export class InstitutionRepository {
       });
       contactId = contact.id;
     }
-    return await this.prisma.institution.create({
+    return await this.prisma.church.create({
       data: {
+        institution_id: data.institution_id,
         name: data.name,
-        denomination: data.denomination,
-        language_preference: data.language_preference,
+        region_id: data.region_id,
         contact_id: contactId,
         created_by: userId,
         updated_by: userId,
@@ -39,16 +33,12 @@ export class InstitutionRepository {
     });
   }
 
-  async update(
-    data: InstitutionUpdateDto,
-    userId: string,
-  ): Promise<Institution> {
-    // Atualiza dados básicos e o contato, se enviado
-    const institution = await this.prisma.institution.findUnique({
+  async update(data: ChurchUpdateDto, userId: string): Promise<Church> {
+    const church = await this.prisma.church.findUnique({
       where: { id: data.id },
     });
-    if (!institution) throw new Error('Institution not found');
-    const contactId = institution.contact_id;
+    if (!church) throw new Error('Church not found');
+    const contactId = church.contact_id;
     if (data.contact && contactId) {
       await this.prisma.contact.update({
         where: { id: contactId },
@@ -58,20 +48,20 @@ export class InstitutionRepository {
         },
       });
     }
-    return await this.prisma.institution.update({
+    return await this.prisma.church.update({
       where: { id: data.id },
       data: {
+        institution_id: data.institution_id,
         name: data.name,
-        denomination: data.denomination,
-        language_preference: data.language_preference,
+        region_id: data.region_id,
         contact_id: contactId,
         updated_by: userId,
       },
     });
   }
 
-  async softDelete(id: string, userId: string): Promise<Institution> {
-    return await this.prisma.institution.update({
+  async softDelete(id: string, userId: string): Promise<Church> {
+    return await this.prisma.church.update({
       where: { id },
       data: {
         is_deleted: true,
@@ -82,14 +72,12 @@ export class InstitutionRepository {
     });
   }
 
-  async findAll(): Promise<Institution[]> {
-    return await this.prisma.institution.findMany({
-      where: { is_deleted: false },
-    });
+  async findAll(): Promise<Church[]> {
+    return await this.prisma.church.findMany({ where: { is_deleted: false } });
   }
 
-  async findById(id: string): Promise<Institution | null> {
-    return await this.prisma.institution.findUnique({
+  async findById(id: string): Promise<Church | null> {
+    return await this.prisma.church.findUnique({
       where: { id, is_deleted: false },
     });
   }

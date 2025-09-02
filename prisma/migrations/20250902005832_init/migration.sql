@@ -11,7 +11,7 @@ CREATE TYPE "public"."EventType" AS ENUM ('show', 'evangelism');
 CREATE TYPE "public"."EventRegistrationStatus" AS ENUM ('paid', 'pendent', 'reserved', 'approved', 'canceled');
 
 -- CreateEnum
-CREATE TYPE "public"."PermissionResolverName" AS ENUM ('getAllUsers', 'deleteUser');
+CREATE TYPE "public"."PermissionResolverName" AS ENUM ('users');
 
 -- CreateTable
 CREATE TABLE "public"."Institution" (
@@ -90,16 +90,17 @@ CREATE TABLE "public"."Department" (
 -- CreateTable
 CREATE TABLE "public"."Contact" (
     "id" TEXT NOT NULL,
-    "name" TEXT NOT NULL,
-    "phone" TEXT NOT NULL,
-    "mobile" TEXT NOT NULL,
-    "email" TEXT NOT NULL,
-    "country" TEXT NOT NULL,
-    "city" TEXT NOT NULL,
-    "address" TEXT NOT NULL,
-    "postal_code" TEXT NOT NULL,
-    "website" TEXT NOT NULL,
-    "notes" TEXT NOT NULL,
+    "name" TEXT,
+    "phone" TEXT,
+    "mobile" TEXT,
+    "email" TEXT,
+    "country" TEXT,
+    "city" TEXT,
+    "address" TEXT,
+    "full_address" TEXT,
+    "postal_code" TEXT,
+    "website" TEXT,
+    "notes" TEXT,
     "is_primary" BOOLEAN NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL,

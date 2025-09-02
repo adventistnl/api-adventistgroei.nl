@@ -1,5 +1,10 @@
-import { ObjectType, Field } from '@nestjs/graphql';
+import { ObjectType, Field, registerEnumType } from '@nestjs/graphql';
 import { LanguagePreference } from '@prisma/client';
+
+registerEnumType(LanguagePreference, {
+  name: 'LanguagePreference',
+  description: 'Idioma preferencial da instituição',
+});
 
 @ObjectType()
 export class InstitutionModel {

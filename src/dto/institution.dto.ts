@@ -1,5 +1,6 @@
 import { InputType, Field, PartialType } from '@nestjs/graphql';
 import { LanguagePreference } from '@prisma/client';
+import { ContactCreateDto } from './contact.dto';
 
 @InputType()
 export class InstitutionCreateDto {
@@ -20,6 +21,9 @@ export class InstitutionCreateDto {
 
   @Field({ nullable: true })
   country?: string;
+
+  @Field(() => ContactCreateDto, { nullable: true })
+  contact?: ContactCreateDto;
 }
 
 @InputType()
