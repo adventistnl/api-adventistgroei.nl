@@ -12,14 +12,12 @@ import { PermissionsGuard } from '../middlewares/permissions.guard';
 export class UserResolver {
   constructor(private readonly userService: UserService) {}
 
-  @Permission()
+  // @Permission()
   @Mutation(() => UserModel)
   async createUser(
     @Args('data') data: UserCreateDto,
-    @Context() context: { userId: string },
   ): Promise<User> {
-    const userId = context.userId;
-    return await this.userService.createUser(data, userId);
+    return await this.userService.createUser(data);
   }
 
   @Permission()

@@ -7,8 +7,8 @@ import { User } from '@prisma/client';
 export class UserService {
   constructor(private readonly userRepository: UserRepository) {}
 
-  async createUser(data: UserCreateDto, userId: string): Promise<User> {
-    return await this.userRepository.create(data, userId);
+  async createUser(data: UserCreateDto): Promise<User> {
+    return await this.userRepository.create(data);
   }
 
   async updateUser(data: UserUpdateDto, userId: string): Promise<User> {
@@ -25,5 +25,9 @@ export class UserService {
 
   async getUserById(id: string): Promise<User | null> {
     return await this.userRepository.findById(id);
+  }
+
+  async findByEmail(email: string): Promise<User | null> {
+    return await this.userRepository.findByEmail(email);
   }
 }

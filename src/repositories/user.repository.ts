@@ -2,38 +2,40 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../services/prisma.service';
 import { UserCreateDto, UserUpdateDto } from '../dto/user.dto';
 import { User } from '@prisma/client';
+import * as bcrypt from 'bcryptjs';
 
 @Injectable()
 export class UserRepository {
   constructor(private readonly prisma: PrismaService) {}
 
-  async create(data: UserCreateDto, userId: string): Promise<User> {
+  async create(data: UserCreateDto): Promise<User> {
     let contactId: string | null = null;
     if (data.contact) {
       const contact = await this.prisma.contact.create({
         data: {
           ...data.contact,
           is_primary: true,
-          created_by: userId,
-          updated_by: userId,
+          created_by: 'self',
+          updated_by: 'self',
         },
       });
       contactId = contact.id;
     }
-    return await this.prisma.user.create({
-      data: {
-        institution_id: data.institution_id,
-        church_id: data.church_id ? data.church_id : '',
+    // Hash da senha antes de salvar
+      const hashedPassword = await bcrypt.hash(data.password, 10);
+      const userData = {
         name: data.name,
         email: data.email,
-        password: data.password,
+        password: hashedPassword,
         language_preference: data.language_preference,
         contact_id: contactId,
-        created_by: userId,
-        updated_by: userId,
+        created_by: 'self',
+        updated_by: 'self',
         is_deleted: false,
-      },
-    });
+        church_id: data.church_id,
+        institution_id: data.institution_id,
+      };
+      return await this.prisma.user.create({ data: userData });
   }
 
   async update(data: UserUpdateDto, userId: string): Promise<User> {
@@ -83,6 +85,12 @@ export class UserRepository {
   async findById(id: string): Promise<User | null> {
     return await this.prisma.user.findUnique({
       where: { id, is_deleted: false },
+    });
+  }
+
+  async findByEmail(email: string): Promise<User | null> {
+    return await this.prisma.user.findFirst({
+      where: { email, is_deleted: false },
     });
   }
 }

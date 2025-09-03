@@ -46,3 +46,5 @@ export class PermissionsGuard implements CanActivate {
     return requiredPermissions.some((p) => userPermissions.includes(p));
   }
 }
+
+export * from './jwt.strategy';

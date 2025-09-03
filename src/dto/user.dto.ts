@@ -7,8 +7,8 @@ export class UserCreateDto {
   @Field()
   institution_id: string;
 
-  @Field({ nullable: true })
-  church_id?: string;
+  @Field()
+  church_id: string;
 
   @Field()
   name: string;
