@@ -39,9 +39,9 @@ export class AuthService {
       throw new Error('Invalid credentials');
     }
     const payload = { sub: user.id, email: user.email };
-    return {
-      accessToken: this.jwtService.sign(payload),
-      expiresIn: 3600,
-    };
+      return {
+        accessToken: this.jwtService.sign(payload, { expiresIn: '30d' }),
+        expiresIn: 2592000, // 30 dias em segundos
+      };
   }
 }
