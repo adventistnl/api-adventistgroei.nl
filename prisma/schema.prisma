@@ -234,7 +234,7 @@ model Role {
   id                        String                   @id @default(uuid())
   name                      String
   description               String
-  key_code                  String
+  key_code                  String                   @unique
   created_at                DateTime                 @default(now())
   updated_at                DateTime                 @updatedAt
   created_by                String
@@ -251,7 +251,7 @@ model Permission {
   id               String                 @id @default(uuid())
   name             String
   description      String
-  key_code         String
+  key_code         String         @unique
   resolver_name    PermissionResolverName @unique
   group            PermissionGroup?
   created_at       DateTime               @default(now())
@@ -267,7 +267,7 @@ model Permission {
 model RolePermission {
   id            String     @id @default(uuid())
   role_id       String
-  role          Role       @relation(fields: [role_id], references: [id])
+  role          Role       @relation(fields: [role_id], references: [id], onDelete: Cascade)
   permission_id String
   permission    Permission @relation(fields: [permission_id], references: [id])
   created_at    DateTime   @default(now())
