@@ -12,7 +12,6 @@ import { PermissionsGuard } from '../middlewares/permissions.guard';
 export class UserResolver {
   constructor(private readonly userService: UserService) {}
 
-  // @Permission()
   @Mutation(() => UserModel)
   async createUser(
     @Args('data') data: UserCreateDto,

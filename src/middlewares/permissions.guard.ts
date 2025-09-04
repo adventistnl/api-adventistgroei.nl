@@ -41,8 +41,8 @@ export class PermissionsGuard implements CanActivate {
     });
     if (!user) return false;
     const userPermissions: PermissionResolverName[] = user.user_roles
-      .flatMap((ur) => ur.role.role_permissions)
-      .map((rp) => rp.permission.resolver_name);
+    .flatMap((ur) => ur.role.role_permissions)
+    .map((rp) => rp.permission.resolver_name);
     return requiredPermissions.some((p) => userPermissions.includes(p));
   }
 }

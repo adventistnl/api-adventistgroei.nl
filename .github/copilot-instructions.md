@@ -78,3 +78,18 @@
 	- `src/graphql/nome.resolver.ts`
 2. Adicione as exports nos `index.ts` das pastas.
 3. Atualize permissões se necessário.
+
+## Autenticação JWT
+
+A aplicação utiliza autenticação baseada em JWT (JSON Web Token) para proteger rotas e operações GraphQL. O fluxo funciona da seguinte forma:
+
+1. O usuário realiza login via mutation GraphQL (`login`), enviando email e senha.
+2. O `AuthResolver` chama o `AuthService`, que valida o usuário usando o `UserService` e compara a senha com bcrypt.
+3. Se válido, o `AuthService` gera um JWT com payload `{ sub: user.id, email: user.email }` usando o `JwtService` do NestJS. O token tem validade de 30 dias.
+4. O token é retornado ao usuário junto com o tempo de expiração.
+5. Nas requisições seguintes, o token JWT é enviado no header `Authorization: Bearer <token>`.
+6. O contexto do GraphQL (`AppModule`) extrai o `userId` do token usando a função `getUserIdFromRequest`, que faz a verificação do JWT e retorna o campo `sub` (id do usuário).
+7. O `JwtStrategy` do Passport valida o token em rotas protegidas, garantindo que o usuário está autenticado.
+8. O `PermissionsGuard` utiliza o `userId` do contexto para buscar permissões do usuário no banco e validar o acesso às operações protegidas.
+
+Resumo: O login gera e retorna um JWT, que é usado para autenticar e autorizar o usuário nas operações GraphQL, com validação automática do token e extração do usuário no contexto. O fluxo é seguro e segue boas práticas do NestJS.

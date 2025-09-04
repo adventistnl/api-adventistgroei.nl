@@ -61,6 +61,22 @@ enum PermissionResolverName {
   createChurch
   updateChurch
   deleteChurch
+  permissions
+  createRole
+  updateRole
+  deleteRole
+  roles
+  role
+}
+
+enum PermissionGroup {
+  USER
+  INSTITUTION
+  CHURCH
+  REGION
+  CONTACT
+  ROLE
+  PERMISSION
 }
 
 // Models
@@ -237,6 +253,7 @@ model Permission {
   description      String
   key_code         String
   resolver_name    PermissionResolverName @unique
+  group            PermissionGroup?
   created_at       DateTime               @default(now())
   updated_at       DateTime               @updatedAt
   created_by       String
