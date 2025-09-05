@@ -1,4 +1,5 @@
 import { ObjectType, Field } from '@nestjs/graphql';
+import { UserWithRoles } from './user.model';
 
 @ObjectType()
 export class AuthModel {
@@ -7,4 +8,7 @@ export class AuthModel {
 
   @Field()
   expiresIn: number;
+
+  @Field(() => UserWithRoles)
+  user: UserWithRoles
 }

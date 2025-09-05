@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { UserRepository } from '../repositories/user.repository';
 import { UserCreateDto, UserUpdateDto } from '../dto/user.dto';
 import { User } from '@prisma/client';
+import { UserWithRoles } from 'src/models';
 
 @Injectable()
 export class UserService {
@@ -27,7 +28,7 @@ export class UserService {
     return await this.userRepository.findById(id);
   }
 
-  async findByEmail(email: string): Promise<User | null> {
+  async findByEmail(email: string): Promise<UserWithRoles | null> {
     return await this.userRepository.findByEmail(email);
   }
 }

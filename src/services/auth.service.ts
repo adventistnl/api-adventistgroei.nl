@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { User } from '@prisma/client';
 import { JwtService } from '@nestjs/jwt';
 import { UserService } from './user.service';
 import { LoginInput } from '../dto/auth.dto';
 import { AuthModel } from '../models/auth.model';
+import { UserWithRoles } from 'src/models';
 
 @Injectable()
 export class AuthService {
@@ -15,7 +15,7 @@ export class AuthService {
   async validateUser(
     email: string,
     password: string,
-  ): Promise<Omit<User, 'password'> | null> {
+  ): Promise<Omit<UserWithRoles, 'password'> | null> {
     const user = await this.userService.findByEmail(email);
     if (!user) return null;
     const bcrypt = await import('bcryptjs');
@@ -38,10 +38,14 @@ export class AuthService {
     if (!isValid) {
       throw new Error('Invalid credentials');
     }
+    // Remover o campo password explicitamente
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { password, ...userWithoutPassword } = user;
     const payload = { sub: user.id, email: user.email };
-      return {
-        accessToken: this.jwtService.sign(payload, { expiresIn: '30d' }),
-        expiresIn: 2592000, // 30 dias em segundos
-      };
+    return {
+      accessToken: this.jwtService.sign(payload, { expiresIn: '30d' }),
+      expiresIn: 2592000, // 30 dias em segundos
+      user: {...userWithoutPassword, password: ''},
+    };
   }
 }

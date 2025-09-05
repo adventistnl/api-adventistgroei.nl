@@ -3,6 +3,7 @@ import { PrismaService } from '../services/prisma.service';
 import { UserCreateDto, UserUpdateDto } from '../dto/user.dto';
 import { User } from '@prisma/client';
 import * as bcrypt from 'bcryptjs';
+import { UserWithRoles } from 'src/models';
 
 @Injectable()
 export class UserRepository {
@@ -88,9 +89,49 @@ export class UserRepository {
     });
   }
 
-  async findByEmail(email: string): Promise<User | null> {
-    return await this.prisma.user.findFirst({
+  async findByEmail(email: string): Promise<UserWithRoles | null> {
+    const user = await this.prisma.user.findFirst({
       where: { email, is_deleted: false },
+      include: {
+        user_roles: {
+          include: {
+            role: {
+              include: {
+                role_permissions: {
+                  include: {
+                    permission: true,
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
     });
+    if (!user) return null;
+    // Tipar corretamente os objetos
+    const userWithRoles: UserWithRoles = {
+      ...user,
+      user_roles: user.user_roles.map((ur): import('src/models/role.model').RoleModel => {
+        const role = ur.role;
+        // Agrupar permissões por grupo
+        const permissionsByGroup: { [group: string]: import('src/models/permission.model').PermissionModel[] } = {};
+        for (const rp of role.role_permissions) {
+          const perm = rp.permission;
+          // Converter group para string, nunca null
+          const group = perm.group ? String(perm.group) : 'OUTRO';
+          if (!permissionsByGroup[group]) permissionsByGroup[group] = [];
+          permissionsByGroup[group].push({ ...perm, group });
+        }
+        return {
+          id: role.id,
+          name: role.name,
+          description: role.description,
+          key_code: role.key_code,
+          permissions: Object.entries(permissionsByGroup).map(([group, data]) => ({ group, data })),
+        };
+      }),
+    };
+    return userWithRoles;
   }
 }

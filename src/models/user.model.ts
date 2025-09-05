@@ -1,5 +1,6 @@
 import { ObjectType, Field, registerEnumType } from '@nestjs/graphql';
 import { LanguagePreference } from '@prisma/client';
+import { RoleModel } from './role.model';
 
 registerEnumType(LanguagePreference, {
   name: 'LanguagePreference',
@@ -14,8 +15,11 @@ export class UserModel {
   @Field()
   institution_id: string;
 
-  @Field({ nullable: true })
-  church_id?: string;
+  @Field()
+  password: string;
+
+  @Field(() => String, { nullable: true })
+  church_id: string | null;
 
   @Field()
   name: string;
@@ -23,11 +27,11 @@ export class UserModel {
   @Field()
   email: string;
 
-  @Field(() => LanguagePreference)
+  @Field()
   language_preference: LanguagePreference;
 
   @Field(() => String, { nullable: true })
-  contact_id?: string | null;
+  contact_id: string | null;
 
   @Field()
   created_at: Date;
@@ -44,9 +48,15 @@ export class UserModel {
   @Field()
   is_deleted: boolean;
 
-  @Field({ nullable: true })
-  deleted_at?: Date;
+  @Field(() => Date, { nullable: true })
+  deleted_at: Date | null;
 
   @Field(() => String, { nullable: true })
-  deleted_by?: string;
+  deleted_by: string | null;
+}
+
+@ObjectType()
+export class UserWithRoles extends UserModel {
+  @Field(() => [RoleModel])
+  user_roles: RoleModel[];
 }
