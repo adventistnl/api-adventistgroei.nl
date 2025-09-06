@@ -11,9 +11,9 @@ export class SubsidyRequestCreateDto {
   @IsNumber()
   total_budget: number;
 
-  @Field()
-  @IsString()
-  project_id: string;
+  // @Field()
+  // @IsString()
+  // project_id: string;
   
   @Field({ nullable: true })
   @IsString()
@@ -44,10 +44,10 @@ export class SubsidyRequestUpdateDto {
   @IsNumber()
   total_budget?: number;
 
-  @Field({ nullable: true })
-  @IsOptional()
-  @IsString()
-  project_id?: string;
+  // @Field({ nullable: true })
+  // @IsOptional()
+  // @IsString()
+  // project_id?: string;
 
   @Field({ nullable: true })
   @IsOptional()

@@ -1,3 +1,5 @@
+src/scripts/seed-developer-role.ts
+
 # Dependencies
 node_modules/
 npm-debug.log*

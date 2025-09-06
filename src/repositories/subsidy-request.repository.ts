@@ -10,6 +10,17 @@ export class SubsidyRequestRepository {
   async create(data: SubsidyRequestCreateDto, userId: string): Promise<SubsidyRequest> {
     const { institution_id, requester_id, department_id, church_id, ...rest } = data;
 
+    const subsidy = await this.prisma.subsidyStatus.create({
+      data: {
+        created_by: userId,
+        updated_by: userId,
+        department: { connect: { id: department_id } },
+        assigned_user: { connect: { id: requester_id } },
+        name: 'Initial status',
+        description: 'Initial status upon subsidy request creation',
+        order: 1,
+      }
+    })
 
     return this.prisma.subsidyRequest.create({
       data: {
@@ -18,7 +29,8 @@ export class SubsidyRequestRepository {
         requester: { connect: { id: requester_id } },
         department: { connect: { id: department_id } },
         church: { connect: { id: church_id } },
-        subsidy_status: {},
+        // projects: { connect: [{ id: data.project_id }] },
+        subsidy_status: { connect: { id: subsidy.id } },
         created_by: userId,
         updated_by: userId,
         is_deleted: false,
