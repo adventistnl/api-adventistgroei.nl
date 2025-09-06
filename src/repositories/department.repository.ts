@@ -1,13 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../services/prisma.service';
 import { Department } from '../@generated/department/department.model';
-import { DepartmentCreateInput } from 'src/@generated/department/department-create.input';
-import { DepartmentUpdateInput } from 'src/@generated/department/department-update.input';
 import { DepartmentCreateDto, DepartmentUpdateDto } from 'src/dto';
-import { transformToDecimal } from 'prisma-graphql-type-decimal';
 import { CustomGraphQLError, ErrorCode } from 'src/common/errors/custom-graphql-error';
 import { InstitutionRepository } from './institution.repository';
 import { ChurchRepository } from './church.repository';
+import { Prisma } from '@prisma/client';
 
 @Injectable()
 export class DepartmentRepository {
@@ -30,15 +28,23 @@ export class DepartmentRepository {
     if (!institution) {
       throw new CustomGraphQLError('Institution not found', ErrorCode.NOT_FOUND, 404);
     }
-    const createPrismaData: DepartmentCreateInput = {
-      ...data,
-      created_by: userId,
-      updated_by: userId,
-      annual_budget: transformToDecimal(data.annual_budget),
-      institution: { connect: { id: data.institution } },
-      church: { connect: { id: data.church } },
-    };
-    return this.prisma.department.create({ data: createPrismaData });
+    const church = await this.churchRepository.findById(data.church);
+    if (!church) {
+      throw new CustomGraphQLError('Church not found', ErrorCode.NOT_FOUND, 404);
+    }
+    const annual_budget = Prisma.Decimal(data.annual_budget);
+    console.log("data", data);
+    console.log("annual_budget", annual_budget);
+    return this.prisma.department.create({
+      data: {
+        ...data,
+        created_by: userId,
+        updated_by: userId,
+        annual_budget: annual_budget,
+        institution: { connect: { id: data.institution } },
+        church: { connect: { id: data.church } },
+      },
+    });
   }
 
   async update(id: string, data: DepartmentUpdateDto, userId: string): Promise<Department> {
@@ -59,15 +65,14 @@ export class DepartmentRepository {
         }
     }
 
-    const updatePrismaData: DepartmentUpdateInput = {
+    return this.prisma.department.update({ where: { id }, data: {
       updated_by: { set: userId },
       name: data.name ? { set: data.name } : undefined,
       description: data.description ? { set: data.description } : undefined,
-      annual_budget: data.annual_budget ? { set: transformToDecimal(data.annual_budget) } : undefined,
+      annual_budget: data.annual_budget ? { set: Prisma.Decimal(data.annual_budget) } : undefined,
       institution: data.institution_id ? { connect: { id: data.institution_id } } : undefined,
       church: data.church_id ? { connect: { id: data.church_id } } : undefined,
-    };
-    return this.prisma.department.update({ where: { id }, data: updatePrismaData });
+    } });
   }
 
   async delete(id: string): Promise<Department> {
