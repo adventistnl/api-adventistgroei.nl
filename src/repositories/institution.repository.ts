@@ -91,6 +91,40 @@ export class InstitutionRepository {
   async findById(id: string): Promise<Institution | null> {
     return await this.prisma.institution.findUnique({
       where: { id, is_deleted: false },
+     });
+  }
+
+  async findOneByFilters(filters: Partial<Record<keyof Institution, any>>): Promise<Institution | null> {
+    const allowedKeys: (keyof Institution)[] = ['name', 'denomination', 'language_preference', 'is_deleted'];
+
+    for (const key of Object.keys(filters)) {
+      if (!allowedKeys.includes(key as keyof Institution)) {
+        throw new Error(`Invalid filter key: ${key}`);
+      }
+    }
+
+    return this.prisma.institution.findFirst({
+      where: {
+        is_deleted: false,
+        ...filters,
+      },
+    });
+  }
+
+  async findManyByFilters(filters: Partial<Record<keyof Institution, any>>): Promise<Institution[]> {
+    const allowedKeys: (keyof Institution)[] = ['name', 'denomination', 'language_preference', 'is_deleted'];
+
+    for (const key of Object.keys(filters)) {
+      if (!allowedKeys.includes(key as keyof Institution)) {
+        throw new Error(`Invalid filter key: ${key}`);
+      }
+    }
+
+    return this.prisma.institution.findMany({
+      where: {
+        is_deleted: false,
+        ...filters,
+      },
     });
   }
 }

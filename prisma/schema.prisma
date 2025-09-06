@@ -4,13 +4,18 @@
 // Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
 generator client {
   provider = "prisma-client-js"
 }
 
-datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+generator nestgraphql {
+  provider = "prisma-nestjs-graphql"
+  output   = "../src/@generated" // Diretório onde os tipos serão gerados
 }
 
 // Enums
@@ -77,6 +82,27 @@ enum PermissionGroup {
   CONTACT
   ROLE
   PERMISSION
+}
+
+enum CommunicationType {
+  EMAIL
+  SMS
+  PUSH_NOTIFICATION
+  IN_APP_MESSAGE
+}
+
+enum CommunicationPriority {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+enum CommunicationStatus {
+  DRAFT
+  SCHEDULED
+  SENT
+  FAILED
 }
 
 // Models
@@ -537,8 +563,8 @@ model MissionProject {
   is_deleted          Boolean            @default(false)
   deleted_at          DateTime?
   deleted_by          String?
-  Institution         Institution?       @relation(fields: [institutionId], references: [id])
-  institutionId       String?
+  Institution         Institution?       @relation(fields: [institution_id], references: [id])
+  institution_id      String?
 }
 
 model Notification {

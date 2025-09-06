@@ -1,22 +1,29 @@
-import { Resolver, Mutation, Args, Query, Context } from '@nestjs/graphql';
+import { Resolver, Mutation, Args, Query, Context, ResolveField, Parent } from '@nestjs/graphql';
 import { InstitutionService } from '../services/institution.service';
-import { InstitutionModel } from '../models/institution.model';
-import { Institution } from '@prisma/client';
-import {
-  InstitutionCreateDto,
-  InstitutionUpdateDto,
-} from '../dto/institution.dto';
+import { Institution } from '../@generated/institution/institution.model';
 import { Permission } from '../middlewares/permissions.decorator';
 import { UseGuards } from '@nestjs/common';
 import { PermissionsGuard } from '../middlewares/permissions.guard';
+import { InstitutionCreateDto, InstitutionUpdateDto } from '../dto/institution.dto';
+import { Region } from 'src/@generated/region/region.model';
+import { Church } from 'src/@generated/church/church.model';
+import { Department } from 'src/@generated/department/department.model';
+import { User } from 'src/@generated/user/user.model';
+import { Communication } from 'src/@generated/communication/communication.model';
+import { Notification } from 'src/@generated/notification/notification.model';
+import { Setting } from 'src/@generated/setting/setting.model';
+import { MissionProject } from 'src/@generated/mission-project/mission-project.model';
+import { DirectMessage } from 'src/@generated/direct-message/direct-message.model';
+import { SubsidyRequest } from 'src/@generated/subsidy-request/subsidy-request.model';
+import { Contact } from 'src/@generated/contact/contact.model';
 
-@Resolver(() => InstitutionModel)
+@Resolver(() => Institution)
 @UseGuards(PermissionsGuard)
 export class InstitutionResolver {
   constructor(private readonly institutionService: InstitutionService) {}
 
   @Permission()
-  @Mutation(() => InstitutionModel)
+  @Mutation(() => Institution)
   async createInstitution(
     @Args('data') data: InstitutionCreateDto,
     @Context() context: { userId: string },
@@ -26,19 +33,19 @@ export class InstitutionResolver {
   }
 
   @Permission()
-  @Query(() => [InstitutionModel])
+  @Query(() => [Institution])
   async institutions(): Promise<Institution[]> {
     return await this.institutionService.getInstitutions();
   }
 
   @Permission()
-  @Query(() => InstitutionModel, { nullable: true })
+  @Query(() => Institution, { nullable: true })
   async institution(@Args('id') id: string): Promise<Institution | null> {
     return await this.institutionService.getInstitutionById(id);
   }
 
   @Permission()
-  @Mutation(() => InstitutionModel)
+  @Mutation(() => Institution)
   async updateInstitution(
     @Args('data') data: InstitutionUpdateDto,
     @Context() context: { userId: string },
@@ -48,12 +55,67 @@ export class InstitutionResolver {
   }
 
   @Permission()
-  @Mutation(() => InstitutionModel)
+  @Mutation(() => Institution)
   async deleteInstitution(
     @Args('id') id: string,
     @Context() context: { userId: string },
   ): Promise<Institution> {
     const userId = context.userId;
     return await this.institutionService.deleteInstitution(id, userId);
+  }
+
+  @ResolveField(() => [Region])
+  async regions(@Parent() institution: Institution) {
+    return this.institutionService.getRegions(institution.id);
+  }
+
+  @ResolveField(() => [Church])
+  async churches(@Parent() institution: Institution) {
+    return this.institutionService.getChurches(institution.id);
+  }
+
+  @ResolveField(() => [Department])
+  async departments(@Parent() institution: Institution) {
+    return this.institutionService.getDepartmentsByInstitutionId(institution.id);
+  }
+
+  @ResolveField(() => [User])
+  async users(@Parent() institution: Institution) {
+    return this.institutionService.getUsersByInstitutionId(institution.id);
+  }
+
+  @ResolveField(() => [Communication])
+  async communications(@Parent() institution: Institution) {
+    return await this.institutionService.getCommunicationsByInstitutionId(institution.id);
+  }
+
+  @ResolveField(() => [Notification])
+  async notifications(@Parent() institution: Institution) {
+    return await this.institutionService.getNotificationsByInstitutionId(institution.id);
+  }
+
+  @ResolveField(() => [Setting])
+  async settings(@Parent() institution: Institution) {
+    return await this.institutionService.getSettingsByInstitutionId(institution.id);
+  }
+
+  @ResolveField(() => [MissionProject], { name: 'mission_projects' })
+  async missionProjects(@Parent() institution: Institution) {
+    return await this.institutionService.getMissionProjectsByInstitutionId(institution.id);
+  }
+
+  @ResolveField(() => [DirectMessage], { name: 'direct_messages' })
+  async directMessages(@Parent() institution: Institution) {
+    return await this.institutionService.getDirectMessagesByInstitutionId(institution.id);
+  }
+
+  @ResolveField(() => [SubsidyRequest], { name: 'subsidy_requests' })
+  async subsidyRequests(@Parent() institution: Institution) {
+    return await this.institutionService.getSubsidyRequestsByInstitutionId(institution.id);
+  }
+
+  @ResolveField(() => Contact, { nullable: true })
+  async contact(@Parent() institution: Institution) {
+    return await this.institutionService.getContactByInstitutionId(institution.id);
   }
 }

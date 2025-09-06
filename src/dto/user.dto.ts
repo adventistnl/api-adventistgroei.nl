@@ -1,5 +1,5 @@
 import { InputType, Field, PartialType } from '@nestjs/graphql';
-import { LanguagePreference } from '@prisma/client';
+import { LanguagePreference } from 'src/@generated/prisma/language-preference.enum';
 import { ContactCreateDto } from './contact.dto';
 
 @InputType()

@@ -1,0 +1,63 @@
+import { InputType, Field } from '@nestjs/graphql';
+import { IsOptional, IsString, IsEnum, IsNumber } from 'class-validator';
+import { LanguagePreference } from '../@generated/prisma/language-preference.enum';
+
+@InputType()
+export class MissionProjectCreateDto {
+  @Field()
+  @IsString()
+  title: string;
+
+  @Field()
+  @IsString()
+  description: string;
+
+  @Field(() => LanguagePreference)
+  @IsEnum(LanguagePreference)
+  language_preference: LanguagePreference;
+
+  @Field()
+  @IsNumber()
+  budget: number;
+
+  @Field()
+  @IsOptional()
+  @IsString()
+  media_link: string;
+
+  @Field()
+  @IsString()
+  department: string;
+}
+
+@InputType()
+export class MissionProjectUpdateDto {
+  @Field({ nullable: true })
+  @IsOptional()
+  @IsString()
+  title?: string;
+
+  @Field({ nullable: true })
+  @IsOptional()
+  @IsString()
+  description?: string;
+
+  @Field(() => LanguagePreference, { nullable: true })
+  @IsOptional()
+  @IsEnum(LanguagePreference)
+  language_preference?: LanguagePreference;
+
+  @Field({ nullable: true })
+  @IsOptional()
+  @IsNumber()
+  budget?: number;
+
+  @Field({ nullable: true })
+  @IsOptional()
+  @IsString()
+  media_link?: string;
+
+  @Field({ nullable: true })
+  @IsOptional()
+  departmentId?: string;
+}

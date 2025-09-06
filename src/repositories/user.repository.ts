@@ -4,6 +4,7 @@ import { UserCreateDto, UserUpdateDto } from '../dto/user.dto';
 import { User } from '@prisma/client';
 import * as bcrypt from 'bcryptjs';
 import { UserWithRoles } from 'src/models';
+import { LanguagePreference } from '../@generated/prisma/language-preference.enum';
 
 @Injectable()
 export class UserRepository {
@@ -131,7 +132,42 @@ export class UserRepository {
           permissions: Object.entries(permissionsByGroup).map(([group, data]) => ({ group, data })),
         };
       }),
+      language_preference: LanguagePreference.en, // Ajustar para o enum correto
     };
     return userWithRoles;
+  }
+
+  async findOneByFilters(filters: Partial<Record<keyof User, any>>): Promise<User | null> {
+    const allowedKeys: (keyof User)[] = ['institution_id', 'email', 'name', 'is_deleted'];
+
+    for (const key of Object.keys(filters)) {
+      if (!allowedKeys.includes(key as keyof User)) {
+        throw new Error(`Invalid filter key: ${key}`);
+      }
+    }
+
+    return this.prisma.user.findFirst({
+      where: {
+        is_deleted: false,
+        ...filters,
+      },
+    });
+  }
+
+  async findManyByFilters(filters: Partial<Record<keyof User, any>>): Promise<User[]> {
+    const allowedKeys: (keyof User)[] = ['institution_id', 'email', 'name', 'is_deleted'];
+
+    for (const key of Object.keys(filters)) {
+      if (!allowedKeys.includes(key as keyof User)) {
+        throw new Error(`Invalid filter key: ${key}`);
+      }
+    }
+
+    return this.prisma.user.findMany({
+      where: {
+        is_deleted: false,
+        ...filters,
+      },
+    });
   }
 }

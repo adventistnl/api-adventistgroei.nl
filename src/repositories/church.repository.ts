@@ -81,4 +81,38 @@ export class ChurchRepository {
       where: { id, is_deleted: false },
     });
   }
+
+  async findOneByFilters(filters: Partial<Record<keyof Church, any>>): Promise<Church | null> {
+    const allowedKeys: (keyof Church)[] = ['institution_id', 'region_id', 'name', 'is_deleted'];
+
+    for (const key of Object.keys(filters)) {
+      if (!allowedKeys.includes(key as keyof Church)) {
+        throw new Error(`Invalid filter key: ${key}`);
+      }
+    }
+
+    return this.prisma.church.findFirst({
+      where: {
+        is_deleted: false,
+        ...filters,
+      },
+    });
+  }
+
+  async findManyByFilters(filters: Partial<Record<keyof Church, any>>): Promise<Church[]> {
+    const allowedKeys: (keyof Church)[] = ['institution_id', 'region_id', 'name', 'is_deleted'];
+
+    for (const key of Object.keys(filters)) {
+      if (!allowedKeys.includes(key as keyof Church)) {
+        throw new Error(`Invalid filter key: ${key}`);
+      }
+    }
+
+    return this.prisma.church.findMany({
+      where: {
+        is_deleted: false,
+        ...filters,
+      },
+    });
+  }
 }

@@ -1,5 +1,5 @@
 import { ObjectType, Field, registerEnumType } from '@nestjs/graphql';
-import { LanguagePreference } from '@prisma/client';
+import { LanguagePreference } from 'src/@generated/prisma/language-preference.enum';
 
 registerEnumType(LanguagePreference, {
   name: 'LanguagePreference',

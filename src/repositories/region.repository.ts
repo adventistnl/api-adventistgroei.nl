@@ -89,4 +89,38 @@ export class RegionRepository {
       },
     });
   }
+
+  async findOneByFilters(filters: Partial<Record<keyof Region, any>>): Promise<Region | null> {
+    const allowedKeys: (keyof Region)[] = ['institution_id', 'parent_region_id', 'name', 'is_deleted'];
+
+    for (const key of Object.keys(filters)) {
+      if (!allowedKeys.includes(key as keyof Region)) {
+        throw new Error(`Invalid filter key: ${key}`);
+      }
+    }
+
+    return this.prisma.region.findFirst({
+      where: {
+        is_deleted: false,
+        ...filters,
+      },
+    });
+  }
+
+  async findManyByFilters(filters: Partial<Record<keyof Region, any>>): Promise<Region[]> {
+    const allowedKeys: (keyof Region)[] = ['institution_id', 'parent_region_id', 'name', 'is_deleted'];
+
+    for (const key of Object.keys(filters)) {
+      if (!allowedKeys.includes(key as keyof Region)) {
+        throw new Error(`Invalid filter key: ${key}`);
+      }
+    }
+
+    return this.prisma.region.findMany({
+      where: {
+        is_deleted: false,
+        ...filters,
+      },
+    });
+  }
 }

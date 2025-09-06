@@ -1,14 +1,29 @@
 import { Injectable } from '@nestjs/common';
-import { InstitutionRepository } from '../repositories/institution.repository';
 import {
   InstitutionCreateDto,
   InstitutionUpdateDto,
 } from '../dto/institution.dto';
-import { Institution } from '@prisma/client';
+import { Institution } from '../@generated/institution/institution.model';
+import { CustomGraphQLError, ErrorCode } from '../common/errors/custom-graphql-error';
+import { ContactRepository, ChurchRepository, CommunicationRepository, DepartmentRepository, InstitutionRepository, MissionProjectRepository, NotificationRepository, RegionRepository, SettingRepository, SubsidyRequestRepository, UserRepository } from 'src/repositories';
+import { DirectMessageRepository } from 'src/repositories/direct-message.repository';
 
 @Injectable()
 export class InstitutionService {
-  constructor(private readonly institutionRepository: InstitutionRepository) {}
+  constructor(
+    private readonly institutionRepository: InstitutionRepository,
+    private readonly regionRepository: RegionRepository,
+    private readonly churchRepository: ChurchRepository,
+    private readonly departmentRepository: DepartmentRepository,
+    private readonly userRepository: UserRepository,
+    private readonly communicationRepository: CommunicationRepository,
+    private readonly notificationRepository: NotificationRepository,
+    private readonly settingRepository: SettingRepository,
+    private readonly missionProjectRepository: MissionProjectRepository,
+    private readonly directMessageRepository: DirectMessageRepository,
+    private readonly subsidyRequestRepository: SubsidyRequestRepository,
+    private readonly contactRepository: ContactRepository,
+  ) {}
 
   async createInstitution(
     data: InstitutionCreateDto,
@@ -33,6 +48,58 @@ export class InstitutionService {
   }
 
   async getInstitutionById(id: string): Promise<Institution | null> {
-    return await this.institutionRepository.findById(id);
+    const institution = await this.institutionRepository.findById(id);
+    if (!institution) {
+      throw new CustomGraphQLError('Institution not found', ErrorCode.NOT_FOUND, 404);
+    }
+    return institution;
+  }
+
+  async getRegions(institutionId: string) {
+    const regions = await this.regionRepository.findManyByFilters({ institution_id: institutionId });
+    return regions;
+  }
+
+  async getChurches(institutionId: string) {
+    const churches = await this.churchRepository.findManyByFilters({ institution_id: institutionId });
+    return churches;
+  }
+
+  async getDepartmentsByInstitutionId(institutionId: string) {
+    const departments = await this.departmentRepository.findManyByFilters({ institution_id: institutionId });
+    return departments;
+  }
+
+  async getUsersByInstitutionId(institutionId: string) {
+    const users = await this.userRepository.findManyByFilters({ institution_id: institutionId });
+    return users;
+  }
+
+  async getCommunicationsByInstitutionId(institutionId: string) {
+    return await this.communicationRepository.findManyByFilters({ institution_id: institutionId });
+  }
+
+  async getNotificationsByInstitutionId(institutionId: string) {
+    return await this.notificationRepository.findManyByFilters({ institution_id: institutionId });
+  }
+
+  async getSettingsByInstitutionId(institutionId: string) {
+    return await this.settingRepository.findManyByFilters({ institution_id: institutionId });
+  }
+
+  async getMissionProjectsByInstitutionId(institutionId: string) {
+    return (await this.missionProjectRepository.findManyByFilters({ institution_id: institutionId }));
+  }
+
+  async getDirectMessagesByInstitutionId(institutionId: string) {
+    return (await this.directMessageRepository.findManyByFilters({ institution_id: institutionId }));
+  }
+
+  async getSubsidyRequestsByInstitutionId(institutionId: string) {
+    return (await this.subsidyRequestRepository.findManyByFilters({ institution_id: institutionId }));
+  }
+
+  async getContactByInstitutionId(institutionId: string) {
+    return await this.contactRepository.findOneByFilters({ Institution: { id: institutionId} });
   }
 }
