@@ -5,6 +5,7 @@ import {
   InstitutionUpdateDto,
 } from '../dto/institution.dto';
 import { Institution } from '@prisma/client';
+import { CustomGraphQLError, ErrorCode } from 'src/common/errors/custom-graphql-error';
 
 @Injectable()
 export class InstitutionRepository {
@@ -89,9 +90,13 @@ export class InstitutionRepository {
   }
 
   async findById(id: string): Promise<Institution | null> {
-    return await this.prisma.institution.findUnique({
+    const institution = await this.prisma.institution.findUnique({
       where: { id, is_deleted: false },
      });
+    if (!institution) {
+      throw new CustomGraphQLError('Institution not found', ErrorCode.NOT_FOUND, 404);
+    }
+    return institution;
   }
 
   async findOneByFilters(filters: Partial<Record<keyof Institution, any>>): Promise<Institution | null> {

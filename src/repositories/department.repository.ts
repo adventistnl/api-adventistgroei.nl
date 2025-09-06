@@ -20,7 +20,11 @@ export class DepartmentRepository {
   }
 
   async findById(id: string): Promise<Department | null> {
-    return this.prisma.department.findUnique({ where: { id } });
+    const department = await this.prisma.department.findUnique({ where: { id } });
+    if (!department) {
+      throw new CustomGraphQLError('Department not found', ErrorCode.NOT_FOUND, 404);
+    }
+    return department;
   }
 
   async create(data: DepartmentCreateDto, userId: string): Promise<Department> {

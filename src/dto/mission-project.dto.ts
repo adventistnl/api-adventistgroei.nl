@@ -27,7 +27,11 @@ export class MissionProjectCreateDto {
 
   @Field()
   @IsString()
-  department: string;
+  department_id: string;
+
+  @Field()
+  @IsString()
+  institution_id: string;
 }
 
 @InputType()
@@ -59,5 +63,10 @@ export class MissionProjectUpdateDto {
 
   @Field({ nullable: true })
   @IsOptional()
-  departmentId?: string;
+  department_id?: string;
+
+  @Field({ nullable: true })
+  @IsOptional()
+  @IsString()
+  institution_id?: string;
 }
