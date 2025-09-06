@@ -72,6 +72,42 @@ enum PermissionResolverName {
   deleteRole
   roles
   role
+  auth
+  departments
+  department
+  createDepartment
+  updateDepartment
+  deleteDepartment
+  communications
+  communication
+  createCommunication
+  updateCommunication
+  deleteCommunication
+  directMessages
+  directMessage
+  createDirectMessage
+  updateDirectMessage
+  deleteDirectMessage
+  missionProjects
+  missionProject
+  createMissionProject
+  updateMissionProject
+  deleteMissionProject
+  notifications
+  notification
+  createNotification
+  updateNotification
+  deleteNotification
+  settings
+  setting
+  createSetting
+  updateSetting
+  deleteSetting
+  subsidyRequests
+  subsidyRequest
+  createSubsidyRequest
+  updateSubsidyRequest
+  deleteSubsidyRequest
 }
 
 enum PermissionGroup {
@@ -82,6 +118,13 @@ enum PermissionGroup {
   CONTACT
   ROLE
   PERMISSION
+  DEPARTMENT
+  COMMUNICATION
+  DIRECT_MESSAGE
+  MISSION_PROJECT
+  NOTIFICATION
+  SETTING
+  SUBSIDY_REQUEST
 }
 
 enum CommunicationType {
