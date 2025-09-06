@@ -3,7 +3,6 @@ import { DepartmentRepository } from '../repositories/department.repository';
 import { Department } from '../@generated/department/department.model';
 import { DepartmentCreateDto, DepartmentUpdateDto } from '../dto/department.dto';
 import { CustomGraphQLError, ErrorCode } from '../common/errors/custom-graphql-error';
-import { transformToDecimal } from 'prisma-graphql-type-decimal';
 
 @Injectable()
 export class DepartmentService {
@@ -21,24 +20,12 @@ export class DepartmentService {
     return department;
   }
 
-  async createDepartment(data: DepartmentCreateDto): Promise<Department> {
-    const createData = {
-      ...data,
-      annual_budget: transformToDecimal(data.annual_budget),
-      institution: { connect: { id: data.institution } },
-      church: { connect: { id: data.church } },
-    };
-    return this.departmentRepository.create(createData);
+  async createDepartment(data: DepartmentCreateDto, userId: string): Promise<Department> {
+    return this.departmentRepository.create(data, userId);
   }
 
-  async updateDepartment(data: DepartmentUpdateDto): Promise<Department> {
-    const { id, ...updateData } = data;
-    const prismaUpdateData = {
-      name: updateData.name ? { set: updateData.name } : undefined,
-      description: updateData.description ? { set: updateData.description } : undefined,
-      annual_budget: updateData.annual_budget ? { set: transformToDecimal(updateData.annual_budget) } : undefined,
-    };
-    return this.departmentRepository.update(id, prismaUpdateData);
+  async updateDepartment(department_id: string, data: DepartmentUpdateDto, userId: string): Promise<Department> {
+    return this.departmentRepository.update(department_id, data, userId);
   }
 
   async deleteDepartment(id: string): Promise<Department> {

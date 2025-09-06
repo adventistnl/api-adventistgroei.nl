@@ -17,14 +17,6 @@ export class DepartmentCreateDto {
 
   @Field()
   @IsString()
-  created_by: string;
-
-  @Field()
-  @IsString()
-  updated_by: string;
-
-  @Field()
-  @IsString()
   institution: string;
 
   @Field()
@@ -52,4 +44,14 @@ export class DepartmentUpdateDto {
   @IsOptional()
   @IsNumber()
   annual_budget?: number;
+
+  @Field({ nullable: true })
+  @IsOptional()
+  @IsString()
+  institution_id?: string;
+
+  @Field({ nullable: true })
+  @IsOptional()
+  @IsString()
+  church_id?: string;
 }

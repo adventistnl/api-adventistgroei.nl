@@ -1,10 +1,10 @@
-import { Resolver, Query, Mutation, Args } from '@nestjs/graphql';
+import { Resolver, Query, Mutation, Args, Context } from '@nestjs/graphql';
 import { DepartmentService } from '../services/department.service';
 import { Department } from '../@generated/department/department.model';
-import { DepartmentCreateDto, DepartmentUpdateDto } from '../dto/department.dto';
 import { Permission } from '../middlewares/permissions.decorator';
 import { UseGuards } from '@nestjs/common';
 import { PermissionsGuard } from '../middlewares/permissions.guard';
+import { DepartmentCreateDto, DepartmentUpdateDto } from 'src/dto';
 
 @Resolver(() => Department)
 @UseGuards(PermissionsGuard)
@@ -25,14 +25,18 @@ export class DepartmentResolver {
 
   @Permission()
   @Mutation(() => Department)
-  async createDepartment(@Args('data') data: DepartmentCreateDto): Promise<Department> {
-    return this.departmentService.createDepartment(data);
+  async createDepartment(@Args('data') data: DepartmentCreateDto, @Context() context: { userId: string }): Promise<Department> {
+    return this.departmentService.createDepartment(data, context.userId);
   }
 
   @Permission()
   @Mutation(() => Department)
-  async updateDepartment(@Args('data') data: DepartmentUpdateDto): Promise<Department> {
-    return this.departmentService.updateDepartment(data);
+  async updateDepartment(
+    @Args('data') data: DepartmentUpdateDto,
+    @Args('department_id') department_id: string,
+    @Context() context: { userId: string }
+  ): Promise<Department> {
+    return this.departmentService.updateDepartment(department_id, data, context.userId);
   }
 
   @Permission()
