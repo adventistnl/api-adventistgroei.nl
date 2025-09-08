@@ -4,6 +4,7 @@ import { PrismaService } from '../services/prisma.service';
 import { PERMISSIONS_KEY } from './permissions.decorator';
 import type { PermissionResolverName } from '@prisma/client';
 import type { IGqlContext } from '../types/global';
+import { CustomGraphQLError, ErrorCode } from 'src/common/errors/custom-graphql-error';
 
 @Injectable()
 export class PermissionsGuard implements CanActivate {
@@ -39,7 +40,7 @@ export class PermissionsGuard implements CanActivate {
         },
       },
     });
-    if (!user) return false;
+    if (!user) throw new CustomGraphQLError('User not found trying to admit permission', ErrorCode.NOT_FOUND, 404);
     const userPermissions: PermissionResolverName[] = user.user_roles
     .flatMap((ur) => ur.role.role_permissions)
     .map((rp) => rp.permission.resolver_name);

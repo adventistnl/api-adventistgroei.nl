@@ -1,7 +1,8 @@
 import { Resolver, Query, Mutation, Args } from '@nestjs/graphql';
 import { ContactService } from '../services/contact.service';
-import { ContactCreateDto, ContactUpdateDto } from '../dto/contact.dto';
+import { ContactCreateDto, ContactUpdateDto, LinkContactDto } from '../dto/contact.dto';
 import { Contact } from 'src/@generated/contact/contact.model';
+import { LinkContactResult } from 'src/models/contact.model';
 
 @Resolver(() => Contact)
 export class ContactResolver {
@@ -33,5 +34,11 @@ export class ContactResolver {
   @Mutation(() => Contact)
   async deleteContact(@Args('id') id: string, @Args('userId') userId: string): Promise<Contact> {
     return this.contactService.deleteContact(id, userId);
+  }
+
+  @Mutation(() => LinkContactResult)
+  async linkContact(@Args('data') data: LinkContactDto): Promise<LinkContactResult> {
+    const result = await this.contactService.linkContact(data);
+    return result;
   }
 }

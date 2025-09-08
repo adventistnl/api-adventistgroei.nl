@@ -4,6 +4,7 @@ import { UserService } from './user.service';
 import { LoginInput } from '../dto/auth.dto';
 import { AuthModel } from '../models/auth.model';
 import { UserWithRoles } from 'src/models';
+import { CustomGraphQLError, ErrorCode } from 'src/common/errors/custom-graphql-error';
 
 @Injectable()
 export class AuthService {
@@ -29,14 +30,15 @@ export class AuthService {
   }
 
   async login(input: LoginInput): Promise<AuthModel> {
+    console.log("input", input);
     const user = await this.userService.findByEmail(input.email);
     if (!user) {
-      throw new Error('Invalid credentials');
+      throw new CustomGraphQLError('Invalid credentials', ErrorCode.UNAUTHORIZED, 401);
     }
     const bcrypt = await import('bcryptjs');
     const isValid = await bcrypt.compare(input.password, user.password);
     if (!isValid) {
-      throw new Error('Invalid credentials');
+      throw new CustomGraphQLError('Invalid credentials', ErrorCode.UNAUTHORIZED, 401);
     }
     // Remover o campo password explicitamente
     // eslint-disable-next-line @typescript-eslint/no-unused-vars

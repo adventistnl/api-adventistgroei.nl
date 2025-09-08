@@ -1,4 +1,13 @@
 import { InputType, Field, PartialType } from '@nestjs/graphql';
+import { IsNotEmpty, IsString } from 'class-validator';
+
+export enum TargetEnum {
+  INSTITUTION = 'institution',
+  USER = 'user',
+  CHURCH = 'church',
+  DEPARTMENT = 'department',
+  EVENT = 'event',
+}
 
 @InputType()
 export class ContactCreateDto {
@@ -40,4 +49,22 @@ export class ContactCreateDto {
 export class ContactUpdateDto extends PartialType(ContactCreateDto) {
   @Field()
   id: string;
+}
+
+@InputType()
+export class LinkContactDto {
+  @Field()
+  @IsNotEmpty()
+  @IsString()
+  contact_id: string; // ID do contato a ser vinculado
+
+  @Field()
+  @IsNotEmpty()
+  @IsString()
+  target: TargetEnum; // Nome da tabela de destino (ex.: 'institution', 'user')
+
+  @Field()
+  @IsNotEmpty()
+  @IsString()
+  target_id: string; // ID do registro na tabela de destino
 }

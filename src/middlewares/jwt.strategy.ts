@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { Strategy, ExtractJwt } from 'passport-jwt';
 import { ConfigService } from '@nestjs/config';
+import { CustomGraphQLError, ErrorCode } from 'src/common/errors/custom-graphql-error';
 interface JwtPayload {
   sub: string;
   email: string;
@@ -12,7 +13,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor(configService: ConfigService) {
     const jwtSecret = configService.get<string>('JWT_SECRET');
     if (!jwtSecret) {
-      throw new Error('JWT_SECRET is not defined in environment variables');
+      throw new CustomGraphQLError('JWT_SECRET is not defined in environment variables', ErrorCode.INTERNAL_SERVER_ERROR, 500);
     }
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),

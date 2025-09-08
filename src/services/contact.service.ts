@@ -1,7 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { ContactRepository } from '../repositories/contact.repository';
-import { ContactCreateDto, ContactUpdateDto } from '../dto/contact.dto';
+import { ContactCreateDto, ContactUpdateDto, LinkContactDto } from '../dto/contact.dto';
 import { Contact } from '@prisma/client';
+import { LinkContactResult } from 'src/models/contact.model';
 
 @Injectable()
 export class ContactService {
@@ -25,5 +26,9 @@ export class ContactService {
 
   async getAllContacts(): Promise<Contact[]> {
     return this.contactRepository.findAll();
+  }
+
+  async linkContact(data: LinkContactDto): Promise<LinkContactResult> {
+    return this.contactRepository.linkContact(data);
   }
 }
