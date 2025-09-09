@@ -123,4 +123,11 @@ export class RegionRepository {
       },
     });
   }
+
+  async findChildren(parentRegionId: string): Promise<Region[]> {
+    return this.prisma.region.findMany({
+      where: { parent_region_id: parentRegionId, is_deleted: false },
+    });
+  }
+
 }

@@ -26,4 +26,8 @@ export class ChurchService {
   async getChurchById(id: string): Promise<Church | null> {
     return await this.churchRepository.findById(id);
   }
+  
+  async findManyByFilters(filters: Partial<Record<keyof Church, any>>): Promise<Church[]> {
+    return await this.churchRepository.findManyByFilters(filters);
+  }
 }
