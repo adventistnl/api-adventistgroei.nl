@@ -2,15 +2,16 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../services/prisma.service';
 import { SubsidyRequest } from '../@generated/subsidy-request/subsidy-request.model';
 import { SubsidyRequestCreateDto, SubsidyRequestUpdateDto } from '../dto/subsidy-request.dto';
+import { SubsidyActivityInput } from '../dto/subsidy-request.dto';
 
 @Injectable()
 export class SubsidyRequestRepository {
   constructor(private readonly prisma: PrismaService) {}
 
   async create(data: SubsidyRequestCreateDto, userId: string): Promise<SubsidyRequest> {
-    const { institution_id, requester_id, department_id, church_id, ...rest } = data;
+    const { institution_id, requester_id, department_id, church_id, subsidy_activities, ...rest } = data;
 
-    const subsidy = await this.prisma.subsidyStatus.create({
+    const subsidyStatus = await this.prisma.subsidyStatus.create({
       data: {
         created_by: userId,
         updated_by: userId,
@@ -22,20 +23,38 @@ export class SubsidyRequestRepository {
       }
     })
 
-    return this.prisma.subsidyRequest.create({
+    const subsidyRequest = await this.prisma.subsidyRequest.create({
       data: {
         ...rest,
         institution: { connect: { id: institution_id } },
         requester: { connect: { id: requester_id } },
         department: { connect: { id: department_id } },
         church: { connect: { id: church_id } },
-        // projects: { connect: [{ id: data.project_id }] },
-        subsidy_status: { connect: { id: subsidy.id } },
+        // projects: { connect:  [{ id: data.project_id }] },
+        subsidy_status: { connect: { id: subsidyStatus.id } },
         created_by: userId,
         updated_by: userId,
         is_deleted: false,
       },
     });
+
+    await Promise.all(
+      subsidy_activities.map(async (activityData: SubsidyActivityInput) => {
+         
+        const { ...activityDataWithoutRequestId } = activityData;
+        await this.prisma.subsidyActivity.create({
+          data: {
+            ...activityDataWithoutRequestId,
+            created_by: userId,
+            updated_by: userId,
+            subsidy_request: { connect: { id: subsidyRequest.id } },
+            subsidy_receipts: { create: [] }, //TODO: Implement subsidy receipts creation on subsidy request creation
+          },
+        });
+      })
+    );
+
+    return subsidyRequest;
   }
 
   async update(id: string, data: SubsidyRequestUpdateDto, userId: string): Promise<SubsidyRequest> {

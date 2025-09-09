@@ -12,9 +12,6 @@ export class RegionCreateDto {
   @Field({ nullable: true })
   parent_region_id?: string;
 
-  @Field({ nullable: true })
-  contact_id?: string;
-
   @Field(() => ContactCreateDto, { nullable: true })
   contact?: ContactCreateDto;
 }
@@ -23,4 +20,7 @@ export class RegionCreateDto {
 export class RegionUpdateDto extends PartialType(RegionCreateDto) {
   @Field()
   id: string;
+
+  @Field({ nullable: true })
+  contact_id?: string;
 }

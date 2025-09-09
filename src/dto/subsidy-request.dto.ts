@@ -1,5 +1,22 @@
-import { InputType, Field } from '@nestjs/graphql';
+import { InputType, Field, Float } from '@nestjs/graphql';
+import { Exclude } from 'class-transformer';
 import { IsOptional, IsString, IsNumber } from 'class-validator';
+
+@InputType()
+@InputType()
+export class SubsidyActivityInput {
+  @Field()
+  @IsString()
+  name: string;
+
+  @Field(() => Float)
+  @IsNumber()
+  budget_amount: number;
+
+  @Field({ nullable: true })
+  @IsString()
+  description: string;
+}
 
 @InputType()
 export class SubsidyRequestCreateDto {
@@ -7,13 +24,9 @@ export class SubsidyRequestCreateDto {
   @IsString()
   description: string;
 
-  @Field()
+  @Field(() => Float)
   @IsNumber()
   total_budget: number;
-
-  // @Field()
-  // @IsString()
-  // project_id: string;
   
   @Field({ nullable: true })
   @IsString()
@@ -30,8 +43,10 @@ export class SubsidyRequestCreateDto {
   @Field()
   @IsString()
   church_id: string;
-}
 
+  @Field(() => [SubsidyActivityInput])
+  subsidy_activities: SubsidyActivityInput[];
+}
 @InputType()
 export class SubsidyRequestUpdateDto {
   @Field({ nullable: true })
@@ -74,3 +89,4 @@ export class SubsidyRequestUpdateDto {
   @IsString()
   subsidy_status_id?: string;
 }
+
