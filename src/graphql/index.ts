@@ -13,3 +13,5 @@ export * from './notification.resolver';
 export * from './setting.resolver';
 export * from './subsidy-request.resolver';
 export * from './contact.resolver';
+
+export * from './subsidy-status.resolver';

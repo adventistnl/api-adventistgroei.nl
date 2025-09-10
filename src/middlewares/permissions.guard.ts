@@ -44,7 +44,11 @@ export class PermissionsGuard implements CanActivate {
     const userPermissions: PermissionResolverName[] = user.user_roles
     .flatMap((ur) => ur.role.role_permissions)
     .map((rp) => rp.permission.resolver_name);
-    return requiredPermissions.some((p) => userPermissions.includes(p));
+    const permissions = requiredPermissions.some((p) => userPermissions.includes(p));
+    if (!permissions) {
+      throw new CustomGraphQLError('User does not have permission to access this resource', ErrorCode.UNAUTHORIZED, 401);
+    }
+    return permissions;
   }
 }
 

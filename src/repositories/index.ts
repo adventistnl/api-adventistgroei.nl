@@ -12,3 +12,5 @@ export * from './mission-project.repository';
 export * from './subsidy-request.repository';
 export * from './direct-message.repository';
 export * from './contact.repository';
+
+export * from './subsidy-status.repository';

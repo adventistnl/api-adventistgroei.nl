@@ -14,3 +14,5 @@ export * from './notification.service';
 export * from './setting.service';
 export * from './subsidy-request.service';
 export * from './contact.service';
+
+export * from './subsidy-status.service';

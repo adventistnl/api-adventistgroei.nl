@@ -44,6 +44,10 @@ export class SubsidyRequestCreateDto {
   @IsString()
   church_id: string;
 
+  @Field()
+  @IsString() 
+  subsidy_status_id: string;
+
   @Field(() => [SubsidyActivityInput])
   subsidy_activities: SubsidyActivityInput[];
 }

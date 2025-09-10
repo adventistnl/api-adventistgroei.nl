@@ -65,6 +65,11 @@ const permissions = [
   { name: 'createSubsidyRequest', description: 'Create a subsidy request', resolver_name: 'createSubsidyRequest' as PermissionResolverName, group: 'SUBSIDY_REQUEST' as PermissionGroup, key_code: 'SUBSIDY_REQUEST_CREATE' },
   { name: 'updateSubsidyRequest', description: 'Update a subsidy request', resolver_name: 'updateSubsidyRequest' as PermissionResolverName, group: 'SUBSIDY_REQUEST' as PermissionGroup, key_code: 'SUBSIDY_REQUEST_UPDATE' },
   { name: 'deleteSubsidyRequest', description: 'Delete a subsidy request', resolver_name: 'deleteSubsidyRequest' as PermissionResolverName, group: 'SUBSIDY_REQUEST' as PermissionGroup, key_code: 'SUBSIDY_REQUEST_DELETE' },
+  { name: 'subsidyStatuses', description: 'Access to subsidy statuses', resolver_name: 'subsidyStatuses' as PermissionResolverName, group: 'SUBSIDY_STATUS' as PermissionGroup, key_code: 'SUBSIDY_STATUSES_ACCESS' },
+  { name: 'subsidyStatus', description: 'Access to a single subsidy status', resolver_name: 'subsidyStatus' as PermissionResolverName, group: 'SUBSIDY_STATUS' as PermissionGroup, key_code: 'SUBSIDY_STATUS_ACCESS' },
+  { name: 'createSubsidyStatus', description: 'Create a subsidy status', resolver_name: 'createSubsidyStatus' as PermissionResolverName, group: 'SUBSIDY_STATUS' as PermissionGroup, key_code: 'SUBSIDY_STATUS_CREATE' },
+  { name: 'updateSubsidyStatus', description: 'Update a subsidy status', resolver_name: 'updateSubsidyStatus' as PermissionResolverName, group: 'SUBSIDY_STATUS' as PermissionGroup, key_code: 'SUBSIDY_STATUS_UPDATE' },
+  { name: 'deleteSubsidyStatus', description: 'Delete a subsidy status', resolver_name: 'deleteSubsidyStatus' as PermissionResolverName, group: 'SUBSIDY_STATUS' as PermissionGroup, key_code: 'SUBSIDY_STATUS_DELETE' },
 ];
 
 async function main() {

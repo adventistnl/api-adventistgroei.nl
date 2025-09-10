@@ -41,4 +41,5 @@ export class SubsidyRequestResolver {
   ): Promise<SubsidyRequest> {
     return this.subsidyRequestService.delete(id, context.userId);
   }
+  
 }

@@ -3,25 +3,22 @@ import { PrismaService } from '../services/prisma.service';
 import { SubsidyRequest } from '../@generated/subsidy-request/subsidy-request.model';
 import { SubsidyRequestCreateDto, SubsidyRequestUpdateDto } from '../dto/subsidy-request.dto';
 import { SubsidyActivityInput } from '../dto/subsidy-request.dto';
+import { CustomGraphQLError, ErrorCode } from 'src/common/errors/custom-graphql-error';
 
 @Injectable()
 export class SubsidyRequestRepository {
   constructor(private readonly prisma: PrismaService) {}
 
   async create(data: SubsidyRequestCreateDto, userId: string): Promise<SubsidyRequest> {
-    const { institution_id, requester_id, department_id, church_id, subsidy_activities, ...rest } = data;
+    const { institution_id, requester_id, department_id, church_id, subsidy_activities, subsidy_status_id, ...rest } = data;
 
-    const subsidyStatus = await this.prisma.subsidyStatus.create({
-      data: {
-        created_by: userId,
-        updated_by: userId,
-        department: { connect: { id: department_id } },
-        assigned_user: { connect: { id: requester_id } },
-        name: 'Initial status',
-        description: 'Initial status upon subsidy request creation',
-        order: 1,
-      }
-    })
+    const subsidyStatus = await this.prisma.subsidyStatus.findUnique({
+      where: { id: subsidy_status_id, is_deleted: false },
+    });
+
+    if (!subsidyStatus) {
+      throw new CustomGraphQLError(`SubsidyStatus with id ${subsidy_status_id} does not exist or has been deleted.`, ErrorCode.NOT_FOUND, 404);
+    }
 
     const subsidyRequest = await this.prisma.subsidyRequest.create({
       data: {
@@ -30,8 +27,7 @@ export class SubsidyRequestRepository {
         requester: { connect: { id: requester_id } },
         department: { connect: { id: department_id } },
         church: { connect: { id: church_id } },
-        // projects: { connect:  [{ id: data.project_id }] },
-        subsidy_status: { connect: { id: subsidyStatus.id } },
+        subsidy_status: { connect: { id: subsidy_status_id } },
         created_by: userId,
         updated_by: userId,
         is_deleted: false,
@@ -48,7 +44,7 @@ export class SubsidyRequestRepository {
             created_by: userId,
             updated_by: userId,
             subsidy_request: { connect: { id: subsidyRequest.id } },
-            subsidy_receipts: { create: [] }, //TODO: Implement subsidy receipts creation on subsidy request creation
+            subsidy_receipts: { create: [] },
           },
         });
       })
