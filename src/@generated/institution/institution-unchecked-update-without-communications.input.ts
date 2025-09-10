@@ -13,7 +13,7 @@ import { DepartmentUncheckedUpdateManyWithoutInstitutionNestedInput } from '../d
 import { UserUncheckedUpdateManyWithoutInstitutionNestedInput } from '../user/user-unchecked-update-many-without-institution-nested.input';
 import { NotificationUncheckedUpdateManyWithoutInstitutionNestedInput } from '../notification/notification-unchecked-update-many-without-institution-nested.input';
 import { SettingUncheckedUpdateManyWithoutInstitutionNestedInput } from '../setting/setting-unchecked-update-many-without-institution-nested.input';
-import { MissionProjectUncheckedUpdateManyWithoutInstitutionNestedInput } from '../mission-project/mission-project-unchecked-update-many-without-institution-nested.input';
+import { ProjectUncheckedUpdateManyWithoutInstitutionNestedInput } from '../project/project-unchecked-update-many-without-institution-nested.input';
 import { DirectMessageUncheckedUpdateManyWithoutInstitutionNestedInput } from '../direct-message/direct-message-unchecked-update-many-without-institution-nested.input';
 import { SubsidyRequestUncheckedUpdateManyWithoutInstitutionNestedInput } from '../subsidy-request/subsidy-request-unchecked-update-many-without-institution-nested.input';
 
@@ -77,9 +77,9 @@ export class InstitutionUncheckedUpdateWithoutCommunicationsInput {
     @Field(() => SettingUncheckedUpdateManyWithoutInstitutionNestedInput, {nullable:true})
     settings?: SettingUncheckedUpdateManyWithoutInstitutionNestedInput;
 
-    @Field(() => MissionProjectUncheckedUpdateManyWithoutInstitutionNestedInput, {nullable:true})
-    @Type(() => MissionProjectUncheckedUpdateManyWithoutInstitutionNestedInput)
-    mission_projects?: MissionProjectUncheckedUpdateManyWithoutInstitutionNestedInput;
+    @Field(() => ProjectUncheckedUpdateManyWithoutInstitutionNestedInput, {nullable:true})
+    @Type(() => ProjectUncheckedUpdateManyWithoutInstitutionNestedInput)
+    projects?: ProjectUncheckedUpdateManyWithoutInstitutionNestedInput;
 
     @Field(() => DirectMessageUncheckedUpdateManyWithoutInstitutionNestedInput, {nullable:true})
     direct_messages?: DirectMessageUncheckedUpdateManyWithoutInstitutionNestedInput;

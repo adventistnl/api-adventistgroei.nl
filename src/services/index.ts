@@ -9,7 +9,7 @@ export * from './role.service';
 export * from './department.service';
 export * from './communication.service';
 export * from './direct-message.service';
-export * from './mission-project.service';
+export * from './project.service';
 export * from './notification.service';
 export * from './setting.service';
 export * from './subsidy-request.service';

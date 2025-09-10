@@ -11,7 +11,7 @@ import { UserOrderByRelationAggregateInput } from '../user/user-order-by-relatio
 import { CommunicationOrderByRelationAggregateInput } from '../communication/communication-order-by-relation-aggregate.input';
 import { NotificationOrderByRelationAggregateInput } from '../notification/notification-order-by-relation-aggregate.input';
 import { SettingOrderByRelationAggregateInput } from '../setting/setting-order-by-relation-aggregate.input';
-import { MissionProjectOrderByRelationAggregateInput } from '../mission-project/mission-project-order-by-relation-aggregate.input';
+import { ProjectOrderByRelationAggregateInput } from '../project/project-order-by-relation-aggregate.input';
 import { DirectMessageOrderByRelationAggregateInput } from '../direct-message/direct-message-order-by-relation-aggregate.input';
 import { SubsidyRequestOrderByRelationAggregateInput } from '../subsidy-request/subsidy-request-order-by-relation-aggregate.input';
 
@@ -82,9 +82,9 @@ export class InstitutionOrderByWithRelationInput {
     @Field(() => SettingOrderByRelationAggregateInput, {nullable:true})
     settings?: SettingOrderByRelationAggregateInput;
 
-    @Field(() => MissionProjectOrderByRelationAggregateInput, {nullable:true})
-    @Type(() => MissionProjectOrderByRelationAggregateInput)
-    mission_projects?: MissionProjectOrderByRelationAggregateInput;
+    @Field(() => ProjectOrderByRelationAggregateInput, {nullable:true})
+    @Type(() => ProjectOrderByRelationAggregateInput)
+    projects?: ProjectOrderByRelationAggregateInput;
 
     @Field(() => DirectMessageOrderByRelationAggregateInput, {nullable:true})
     direct_messages?: DirectMessageOrderByRelationAggregateInput;

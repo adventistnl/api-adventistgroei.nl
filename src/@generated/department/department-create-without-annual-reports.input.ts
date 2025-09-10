@@ -9,7 +9,7 @@ import { InstitutionCreateNestedOneWithoutDepartmentsInput } from '../institutio
 import { ChurchCreateNestedOneWithoutDepartmentsInput } from '../church/church-create-nested-one-without-departments.input';
 import { ContactCreateNestedOneWithoutDepartmentInput } from '../contact/contact-create-nested-one-without-department.input';
 import { SubsidyStatusCreateNestedManyWithoutDepartmentInput } from '../subsidy-status/subsidy-status-create-nested-many-without-department.input';
-import { MissionProjectCreateNestedManyWithoutDepartmentInput } from '../mission-project/mission-project-create-nested-many-without-department.input';
+import { ProjectCreateNestedManyWithoutDepartmentInput } from '../project/project-create-nested-many-without-department.input';
 import { SubsidyRequestCreateNestedManyWithoutDepartmentInput } from '../subsidy-request/subsidy-request-create-nested-many-without-department.input';
 
 @InputType()
@@ -66,9 +66,9 @@ export class DepartmentCreateWithoutAnnual_reportsInput {
     @Type(() => SubsidyStatusCreateNestedManyWithoutDepartmentInput)
     subsidy_statuses?: SubsidyStatusCreateNestedManyWithoutDepartmentInput;
 
-    @Field(() => MissionProjectCreateNestedManyWithoutDepartmentInput, {nullable:true})
-    @Type(() => MissionProjectCreateNestedManyWithoutDepartmentInput)
-    mission_projects?: MissionProjectCreateNestedManyWithoutDepartmentInput;
+    @Field(() => ProjectCreateNestedManyWithoutDepartmentInput, {nullable:true})
+    @Type(() => ProjectCreateNestedManyWithoutDepartmentInput)
+    projects?: ProjectCreateNestedManyWithoutDepartmentInput;
 
     @Field(() => SubsidyRequestCreateNestedManyWithoutDepartmentInput, {nullable:true})
     @Type(() => SubsidyRequestCreateNestedManyWithoutDepartmentInput)

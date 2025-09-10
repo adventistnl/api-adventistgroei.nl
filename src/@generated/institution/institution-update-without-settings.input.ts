@@ -14,7 +14,7 @@ import { DepartmentUpdateManyWithoutInstitutionNestedInput } from '../department
 import { UserUpdateManyWithoutInstitutionNestedInput } from '../user/user-update-many-without-institution-nested.input';
 import { CommunicationUpdateManyWithoutInstitutionNestedInput } from '../communication/communication-update-many-without-institution-nested.input';
 import { NotificationUpdateManyWithoutInstitutionNestedInput } from '../notification/notification-update-many-without-institution-nested.input';
-import { MissionProjectUpdateManyWithoutInstitutionNestedInput } from '../mission-project/mission-project-update-many-without-institution-nested.input';
+import { ProjectUpdateManyWithoutInstitutionNestedInput } from '../project/project-update-many-without-institution-nested.input';
 import { DirectMessageUpdateManyWithoutInstitutionNestedInput } from '../direct-message/direct-message-update-many-without-institution-nested.input';
 import { SubsidyRequestUpdateManyWithoutInstitutionNestedInput } from '../subsidy-request/subsidy-request-update-many-without-institution-nested.input';
 
@@ -79,9 +79,9 @@ export class InstitutionUpdateWithoutSettingsInput {
     @Field(() => NotificationUpdateManyWithoutInstitutionNestedInput, {nullable:true})
     notifications?: NotificationUpdateManyWithoutInstitutionNestedInput;
 
-    @Field(() => MissionProjectUpdateManyWithoutInstitutionNestedInput, {nullable:true})
-    @Type(() => MissionProjectUpdateManyWithoutInstitutionNestedInput)
-    mission_projects?: MissionProjectUpdateManyWithoutInstitutionNestedInput;
+    @Field(() => ProjectUpdateManyWithoutInstitutionNestedInput, {nullable:true})
+    @Type(() => ProjectUpdateManyWithoutInstitutionNestedInput)
+    projects?: ProjectUpdateManyWithoutInstitutionNestedInput;
 
     @Field(() => DirectMessageUpdateManyWithoutInstitutionNestedInput, {nullable:true})
     direct_messages?: DirectMessageUpdateManyWithoutInstitutionNestedInput;

@@ -9,7 +9,7 @@ export class DepartmentCount {
     subsidy_statuses?: number;
 
     @Field(() => Int, {nullable:false})
-    mission_projects?: number;
+    projects?: number;
 
     @Field(() => Int, {nullable:false})
     annual_reports?: number;

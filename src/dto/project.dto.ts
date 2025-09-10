@@ -3,7 +3,7 @@ import { IsOptional, IsString, IsEnum, IsNumber } from 'class-validator';
 import { LanguagePreference } from '../@generated/prisma/language-preference.enum';
 
 @InputType()
-export class MissionProjectCreateDto {
+export class ProjectCreateDto {
   @Field()
   @IsString()
   title: string;
@@ -35,7 +35,7 @@ export class MissionProjectCreateDto {
 }
 
 @InputType()
-export class MissionProjectUpdateDto {
+export class ProjectUpdateDto {
   @Field({ nullable: true })
   @IsOptional()
   @IsString()

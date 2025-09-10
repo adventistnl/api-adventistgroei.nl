@@ -15,7 +15,7 @@ import { UserListRelationFilter } from '../user/user-list-relation-filter.input'
 import { CommunicationListRelationFilter } from '../communication/communication-list-relation-filter.input';
 import { NotificationListRelationFilter } from '../notification/notification-list-relation-filter.input';
 import { SettingListRelationFilter } from '../setting/setting-list-relation-filter.input';
-import { MissionProjectListRelationFilter } from '../mission-project/mission-project-list-relation-filter.input';
+import { ProjectListRelationFilter } from '../project/project-list-relation-filter.input';
 import { DirectMessageListRelationFilter } from '../direct-message/direct-message-list-relation-filter.input';
 import { SubsidyRequestListRelationFilter } from '../subsidy-request/subsidy-request-list-relation-filter.input';
 
@@ -95,9 +95,9 @@ export class InstitutionWhereInput {
     @Field(() => SettingListRelationFilter, {nullable:true})
     settings?: SettingListRelationFilter;
 
-    @Field(() => MissionProjectListRelationFilter, {nullable:true})
-    @Type(() => MissionProjectListRelationFilter)
-    mission_projects?: MissionProjectListRelationFilter;
+    @Field(() => ProjectListRelationFilter, {nullable:true})
+    @Type(() => ProjectListRelationFilter)
+    projects?: ProjectListRelationFilter;
 
     @Field(() => DirectMessageListRelationFilter, {nullable:true})
     direct_messages?: DirectMessageListRelationFilter;

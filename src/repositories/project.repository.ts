@@ -1,13 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../services/prisma.service';
-import { MissionProject } from '../@generated/mission-project/mission-project.model';
-import { MissionProjectCreateDto, MissionProjectUpdateDto } from '../dto/mission-project.dto';
+import { Project } from '../@generated/project/project.model';
+import { ProjectCreateDto, ProjectUpdateDto } from '../dto/project.dto';
 import { Decimal } from '@prisma/client/runtime/library';
 import { InstitutionRepository } from './institution.repository';
 import { DepartmentRepository } from './department.repository';
 
 @Injectable()
-export class MissionProjectRepository {
+export class ProjectRepository {
   constructor(
     private readonly prisma: PrismaService,
     private readonly institutionRepository: InstitutionRepository,
@@ -15,11 +15,11 @@ export class MissionProjectRepository {
 
   ) {}
 
-  async create(data: MissionProjectCreateDto, userId: string): Promise<MissionProject> {
+  async create(data: ProjectCreateDto, userId: string): Promise<Project> {
     await this.institutionRepository.findById(data.institution_id);
     await this.departmentRepository.findById(data.department_id);
 
-    return this.prisma.missionProject.create({
+    return this.prisma.project.create({
       data: {
         title: data.title,
         description: data.description,
@@ -35,7 +35,7 @@ export class MissionProjectRepository {
     });
   }
 
-  async update(id: string, data: MissionProjectUpdateDto, userId: string): Promise<MissionProject> {
+  async update(id: string, data: ProjectUpdateDto, userId: string): Promise<Project> {
     const {institution_id, department_id, ...rest} = data
     if (institution_id) { 
       await this.institutionRepository.findById(institution_id);
@@ -43,7 +43,7 @@ export class MissionProjectRepository {
     if (department_id) {
       await this.departmentRepository.findById(department_id);
     }
-    return this.prisma.missionProject.update({
+    return this.prisma.project.update({
       where: { id },
       data: {
         Institution: { connect: { id: institution_id } },
@@ -54,8 +54,8 @@ export class MissionProjectRepository {
     });
   }
 
-  async softDelete(id: string, userId: string): Promise<MissionProject> {
-    return this.prisma.missionProject.update({
+  async softDelete(id: string, userId: string): Promise<Project> {
+    return this.prisma.project.update({
       where: { id },
       data: {
         is_deleted: true,
@@ -66,22 +66,22 @@ export class MissionProjectRepository {
     });
   }
 
-  async findById(id: string): Promise<MissionProject | null> {
-    return this.prisma.missionProject.findUnique({
+  async findById(id: string): Promise<Project | null> {
+    return this.prisma.project.findUnique({
       where: { id, is_deleted: false },
     });
   }
 
-  async findManyByFilters(filters: Partial<Record<keyof MissionProject, any>>): Promise<MissionProject[]> {
-    const allowedKeys: (keyof MissionProject)[] = ['institution_id', 'title', 'description', 'is_deleted'];
+  async findManyByFilters(filters: Partial<Record<keyof Project, any>>): Promise<Project[]> {
+    const allowedKeys: (keyof Project)[] = ['institution_id', 'title', 'description', 'is_deleted'];
 
     for (const key of Object.keys(filters)) {
-      if (!allowedKeys.includes(key as keyof MissionProject)) {
+      if (!allowedKeys.includes(key as keyof Project)) {
         throw new Error(`Invalid filter key: ${key}`);
       }
     }
 
-    return this.prisma.missionProject.findMany({
+    return this.prisma.project.findMany({
       where: {
         ...filters,
         is_deleted: false,
@@ -89,16 +89,16 @@ export class MissionProjectRepository {
     });
   }
 
-  async findOneByFilters(filters: Partial<Record<keyof MissionProject, any>>): Promise<MissionProject | null> {
-    const allowedKeys: (keyof MissionProject)[] = ['institution_id', 'title', 'description', 'is_deleted'];
+  async findOneByFilters(filters: Partial<Record<keyof Project, any>>): Promise<Project | null> {
+    const allowedKeys: (keyof Project)[] = ['institution_id', 'title', 'description', 'is_deleted'];
 
     for (const key of Object.keys(filters)) {
-      if (!allowedKeys.includes(key as keyof MissionProject)) {
+      if (!allowedKeys.includes(key as keyof Project)) {
         throw new Error(`Invalid filter key: ${key}`);
       }
     }
 
-    return this.prisma.missionProject.findFirst({
+    return this.prisma.project.findFirst({
       where: {
         ...filters,
         is_deleted: false,
@@ -106,7 +106,7 @@ export class MissionProjectRepository {
     });
   }
 
-  async findAll(): Promise<MissionProject[]> {
-    return this.prisma.missionProject.findMany({ where: { is_deleted: false } });
+  async findAll(): Promise<Project[]> {
+    return this.prisma.project.findMany({ where: { is_deleted: false } });
   }
 }

@@ -5,7 +5,7 @@ import { GraphQLDecimal } from 'prisma-graphql-type-decimal';
 import { transformToDecimal } from 'prisma-graphql-type-decimal';
 import { Transform } from 'class-transformer';
 import { Type } from 'class-transformer';
-import { MissionProjectUncheckedCreateNestedManyWithoutDepartmentInput } from '../mission-project/mission-project-unchecked-create-nested-many-without-department.input';
+import { ProjectUncheckedCreateNestedManyWithoutDepartmentInput } from '../project/project-unchecked-create-nested-many-without-department.input';
 import { AnnualReportUncheckedCreateNestedManyWithoutDepartmentInput } from '../annual-report/annual-report-unchecked-create-nested-many-without-department.input';
 import { SubsidyRequestUncheckedCreateNestedManyWithoutDepartmentInput } from '../subsidy-request/subsidy-request-unchecked-create-nested-many-without-department.input';
 
@@ -56,9 +56,9 @@ export class DepartmentUncheckedCreateWithoutSubsidy_statusesInput {
     @Field(() => String, {nullable:true})
     deleted_by?: string;
 
-    @Field(() => MissionProjectUncheckedCreateNestedManyWithoutDepartmentInput, {nullable:true})
-    @Type(() => MissionProjectUncheckedCreateNestedManyWithoutDepartmentInput)
-    mission_projects?: MissionProjectUncheckedCreateNestedManyWithoutDepartmentInput;
+    @Field(() => ProjectUncheckedCreateNestedManyWithoutDepartmentInput, {nullable:true})
+    @Type(() => ProjectUncheckedCreateNestedManyWithoutDepartmentInput)
+    projects?: ProjectUncheckedCreateNestedManyWithoutDepartmentInput;
 
     @Field(() => AnnualReportUncheckedCreateNestedManyWithoutDepartmentInput, {nullable:true})
     @Type(() => AnnualReportUncheckedCreateNestedManyWithoutDepartmentInput)

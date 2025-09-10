@@ -8,7 +8,7 @@ import { DepartmentUncheckedCreateNestedManyWithoutInstitutionInput } from '../d
 import { UserUncheckedCreateNestedManyWithoutInstitutionInput } from '../user/user-unchecked-create-nested-many-without-institution.input';
 import { CommunicationUncheckedCreateNestedManyWithoutInstitutionInput } from '../communication/communication-unchecked-create-nested-many-without-institution.input';
 import { NotificationUncheckedCreateNestedManyWithoutInstitutionInput } from '../notification/notification-unchecked-create-nested-many-without-institution.input';
-import { MissionProjectUncheckedCreateNestedManyWithoutInstitutionInput } from '../mission-project/mission-project-unchecked-create-nested-many-without-institution.input';
+import { ProjectUncheckedCreateNestedManyWithoutInstitutionInput } from '../project/project-unchecked-create-nested-many-without-institution.input';
 import { DirectMessageUncheckedCreateNestedManyWithoutInstitutionInput } from '../direct-message/direct-message-unchecked-create-nested-many-without-institution.input';
 import { SubsidyRequestUncheckedCreateNestedManyWithoutInstitutionInput } from '../subsidy-request/subsidy-request-unchecked-create-nested-many-without-institution.input';
 
@@ -72,9 +72,9 @@ export class InstitutionUncheckedCreateWithoutSettingsInput {
     @Field(() => NotificationUncheckedCreateNestedManyWithoutInstitutionInput, {nullable:true})
     notifications?: NotificationUncheckedCreateNestedManyWithoutInstitutionInput;
 
-    @Field(() => MissionProjectUncheckedCreateNestedManyWithoutInstitutionInput, {nullable:true})
-    @Type(() => MissionProjectUncheckedCreateNestedManyWithoutInstitutionInput)
-    mission_projects?: MissionProjectUncheckedCreateNestedManyWithoutInstitutionInput;
+    @Field(() => ProjectUncheckedCreateNestedManyWithoutInstitutionInput, {nullable:true})
+    @Type(() => ProjectUncheckedCreateNestedManyWithoutInstitutionInput)
+    projects?: ProjectUncheckedCreateNestedManyWithoutInstitutionInput;
 
     @Field(() => DirectMessageUncheckedCreateNestedManyWithoutInstitutionInput, {nullable:true})
     direct_messages?: DirectMessageUncheckedCreateNestedManyWithoutInstitutionInput;

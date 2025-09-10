@@ -11,7 +11,7 @@ import { InstitutionScalarRelationFilter } from '../institution/institution-scal
 import { ChurchScalarRelationFilter } from '../church/church-scalar-relation-filter.input';
 import { ContactNullableScalarRelationFilter } from '../contact/contact-nullable-scalar-relation-filter.input';
 import { SubsidyStatusListRelationFilter } from '../subsidy-status/subsidy-status-list-relation-filter.input';
-import { MissionProjectListRelationFilter } from '../mission-project/mission-project-list-relation-filter.input';
+import { ProjectListRelationFilter } from '../project/project-list-relation-filter.input';
 import { AnnualReportListRelationFilter } from '../annual-report/annual-report-list-relation-filter.input';
 import { SubsidyRequestListRelationFilter } from '../subsidy-request/subsidy-request-list-relation-filter.input';
 
@@ -89,9 +89,9 @@ export class DepartmentWhereInput {
     @Type(() => SubsidyStatusListRelationFilter)
     subsidy_statuses?: SubsidyStatusListRelationFilter;
 
-    @Field(() => MissionProjectListRelationFilter, {nullable:true})
-    @Type(() => MissionProjectListRelationFilter)
-    mission_projects?: MissionProjectListRelationFilter;
+    @Field(() => ProjectListRelationFilter, {nullable:true})
+    @Type(() => ProjectListRelationFilter)
+    projects?: ProjectListRelationFilter;
 
     @Field(() => AnnualReportListRelationFilter, {nullable:true})
     @Type(() => AnnualReportListRelationFilter)

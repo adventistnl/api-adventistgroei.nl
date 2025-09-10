@@ -5,7 +5,7 @@ import {
 } from '../dto/institution.dto';
 import { Institution } from '../@generated/institution/institution.model';
 import { CustomGraphQLError, ErrorCode } from '../common/errors/custom-graphql-error';
-import { ContactRepository, ChurchRepository, CommunicationRepository, DepartmentRepository, InstitutionRepository, MissionProjectRepository, NotificationRepository, RegionRepository, SettingRepository, SubsidyRequestRepository, UserRepository } from 'src/repositories';
+import { ContactRepository, ChurchRepository, CommunicationRepository, DepartmentRepository, InstitutionRepository, ProjectRepository, NotificationRepository, RegionRepository, SettingRepository, SubsidyRequestRepository, UserRepository } from 'src/repositories';
 import { DirectMessageRepository } from 'src/repositories/direct-message.repository';
 
 @Injectable()
@@ -19,7 +19,7 @@ export class InstitutionService {
     private readonly communicationRepository: CommunicationRepository,
     private readonly notificationRepository: NotificationRepository,
     private readonly settingRepository: SettingRepository,
-    private readonly missionProjectRepository: MissionProjectRepository,
+    private readonly projectRepository: ProjectRepository,
     private readonly directMessageRepository: DirectMessageRepository,
     private readonly subsidyRequestRepository: SubsidyRequestRepository,
     private readonly contactRepository: ContactRepository,
@@ -87,8 +87,8 @@ export class InstitutionService {
     return await this.settingRepository.findManyByFilters({ institution_id: institutionId });
   }
 
-  async getMissionProjectsByInstitutionId(institutionId: string) {
-    return (await this.missionProjectRepository.findManyByFilters({ institution_id: institutionId }));
+  async getProjectsByInstitutionId(institutionId: string) {
+    return (await this.projectRepository.findManyByFilters({ institution_id: institutionId }));
   }
 
   async getDirectMessagesByInstitutionId(institutionId: string) {

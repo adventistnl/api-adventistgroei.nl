@@ -10,7 +10,7 @@ import { User } from '../user/user.model';
 import { Communication } from '../communication/communication.model';
 import { Notification } from '../notification/notification.model';
 import { Setting } from '../setting/setting.model';
-import { MissionProject } from '../mission-project/mission-project.model';
+import { Project } from '../project/project.model';
 import { DirectMessage } from '../direct-message/direct-message.model';
 import { SubsidyRequest } from '../subsidy-request/subsidy-request.model';
 import { InstitutionCount } from './institution-count.output';
@@ -78,8 +78,8 @@ export class Institution {
     @Field(() => [Setting], {nullable:true})
     settings?: Array<Setting>;
 
-    @Field(() => [MissionProject], {nullable:true})
-    mission_projects?: Array<MissionProject>;
+    @Field(() => [Project], {nullable:true})
+    projects?: Array<Project>;
 
     @Field(() => [DirectMessage], {nullable:true})
     direct_messages?: Array<DirectMessage>;

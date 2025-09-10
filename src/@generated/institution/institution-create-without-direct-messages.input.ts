@@ -10,7 +10,7 @@ import { UserCreateNestedManyWithoutInstitutionInput } from '../user/user-create
 import { CommunicationCreateNestedManyWithoutInstitutionInput } from '../communication/communication-create-nested-many-without-institution.input';
 import { NotificationCreateNestedManyWithoutInstitutionInput } from '../notification/notification-create-nested-many-without-institution.input';
 import { SettingCreateNestedManyWithoutInstitutionInput } from '../setting/setting-create-nested-many-without-institution.input';
-import { MissionProjectCreateNestedManyWithoutInstitutionInput } from '../mission-project/mission-project-create-nested-many-without-institution.input';
+import { ProjectCreateNestedManyWithoutInstitutionInput } from '../project/project-create-nested-many-without-institution.input';
 import { SubsidyRequestCreateNestedManyWithoutInstitutionInput } from '../subsidy-request/subsidy-request-create-nested-many-without-institution.input';
 
 @InputType()
@@ -77,9 +77,9 @@ export class InstitutionCreateWithoutDirect_messagesInput {
     @Field(() => SettingCreateNestedManyWithoutInstitutionInput, {nullable:true})
     settings?: SettingCreateNestedManyWithoutInstitutionInput;
 
-    @Field(() => MissionProjectCreateNestedManyWithoutInstitutionInput, {nullable:true})
-    @Type(() => MissionProjectCreateNestedManyWithoutInstitutionInput)
-    mission_projects?: MissionProjectCreateNestedManyWithoutInstitutionInput;
+    @Field(() => ProjectCreateNestedManyWithoutInstitutionInput, {nullable:true})
+    @Type(() => ProjectCreateNestedManyWithoutInstitutionInput)
+    projects?: ProjectCreateNestedManyWithoutInstitutionInput;
 
     @Field(() => SubsidyRequestCreateNestedManyWithoutInstitutionInput, {nullable:true})
     @Type(() => SubsidyRequestCreateNestedManyWithoutInstitutionInput)

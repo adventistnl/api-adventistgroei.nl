@@ -88,11 +88,11 @@ enum PermissionResolverName {
   createDirectMessage
   updateDirectMessage
   deleteDirectMessage
-  missionProjects
-  missionProject
-  createMissionProject
-  updateMissionProject
-  deleteMissionProject
+  projects
+  project
+  createProject
+  updateProject
+  deleteProject
   notifications
   notification
   createNotification
@@ -176,7 +176,7 @@ model Institution {
   communications      Communication[]
   notifications       Notification[]
   settings            Setting[]
-  mission_projects    MissionProject[]
+  projects    Project[]
   direct_messages     DirectMessage[]
   subsidy_requests    SubsidyRequest[]
 }
@@ -241,7 +241,7 @@ model Department {
   deleted_at       DateTime?
   deleted_by       String?
   subsidy_statuses SubsidyStatus[]
-  mission_projects MissionProject[]
+  projects Project[]
   annual_reports   AnnualReport[]
   subsidy_requests SubsidyRequest[]
 }
@@ -596,7 +596,7 @@ model DirectMessageRecipient {
   deleted_by        String?
 }
 
-model MissionProject {
+model Project {
   id                  String             @id @default(uuid())
   department_id       String
   department          Department         @relation(fields: [department_id], references: [id])

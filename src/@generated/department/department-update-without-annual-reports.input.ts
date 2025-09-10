@@ -11,7 +11,7 @@ import { InstitutionUpdateOneRequiredWithoutDepartmentsNestedInput } from '../in
 import { ChurchUpdateOneRequiredWithoutDepartmentsNestedInput } from '../church/church-update-one-required-without-departments-nested.input';
 import { ContactUpdateOneWithoutDepartmentNestedInput } from '../contact/contact-update-one-without-department-nested.input';
 import { SubsidyStatusUpdateManyWithoutDepartmentNestedInput } from '../subsidy-status/subsidy-status-update-many-without-department-nested.input';
-import { MissionProjectUpdateManyWithoutDepartmentNestedInput } from '../mission-project/mission-project-update-many-without-department-nested.input';
+import { ProjectUpdateManyWithoutDepartmentNestedInput } from '../project/project-update-many-without-department-nested.input';
 import { SubsidyRequestUpdateManyWithoutDepartmentNestedInput } from '../subsidy-request/subsidy-request-update-many-without-department-nested.input';
 
 @InputType()
@@ -67,9 +67,9 @@ export class DepartmentUpdateWithoutAnnual_reportsInput {
     @Type(() => SubsidyStatusUpdateManyWithoutDepartmentNestedInput)
     subsidy_statuses?: SubsidyStatusUpdateManyWithoutDepartmentNestedInput;
 
-    @Field(() => MissionProjectUpdateManyWithoutDepartmentNestedInput, {nullable:true})
-    @Type(() => MissionProjectUpdateManyWithoutDepartmentNestedInput)
-    mission_projects?: MissionProjectUpdateManyWithoutDepartmentNestedInput;
+    @Field(() => ProjectUpdateManyWithoutDepartmentNestedInput, {nullable:true})
+    @Type(() => ProjectUpdateManyWithoutDepartmentNestedInput)
+    projects?: ProjectUpdateManyWithoutDepartmentNestedInput;
 
     @Field(() => SubsidyRequestUpdateManyWithoutDepartmentNestedInput, {nullable:true})
     @Type(() => SubsidyRequestUpdateManyWithoutDepartmentNestedInput)

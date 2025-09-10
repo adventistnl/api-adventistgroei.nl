@@ -7,7 +7,7 @@ import { Institution } from '../institution/institution.model';
 import { Church } from '../church/church.model';
 import { Contact } from '../contact/contact.model';
 import { SubsidyStatus } from '../subsidy-status/subsidy-status.model';
-import { MissionProject } from '../mission-project/mission-project.model';
+import { Project } from '../project/project.model';
 import { AnnualReport } from '../annual-report/annual-report.model';
 import { SubsidyRequest } from '../subsidy-request/subsidy-request.model';
 import { DepartmentCount } from './department-count.output';
@@ -69,8 +69,8 @@ export class Department {
     @Field(() => [SubsidyStatus], {nullable:true})
     subsidy_statuses?: Array<SubsidyStatus>;
 
-    @Field(() => [MissionProject], {nullable:true})
-    mission_projects?: Array<MissionProject>;
+    @Field(() => [Project], {nullable:true})
+    projects?: Array<Project>;
 
     @Field(() => [AnnualReport], {nullable:true})
     annual_reports?: Array<AnnualReport>;

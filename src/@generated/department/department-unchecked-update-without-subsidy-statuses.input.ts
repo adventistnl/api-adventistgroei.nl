@@ -7,7 +7,7 @@ import { NullableStringFieldUpdateOperationsInput } from '../prisma/nullable-str
 import { DateTimeFieldUpdateOperationsInput } from '../prisma/date-time-field-update-operations.input';
 import { BoolFieldUpdateOperationsInput } from '../prisma/bool-field-update-operations.input';
 import { NullableDateTimeFieldUpdateOperationsInput } from '../prisma/nullable-date-time-field-update-operations.input';
-import { MissionProjectUncheckedUpdateManyWithoutDepartmentNestedInput } from '../mission-project/mission-project-unchecked-update-many-without-department-nested.input';
+import { ProjectUncheckedUpdateManyWithoutDepartmentNestedInput } from '../project/project-unchecked-update-many-without-department-nested.input';
 import { AnnualReportUncheckedUpdateManyWithoutDepartmentNestedInput } from '../annual-report/annual-report-unchecked-update-many-without-department-nested.input';
 import { SubsidyRequestUncheckedUpdateManyWithoutDepartmentNestedInput } from '../subsidy-request/subsidy-request-unchecked-update-many-without-department-nested.input';
 
@@ -57,9 +57,9 @@ export class DepartmentUncheckedUpdateWithoutSubsidy_statusesInput {
     @Field(() => NullableStringFieldUpdateOperationsInput, {nullable:true})
     deleted_by?: NullableStringFieldUpdateOperationsInput;
 
-    @Field(() => MissionProjectUncheckedUpdateManyWithoutDepartmentNestedInput, {nullable:true})
-    @Type(() => MissionProjectUncheckedUpdateManyWithoutDepartmentNestedInput)
-    mission_projects?: MissionProjectUncheckedUpdateManyWithoutDepartmentNestedInput;
+    @Field(() => ProjectUncheckedUpdateManyWithoutDepartmentNestedInput, {nullable:true})
+    @Type(() => ProjectUncheckedUpdateManyWithoutDepartmentNestedInput)
+    projects?: ProjectUncheckedUpdateManyWithoutDepartmentNestedInput;
 
     @Field(() => AnnualReportUncheckedUpdateManyWithoutDepartmentNestedInput, {nullable:true})
     @Type(() => AnnualReportUncheckedUpdateManyWithoutDepartmentNestedInput)

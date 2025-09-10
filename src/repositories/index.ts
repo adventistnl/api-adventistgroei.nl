@@ -8,7 +8,7 @@ export * from './department.repository';
 export * from './communication.repository';
 export * from './notification.repository';
 export * from './setting.repository';
-export * from './mission-project.repository';
+export * from './project.repository';
 export * from './subsidy-request.repository';
 export * from './direct-message.repository';
 export * from './contact.repository';

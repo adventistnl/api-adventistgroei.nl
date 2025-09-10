@@ -7,7 +7,7 @@ import { Type } from 'class-transformer';
 import { ChurchOrderByWithRelationInput } from '../church/church-order-by-with-relation.input';
 import { ContactOrderByWithRelationInput } from '../contact/contact-order-by-with-relation.input';
 import { SubsidyStatusOrderByRelationAggregateInput } from '../subsidy-status/subsidy-status-order-by-relation-aggregate.input';
-import { MissionProjectOrderByRelationAggregateInput } from '../mission-project/mission-project-order-by-relation-aggregate.input';
+import { ProjectOrderByRelationAggregateInput } from '../project/project-order-by-relation-aggregate.input';
 import { AnnualReportOrderByRelationAggregateInput } from '../annual-report/annual-report-order-by-relation-aggregate.input';
 import { SubsidyRequestOrderByRelationAggregateInput } from '../subsidy-request/subsidy-request-order-by-relation-aggregate.input';
 
@@ -72,9 +72,9 @@ export class DepartmentOrderByWithRelationInput {
     @Type(() => SubsidyStatusOrderByRelationAggregateInput)
     subsidy_statuses?: SubsidyStatusOrderByRelationAggregateInput;
 
-    @Field(() => MissionProjectOrderByRelationAggregateInput, {nullable:true})
-    @Type(() => MissionProjectOrderByRelationAggregateInput)
-    mission_projects?: MissionProjectOrderByRelationAggregateInput;
+    @Field(() => ProjectOrderByRelationAggregateInput, {nullable:true})
+    @Type(() => ProjectOrderByRelationAggregateInput)
+    projects?: ProjectOrderByRelationAggregateInput;
 
     @Field(() => AnnualReportOrderByRelationAggregateInput, {nullable:true})
     @Type(() => AnnualReportOrderByRelationAggregateInput)

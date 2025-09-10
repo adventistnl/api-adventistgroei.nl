@@ -12,7 +12,7 @@ import { User } from 'src/@generated/user/user.model';
 import { Communication } from 'src/@generated/communication/communication.model';
 import { Notification } from 'src/@generated/notification/notification.model';
 import { Setting } from 'src/@generated/setting/setting.model';
-import { MissionProject } from 'src/@generated/mission-project/mission-project.model';
+import { Project } from 'src/@generated/project/project.model';
 import { DirectMessage } from 'src/@generated/direct-message/direct-message.model';
 import { SubsidyRequest } from 'src/@generated/subsidy-request/subsidy-request.model';
 import { Contact } from 'src/@generated/contact/contact.model';
@@ -99,9 +99,9 @@ export class InstitutionResolver {
     return await this.institutionService.getSettingsByInstitutionId(institution.id);
   }
 
-  @ResolveField(() => [MissionProject], { name: 'mission_projects' })
-  async missionProjects(@Parent() institution: Institution) {
-    return await this.institutionService.getMissionProjectsByInstitutionId(institution.id);
+  @ResolveField(() => [Project], { name: 'projects' })
+  async projects(@Parent() institution: Institution) {
+    return await this.institutionService.getProjectsByInstitutionId(institution.id);
   }
 
   @ResolveField(() => [DirectMessage], { name: 'direct_messages' })

@@ -27,7 +27,7 @@ export class InstitutionCount {
     settings?: number;
 
     @Field(() => Int, {nullable:false})
-    mission_projects?: number;
+    projects?: number;
 
     @Field(() => Int, {nullable:false})
     direct_messages?: number;

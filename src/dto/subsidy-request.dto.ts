@@ -1,5 +1,4 @@
 import { InputType, Field, Float } from '@nestjs/graphql';
-import { Exclude } from 'class-transformer';
 import { IsOptional, IsString, IsNumber } from 'class-validator';
 
 @InputType()
