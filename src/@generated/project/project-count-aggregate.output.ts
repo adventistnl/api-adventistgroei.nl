@@ -27,6 +27,9 @@ export class ProjectCountAggregate {
     language_preference!: number;
 
     @Field(() => Int, {nullable:false})
+    type!: number;
+
+    @Field(() => Int, {nullable:false})
     created_at!: number;
 
     @Field(() => Int, {nullable:false})

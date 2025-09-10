@@ -6,6 +6,7 @@ import { transformToDecimal } from 'prisma-graphql-type-decimal';
 import { Transform } from 'class-transformer';
 import { Type } from 'class-transformer';
 import { LanguagePreference } from '../prisma/language-preference.enum';
+import { ProjectType } from '../prisma/project-type.enum';
 
 @InputType()
 export class ProjectCreateManyInstitutionInput {
@@ -32,6 +33,9 @@ export class ProjectCreateManyInstitutionInput {
 
     @Field(() => LanguagePreference, {nullable:false})
     language_preference!: `${LanguagePreference}`;
+
+    @Field(() => ProjectType, {nullable:false})
+    type!: `${ProjectType}`;
 
     @Field(() => Date, {nullable:true})
     created_at?: Date | string;

@@ -6,6 +6,7 @@ import { transformToDecimal } from 'prisma-graphql-type-decimal';
 import { Transform } from 'class-transformer';
 import { Type } from 'class-transformer';
 import { LanguagePreference } from '../prisma/language-preference.enum';
+import { ProjectType } from '../prisma/project-type.enum';
 import { InstitutionCreateNestedOneWithoutProjectsInput } from '../institution/institution-create-nested-one-without-projects.input';
 
 @InputType()
@@ -30,6 +31,9 @@ export class ProjectCreateWithoutDepartmentInput {
 
     @Field(() => LanguagePreference, {nullable:false})
     language_preference!: `${LanguagePreference}`;
+
+    @Field(() => ProjectType, {nullable:false})
+    type!: `${ProjectType}`;
 
     @Field(() => Date, {nullable:true})
     created_at?: Date | string;

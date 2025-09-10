@@ -1,6 +1,7 @@
 import { InputType, Field } from '@nestjs/graphql';
 import { IsOptional, IsString, IsEnum, IsNumber } from 'class-validator';
 import { LanguagePreference } from '../@generated/prisma/language-preference.enum';
+import { ProjectType } from '../@generated/prisma/project-type.enum';
 
 @InputType()
 export class ProjectCreateDto {
@@ -24,6 +25,10 @@ export class ProjectCreateDto {
   @IsOptional()
   @IsString()
   media_link: string;
+
+  @Field(() => ProjectType)
+  @IsEnum(ProjectType)
+  type: ProjectType;
 
   @Field()
   @IsString()
@@ -60,6 +65,11 @@ export class ProjectUpdateDto {
   @IsOptional()
   @IsString()
   media_link?: string;
+
+  @Field(() => ProjectType, { nullable: true })
+  @IsOptional()
+  @IsEnum(ProjectType)
+  type?: ProjectType;
 
   @Field({ nullable: true })
   @IsOptional()

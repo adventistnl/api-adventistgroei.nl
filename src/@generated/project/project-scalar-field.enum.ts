@@ -8,6 +8,7 @@ export enum ProjectScalarFieldEnum {
     budget = "budget",
     media_link = "media_link",
     language_preference = "language_preference",
+    type = "type",
     created_at = "created_at",
     updated_at = "updated_at",
     created_by = "created_by",

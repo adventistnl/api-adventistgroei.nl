@@ -4,6 +4,7 @@ import { Type } from 'class-transformer';
 import { StringWithAggregatesFilter } from '../prisma/string-with-aggregates-filter.input';
 import { DecimalWithAggregatesFilter } from '../prisma/decimal-with-aggregates-filter.input';
 import { EnumLanguagePreferenceWithAggregatesFilter } from '../prisma/enum-language-preference-with-aggregates-filter.input';
+import { EnumProjectTypeWithAggregatesFilter } from '../prisma/enum-project-type-with-aggregates-filter.input';
 import { DateTimeWithAggregatesFilter } from '../prisma/date-time-with-aggregates-filter.input';
 import { BoolWithAggregatesFilter } from '../prisma/bool-with-aggregates-filter.input';
 import { DateTimeNullableWithAggregatesFilter } from '../prisma/date-time-nullable-with-aggregates-filter.input';
@@ -45,6 +46,9 @@ export class ProjectScalarWhereWithAggregatesInput {
 
     @Field(() => EnumLanguagePreferenceWithAggregatesFilter, {nullable:true})
     language_preference?: EnumLanguagePreferenceWithAggregatesFilter;
+
+    @Field(() => EnumProjectTypeWithAggregatesFilter, {nullable:true})
+    type?: EnumProjectTypeWithAggregatesFilter;
 
     @Field(() => DateTimeWithAggregatesFilter, {nullable:true})
     created_at?: DateTimeWithAggregatesFilter;

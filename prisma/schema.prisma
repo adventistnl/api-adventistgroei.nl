@@ -154,6 +154,13 @@ enum CommunicationStatus {
   FAILED
 }
 
+enum ProjectType {
+  MISSION
+  EVANGELISM
+  SOCIAL
+  OTHER
+}
+
 // Models
 model Institution {
   id                  String             @id @default(uuid())
@@ -605,6 +612,7 @@ model Project {
   budget              Decimal
   media_link          String
   language_preference LanguagePreference
+  type                ProjectType
   created_at          DateTime           @default(now())
   updated_at          DateTime           @updatedAt
   created_by          String

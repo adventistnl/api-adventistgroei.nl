@@ -27,6 +27,9 @@ export class ProjectMinOrderByAggregateInput {
     language_preference?: `${SortOrder}`;
 
     @Field(() => SortOrder, {nullable:true})
+    type?: `${SortOrder}`;
+
+    @Field(() => SortOrder, {nullable:true})
     created_at?: `${SortOrder}`;
 
     @Field(() => SortOrder, {nullable:true})

@@ -4,6 +4,7 @@ import { Type } from 'class-transformer';
 import { StringFilter } from '../prisma/string-filter.input';
 import { DecimalFilter } from '../prisma/decimal-filter.input';
 import { EnumLanguagePreferenceFilter } from '../prisma/enum-language-preference-filter.input';
+import { EnumProjectTypeFilter } from '../prisma/enum-project-type-filter.input';
 import { DateTimeFilter } from '../prisma/date-time-filter.input';
 import { BoolFilter } from '../prisma/bool-filter.input';
 import { DateTimeNullableFilter } from '../prisma/date-time-nullable-filter.input';
@@ -47,6 +48,9 @@ export class ProjectWhereInput {
 
     @Field(() => EnumLanguagePreferenceFilter, {nullable:true})
     language_preference?: EnumLanguagePreferenceFilter;
+
+    @Field(() => EnumProjectTypeFilter, {nullable:true})
+    type?: EnumProjectTypeFilter;
 
     @Field(() => DateTimeFilter, {nullable:true})
     created_at?: DateTimeFilter;

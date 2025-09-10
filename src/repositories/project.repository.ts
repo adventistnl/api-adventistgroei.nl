@@ -26,6 +26,7 @@ export class ProjectRepository {
         language_preference: data.language_preference,
         budget: new Decimal(data.budget),
         media_link: data.media_link,
+        type: data.type,
         department: { connect: { id: data.department_id } },
         created_by: userId,
         updated_by: userId,
@@ -36,8 +37,8 @@ export class ProjectRepository {
   }
 
   async update(id: string, data: ProjectUpdateDto, userId: string): Promise<Project> {
-    const {institution_id, department_id, ...rest} = data
-    if (institution_id) { 
+    const { institution_id, department_id, ...rest } = data;
+    if (institution_id) {
       await this.institutionRepository.findById(institution_id);
     }
     if (department_id) {
@@ -46,9 +47,14 @@ export class ProjectRepository {
     return this.prisma.project.update({
       where: { id },
       data: {
-        Institution: { connect: { id: institution_id } },
+        Institution: institution_id ? { connect: { id: institution_id } } : undefined,
         budget: rest.budget ? new Decimal(rest.budget) : undefined,
-        department: { connect: { id: department_id } },
+        department: department_id ? { connect: { id: department_id } } : undefined,
+        title: rest.title,
+        description: rest.description,
+        language_preference: rest.language_preference,
+        media_link: rest.media_link,
+        type: rest.type,
         updated_by: userId,
       },
     });
@@ -73,7 +79,7 @@ export class ProjectRepository {
   }
 
   async findManyByFilters(filters: Partial<Record<keyof Project, any>>): Promise<Project[]> {
-    const allowedKeys: (keyof Project)[] = ['institution_id', 'title', 'description', 'is_deleted'];
+  const allowedKeys: (keyof Project)[] = ['institution_id', 'title', 'description', 'is_deleted', 'type'];
 
     for (const key of Object.keys(filters)) {
       if (!allowedKeys.includes(key as keyof Project)) {

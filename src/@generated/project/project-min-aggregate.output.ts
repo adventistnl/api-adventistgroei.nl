@@ -3,6 +3,7 @@ import { ObjectType } from '@nestjs/graphql';
 import { Decimal } from '@prisma/client/runtime/library';
 import { GraphQLDecimal } from 'prisma-graphql-type-decimal';
 import { LanguagePreference } from '../prisma/language-preference.enum';
+import { ProjectType } from '../prisma/project-type.enum';
 
 @ObjectType()
 export class ProjectMinAggregate {
@@ -27,6 +28,9 @@ export class ProjectMinAggregate {
 
     @Field(() => LanguagePreference, {nullable:true})
     language_preference?: `${LanguagePreference}`;
+
+    @Field(() => ProjectType, {nullable:true})
+    type?: `${ProjectType}`;
 
     @Field(() => Date, {nullable:true})
     created_at?: Date | string;

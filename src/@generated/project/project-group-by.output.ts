@@ -3,6 +3,7 @@ import { ObjectType } from '@nestjs/graphql';
 import { Decimal } from '@prisma/client/runtime/library';
 import { GraphQLDecimal } from 'prisma-graphql-type-decimal';
 import { LanguagePreference } from '../prisma/language-preference.enum';
+import { ProjectType } from '../prisma/project-type.enum';
 import { ProjectCountAggregate } from './project-count-aggregate.output';
 import { ProjectAvgAggregate } from './project-avg-aggregate.output';
 import { ProjectSumAggregate } from './project-sum-aggregate.output';
@@ -32,6 +33,9 @@ export class ProjectGroupBy {
 
     @Field(() => LanguagePreference, {nullable:false})
     language_preference!: `${LanguagePreference}`;
+
+    @Field(() => ProjectType, {nullable:false})
+    type!: `${ProjectType}`;
 
     @Field(() => Date, {nullable:false})
     created_at!: Date | string;

@@ -4,6 +4,7 @@ import { ID } from '@nestjs/graphql';
 import { GraphQLDecimal } from 'prisma-graphql-type-decimal';
 import { Decimal } from '@prisma/client/runtime/library';
 import { LanguagePreference } from '../prisma/language-preference.enum';
+import { ProjectType } from '../prisma/project-type.enum';
 import { Department } from '../department/department.model';
 import { Institution } from '../institution/institution.model';
 
@@ -30,6 +31,9 @@ export class Project {
 
     @Field(() => LanguagePreference, {nullable:false})
     language_preference!: `${LanguagePreference}`;
+
+    @Field(() => ProjectType, {nullable:false})
+    type!: `${ProjectType}`;
 
     @Field(() => Date, {nullable:false})
     created_at!: Date;
