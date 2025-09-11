@@ -11,6 +11,7 @@ import { NullableDateTimeFieldUpdateOperationsInput } from '../prisma/nullable-d
 import { NullableStringFieldUpdateOperationsInput } from '../prisma/nullable-string-field-update-operations.input';
 import { DepartmentUpdateOneRequiredWithoutProjectsNestedInput } from '../department/department-update-one-required-without-projects-nested.input';
 import { InstitutionUpdateOneWithoutProjectsNestedInput } from '../institution/institution-update-one-without-projects-nested.input';
+import { VoluntariesOnProjectsUpdateManyWithoutProjectNestedInput } from '../voluntaries-on-projects/voluntaries-on-projects-update-many-without-project-nested.input';
 
 @InputType()
 export class ProjectUpdateInput {
@@ -65,4 +66,8 @@ export class ProjectUpdateInput {
     @Field(() => InstitutionUpdateOneWithoutProjectsNestedInput, {nullable:true})
     @Type(() => InstitutionUpdateOneWithoutProjectsNestedInput)
     Institution?: InstitutionUpdateOneWithoutProjectsNestedInput;
+
+    @Field(() => VoluntariesOnProjectsUpdateManyWithoutProjectNestedInput, {nullable:true})
+    @Type(() => VoluntariesOnProjectsUpdateManyWithoutProjectNestedInput)
+    voluntary_users?: VoluntariesOnProjectsUpdateManyWithoutProjectNestedInput;
 }

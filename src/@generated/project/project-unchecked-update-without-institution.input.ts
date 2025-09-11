@@ -9,6 +9,7 @@ import { DateTimeFieldUpdateOperationsInput } from '../prisma/date-time-field-up
 import { BoolFieldUpdateOperationsInput } from '../prisma/bool-field-update-operations.input';
 import { NullableDateTimeFieldUpdateOperationsInput } from '../prisma/nullable-date-time-field-update-operations.input';
 import { NullableStringFieldUpdateOperationsInput } from '../prisma/nullable-string-field-update-operations.input';
+import { VoluntariesOnProjectsUncheckedUpdateManyWithoutProjectNestedInput } from '../voluntaries-on-projects/voluntaries-on-projects-unchecked-update-many-without-project-nested.input';
 
 @InputType()
 export class ProjectUncheckedUpdateWithoutInstitutionInput {
@@ -58,4 +59,8 @@ export class ProjectUncheckedUpdateWithoutInstitutionInput {
 
     @Field(() => NullableStringFieldUpdateOperationsInput, {nullable:true})
     deleted_by?: NullableStringFieldUpdateOperationsInput;
+
+    @Field(() => VoluntariesOnProjectsUncheckedUpdateManyWithoutProjectNestedInput, {nullable:true})
+    @Type(() => VoluntariesOnProjectsUncheckedUpdateManyWithoutProjectNestedInput)
+    voluntary_users?: VoluntariesOnProjectsUncheckedUpdateManyWithoutProjectNestedInput;
 }

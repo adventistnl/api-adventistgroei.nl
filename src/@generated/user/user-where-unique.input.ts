@@ -20,6 +20,7 @@ import { EventRecipientListRelationFilter } from '../event-recipient/event-recip
 import { CommunicationListRelationFilter } from '../communication/communication-list-relation-filter.input';
 import { SubsidyRequestListRelationFilter } from '../subsidy-request/subsidy-request-list-relation-filter.input';
 import { SubsidyStatusListRelationFilter } from '../subsidy-status/subsidy-status-list-relation-filter.input';
+import { VoluntariesOnProjectsListRelationFilter } from '../voluntaries-on-projects/voluntaries-on-projects-list-relation-filter.input';
 
 @InputType()
 export class UserWhereUniqueInput {
@@ -120,4 +121,8 @@ export class UserWhereUniqueInput {
     @Field(() => SubsidyStatusListRelationFilter, {nullable:true})
     @Type(() => SubsidyStatusListRelationFilter)
     SubsidyStatus?: SubsidyStatusListRelationFilter;
+
+    @Field(() => VoluntariesOnProjectsListRelationFilter, {nullable:true})
+    @Type(() => VoluntariesOnProjectsListRelationFilter)
+    voluntary_projects?: VoluntariesOnProjectsListRelationFilter;
 }

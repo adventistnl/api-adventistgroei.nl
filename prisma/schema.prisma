@@ -183,7 +183,7 @@ model Institution {
   communications      Communication[]
   notifications       Notification[]
   settings            Setting[]
-  projects    Project[]
+  projects            Project[]
   direct_messages     DirectMessage[]
   subsidy_requests    SubsidyRequest[]
 }
@@ -248,38 +248,38 @@ model Department {
   deleted_at       DateTime?
   deleted_by       String?
   subsidy_statuses SubsidyStatus[]
-  projects Project[]
+  projects         Project[]
   annual_reports   AnnualReport[]
   subsidy_requests SubsidyRequest[]
 }
 
 model Contact {
-  id          String       @id @default(uuid())
-  name        String?
-  phone       String?
-  mobile      String?
-  email       String?
-  country     String?
-  city        String?
-  address     String?
+  id           String       @id @default(uuid())
+  name         String?
+  phone        String?
+  mobile       String?
+  email        String?
+  country      String?
+  city         String?
+  address      String?
   full_address String?
-  postal_code String?
-  website     String?
-  notes       String?
-  is_primary  Boolean
-  created_at  DateTime     @default(now())
-  updated_at  DateTime     @updatedAt
-  created_by  String
-  updated_by  String
-  is_deleted  Boolean      @default(false)
-  deleted_at  DateTime?
-  deleted_by  String?
-  Institution Institution?
-  Region      Region[]
-  Church      Church[]
-  Department  Department[]
-  User        User[]
-  Event       Event[]
+  postal_code  String?
+  website      String?
+  notes        String?
+  is_primary   Boolean
+  created_at   DateTime     @default(now())
+  updated_at   DateTime     @updatedAt
+  created_by   String
+  updated_by   String
+  is_deleted   Boolean      @default(false)
+  deleted_at   DateTime?
+  deleted_by   String?
+  Institution  Institution?
+  Region       Region[]
+  Church       Church[]
+  Department   Department[]
+  User         User[]
+  Event        Event[]
 }
 
 model User {
@@ -310,6 +310,38 @@ model User {
   communications            Communication[]          @relation("AuthorCommunications")
   SubsidyRequest            SubsidyRequest[]
   SubsidyStatus             SubsidyStatus[]
+  voluntary_projects        VoluntariesOnProjects[]
+}
+
+model Project {
+  id                    String                  @id @default(uuid())
+  department_id         String
+  department            Department              @relation(fields: [department_id], references: [id])
+  title                 String
+  description           String
+  budget                Decimal
+  media_link            String
+  language_preference   LanguagePreference
+  type                  ProjectType
+  created_at            DateTime                @default(now())
+  updated_at            DateTime                @updatedAt
+  created_by            String
+  updated_by            String
+  is_deleted            Boolean                 @default(false)
+  deleted_at            DateTime?
+  deleted_by            String?
+  Institution           Institution?            @relation(fields: [institution_id], references: [id])
+  institution_id        String?
+  voluntary_users       VoluntariesOnProjects[]
+}
+
+model VoluntariesOnProjects {
+  user       User    @relation(fields: [user_id], references: [id])
+  user_id    String
+  project    Project @relation(fields: [project_id], references: [id])
+  project_id String
+
+  @@id([user_id, project_id])
 }
 
 model Role {
@@ -333,7 +365,7 @@ model Permission {
   id               String                 @id @default(uuid())
   name             String
   description      String
-  key_code         String         @unique
+  key_code         String                 @unique
   resolver_name    PermissionResolverName @unique
   group            PermissionGroup?
   created_at       DateTime               @default(now())
@@ -601,27 +633,6 @@ model DirectMessageRecipient {
   is_deleted        Boolean       @default(false)
   deleted_at        DateTime?
   deleted_by        String?
-}
-
-model Project {
-  id                  String             @id @default(uuid())
-  department_id       String
-  department          Department         @relation(fields: [department_id], references: [id])
-  title               String
-  description         String
-  budget              Decimal
-  media_link          String
-  language_preference LanguagePreference
-  type                ProjectType
-  created_at          DateTime           @default(now())
-  updated_at          DateTime           @updatedAt
-  created_by          String
-  updated_by          String
-  is_deleted          Boolean            @default(false)
-  deleted_at          DateTime?
-  deleted_by          String?
-  Institution         Institution?       @relation(fields: [institution_id], references: [id])
-  institution_id      String?
 }
 
 model Notification {

@@ -7,6 +7,8 @@ import { LanguagePreference } from '../prisma/language-preference.enum';
 import { ProjectType } from '../prisma/project-type.enum';
 import { Department } from '../department/department.model';
 import { Institution } from '../institution/institution.model';
+import { VoluntariesOnProjects } from '../voluntaries-on-projects/voluntaries-on-projects.model';
+import { ProjectCount } from './project-count.output';
 
 @ObjectType()
 export class Project {
@@ -64,4 +66,10 @@ export class Project {
 
     @Field(() => Institution, {nullable:true})
     Institution?: Institution | null;
+
+    @Field(() => [VoluntariesOnProjects], {nullable:true})
+    voluntary_users?: Array<VoluntariesOnProjects>;
+
+    @Field(() => ProjectCount, {nullable:false})
+    _count?: ProjectCount;
 }

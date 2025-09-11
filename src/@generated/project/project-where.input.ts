@@ -11,6 +11,7 @@ import { DateTimeNullableFilter } from '../prisma/date-time-nullable-filter.inpu
 import { StringNullableFilter } from '../prisma/string-nullable-filter.input';
 import { DepartmentScalarRelationFilter } from '../department/department-scalar-relation-filter.input';
 import { InstitutionNullableScalarRelationFilter } from '../institution/institution-nullable-scalar-relation-filter.input';
+import { VoluntariesOnProjectsListRelationFilter } from '../voluntaries-on-projects/voluntaries-on-projects-list-relation-filter.input';
 
 @InputType()
 export class ProjectWhereInput {
@@ -83,4 +84,8 @@ export class ProjectWhereInput {
     @Field(() => InstitutionNullableScalarRelationFilter, {nullable:true})
     @Type(() => InstitutionNullableScalarRelationFilter)
     Institution?: InstitutionNullableScalarRelationFilter;
+
+    @Field(() => VoluntariesOnProjectsListRelationFilter, {nullable:true})
+    @Type(() => VoluntariesOnProjectsListRelationFilter)
+    voluntary_users?: VoluntariesOnProjectsListRelationFilter;
 }

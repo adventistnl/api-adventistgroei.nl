@@ -10,6 +10,7 @@ import { Type } from 'class-transformer';
 import { CommunicationUncheckedCreateNestedManyWithoutAuthorInput } from '../communication/communication-unchecked-create-nested-many-without-author.input';
 import { SubsidyRequestUncheckedCreateNestedManyWithoutRequesterInput } from '../subsidy-request/subsidy-request-unchecked-create-nested-many-without-requester.input';
 import { SubsidyStatusUncheckedCreateNestedManyWithoutAssigned_userInput } from '../subsidy-status/subsidy-status-unchecked-create-nested-many-without-assigned-user.input';
+import { VoluntariesOnProjectsUncheckedCreateNestedManyWithoutUserInput } from '../voluntaries-on-projects/voluntaries-on-projects-unchecked-create-nested-many-without-user.input';
 
 @InputType()
 export class UserUncheckedCreateWithoutEvent_recipientsInput {
@@ -85,4 +86,8 @@ export class UserUncheckedCreateWithoutEvent_recipientsInput {
     @Field(() => SubsidyStatusUncheckedCreateNestedManyWithoutAssigned_userInput, {nullable:true})
     @Type(() => SubsidyStatusUncheckedCreateNestedManyWithoutAssigned_userInput)
     SubsidyStatus?: SubsidyStatusUncheckedCreateNestedManyWithoutAssigned_userInput;
+
+    @Field(() => VoluntariesOnProjectsUncheckedCreateNestedManyWithoutUserInput, {nullable:true})
+    @Type(() => VoluntariesOnProjectsUncheckedCreateNestedManyWithoutUserInput)
+    voluntary_projects?: VoluntariesOnProjectsUncheckedCreateNestedManyWithoutUserInput;
 }

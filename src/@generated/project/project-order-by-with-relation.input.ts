@@ -5,6 +5,7 @@ import { SortOrderInput } from '../prisma/sort-order.input';
 import { DepartmentOrderByWithRelationInput } from '../department/department-order-by-with-relation.input';
 import { Type } from 'class-transformer';
 import { InstitutionOrderByWithRelationInput } from '../institution/institution-order-by-with-relation.input';
+import { VoluntariesOnProjectsOrderByRelationAggregateInput } from '../voluntaries-on-projects/voluntaries-on-projects-order-by-relation-aggregate.input';
 
 @InputType()
 export class ProjectOrderByWithRelationInput {
@@ -64,4 +65,8 @@ export class ProjectOrderByWithRelationInput {
     @Field(() => InstitutionOrderByWithRelationInput, {nullable:true})
     @Type(() => InstitutionOrderByWithRelationInput)
     Institution?: InstitutionOrderByWithRelationInput;
+
+    @Field(() => VoluntariesOnProjectsOrderByRelationAggregateInput, {nullable:true})
+    @Type(() => VoluntariesOnProjectsOrderByRelationAggregateInput)
+    voluntary_users?: VoluntariesOnProjectsOrderByRelationAggregateInput;
 }

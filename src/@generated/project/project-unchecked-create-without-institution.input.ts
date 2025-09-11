@@ -7,6 +7,7 @@ import { Transform } from 'class-transformer';
 import { Type } from 'class-transformer';
 import { LanguagePreference } from '../prisma/language-preference.enum';
 import { ProjectType } from '../prisma/project-type.enum';
+import { VoluntariesOnProjectsUncheckedCreateNestedManyWithoutProjectInput } from '../voluntaries-on-projects/voluntaries-on-projects-unchecked-create-nested-many-without-project.input';
 
 @InputType()
 export class ProjectUncheckedCreateWithoutInstitutionInput {
@@ -57,4 +58,8 @@ export class ProjectUncheckedCreateWithoutInstitutionInput {
 
     @Field(() => String, {nullable:true})
     deleted_by?: string;
+
+    @Field(() => VoluntariesOnProjectsUncheckedCreateNestedManyWithoutProjectInput, {nullable:true})
+    @Type(() => VoluntariesOnProjectsUncheckedCreateNestedManyWithoutProjectInput)
+    voluntary_users?: VoluntariesOnProjectsUncheckedCreateNestedManyWithoutProjectInput;
 }

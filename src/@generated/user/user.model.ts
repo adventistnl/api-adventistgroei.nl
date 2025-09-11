@@ -14,6 +14,7 @@ import { EventRecipient } from '../event-recipient/event-recipient.model';
 import { Communication } from '../communication/communication.model';
 import { SubsidyRequest } from '../subsidy-request/subsidy-request.model';
 import { SubsidyStatus } from '../subsidy-status/subsidy-status.model';
+import { VoluntariesOnProjects } from '../voluntaries-on-projects/voluntaries-on-projects.model';
 import { UserCount } from './user-count.output';
 
 @ObjectType()
@@ -99,6 +100,9 @@ export class User {
 
     @Field(() => [SubsidyStatus], {nullable:true})
     SubsidyStatus?: Array<SubsidyStatus>;
+
+    @Field(() => [VoluntariesOnProjects], {nullable:true})
+    voluntary_projects?: Array<VoluntariesOnProjects>;
 
     @Field(() => UserCount, {nullable:false})
     _count?: UserCount;

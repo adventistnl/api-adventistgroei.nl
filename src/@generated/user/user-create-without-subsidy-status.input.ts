@@ -13,6 +13,7 @@ import { EventRegistrationCreateNestedManyWithoutUserInput } from '../event-regi
 import { EventRecipientCreateNestedManyWithoutUserInput } from '../event-recipient/event-recipient-create-nested-many-without-user.input';
 import { CommunicationCreateNestedManyWithoutAuthorInput } from '../communication/communication-create-nested-many-without-author.input';
 import { SubsidyRequestCreateNestedManyWithoutRequesterInput } from '../subsidy-request/subsidy-request-create-nested-many-without-requester.input';
+import { VoluntariesOnProjectsCreateNestedManyWithoutUserInput } from '../voluntaries-on-projects/voluntaries-on-projects-create-nested-many-without-user.input';
 
 @InputType()
 export class UserCreateWithoutSubsidyStatusInput {
@@ -91,4 +92,8 @@ export class UserCreateWithoutSubsidyStatusInput {
     @Field(() => SubsidyRequestCreateNestedManyWithoutRequesterInput, {nullable:true})
     @Type(() => SubsidyRequestCreateNestedManyWithoutRequesterInput)
     SubsidyRequest?: SubsidyRequestCreateNestedManyWithoutRequesterInput;
+
+    @Field(() => VoluntariesOnProjectsCreateNestedManyWithoutUserInput, {nullable:true})
+    @Type(() => VoluntariesOnProjectsCreateNestedManyWithoutUserInput)
+    voluntary_projects?: VoluntariesOnProjectsCreateNestedManyWithoutUserInput;
 }

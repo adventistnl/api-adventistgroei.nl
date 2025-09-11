@@ -15,6 +15,7 @@ import { Type } from 'class-transformer';
 import { EventRecipientUncheckedUpdateManyWithoutUserNestedInput } from '../event-recipient/event-recipient-unchecked-update-many-without-user-nested.input';
 import { CommunicationUncheckedUpdateManyWithoutAuthorNestedInput } from '../communication/communication-unchecked-update-many-without-author-nested.input';
 import { SubsidyRequestUncheckedUpdateManyWithoutRequesterNestedInput } from '../subsidy-request/subsidy-request-unchecked-update-many-without-requester-nested.input';
+import { VoluntariesOnProjectsUncheckedUpdateManyWithoutUserNestedInput } from '../voluntaries-on-projects/voluntaries-on-projects-unchecked-update-many-without-user-nested.input';
 
 @InputType()
 export class UserUncheckedUpdateWithoutSubsidyStatusInput {
@@ -90,4 +91,8 @@ export class UserUncheckedUpdateWithoutSubsidyStatusInput {
     @Field(() => SubsidyRequestUncheckedUpdateManyWithoutRequesterNestedInput, {nullable:true})
     @Type(() => SubsidyRequestUncheckedUpdateManyWithoutRequesterNestedInput)
     SubsidyRequest?: SubsidyRequestUncheckedUpdateManyWithoutRequesterNestedInput;
+
+    @Field(() => VoluntariesOnProjectsUncheckedUpdateManyWithoutUserNestedInput, {nullable:true})
+    @Type(() => VoluntariesOnProjectsUncheckedUpdateManyWithoutUserNestedInput)
+    voluntary_projects?: VoluntariesOnProjectsUncheckedUpdateManyWithoutUserNestedInput;
 }
