@@ -33,12 +33,12 @@ export class AuthService {
     console.log("input", input);
     const user = await this.userService.findByEmail(input.email);
     if (!user) {
-      throw new CustomGraphQLError('Invalid credentials', ErrorCode.UNAUTHORIZED, 401);
+      throw new CustomGraphQLError('Invalid credentials. check your email', ErrorCode.UNAUTHORIZED, 401);
     }
     const bcrypt = await import('bcryptjs');
     const isValid = await bcrypt.compare(input.password, user.password);
     if (!isValid) {
-      throw new CustomGraphQLError('Invalid credentials', ErrorCode.UNAUTHORIZED, 401);
+      throw new CustomGraphQLError('Invalid credentials. check your password', ErrorCode.UNAUTHORIZED, 401);
     }
     // Remover o campo password explicitamente
     // eslint-disable-next-line @typescript-eslint/no-unused-vars

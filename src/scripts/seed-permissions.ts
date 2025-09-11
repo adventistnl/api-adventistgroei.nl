@@ -70,6 +70,8 @@ const permissions = [
   { name: 'createSubsidyStatus', description: 'Create a subsidy status', resolver_name: 'createSubsidyStatus' as PermissionResolverName, group: 'SUBSIDY_STATUS' as PermissionGroup, key_code: 'SUBSIDY_STATUS_CREATE' },
   { name: 'updateSubsidyStatus', description: 'Update a subsidy status', resolver_name: 'updateSubsidyStatus' as PermissionResolverName, group: 'SUBSIDY_STATUS' as PermissionGroup, key_code: 'SUBSIDY_STATUS_UPDATE' },
   { name: 'deleteSubsidyStatus', description: 'Delete a subsidy status', resolver_name: 'deleteSubsidyStatus' as PermissionResolverName, group: 'SUBSIDY_STATUS' as PermissionGroup, key_code: 'SUBSIDY_STATUS_DELETE' },
+  { name: 'addProjectVoluntary', description: 'Adicionar voluntário ao projeto', resolver_name: 'addProjectVoluntary' as PermissionResolverName, group: 'MISSION_PROJECT' as PermissionGroup, key_code: 'PROJECT_VOLUNTARY_ADD' },
+  { name: 'removeProjectVoluntary', description: 'Remover voluntário do projeto', resolver_name: 'removeProjectVoluntary' as PermissionResolverName, group: 'MISSION_PROJECT' as PermissionGroup, key_code: 'PROJECT_VOLUNTARY_REMOVE' },
 ];
 
 async function main() {
