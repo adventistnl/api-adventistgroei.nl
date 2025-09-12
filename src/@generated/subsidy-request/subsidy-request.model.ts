@@ -8,7 +8,7 @@ import { User } from '../user/user.model';
 import { Department } from '../department/department.model';
 import { Church } from '../church/church.model';
 import { SubsidyStatus } from '../subsidy-status/subsidy-status.model';
-import { SubsidyActivity } from '../subsidy-activity/subsidy-activity.model';
+import { ProjectActivity } from '../project-activity/project-activity.model';
 import { SubsidyRequestCount } from './subsidy-request-count.output';
 
 @ObjectType()
@@ -74,8 +74,8 @@ export class SubsidyRequest {
     @Field(() => SubsidyStatus, {nullable:false})
     subsidy_status?: SubsidyStatus;
 
-    @Field(() => [SubsidyActivity], {nullable:true})
-    subsidy_activities?: Array<SubsidyActivity>;
+    @Field(() => [ProjectActivity], {nullable:true})
+    project_activities?: Array<ProjectActivity>;
 
     @Field(() => SubsidyRequestCount, {nullable:false})
     _count?: SubsidyRequestCount;

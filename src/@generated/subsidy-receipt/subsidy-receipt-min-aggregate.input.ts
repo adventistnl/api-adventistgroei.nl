@@ -8,7 +8,7 @@ export class SubsidyReceiptMinAggregateInput {
     id?: true;
 
     @Field(() => Boolean, {nullable:true})
-    subsidy_activities_id?: true;
+    project_activities_id?: true;
 
     @Field(() => Boolean, {nullable:true})
     file_path?: true;

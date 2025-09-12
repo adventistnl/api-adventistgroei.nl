@@ -13,7 +13,7 @@ import { UserScalarRelationFilter } from '../user/user-scalar-relation-filter.in
 import { DepartmentScalarRelationFilter } from '../department/department-scalar-relation-filter.input';
 import { ChurchScalarRelationFilter } from '../church/church-scalar-relation-filter.input';
 import { SubsidyStatusScalarRelationFilter } from '../subsidy-status/subsidy-status-scalar-relation-filter.input';
-import { SubsidyActivityListRelationFilter } from '../subsidy-activity/subsidy-activity-list-relation-filter.input';
+import { ProjectActivityListRelationFilter } from '../project-activity/project-activity-list-relation-filter.input';
 
 @InputType()
 export class SubsidyRequestWhereUniqueInput {
@@ -96,7 +96,7 @@ export class SubsidyRequestWhereUniqueInput {
     @Type(() => SubsidyStatusScalarRelationFilter)
     subsidy_status?: SubsidyStatusScalarRelationFilter;
 
-    @Field(() => SubsidyActivityListRelationFilter, {nullable:true})
-    @Type(() => SubsidyActivityListRelationFilter)
-    subsidy_activities?: SubsidyActivityListRelationFilter;
+    @Field(() => ProjectActivityListRelationFilter, {nullable:true})
+    @Type(() => ProjectActivityListRelationFilter)
+    project_activities?: ProjectActivityListRelationFilter;
 }

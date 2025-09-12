@@ -9,7 +9,7 @@ import { InstitutionCreateNestedOneWithoutSubsidy_requestsInput } from '../insti
 import { UserCreateNestedOneWithoutSubsidyRequestInput } from '../user/user-create-nested-one-without-subsidy-request.input';
 import { DepartmentCreateNestedOneWithoutSubsidy_requestsInput } from '../department/department-create-nested-one-without-subsidy-requests.input';
 import { SubsidyStatusCreateNestedOneWithoutSubsidy_requestsInput } from '../subsidy-status/subsidy-status-create-nested-one-without-subsidy-requests.input';
-import { SubsidyActivityCreateNestedManyWithoutSubsidy_requestInput } from '../subsidy-activity/subsidy-activity-create-nested-many-without-subsidy-request.input';
+import { ProjectActivityCreateNestedManyWithoutSubsidy_requestInput } from '../project-activity/project-activity-create-nested-many-without-subsidy-request.input';
 
 @InputType()
 export class SubsidyRequestCreateWithoutChurchInput {
@@ -62,7 +62,7 @@ export class SubsidyRequestCreateWithoutChurchInput {
     @Type(() => SubsidyStatusCreateNestedOneWithoutSubsidy_requestsInput)
     subsidy_status!: SubsidyStatusCreateNestedOneWithoutSubsidy_requestsInput;
 
-    @Field(() => SubsidyActivityCreateNestedManyWithoutSubsidy_requestInput, {nullable:true})
-    @Type(() => SubsidyActivityCreateNestedManyWithoutSubsidy_requestInput)
-    subsidy_activities?: SubsidyActivityCreateNestedManyWithoutSubsidy_requestInput;
+    @Field(() => ProjectActivityCreateNestedManyWithoutSubsidy_requestInput, {nullable:true})
+    @Type(() => ProjectActivityCreateNestedManyWithoutSubsidy_requestInput)
+    project_activities?: ProjectActivityCreateNestedManyWithoutSubsidy_requestInput;
 }

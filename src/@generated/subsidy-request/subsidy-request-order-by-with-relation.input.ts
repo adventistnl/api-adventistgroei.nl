@@ -8,7 +8,7 @@ import { UserOrderByWithRelationInput } from '../user/user-order-by-with-relatio
 import { DepartmentOrderByWithRelationInput } from '../department/department-order-by-with-relation.input';
 import { ChurchOrderByWithRelationInput } from '../church/church-order-by-with-relation.input';
 import { SubsidyStatusOrderByWithRelationInput } from '../subsidy-status/subsidy-status-order-by-with-relation.input';
-import { SubsidyActivityOrderByRelationAggregateInput } from '../subsidy-activity/subsidy-activity-order-by-relation-aggregate.input';
+import { ProjectActivityOrderByRelationAggregateInput } from '../project-activity/project-activity-order-by-relation-aggregate.input';
 
 @InputType()
 export class SubsidyRequestOrderByWithRelationInput {
@@ -78,7 +78,7 @@ export class SubsidyRequestOrderByWithRelationInput {
     @Type(() => SubsidyStatusOrderByWithRelationInput)
     subsidy_status?: SubsidyStatusOrderByWithRelationInput;
 
-    @Field(() => SubsidyActivityOrderByRelationAggregateInput, {nullable:true})
-    @Type(() => SubsidyActivityOrderByRelationAggregateInput)
-    subsidy_activities?: SubsidyActivityOrderByRelationAggregateInput;
+    @Field(() => ProjectActivityOrderByRelationAggregateInput, {nullable:true})
+    @Type(() => ProjectActivityOrderByRelationAggregateInput)
+    project_activities?: ProjectActivityOrderByRelationAggregateInput;
 }

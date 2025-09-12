@@ -27,7 +27,7 @@ export class SubsidyReceiptScalarWhereWithAggregatesInput {
     id?: StringWithAggregatesFilter;
 
     @Field(() => StringWithAggregatesFilter, {nullable:true})
-    subsidy_activities_id?: StringWithAggregatesFilter;
+    project_activities_id?: StringWithAggregatesFilter;
 
     @Field(() => StringWithAggregatesFilter, {nullable:true})
     file_path?: StringWithAggregatesFilter;

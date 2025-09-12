@@ -10,7 +10,7 @@ export class SubsidyReceiptMinAggregate {
     id?: string;
 
     @Field(() => String, {nullable:true})
-    subsidy_activities_id?: string;
+    project_activities_id?: string;
 
     @Field(() => String, {nullable:true})
     file_path?: string;

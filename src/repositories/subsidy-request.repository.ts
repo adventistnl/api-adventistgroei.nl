@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../services/prisma.service';
 import { SubsidyRequest } from '../@generated/subsidy-request/subsidy-request.model';
 import { SubsidyRequestCreateDto, SubsidyRequestUpdateDto } from '../dto/subsidy-request.dto';
-import { SubsidyActivityInput } from '../dto/subsidy-request.dto';
+import { ProjectActivityInput } from '../dto/subsidy-request.dto';
 import { CustomGraphQLError, ErrorCode } from 'src/common/errors/custom-graphql-error';
 
 @Injectable()
@@ -10,7 +10,7 @@ export class SubsidyRequestRepository {
   constructor(private readonly prisma: PrismaService) {}
 
   async create(data: SubsidyRequestCreateDto, userId: string): Promise<SubsidyRequest> {
-    const { institution_id, requester_id, department_id, church_id, subsidy_activities, subsidy_status_id, ...rest } = data;
+    const { institution_id, requester_id, department_id, church_id, project_activities, subsidy_status_id, ...rest } = data;
 
     const subsidyStatus = await this.prisma.subsidyStatus.findUnique({
       where: { id: subsidy_status_id, is_deleted: false },
@@ -35,10 +35,10 @@ export class SubsidyRequestRepository {
     });
 
     await Promise.all(
-      subsidy_activities.map(async (activityData: SubsidyActivityInput) => {
+      project_activities.map(async (activityData: ProjectActivityInput) => {
          
         const { ...activityDataWithoutRequestId } = activityData;
-        await this.prisma.subsidyActivity.create({
+        await this.prisma.projectActivity.create({
           data: {
             ...activityDataWithoutRequestId,
             created_by: userId,

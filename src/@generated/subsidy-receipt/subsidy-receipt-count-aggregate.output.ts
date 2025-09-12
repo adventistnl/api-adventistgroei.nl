@@ -9,7 +9,7 @@ export class SubsidyReceiptCountAggregate {
     id!: number;
 
     @Field(() => Int, {nullable:false})
-    subsidy_activities_id!: number;
+    project_activities_id!: number;
 
     @Field(() => Int, {nullable:false})
     file_path!: number;

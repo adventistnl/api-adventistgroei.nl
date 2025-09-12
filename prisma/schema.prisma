@@ -316,25 +316,25 @@ model User {
 }
 
 model Project {
-  id                    String                  @id @default(uuid())
-  department_id         String
-  department            Department              @relation(fields: [department_id], references: [id])
-  title                 String
-  description           String
-  budget                Decimal
-  media_link            String
-  language_preference   LanguagePreference
-  type                  ProjectType
-  created_at            DateTime                @default(now())
-  updated_at            DateTime                @updatedAt
-  created_by            String
-  updated_by            String
-  is_deleted            Boolean                 @default(false)
-  deleted_at            DateTime?
-  deleted_by            String?
-  Institution           Institution?            @relation(fields: [institution_id], references: [id])
-  institution_id        String?
-  voluntary_users       VoluntariesOnProjects[]
+  id                  String                  @id @default(uuid())
+  department_id       String
+  department          Department              @relation(fields: [department_id], references: [id])
+  title               String
+  description         String
+  budget              Decimal
+  media_link          String
+  language_preference LanguagePreference
+  type                ProjectType
+  created_at          DateTime                @default(now())
+  updated_at          DateTime                @updatedAt
+  created_by          String
+  updated_by          String
+  is_deleted          Boolean                 @default(false)
+  deleted_at          DateTime?
+  deleted_by          String?
+  Institution         Institution?            @relation(fields: [institution_id], references: [id])
+  institution_id      String?
+  voluntary_users     VoluntariesOnProjects[]
 }
 
 model VoluntariesOnProjects {
@@ -431,10 +431,10 @@ model SubsidyRequest {
   is_deleted            Boolean           @default(false)
   deleted_at            DateTime?
   deleted_by            String?
-  subsidy_activities    SubsidyActivity[]
+  project_activities    ProjectActivity[]
 }
 
-model SubsidyActivity {
+model ProjectActivity {
   id                 String           @id @default(uuid())
   subsidy_request_id String
   subsidy_request    SubsidyRequest   @relation(fields: [subsidy_request_id], references: [id])
@@ -453,8 +453,8 @@ model SubsidyActivity {
 
 model SubsidyReceipt {
   id                    String          @id @default(uuid())
-  subsidy_activities_id String
-  subsidy_activity      SubsidyActivity @relation(fields: [subsidy_activities_id], references: [id])
+  project_activities_id String
+  project_activity      ProjectActivity @relation(fields: [project_activities_id], references: [id])
   file_path             String
   amount                Decimal
   approved              Boolean

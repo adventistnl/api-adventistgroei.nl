@@ -15,7 +15,7 @@ export class SubsidyReceiptUncheckedUpdateInput {
     id?: StringFieldUpdateOperationsInput;
 
     @Field(() => StringFieldUpdateOperationsInput, {nullable:true})
-    subsidy_activities_id?: StringFieldUpdateOperationsInput;
+    project_activities_id?: StringFieldUpdateOperationsInput;
 
     @Field(() => StringFieldUpdateOperationsInput, {nullable:true})
     file_path?: StringFieldUpdateOperationsInput;

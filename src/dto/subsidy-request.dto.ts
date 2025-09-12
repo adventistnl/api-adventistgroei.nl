@@ -3,7 +3,7 @@ import { IsOptional, IsString, IsNumber } from 'class-validator';
 
 @InputType()
 @InputType()
-export class SubsidyActivityInput {
+export class ProjectActivityInput {
   @Field()
   @IsString()
   name: string;
@@ -47,8 +47,8 @@ export class SubsidyRequestCreateDto {
   @IsString() 
   subsidy_status_id: string;
 
-  @Field(() => [SubsidyActivityInput])
-  subsidy_activities: SubsidyActivityInput[];
+  @Field(() => [ProjectActivityInput])
+  project_activities: ProjectActivityInput[];
 }
 @InputType()
 export class SubsidyRequestUpdateDto {

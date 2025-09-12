@@ -16,7 +16,7 @@ export class SubsidyReceiptOrderByWithAggregationInput {
     id?: `${SortOrder}`;
 
     @Field(() => SortOrder, {nullable:true})
-    subsidy_activities_id?: `${SortOrder}`;
+    project_activities_id?: `${SortOrder}`;
 
     @Field(() => SortOrder, {nullable:true})
     file_path?: `${SortOrder}`;

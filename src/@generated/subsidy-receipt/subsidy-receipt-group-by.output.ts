@@ -15,7 +15,7 @@ export class SubsidyReceiptGroupBy {
     id!: string;
 
     @Field(() => String, {nullable:false})
-    subsidy_activities_id!: string;
+    project_activities_id!: string;
 
     @Field(() => String, {nullable:false})
     file_path!: string;

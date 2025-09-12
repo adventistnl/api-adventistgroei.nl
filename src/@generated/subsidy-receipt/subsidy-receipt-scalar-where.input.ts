@@ -27,7 +27,7 @@ export class SubsidyReceiptScalarWhereInput {
     id?: StringFilter;
 
     @Field(() => StringFilter, {nullable:true})
-    subsidy_activities_id?: StringFilter;
+    project_activities_id?: StringFilter;
 
     @Field(() => StringFilter, {nullable:true})
     file_path?: StringFilter;
