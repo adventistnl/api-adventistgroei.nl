@@ -8,6 +8,7 @@ import { BoolFieldUpdateOperationsInput } from '../prisma/bool-field-update-oper
 import { NullableDateTimeFieldUpdateOperationsInput } from '../prisma/nullable-date-time-field-update-operations.input';
 import { NullableStringFieldUpdateOperationsInput } from '../prisma/nullable-string-field-update-operations.input';
 import { SubsidyRequestUpdateOneRequiredWithoutProject_activitiesNestedInput } from '../subsidy-request/subsidy-request-update-one-required-without-project-activities-nested.input';
+import { ProjectUpdateOneRequiredWithoutActivitiesNestedInput } from '../project/project-update-one-required-without-activities-nested.input';
 import { SubsidyReceiptUpdateManyWithoutProject_activityNestedInput } from '../subsidy-receipt/subsidy-receipt-update-many-without-project-activity-nested.input';
 
 @InputType()
@@ -50,6 +51,10 @@ export class ProjectActivityUpdateInput {
     @Field(() => SubsidyRequestUpdateOneRequiredWithoutProject_activitiesNestedInput, {nullable:true})
     @Type(() => SubsidyRequestUpdateOneRequiredWithoutProject_activitiesNestedInput)
     subsidy_request?: SubsidyRequestUpdateOneRequiredWithoutProject_activitiesNestedInput;
+
+    @Field(() => ProjectUpdateOneRequiredWithoutActivitiesNestedInput, {nullable:true})
+    @Type(() => ProjectUpdateOneRequiredWithoutActivitiesNestedInput)
+    project?: ProjectUpdateOneRequiredWithoutActivitiesNestedInput;
 
     @Field(() => SubsidyReceiptUpdateManyWithoutProject_activityNestedInput, {nullable:true})
     @Type(() => SubsidyReceiptUpdateManyWithoutProject_activityNestedInput)

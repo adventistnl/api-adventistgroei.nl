@@ -11,6 +11,9 @@ export class ProjectActivityMaxAggregateInput {
     subsidy_request_id?: true;
 
     @Field(() => Boolean, {nullable:true})
+    project_id?: true;
+
+    @Field(() => Boolean, {nullable:true})
     name?: true;
 
     @Field(() => Boolean, {nullable:true})

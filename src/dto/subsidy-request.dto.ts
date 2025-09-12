@@ -49,6 +49,10 @@ export class SubsidyRequestCreateDto {
 
   @Field(() => [ProjectActivityInput])
   project_activities: ProjectActivityInput[];
+
+  @Field()
+  @IsString()
+  project_id: string;
 }
 @InputType()
 export class SubsidyRequestUpdateDto {

@@ -17,6 +17,9 @@ export class ProjectActivityUncheckedCreateInput {
     subsidy_request_id!: string;
 
     @Field(() => String, {nullable:false})
+    project_id!: string;
+
+    @Field(() => String, {nullable:false})
     name!: string;
 
     @Field(() => String, {nullable:false})

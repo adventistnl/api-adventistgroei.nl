@@ -12,6 +12,7 @@ import { StringNullableFilter } from '../prisma/string-nullable-filter.input';
 import { DepartmentScalarRelationFilter } from '../department/department-scalar-relation-filter.input';
 import { InstitutionNullableScalarRelationFilter } from '../institution/institution-nullable-scalar-relation-filter.input';
 import { VoluntariesOnProjectsListRelationFilter } from '../voluntaries-on-projects/voluntaries-on-projects-list-relation-filter.input';
+import { ProjectActivityListRelationFilter } from '../project-activity/project-activity-list-relation-filter.input';
 
 @InputType()
 export class ProjectWhereInput {
@@ -88,4 +89,8 @@ export class ProjectWhereInput {
     @Field(() => VoluntariesOnProjectsListRelationFilter, {nullable:true})
     @Type(() => VoluntariesOnProjectsListRelationFilter)
     voluntary_users?: VoluntariesOnProjectsListRelationFilter;
+
+    @Field(() => ProjectActivityListRelationFilter, {nullable:true})
+    @Type(() => ProjectActivityListRelationFilter)
+    activities?: ProjectActivityListRelationFilter;
 }

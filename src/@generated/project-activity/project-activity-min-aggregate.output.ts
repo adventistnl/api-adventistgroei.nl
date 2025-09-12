@@ -13,6 +13,9 @@ export class ProjectActivityMinAggregate {
     subsidy_request_id?: string;
 
     @Field(() => String, {nullable:true})
+    project_id?: string;
+
+    @Field(() => String, {nullable:true})
     name?: string;
 
     @Field(() => String, {nullable:true})

@@ -13,6 +13,9 @@ export class ProjectActivityCreateManySubsidy_requestInput {
     id?: string;
 
     @Field(() => String, {nullable:false})
+    project_id!: string;
+
+    @Field(() => String, {nullable:false})
     name!: string;
 
     @Field(() => String, {nullable:false})

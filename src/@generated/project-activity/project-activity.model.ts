@@ -4,6 +4,7 @@ import { ID } from '@nestjs/graphql';
 import { GraphQLDecimal } from 'prisma-graphql-type-decimal';
 import { Decimal } from '@prisma/client/runtime/library';
 import { SubsidyRequest } from '../subsidy-request/subsidy-request.model';
+import { Project } from '../project/project.model';
 import { SubsidyReceipt } from '../subsidy-receipt/subsidy-receipt.model';
 import { ProjectActivityCount } from './project-activity-count.output';
 
@@ -15,6 +16,9 @@ export class ProjectActivity {
 
     @Field(() => String, {nullable:false})
     subsidy_request_id!: string;
+
+    @Field(() => String, {nullable:false})
+    project_id!: string;
 
     @Field(() => String, {nullable:false})
     name!: string;
@@ -48,6 +52,9 @@ export class ProjectActivity {
 
     @Field(() => SubsidyRequest, {nullable:false})
     subsidy_request?: SubsidyRequest;
+
+    @Field(() => Project, {nullable:false})
+    project?: Project;
 
     @Field(() => [SubsidyReceipt], {nullable:true})
     subsidy_receipts?: Array<SubsidyReceipt>;

@@ -30,6 +30,9 @@ export class ProjectActivityScalarWhereInput {
     subsidy_request_id?: StringFilter;
 
     @Field(() => StringFilter, {nullable:true})
+    project_id?: StringFilter;
+
+    @Field(() => StringFilter, {nullable:true})
     name?: StringFilter;
 
     @Field(() => StringFilter, {nullable:true})

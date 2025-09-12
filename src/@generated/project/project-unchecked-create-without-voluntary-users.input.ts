@@ -7,6 +7,7 @@ import { Transform } from 'class-transformer';
 import { Type } from 'class-transformer';
 import { LanguagePreference } from '../prisma/language-preference.enum';
 import { ProjectType } from '../prisma/project-type.enum';
+import { ProjectActivityUncheckedCreateNestedManyWithoutProjectInput } from '../project-activity/project-activity-unchecked-create-nested-many-without-project.input';
 
 @InputType()
 export class ProjectUncheckedCreateWithoutVoluntary_usersInput {
@@ -60,4 +61,8 @@ export class ProjectUncheckedCreateWithoutVoluntary_usersInput {
 
     @Field(() => String, {nullable:true})
     institution_id?: string;
+
+    @Field(() => ProjectActivityUncheckedCreateNestedManyWithoutProjectInput, {nullable:true})
+    @Type(() => ProjectActivityUncheckedCreateNestedManyWithoutProjectInput)
+    activities?: ProjectActivityUncheckedCreateNestedManyWithoutProjectInput;
 }

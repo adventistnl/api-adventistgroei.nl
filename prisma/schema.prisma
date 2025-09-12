@@ -335,6 +335,7 @@ model Project {
   Institution         Institution?            @relation(fields: [institution_id], references: [id])
   institution_id      String?
   voluntary_users     VoluntariesOnProjects[]
+  activities          ProjectActivity[]
 }
 
 model VoluntariesOnProjects {
@@ -438,6 +439,8 @@ model ProjectActivity {
   id                 String           @id @default(uuid())
   subsidy_request_id String
   subsidy_request    SubsidyRequest   @relation(fields: [subsidy_request_id], references: [id])
+  project_id         String
+  project            Project          @relation(fields: [project_id], references: [id])
   name               String
   description        String
   budget_amount      Decimal

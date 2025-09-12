@@ -10,7 +10,7 @@ export class SubsidyRequestRepository {
   constructor(private readonly prisma: PrismaService) {}
 
   async create(data: SubsidyRequestCreateDto, userId: string): Promise<SubsidyRequest> {
-    const { institution_id, requester_id, department_id, church_id, project_activities, subsidy_status_id, ...rest } = data;
+    const { institution_id, requester_id, department_id, church_id, project_activities, subsidy_status_id, project_id, ...rest } = data;
 
     const subsidyStatus = await this.prisma.subsidyStatus.findUnique({
       where: { id: subsidy_status_id, is_deleted: false },
@@ -45,6 +45,7 @@ export class SubsidyRequestRepository {
             updated_by: userId,
             subsidy_request: { connect: { id: subsidyRequest.id } },
             subsidy_receipts: { create: [] },
+            project: { connect: { id: project_id } },
           },
         });
       })

@@ -9,6 +9,7 @@ import { BoolFilter } from '../prisma/bool-filter.input';
 import { DateTimeNullableFilter } from '../prisma/date-time-nullable-filter.input';
 import { StringNullableFilter } from '../prisma/string-nullable-filter.input';
 import { SubsidyRequestScalarRelationFilter } from '../subsidy-request/subsidy-request-scalar-relation-filter.input';
+import { ProjectScalarRelationFilter } from '../project/project-scalar-relation-filter.input';
 import { SubsidyReceiptListRelationFilter } from '../subsidy-receipt/subsidy-receipt-list-relation-filter.input';
 
 @InputType()
@@ -31,6 +32,9 @@ export class ProjectActivityWhereUniqueInput {
 
     @Field(() => StringFilter, {nullable:true})
     subsidy_request_id?: StringFilter;
+
+    @Field(() => StringFilter, {nullable:true})
+    project_id?: StringFilter;
 
     @Field(() => StringFilter, {nullable:true})
     name?: StringFilter;
@@ -66,6 +70,10 @@ export class ProjectActivityWhereUniqueInput {
     @Field(() => SubsidyRequestScalarRelationFilter, {nullable:true})
     @Type(() => SubsidyRequestScalarRelationFilter)
     subsidy_request?: SubsidyRequestScalarRelationFilter;
+
+    @Field(() => ProjectScalarRelationFilter, {nullable:true})
+    @Type(() => ProjectScalarRelationFilter)
+    project?: ProjectScalarRelationFilter;
 
     @Field(() => SubsidyReceiptListRelationFilter, {nullable:true})
     @Type(() => SubsidyReceiptListRelationFilter)

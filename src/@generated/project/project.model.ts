@@ -8,6 +8,7 @@ import { ProjectType } from '../prisma/project-type.enum';
 import { Department } from '../department/department.model';
 import { Institution } from '../institution/institution.model';
 import { VoluntariesOnProjects } from '../voluntaries-on-projects/voluntaries-on-projects.model';
+import { ProjectActivity } from '../project-activity/project-activity.model';
 import { ProjectCount } from './project-count.output';
 
 @ObjectType()
@@ -69,6 +70,9 @@ export class Project {
 
     @Field(() => [VoluntariesOnProjects], {nullable:true})
     voluntary_users?: Array<VoluntariesOnProjects>;
+
+    @Field(() => [ProjectActivity], {nullable:true})
+    activities?: Array<ProjectActivity>;
 
     @Field(() => ProjectCount, {nullable:false})
     _count?: ProjectCount;

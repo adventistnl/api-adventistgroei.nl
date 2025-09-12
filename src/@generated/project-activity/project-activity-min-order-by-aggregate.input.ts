@@ -12,6 +12,9 @@ export class ProjectActivityMinOrderByAggregateInput {
     subsidy_request_id?: `${SortOrder}`;
 
     @Field(() => SortOrder, {nullable:true})
+    project_id?: `${SortOrder}`;
+
+    @Field(() => SortOrder, {nullable:true})
     name?: `${SortOrder}`;
 
     @Field(() => SortOrder, {nullable:true})

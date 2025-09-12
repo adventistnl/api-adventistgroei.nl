@@ -12,6 +12,9 @@ export class ProjectActivityCountAggregate {
     subsidy_request_id!: number;
 
     @Field(() => Int, {nullable:false})
+    project_id!: number;
+
+    @Field(() => Int, {nullable:false})
     name!: number;
 
     @Field(() => Int, {nullable:false})

@@ -7,4 +7,7 @@ export class ProjectCount {
 
     @Field(() => Int, {nullable:false})
     voluntary_users?: number;
+
+    @Field(() => Int, {nullable:false})
+    activities?: number;
 }
