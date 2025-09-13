@@ -19,12 +19,6 @@ export class UserUncheckedCreateWithoutSubsidyRequestInput {
     id?: string;
 
     @Field(() => String, {nullable:false})
-    institution_id!: string;
-
-    @Field(() => String, {nullable:false})
-    church_id!: string;
-
-    @Field(() => String, {nullable:false})
     name!: string;
 
     @Field(() => String, {nullable:false})
@@ -35,9 +29,6 @@ export class UserUncheckedCreateWithoutSubsidyRequestInput {
 
     @Field(() => LanguagePreference, {nullable:false})
     language_preference!: `${LanguagePreference}`;
-
-    @Field(() => String, {nullable:true})
-    contact_id?: string;
 
     @Field(() => Date, {nullable:true})
     created_at?: Date | string;
@@ -59,6 +50,18 @@ export class UserUncheckedCreateWithoutSubsidyRequestInput {
 
     @Field(() => String, {nullable:true})
     deleted_by?: string;
+
+    @Field(() => String, {nullable:true})
+    contact_id?: string;
+
+    @Field(() => String, {nullable:false})
+    institution_id!: string;
+
+    @Field(() => String, {nullable:false})
+    church_id!: string;
+
+    @Field(() => String, {nullable:false})
+    department_id!: string;
 
     @Field(() => UserRoleUncheckedCreateNestedManyWithoutUserInput, {nullable:true})
     user_roles?: UserRoleUncheckedCreateNestedManyWithoutUserInput;

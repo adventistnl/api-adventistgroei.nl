@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../services/prisma.service';
 import { ChurchCreateDto, ChurchUpdateDto } from '../dto/church.dto';
 import { Church } from '@prisma/client';
+import { CustomGraphQLError, ErrorCode } from 'src/common/errors/custom-graphql-error';
 
 @Injectable()
 export class ChurchRepository {
@@ -77,9 +78,11 @@ export class ChurchRepository {
   }
 
   async findById(id: string): Promise<Church | null> {
-    return await this.prisma.church.findUnique({
+    const res = await this.prisma.church.findUnique({
       where: { id, is_deleted: false },
     });
+    if (!res) throw new CustomGraphQLError('Church not found', ErrorCode.NOT_FOUND, 404);
+    return res;
   }
 
   async findOneByFilters(filters: Partial<Record<keyof Church, any>>): Promise<Church | null> {

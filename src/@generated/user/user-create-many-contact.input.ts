@@ -9,12 +9,6 @@ export class UserCreateManyContactInput {
     id?: string;
 
     @Field(() => String, {nullable:false})
-    institution_id!: string;
-
-    @Field(() => String, {nullable:false})
-    church_id!: string;
-
-    @Field(() => String, {nullable:false})
     name!: string;
 
     @Field(() => String, {nullable:false})
@@ -46,4 +40,13 @@ export class UserCreateManyContactInput {
 
     @Field(() => String, {nullable:true})
     deleted_by?: string;
+
+    @Field(() => String, {nullable:false})
+    institution_id!: string;
+
+    @Field(() => String, {nullable:false})
+    church_id!: string;
+
+    @Field(() => String, {nullable:false})
+    department_id!: string;
 }

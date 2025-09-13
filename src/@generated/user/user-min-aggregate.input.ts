@@ -8,12 +8,6 @@ export class UserMinAggregateInput {
     id?: true;
 
     @Field(() => Boolean, {nullable:true})
-    institution_id?: true;
-
-    @Field(() => Boolean, {nullable:true})
-    church_id?: true;
-
-    @Field(() => Boolean, {nullable:true})
     name?: true;
 
     @Field(() => Boolean, {nullable:true})
@@ -24,9 +18,6 @@ export class UserMinAggregateInput {
 
     @Field(() => Boolean, {nullable:true})
     language_preference?: true;
-
-    @Field(() => Boolean, {nullable:true})
-    contact_id?: true;
 
     @Field(() => Boolean, {nullable:true})
     created_at?: true;
@@ -48,4 +39,16 @@ export class UserMinAggregateInput {
 
     @Field(() => Boolean, {nullable:true})
     deleted_by?: true;
+
+    @Field(() => Boolean, {nullable:true})
+    contact_id?: true;
+
+    @Field(() => Boolean, {nullable:true})
+    institution_id?: true;
+
+    @Field(() => Boolean, {nullable:true})
+    church_id?: true;
+
+    @Field(() => Boolean, {nullable:true})
+    department_id?: true;
 }

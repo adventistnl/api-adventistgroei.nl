@@ -9,6 +9,7 @@ import { SubsidyStatusUncheckedCreateNestedManyWithoutDepartmentInput } from '..
 import { ProjectUncheckedCreateNestedManyWithoutDepartmentInput } from '../project/project-unchecked-create-nested-many-without-department.input';
 import { AnnualReportUncheckedCreateNestedManyWithoutDepartmentInput } from '../annual-report/annual-report-unchecked-create-nested-many-without-department.input';
 import { SubsidyRequestUncheckedCreateNestedManyWithoutDepartmentInput } from '../subsidy-request/subsidy-request-unchecked-create-nested-many-without-department.input';
+import { UserUncheckedCreateNestedManyWithoutDepartmentInput } from '../user/user-unchecked-create-nested-many-without-department.input';
 
 @InputType()
 export class DepartmentUncheckedCreateInput {
@@ -72,4 +73,8 @@ export class DepartmentUncheckedCreateInput {
     @Field(() => SubsidyRequestUncheckedCreateNestedManyWithoutDepartmentInput, {nullable:true})
     @Type(() => SubsidyRequestUncheckedCreateNestedManyWithoutDepartmentInput)
     subsidy_requests?: SubsidyRequestUncheckedCreateNestedManyWithoutDepartmentInput;
+
+    @Field(() => UserUncheckedCreateNestedManyWithoutDepartmentInput, {nullable:true})
+    @Type(() => UserUncheckedCreateNestedManyWithoutDepartmentInput)
+    users?: UserUncheckedCreateNestedManyWithoutDepartmentInput;
 }

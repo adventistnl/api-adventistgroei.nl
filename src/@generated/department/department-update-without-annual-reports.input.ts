@@ -13,6 +13,7 @@ import { ContactUpdateOneWithoutDepartmentNestedInput } from '../contact/contact
 import { SubsidyStatusUpdateManyWithoutDepartmentNestedInput } from '../subsidy-status/subsidy-status-update-many-without-department-nested.input';
 import { ProjectUpdateManyWithoutDepartmentNestedInput } from '../project/project-update-many-without-department-nested.input';
 import { SubsidyRequestUpdateManyWithoutDepartmentNestedInput } from '../subsidy-request/subsidy-request-update-many-without-department-nested.input';
+import { UserUpdateManyWithoutDepartmentNestedInput } from '../user/user-update-many-without-department-nested.input';
 
 @InputType()
 export class DepartmentUpdateWithoutAnnual_reportsInput {
@@ -74,4 +75,8 @@ export class DepartmentUpdateWithoutAnnual_reportsInput {
     @Field(() => SubsidyRequestUpdateManyWithoutDepartmentNestedInput, {nullable:true})
     @Type(() => SubsidyRequestUpdateManyWithoutDepartmentNestedInput)
     subsidy_requests?: SubsidyRequestUpdateManyWithoutDepartmentNestedInput;
+
+    @Field(() => UserUpdateManyWithoutDepartmentNestedInput, {nullable:true})
+    @Type(() => UserUpdateManyWithoutDepartmentNestedInput)
+    users?: UserUpdateManyWithoutDepartmentNestedInput;
 }

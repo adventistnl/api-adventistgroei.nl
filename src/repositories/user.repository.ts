@@ -1,43 +1,58 @@
 import { Injectable } from '@nestjs/common';
+import * as bcrypt from 'bcryptjs';
+import { User } from '@prisma/client';
 import { PrismaService } from '../services/prisma.service';
 import { UserCreateDto, UserUpdateDto } from '../dto/user.dto';
-import { User } from '@prisma/client';
-import * as bcrypt from 'bcryptjs';
 import { UserWithRoles } from 'src/models';
 import { LanguagePreference } from '../@generated/prisma/language-preference.enum';
+import { DepartmentRepository } from './department.repository';
+import { InstitutionRepository } from './institution.repository';
+import { ChurchRepository } from './church.repository';
 
 @Injectable()
 export class UserRepository {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly departmentRepository: DepartmentRepository,
+    private readonly institutioRepository: InstitutionRepository,
+    private readonly churchRepository: ChurchRepository,
+    
+  ) {}
 
   async create(data: UserCreateDto): Promise<User> {
-    let contactId: string | null = null;
-    if (data.contact) {
-      const contact = await this.prisma.contact.create({
-        data: {
-          ...data.contact,
-          is_primary: true,
-          created_by: 'self',
-          updated_by: 'self',
-        },
-      });
-      contactId = contact.id;
-    }
-    // Hash da senha antes de salvar
-      const hashedPassword = await bcrypt.hash(data.password, 10);
-      const userData = {
-        name: data.name,
-        email: data.email,
-        password: hashedPassword,
-        language_preference: data.language_preference,
-        contact_id: contactId,
+    const { contact, church_id, department_id, institution_id, ...rest } = data;
+
+    // os métodos já estouram erros caso não encontrem
+    // Verificar se a institution existe
+    await this.institutioRepository.findById(institution_id);
+    // Verificar se a church existe
+    await this.churchRepository.findById(church_id);
+    // Verificar se o department existe
+    await this.departmentRepository.findById(department_id);
+    
+    const contactCreated = await this.prisma.contact.create({
+      data: {
+        ...contact,
+        email: rest.email,
+        is_primary: true,
         created_by: 'self',
         updated_by: 'self',
-        is_deleted: false,
-        church_id: data.church_id,
-        institution_id: data.institution_id,
-      };
-      return await this.prisma.user.create({ data: userData });
+      },
+    });
+    
+    // Hash da senha antes de salvar
+    const hashedPassword = await bcrypt.hash(data.password, 10);
+    const userData = {
+      ...rest,
+      church: { connect: { id: church_id } },
+      department: { connect: { id: department_id } },
+      institution: { connect: { id: institution_id } },
+      contact: { connect: { id: contactCreated.id } },
+      password: hashedPassword,
+      created_by: 'self',
+      updated_by: 'self',
+    };
+    return await this.prisma.user.create({ data: userData });
   }
 
   async update(data: UserUpdateDto, userId: string): Promise<User> {

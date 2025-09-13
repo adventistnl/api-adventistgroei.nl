@@ -15,6 +15,7 @@ import { SubsidyStatusListRelationFilter } from '../subsidy-status/subsidy-statu
 import { ProjectListRelationFilter } from '../project/project-list-relation-filter.input';
 import { AnnualReportListRelationFilter } from '../annual-report/annual-report-list-relation-filter.input';
 import { SubsidyRequestListRelationFilter } from '../subsidy-request/subsidy-request-list-relation-filter.input';
+import { UserListRelationFilter } from '../user/user-list-relation-filter.input';
 
 @InputType()
 export class DepartmentWhereUniqueInput {
@@ -101,4 +102,8 @@ export class DepartmentWhereUniqueInput {
     @Field(() => SubsidyRequestListRelationFilter, {nullable:true})
     @Type(() => SubsidyRequestListRelationFilter)
     subsidy_requests?: SubsidyRequestListRelationFilter;
+
+    @Field(() => UserListRelationFilter, {nullable:true})
+    @Type(() => UserListRelationFilter)
+    users?: UserListRelationFilter;
 }

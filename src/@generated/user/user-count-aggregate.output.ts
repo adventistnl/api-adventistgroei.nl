@@ -9,12 +9,6 @@ export class UserCountAggregate {
     id!: number;
 
     @Field(() => Int, {nullable:false})
-    institution_id!: number;
-
-    @Field(() => Int, {nullable:false})
-    church_id!: number;
-
-    @Field(() => Int, {nullable:false})
     name!: number;
 
     @Field(() => Int, {nullable:false})
@@ -25,9 +19,6 @@ export class UserCountAggregate {
 
     @Field(() => Int, {nullable:false})
     language_preference!: number;
-
-    @Field(() => Int, {nullable:false})
-    contact_id!: number;
 
     @Field(() => Int, {nullable:false})
     created_at!: number;
@@ -49,6 +40,18 @@ export class UserCountAggregate {
 
     @Field(() => Int, {nullable:false})
     deleted_by!: number;
+
+    @Field(() => Int, {nullable:false})
+    contact_id!: number;
+
+    @Field(() => Int, {nullable:false})
+    institution_id!: number;
+
+    @Field(() => Int, {nullable:false})
+    church_id!: number;
+
+    @Field(() => Int, {nullable:false})
+    department_id!: number;
 
     @Field(() => Int, {nullable:false})
     _all!: number;

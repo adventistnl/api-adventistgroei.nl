@@ -9,12 +9,6 @@ export class UserMaxOrderByAggregateInput {
     id?: `${SortOrder}`;
 
     @Field(() => SortOrder, {nullable:true})
-    institution_id?: `${SortOrder}`;
-
-    @Field(() => SortOrder, {nullable:true})
-    church_id?: `${SortOrder}`;
-
-    @Field(() => SortOrder, {nullable:true})
     name?: `${SortOrder}`;
 
     @Field(() => SortOrder, {nullable:true})
@@ -25,9 +19,6 @@ export class UserMaxOrderByAggregateInput {
 
     @Field(() => SortOrder, {nullable:true})
     language_preference?: `${SortOrder}`;
-
-    @Field(() => SortOrder, {nullable:true})
-    contact_id?: `${SortOrder}`;
 
     @Field(() => SortOrder, {nullable:true})
     created_at?: `${SortOrder}`;
@@ -49,4 +40,16 @@ export class UserMaxOrderByAggregateInput {
 
     @Field(() => SortOrder, {nullable:true})
     deleted_by?: `${SortOrder}`;
+
+    @Field(() => SortOrder, {nullable:true})
+    contact_id?: `${SortOrder}`;
+
+    @Field(() => SortOrder, {nullable:true})
+    institution_id?: `${SortOrder}`;
+
+    @Field(() => SortOrder, {nullable:true})
+    church_id?: `${SortOrder}`;
+
+    @Field(() => SortOrder, {nullable:true})
+    department_id?: `${SortOrder}`;
 }

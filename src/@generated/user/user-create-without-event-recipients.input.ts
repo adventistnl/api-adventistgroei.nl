@@ -1,10 +1,11 @@
 import { Field } from '@nestjs/graphql';
 import { InputType } from '@nestjs/graphql';
 import { LanguagePreference } from '../prisma/language-preference.enum';
-import { InstitutionCreateNestedOneWithoutUsersInput } from '../institution/institution-create-nested-one-without-users.input';
-import { Type } from 'class-transformer';
-import { ChurchCreateNestedOneWithoutUsersInput } from '../church/church-create-nested-one-without-users.input';
 import { ContactCreateNestedOneWithoutUserInput } from '../contact/contact-create-nested-one-without-user.input';
+import { Type } from 'class-transformer';
+import { InstitutionCreateNestedOneWithoutUsersInput } from '../institution/institution-create-nested-one-without-users.input';
+import { ChurchCreateNestedOneWithoutUsersInput } from '../church/church-create-nested-one-without-users.input';
+import { DepartmentCreateNestedOneWithoutUsersInput } from '../department/department-create-nested-one-without-users.input';
 import { UserRoleCreateNestedManyWithoutUserInput } from '../user-role/user-role-create-nested-many-without-user.input';
 import { DirectMessageCreateNestedManyWithoutSenderInput } from '../direct-message/direct-message-create-nested-many-without-sender.input';
 import { DirectMessageRecipientCreateNestedManyWithoutRecipient_userInput } from '../direct-message-recipient/direct-message-recipient-create-nested-many-without-recipient-user.input';
@@ -54,6 +55,10 @@ export class UserCreateWithoutEvent_recipientsInput {
     @Field(() => String, {nullable:true})
     deleted_by?: string;
 
+    @Field(() => ContactCreateNestedOneWithoutUserInput, {nullable:true})
+    @Type(() => ContactCreateNestedOneWithoutUserInput)
+    contact?: ContactCreateNestedOneWithoutUserInput;
+
     @Field(() => InstitutionCreateNestedOneWithoutUsersInput, {nullable:false})
     @Type(() => InstitutionCreateNestedOneWithoutUsersInput)
     institution!: InstitutionCreateNestedOneWithoutUsersInput;
@@ -62,9 +67,9 @@ export class UserCreateWithoutEvent_recipientsInput {
     @Type(() => ChurchCreateNestedOneWithoutUsersInput)
     church!: ChurchCreateNestedOneWithoutUsersInput;
 
-    @Field(() => ContactCreateNestedOneWithoutUserInput, {nullable:true})
-    @Type(() => ContactCreateNestedOneWithoutUserInput)
-    contact?: ContactCreateNestedOneWithoutUserInput;
+    @Field(() => DepartmentCreateNestedOneWithoutUsersInput, {nullable:false})
+    @Type(() => DepartmentCreateNestedOneWithoutUsersInput)
+    department!: DepartmentCreateNestedOneWithoutUsersInput;
 
     @Field(() => UserRoleCreateNestedManyWithoutUserInput, {nullable:true})
     user_roles?: UserRoleCreateNestedManyWithoutUserInput;

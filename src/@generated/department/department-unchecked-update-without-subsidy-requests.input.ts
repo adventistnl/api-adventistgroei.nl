@@ -10,6 +10,7 @@ import { NullableDateTimeFieldUpdateOperationsInput } from '../prisma/nullable-d
 import { SubsidyStatusUncheckedUpdateManyWithoutDepartmentNestedInput } from '../subsidy-status/subsidy-status-unchecked-update-many-without-department-nested.input';
 import { ProjectUncheckedUpdateManyWithoutDepartmentNestedInput } from '../project/project-unchecked-update-many-without-department-nested.input';
 import { AnnualReportUncheckedUpdateManyWithoutDepartmentNestedInput } from '../annual-report/annual-report-unchecked-update-many-without-department-nested.input';
+import { UserUncheckedUpdateManyWithoutDepartmentNestedInput } from '../user/user-unchecked-update-many-without-department-nested.input';
 
 @InputType()
 export class DepartmentUncheckedUpdateWithoutSubsidy_requestsInput {
@@ -68,4 +69,8 @@ export class DepartmentUncheckedUpdateWithoutSubsidy_requestsInput {
     @Field(() => AnnualReportUncheckedUpdateManyWithoutDepartmentNestedInput, {nullable:true})
     @Type(() => AnnualReportUncheckedUpdateManyWithoutDepartmentNestedInput)
     annual_reports?: AnnualReportUncheckedUpdateManyWithoutDepartmentNestedInput;
+
+    @Field(() => UserUncheckedUpdateManyWithoutDepartmentNestedInput, {nullable:true})
+    @Type(() => UserUncheckedUpdateManyWithoutDepartmentNestedInput)
+    users?: UserUncheckedUpdateManyWithoutDepartmentNestedInput;
 }

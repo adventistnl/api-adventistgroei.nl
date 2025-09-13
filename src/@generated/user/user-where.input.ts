@@ -2,14 +2,15 @@ import { Field } from '@nestjs/graphql';
 import { InputType } from '@nestjs/graphql';
 import { StringFilter } from '../prisma/string-filter.input';
 import { EnumLanguagePreferenceFilter } from '../prisma/enum-language-preference-filter.input';
-import { StringNullableFilter } from '../prisma/string-nullable-filter.input';
 import { DateTimeFilter } from '../prisma/date-time-filter.input';
 import { BoolFilter } from '../prisma/bool-filter.input';
 import { DateTimeNullableFilter } from '../prisma/date-time-nullable-filter.input';
-import { InstitutionScalarRelationFilter } from '../institution/institution-scalar-relation-filter.input';
-import { Type } from 'class-transformer';
-import { ChurchScalarRelationFilter } from '../church/church-scalar-relation-filter.input';
+import { StringNullableFilter } from '../prisma/string-nullable-filter.input';
 import { ContactNullableScalarRelationFilter } from '../contact/contact-nullable-scalar-relation-filter.input';
+import { Type } from 'class-transformer';
+import { InstitutionScalarRelationFilter } from '../institution/institution-scalar-relation-filter.input';
+import { ChurchScalarRelationFilter } from '../church/church-scalar-relation-filter.input';
+import { DepartmentScalarRelationFilter } from '../department/department-scalar-relation-filter.input';
 import { UserRoleListRelationFilter } from '../user-role/user-role-list-relation-filter.input';
 import { DirectMessageListRelationFilter } from '../direct-message/direct-message-list-relation-filter.input';
 import { DirectMessageRecipientListRelationFilter } from '../direct-message-recipient/direct-message-recipient-list-relation-filter.input';
@@ -37,12 +38,6 @@ export class UserWhereInput {
     id?: StringFilter;
 
     @Field(() => StringFilter, {nullable:true})
-    institution_id?: StringFilter;
-
-    @Field(() => StringFilter, {nullable:true})
-    church_id?: StringFilter;
-
-    @Field(() => StringFilter, {nullable:true})
     name?: StringFilter;
 
     @Field(() => StringFilter, {nullable:true})
@@ -53,9 +48,6 @@ export class UserWhereInput {
 
     @Field(() => EnumLanguagePreferenceFilter, {nullable:true})
     language_preference?: EnumLanguagePreferenceFilter;
-
-    @Field(() => StringNullableFilter, {nullable:true})
-    contact_id?: StringNullableFilter;
 
     @Field(() => DateTimeFilter, {nullable:true})
     created_at?: DateTimeFilter;
@@ -78,6 +70,22 @@ export class UserWhereInput {
     @Field(() => StringNullableFilter, {nullable:true})
     deleted_by?: StringNullableFilter;
 
+    @Field(() => StringNullableFilter, {nullable:true})
+    contact_id?: StringNullableFilter;
+
+    @Field(() => StringFilter, {nullable:true})
+    institution_id?: StringFilter;
+
+    @Field(() => StringFilter, {nullable:true})
+    church_id?: StringFilter;
+
+    @Field(() => StringFilter, {nullable:true})
+    department_id?: StringFilter;
+
+    @Field(() => ContactNullableScalarRelationFilter, {nullable:true})
+    @Type(() => ContactNullableScalarRelationFilter)
+    contact?: ContactNullableScalarRelationFilter;
+
     @Field(() => InstitutionScalarRelationFilter, {nullable:true})
     @Type(() => InstitutionScalarRelationFilter)
     institution?: InstitutionScalarRelationFilter;
@@ -86,9 +94,9 @@ export class UserWhereInput {
     @Type(() => ChurchScalarRelationFilter)
     church?: ChurchScalarRelationFilter;
 
-    @Field(() => ContactNullableScalarRelationFilter, {nullable:true})
-    @Type(() => ContactNullableScalarRelationFilter)
-    contact?: ContactNullableScalarRelationFilter;
+    @Field(() => DepartmentScalarRelationFilter, {nullable:true})
+    @Type(() => DepartmentScalarRelationFilter)
+    department?: DepartmentScalarRelationFilter;
 
     @Field(() => UserRoleListRelationFilter, {nullable:true})
     user_roles?: UserRoleListRelationFilter;

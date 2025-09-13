@@ -2,10 +2,10 @@ import { Field } from '@nestjs/graphql';
 import { InputType } from '@nestjs/graphql';
 import { StringFilter } from '../prisma/string-filter.input';
 import { EnumLanguagePreferenceFilter } from '../prisma/enum-language-preference-filter.input';
-import { StringNullableFilter } from '../prisma/string-nullable-filter.input';
 import { DateTimeFilter } from '../prisma/date-time-filter.input';
 import { BoolFilter } from '../prisma/bool-filter.input';
 import { DateTimeNullableFilter } from '../prisma/date-time-nullable-filter.input';
+import { StringNullableFilter } from '../prisma/string-nullable-filter.input';
 
 @InputType()
 export class UserScalarWhereInput {
@@ -23,12 +23,6 @@ export class UserScalarWhereInput {
     id?: StringFilter;
 
     @Field(() => StringFilter, {nullable:true})
-    institution_id?: StringFilter;
-
-    @Field(() => StringFilter, {nullable:true})
-    church_id?: StringFilter;
-
-    @Field(() => StringFilter, {nullable:true})
     name?: StringFilter;
 
     @Field(() => StringFilter, {nullable:true})
@@ -39,9 +33,6 @@ export class UserScalarWhereInput {
 
     @Field(() => EnumLanguagePreferenceFilter, {nullable:true})
     language_preference?: EnumLanguagePreferenceFilter;
-
-    @Field(() => StringNullableFilter, {nullable:true})
-    contact_id?: StringNullableFilter;
 
     @Field(() => DateTimeFilter, {nullable:true})
     created_at?: DateTimeFilter;
@@ -63,4 +54,16 @@ export class UserScalarWhereInput {
 
     @Field(() => StringNullableFilter, {nullable:true})
     deleted_by?: StringNullableFilter;
+
+    @Field(() => StringNullableFilter, {nullable:true})
+    contact_id?: StringNullableFilter;
+
+    @Field(() => StringFilter, {nullable:true})
+    institution_id?: StringFilter;
+
+    @Field(() => StringFilter, {nullable:true})
+    church_id?: StringFilter;
+
+    @Field(() => StringFilter, {nullable:true})
+    department_id?: StringFilter;
 }

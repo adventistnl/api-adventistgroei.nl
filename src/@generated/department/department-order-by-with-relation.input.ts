@@ -10,6 +10,7 @@ import { SubsidyStatusOrderByRelationAggregateInput } from '../subsidy-status/su
 import { ProjectOrderByRelationAggregateInput } from '../project/project-order-by-relation-aggregate.input';
 import { AnnualReportOrderByRelationAggregateInput } from '../annual-report/annual-report-order-by-relation-aggregate.input';
 import { SubsidyRequestOrderByRelationAggregateInput } from '../subsidy-request/subsidy-request-order-by-relation-aggregate.input';
+import { UserOrderByRelationAggregateInput } from '../user/user-order-by-relation-aggregate.input';
 
 @InputType()
 export class DepartmentOrderByWithRelationInput {
@@ -83,4 +84,8 @@ export class DepartmentOrderByWithRelationInput {
     @Field(() => SubsidyRequestOrderByRelationAggregateInput, {nullable:true})
     @Type(() => SubsidyRequestOrderByRelationAggregateInput)
     subsidy_requests?: SubsidyRequestOrderByRelationAggregateInput;
+
+    @Field(() => UserOrderByRelationAggregateInput, {nullable:true})
+    @Type(() => UserOrderByRelationAggregateInput)
+    users?: UserOrderByRelationAggregateInput;
 }

@@ -259,6 +259,7 @@ model Department {
   projects         Project[]
   annual_reports   AnnualReport[]
   subsidy_requests SubsidyRequest[]
+  users            User[]
 }
 
 model Contact {
@@ -292,16 +293,10 @@ model Contact {
 
 model User {
   id                        String                   @id @default(uuid())
-  institution_id            String
-  institution               Institution              @relation(fields: [institution_id], references: [id])
-  church_id                 String
-  church                    Church                   @relation(fields: [church_id], references: [id])
   name                      String
   email                     String                   @unique
   password                  String
   language_preference       LanguagePreference
-  contact_id                String?
-  contact                   Contact?                 @relation(fields: [contact_id], references: [id])
   created_at                DateTime                 @default(now())
   updated_at                DateTime                 @updatedAt
   created_by                String
@@ -309,6 +304,14 @@ model User {
   is_deleted                Boolean                  @default(false)
   deleted_at                DateTime?
   deleted_by                String?
+  contact_id                String?
+  contact                   Contact?                 @relation(fields: [contact_id], references: [id])
+  institution_id            String
+  institution               Institution              @relation(fields: [institution_id], references: [id])
+  church_id                 String
+  church                    Church                   @relation(fields: [church_id], references: [id])
+  department_id             String
+  department                Department               @relation(fields: [department_id], references: [id])
   user_roles                UserRole[]
   direct_messages           DirectMessage[]          @relation("SenderMessages")
   direct_message_recipients DirectMessageRecipient[] @relation("RecipientMessages")

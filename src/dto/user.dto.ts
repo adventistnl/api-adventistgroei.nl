@@ -5,22 +5,25 @@ import { ContactCreateDto } from './contact.dto';
 @InputType()
 export class UserCreateDto {
   @Field()
+  name: string;
+
+  @Field()
+  email: string;
+  
+  @Field()
+  password: string;
+  
+  @Field(() => LanguagePreference)
+  language_preference: LanguagePreference;
+
+  @Field()
   institution_id: string;
 
   @Field()
   church_id: string;
 
   @Field()
-  name: string;
-
-  @Field()
-  email: string;
-
-  @Field()
-  password: string;
-
-  @Field(() => LanguagePreference)
-  language_preference: LanguagePreference;
+  department_id: string;
 
   @Field(() => ContactCreateDto, { nullable: true })
   contact?: ContactCreateDto;

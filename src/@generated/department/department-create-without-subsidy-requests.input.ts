@@ -11,6 +11,7 @@ import { ContactCreateNestedOneWithoutDepartmentInput } from '../contact/contact
 import { SubsidyStatusCreateNestedManyWithoutDepartmentInput } from '../subsidy-status/subsidy-status-create-nested-many-without-department.input';
 import { ProjectCreateNestedManyWithoutDepartmentInput } from '../project/project-create-nested-many-without-department.input';
 import { AnnualReportCreateNestedManyWithoutDepartmentInput } from '../annual-report/annual-report-create-nested-many-without-department.input';
+import { UserCreateNestedManyWithoutDepartmentInput } from '../user/user-create-nested-many-without-department.input';
 
 @InputType()
 export class DepartmentCreateWithoutSubsidy_requestsInput {
@@ -73,4 +74,8 @@ export class DepartmentCreateWithoutSubsidy_requestsInput {
     @Field(() => AnnualReportCreateNestedManyWithoutDepartmentInput, {nullable:true})
     @Type(() => AnnualReportCreateNestedManyWithoutDepartmentInput)
     annual_reports?: AnnualReportCreateNestedManyWithoutDepartmentInput;
+
+    @Field(() => UserCreateNestedManyWithoutDepartmentInput, {nullable:true})
+    @Type(() => UserCreateNestedManyWithoutDepartmentInput)
+    users?: UserCreateNestedManyWithoutDepartmentInput;
 }

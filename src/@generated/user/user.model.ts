@@ -2,9 +2,10 @@ import { Field } from '@nestjs/graphql';
 import { ObjectType } from '@nestjs/graphql';
 import { ID } from '@nestjs/graphql';
 import { LanguagePreference } from '../prisma/language-preference.enum';
+import { Contact } from '../contact/contact.model';
 import { Institution } from '../institution/institution.model';
 import { Church } from '../church/church.model';
-import { Contact } from '../contact/contact.model';
+import { Department } from '../department/department.model';
 import { UserRole } from '../user-role/user-role.model';
 import { DirectMessage } from '../direct-message/direct-message.model';
 import { DirectMessageRecipient } from '../direct-message-recipient/direct-message-recipient.model';
@@ -24,12 +25,6 @@ export class User {
     id!: string;
 
     @Field(() => String, {nullable:false})
-    institution_id!: string;
-
-    @Field(() => String, {nullable:false})
-    church_id!: string;
-
-    @Field(() => String, {nullable:false})
     name!: string;
 
     @Field(() => String, {nullable:false})
@@ -40,9 +35,6 @@ export class User {
 
     @Field(() => LanguagePreference, {nullable:false})
     language_preference!: `${LanguagePreference}`;
-
-    @Field(() => String, {nullable:true})
-    contact_id!: string | null;
 
     @Field(() => Date, {nullable:false})
     created_at!: Date;
@@ -65,14 +57,29 @@ export class User {
     @Field(() => String, {nullable:true})
     deleted_by!: string | null;
 
+    @Field(() => String, {nullable:true})
+    contact_id!: string | null;
+
+    @Field(() => String, {nullable:false})
+    institution_id!: string;
+
+    @Field(() => String, {nullable:false})
+    church_id!: string;
+
+    @Field(() => String, {nullable:false})
+    department_id!: string;
+
+    @Field(() => Contact, {nullable:true})
+    contact?: Contact | null;
+
     @Field(() => Institution, {nullable:false})
     institution?: Institution;
 
     @Field(() => Church, {nullable:false})
     church?: Church;
 
-    @Field(() => Contact, {nullable:true})
-    contact?: Contact | null;
+    @Field(() => Department, {nullable:false})
+    department?: Department;
 
     @Field(() => [UserRole], {nullable:true})
     user_roles?: Array<UserRole>;

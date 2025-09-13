@@ -13,12 +13,6 @@ export class UserOrderByWithAggregationInput {
     id?: `${SortOrder}`;
 
     @Field(() => SortOrder, {nullable:true})
-    institution_id?: `${SortOrder}`;
-
-    @Field(() => SortOrder, {nullable:true})
-    church_id?: `${SortOrder}`;
-
-    @Field(() => SortOrder, {nullable:true})
     name?: `${SortOrder}`;
 
     @Field(() => SortOrder, {nullable:true})
@@ -29,9 +23,6 @@ export class UserOrderByWithAggregationInput {
 
     @Field(() => SortOrder, {nullable:true})
     language_preference?: `${SortOrder}`;
-
-    @Field(() => SortOrderInput, {nullable:true})
-    contact_id?: SortOrderInput;
 
     @Field(() => SortOrder, {nullable:true})
     created_at?: `${SortOrder}`;
@@ -53,6 +44,18 @@ export class UserOrderByWithAggregationInput {
 
     @Field(() => SortOrderInput, {nullable:true})
     deleted_by?: SortOrderInput;
+
+    @Field(() => SortOrderInput, {nullable:true})
+    contact_id?: SortOrderInput;
+
+    @Field(() => SortOrder, {nullable:true})
+    institution_id?: `${SortOrder}`;
+
+    @Field(() => SortOrder, {nullable:true})
+    church_id?: `${SortOrder}`;
+
+    @Field(() => SortOrder, {nullable:true})
+    department_id?: `${SortOrder}`;
 
     @Field(() => UserCountOrderByAggregateInput, {nullable:true})
     _count?: UserCountOrderByAggregateInput;

@@ -2,10 +2,11 @@ import { Field } from '@nestjs/graphql';
 import { InputType } from '@nestjs/graphql';
 import { SortOrder } from '../prisma/sort-order.enum';
 import { SortOrderInput } from '../prisma/sort-order.input';
-import { InstitutionOrderByWithRelationInput } from '../institution/institution-order-by-with-relation.input';
-import { Type } from 'class-transformer';
-import { ChurchOrderByWithRelationInput } from '../church/church-order-by-with-relation.input';
 import { ContactOrderByWithRelationInput } from '../contact/contact-order-by-with-relation.input';
+import { Type } from 'class-transformer';
+import { InstitutionOrderByWithRelationInput } from '../institution/institution-order-by-with-relation.input';
+import { ChurchOrderByWithRelationInput } from '../church/church-order-by-with-relation.input';
+import { DepartmentOrderByWithRelationInput } from '../department/department-order-by-with-relation.input';
 import { UserRoleOrderByRelationAggregateInput } from '../user-role/user-role-order-by-relation-aggregate.input';
 import { DirectMessageOrderByRelationAggregateInput } from '../direct-message/direct-message-order-by-relation-aggregate.input';
 import { DirectMessageRecipientOrderByRelationAggregateInput } from '../direct-message-recipient/direct-message-recipient-order-by-relation-aggregate.input';
@@ -24,12 +25,6 @@ export class UserOrderByWithRelationInput {
     id?: `${SortOrder}`;
 
     @Field(() => SortOrder, {nullable:true})
-    institution_id?: `${SortOrder}`;
-
-    @Field(() => SortOrder, {nullable:true})
-    church_id?: `${SortOrder}`;
-
-    @Field(() => SortOrder, {nullable:true})
     name?: `${SortOrder}`;
 
     @Field(() => SortOrder, {nullable:true})
@@ -40,9 +35,6 @@ export class UserOrderByWithRelationInput {
 
     @Field(() => SortOrder, {nullable:true})
     language_preference?: `${SortOrder}`;
-
-    @Field(() => SortOrderInput, {nullable:true})
-    contact_id?: SortOrderInput;
 
     @Field(() => SortOrder, {nullable:true})
     created_at?: `${SortOrder}`;
@@ -65,6 +57,22 @@ export class UserOrderByWithRelationInput {
     @Field(() => SortOrderInput, {nullable:true})
     deleted_by?: SortOrderInput;
 
+    @Field(() => SortOrderInput, {nullable:true})
+    contact_id?: SortOrderInput;
+
+    @Field(() => SortOrder, {nullable:true})
+    institution_id?: `${SortOrder}`;
+
+    @Field(() => SortOrder, {nullable:true})
+    church_id?: `${SortOrder}`;
+
+    @Field(() => SortOrder, {nullable:true})
+    department_id?: `${SortOrder}`;
+
+    @Field(() => ContactOrderByWithRelationInput, {nullable:true})
+    @Type(() => ContactOrderByWithRelationInput)
+    contact?: ContactOrderByWithRelationInput;
+
     @Field(() => InstitutionOrderByWithRelationInput, {nullable:true})
     @Type(() => InstitutionOrderByWithRelationInput)
     institution?: InstitutionOrderByWithRelationInput;
@@ -73,9 +81,9 @@ export class UserOrderByWithRelationInput {
     @Type(() => ChurchOrderByWithRelationInput)
     church?: ChurchOrderByWithRelationInput;
 
-    @Field(() => ContactOrderByWithRelationInput, {nullable:true})
-    @Type(() => ContactOrderByWithRelationInput)
-    contact?: ContactOrderByWithRelationInput;
+    @Field(() => DepartmentOrderByWithRelationInput, {nullable:true})
+    @Type(() => DepartmentOrderByWithRelationInput)
+    department?: DepartmentOrderByWithRelationInput;
 
     @Field(() => UserRoleOrderByRelationAggregateInput, {nullable:true})
     user_roles?: UserRoleOrderByRelationAggregateInput;

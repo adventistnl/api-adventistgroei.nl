@@ -8,6 +8,7 @@ import { Type } from 'class-transformer';
 import { SubsidyStatusUncheckedCreateNestedManyWithoutDepartmentInput } from '../subsidy-status/subsidy-status-unchecked-create-nested-many-without-department.input';
 import { ProjectUncheckedCreateNestedManyWithoutDepartmentInput } from '../project/project-unchecked-create-nested-many-without-department.input';
 import { AnnualReportUncheckedCreateNestedManyWithoutDepartmentInput } from '../annual-report/annual-report-unchecked-create-nested-many-without-department.input';
+import { UserUncheckedCreateNestedManyWithoutDepartmentInput } from '../user/user-unchecked-create-nested-many-without-department.input';
 
 @InputType()
 export class DepartmentUncheckedCreateWithoutSubsidy_requestsInput {
@@ -67,4 +68,8 @@ export class DepartmentUncheckedCreateWithoutSubsidy_requestsInput {
     @Field(() => AnnualReportUncheckedCreateNestedManyWithoutDepartmentInput, {nullable:true})
     @Type(() => AnnualReportUncheckedCreateNestedManyWithoutDepartmentInput)
     annual_reports?: AnnualReportUncheckedCreateNestedManyWithoutDepartmentInput;
+
+    @Field(() => UserUncheckedCreateNestedManyWithoutDepartmentInput, {nullable:true})
+    @Type(() => UserUncheckedCreateNestedManyWithoutDepartmentInput)
+    users?: UserUncheckedCreateNestedManyWithoutDepartmentInput;
 }

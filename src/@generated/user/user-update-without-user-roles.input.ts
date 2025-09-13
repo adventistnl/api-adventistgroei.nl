@@ -6,10 +6,11 @@ import { DateTimeFieldUpdateOperationsInput } from '../prisma/date-time-field-up
 import { BoolFieldUpdateOperationsInput } from '../prisma/bool-field-update-operations.input';
 import { NullableDateTimeFieldUpdateOperationsInput } from '../prisma/nullable-date-time-field-update-operations.input';
 import { NullableStringFieldUpdateOperationsInput } from '../prisma/nullable-string-field-update-operations.input';
-import { InstitutionUpdateOneRequiredWithoutUsersNestedInput } from '../institution/institution-update-one-required-without-users-nested.input';
-import { Type } from 'class-transformer';
-import { ChurchUpdateOneRequiredWithoutUsersNestedInput } from '../church/church-update-one-required-without-users-nested.input';
 import { ContactUpdateOneWithoutUserNestedInput } from '../contact/contact-update-one-without-user-nested.input';
+import { Type } from 'class-transformer';
+import { InstitutionUpdateOneRequiredWithoutUsersNestedInput } from '../institution/institution-update-one-required-without-users-nested.input';
+import { ChurchUpdateOneRequiredWithoutUsersNestedInput } from '../church/church-update-one-required-without-users-nested.input';
+import { DepartmentUpdateOneRequiredWithoutUsersNestedInput } from '../department/department-update-one-required-without-users-nested.input';
 import { DirectMessageUpdateManyWithoutSenderNestedInput } from '../direct-message/direct-message-update-many-without-sender-nested.input';
 import { DirectMessageRecipientUpdateManyWithoutRecipient_userNestedInput } from '../direct-message-recipient/direct-message-recipient-update-many-without-recipient-user-nested.input';
 import { NotificationUpdateManyWithoutUserNestedInput } from '../notification/notification-update-many-without-user-nested.input';
@@ -59,6 +60,10 @@ export class UserUpdateWithoutUser_rolesInput {
     @Field(() => NullableStringFieldUpdateOperationsInput, {nullable:true})
     deleted_by?: NullableStringFieldUpdateOperationsInput;
 
+    @Field(() => ContactUpdateOneWithoutUserNestedInput, {nullable:true})
+    @Type(() => ContactUpdateOneWithoutUserNestedInput)
+    contact?: ContactUpdateOneWithoutUserNestedInput;
+
     @Field(() => InstitutionUpdateOneRequiredWithoutUsersNestedInput, {nullable:true})
     @Type(() => InstitutionUpdateOneRequiredWithoutUsersNestedInput)
     institution?: InstitutionUpdateOneRequiredWithoutUsersNestedInput;
@@ -67,9 +72,9 @@ export class UserUpdateWithoutUser_rolesInput {
     @Type(() => ChurchUpdateOneRequiredWithoutUsersNestedInput)
     church?: ChurchUpdateOneRequiredWithoutUsersNestedInput;
 
-    @Field(() => ContactUpdateOneWithoutUserNestedInput, {nullable:true})
-    @Type(() => ContactUpdateOneWithoutUserNestedInput)
-    contact?: ContactUpdateOneWithoutUserNestedInput;
+    @Field(() => DepartmentUpdateOneRequiredWithoutUsersNestedInput, {nullable:true})
+    @Type(() => DepartmentUpdateOneRequiredWithoutUsersNestedInput)
+    department?: DepartmentUpdateOneRequiredWithoutUsersNestedInput;
 
     @Field(() => DirectMessageUpdateManyWithoutSenderNestedInput, {nullable:true})
     direct_messages?: DirectMessageUpdateManyWithoutSenderNestedInput;

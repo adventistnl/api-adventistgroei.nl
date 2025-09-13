@@ -9,12 +9,6 @@ export class UserMaxAggregate {
     id?: string;
 
     @Field(() => String, {nullable:true})
-    institution_id?: string;
-
-    @Field(() => String, {nullable:true})
-    church_id?: string;
-
-    @Field(() => String, {nullable:true})
     name?: string;
 
     @Field(() => String, {nullable:true})
@@ -25,9 +19,6 @@ export class UserMaxAggregate {
 
     @Field(() => LanguagePreference, {nullable:true})
     language_preference?: `${LanguagePreference}`;
-
-    @Field(() => String, {nullable:true})
-    contact_id?: string;
 
     @Field(() => Date, {nullable:true})
     created_at?: Date | string;
@@ -49,4 +40,16 @@ export class UserMaxAggregate {
 
     @Field(() => String, {nullable:true})
     deleted_by?: string;
+
+    @Field(() => String, {nullable:true})
+    contact_id?: string;
+
+    @Field(() => String, {nullable:true})
+    institution_id?: string;
+
+    @Field(() => String, {nullable:true})
+    church_id?: string;
+
+    @Field(() => String, {nullable:true})
+    department_id?: string;
 }

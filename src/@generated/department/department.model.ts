@@ -10,6 +10,7 @@ import { SubsidyStatus } from '../subsidy-status/subsidy-status.model';
 import { Project } from '../project/project.model';
 import { AnnualReport } from '../annual-report/annual-report.model';
 import { SubsidyRequest } from '../subsidy-request/subsidy-request.model';
+import { User } from '../user/user.model';
 import { DepartmentCount } from './department-count.output';
 
 @ObjectType()
@@ -77,6 +78,9 @@ export class Department {
 
     @Field(() => [SubsidyRequest], {nullable:true})
     subsidy_requests?: Array<SubsidyRequest>;
+
+    @Field(() => [User], {nullable:true})
+    users?: Array<User>;
 
     @Field(() => DepartmentCount, {nullable:false})
     _count?: DepartmentCount;
