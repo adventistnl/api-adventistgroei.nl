@@ -45,11 +45,11 @@ const permissions = [
   { name: 'createDirectMessage', description: 'Create a direct message', resolver_name: 'createDirectMessage' as PermissionResolverName, group: 'DIRECT_MESSAGE' as PermissionGroup, key_code: 'DIRECT_MESSAGE_CREATE' },
   { name: 'updateDirectMessage', description: 'Update a direct message', resolver_name: 'updateDirectMessage' as PermissionResolverName, group: 'DIRECT_MESSAGE' as PermissionGroup, key_code: 'DIRECT_MESSAGE_UPDATE' },
   { name: 'deleteDirectMessage', description: 'Delete a direct message', resolver_name: 'deleteDirectMessage' as PermissionResolverName, group: 'DIRECT_MESSAGE' as PermissionGroup, key_code: 'DIRECT_MESSAGE_DELETE' },
-  { name: 'projects', description: 'Access to mission projects', resolver_name: 'projects' as PermissionResolverName, group: 'MISSION_PROJECT' as PermissionGroup, key_code: 'projects_ACCESS' },
-  { name: 'project', description: 'Access to a single mission project', resolver_name: 'project' as PermissionResolverName, group: 'MISSION_PROJECT' as PermissionGroup, key_code: 'MISSION_PROJECT_ACCESS' },
-  { name: 'createProject', description: 'Create a mission project', resolver_name: 'createProject' as PermissionResolverName, group: 'MISSION_PROJECT' as PermissionGroup, key_code: 'MISSION_PROJECT_CREATE' },
-  { name: 'updateProject', description: 'Update a mission project', resolver_name: 'updateProject' as PermissionResolverName, group: 'MISSION_PROJECT' as PermissionGroup, key_code: 'MISSION_PROJECT_UPDATE' },
-  { name: 'deleteProject', description: 'Delete a mission project', resolver_name: 'deleteProject' as PermissionResolverName, group: 'MISSION_PROJECT' as PermissionGroup, key_code: 'MISSION_PROJECT_DELETE' },
+  { name: 'projects', description: 'Access to mission projects', resolver_name: 'projects' as PermissionResolverName, group: 'PROJECT' as PermissionGroup, key_code: 'PROJECTS_ACCESS' },
+  { name: 'project', description: 'Access to a single mission project', resolver_name: 'project' as PermissionResolverName, group: 'PROJECT' as PermissionGroup, key_code: 'PROJECT_ACCESS' },
+  { name: 'createProject', description: 'Create a mission project', resolver_name: 'createProject' as PermissionResolverName, group: 'PROJECT' as PermissionGroup, key_code: 'PROJECT_CREATE' },
+  { name: 'updateProject', description: 'Update a mission project', resolver_name: 'updateProject' as PermissionResolverName, group: 'PROJECT' as PermissionGroup, key_code: 'PROJECT_UPDATE' },
+  { name: 'deleteProject', description: 'Delete a mission project', resolver_name: 'deleteProject' as PermissionResolverName, group: 'PROJECT' as PermissionGroup, key_code: 'PROJECT_DELETE' },
   { name: 'notifications', description: 'Access to notifications', resolver_name: 'notifications' as PermissionResolverName, group: 'NOTIFICATION' as PermissionGroup, key_code: 'NOTIFICATIONS_ACCESS' },
   { name: 'notification', description: 'Access to a single notification', resolver_name: 'notification' as PermissionResolverName, group: 'NOTIFICATION' as PermissionGroup, key_code: 'NOTIFICATION_ACCESS' },
   { name: 'createNotification', description: 'Create a notification', resolver_name: 'createNotification' as PermissionResolverName, group: 'NOTIFICATION' as PermissionGroup, key_code: 'NOTIFICATION_CREATE' },
@@ -70,8 +70,14 @@ const permissions = [
   { name: 'createSubsidyStatus', description: 'Create a subsidy status', resolver_name: 'createSubsidyStatus' as PermissionResolverName, group: 'SUBSIDY_STATUS' as PermissionGroup, key_code: 'SUBSIDY_STATUS_CREATE' },
   { name: 'updateSubsidyStatus', description: 'Update a subsidy status', resolver_name: 'updateSubsidyStatus' as PermissionResolverName, group: 'SUBSIDY_STATUS' as PermissionGroup, key_code: 'SUBSIDY_STATUS_UPDATE' },
   { name: 'deleteSubsidyStatus', description: 'Delete a subsidy status', resolver_name: 'deleteSubsidyStatus' as PermissionResolverName, group: 'SUBSIDY_STATUS' as PermissionGroup, key_code: 'SUBSIDY_STATUS_DELETE' },
-  { name: 'addProjectVoluntary', description: 'Adicionar voluntário ao projeto', resolver_name: 'addProjectVoluntary' as PermissionResolverName, group: 'MISSION_PROJECT' as PermissionGroup, key_code: 'PROJECT_VOLUNTARY_ADD' },
-  { name: 'removeProjectVoluntary', description: 'Remover voluntário do projeto', resolver_name: 'removeProjectVoluntary' as PermissionResolverName, group: 'MISSION_PROJECT' as PermissionGroup, key_code: 'PROJECT_VOLUNTARY_REMOVE' },
+  { name: 'addProjectVoluntary', description: 'Adicionar voluntário ao projeto', resolver_name: 'addProjectVoluntary' as PermissionResolverName, group: 'PROJECT' as PermissionGroup, key_code: 'PROJECT_VOLUNTARY_ADD' },
+  { name: 'removeProjectVoluntary', description: 'Remover voluntário do projeto', resolver_name: 'removeProjectVoluntary' as PermissionResolverName, group: 'PROJECT' as PermissionGroup, key_code: 'PROJECT_VOLUNTARY_REMOVE' },
+  { name: 'projectActivities', description: 'Access to project activities list', resolver_name: 'projectActivities' as PermissionResolverName, group: 'ACTIVITY' as PermissionGroup, key_code: 'PROJECT_ACTIVITIES_ACCESS' },
+  { name: 'projectActivity', description: 'Access to a single project activity', resolver_name: 'projectActivity' as PermissionResolverName, group: 'ACTIVITY' as PermissionGroup, key_code: 'ACTIVITY_ACCESS' },
+  { name: 'createProjectActivity', description: 'Create a project activity', resolver_name: 'createProjectActivity' as PermissionResolverName, group: 'ACTIVITY' as PermissionGroup, key_code: 'ACTIVITY_CREATE' },
+  { name: 'updateProjectActivity', description: 'Update a project activity', resolver_name: 'updateProjectActivity' as PermissionResolverName, group: 'ACTIVITY' as PermissionGroup, key_code: 'ACTIVITY_UPDATE' },
+  { name: 'deleteProjectActivity', description: 'Delete a project activity', resolver_name: 'deleteProjectActivity' as PermissionResolverName, group: 'ACTIVITY' as PermissionGroup, key_code: 'ACTIVITY_DELETE' },
+  
 ];
 
 async function main() {

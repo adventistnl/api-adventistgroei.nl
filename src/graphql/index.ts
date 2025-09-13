@@ -15,3 +15,4 @@ export * from './subsidy-request.resolver';
 export * from './contact.resolver';
 export * from './subsidy-status.resolver';
 export * from './project-voluntary.resolver';
+export * from './project-activity.resolver';

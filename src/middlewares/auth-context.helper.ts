@@ -1,4 +1,5 @@
 import * as jwt from 'jsonwebtoken';
+import { CustomGraphQLError, ErrorCode } from 'src/common/errors/custom-graphql-error';
 
 export function getUserIdFromRequest(req: { headers: Record<string, string> }): string | null {
   const JWT_SECRET = process.env.JWT_SECRET;
@@ -11,7 +12,7 @@ export function getUserIdFromRequest(req: { headers: Record<string, string> }): 
       return decoded.sub ?? null;
     } catch {
       console.error('Failed to verify token', token);
-      return null;
+      throw new CustomGraphQLError('Failed to verify token', ErrorCode.UNAUTHORIZED, 401);
     }
   }
   return null;

@@ -3,20 +3,39 @@ import { PrismaService } from '../services/prisma.service';
 import { SubsidyRequest } from '../@generated/subsidy-request/subsidy-request.model';
 import { SubsidyRequestCreateDto, SubsidyRequestUpdateDto } from '../dto/subsidy-request.dto';
 import { CustomGraphQLError, ErrorCode } from 'src/common/errors/custom-graphql-error';
+import { ProjectActivityRepository } from './project-activity.repository';
 
 @Injectable()
 export class SubsidyRequestRepository {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly projectActivityRespository: ProjectActivityRepository,
+    
+  ) {}
 
   async create(data: SubsidyRequestCreateDto, userId: string): Promise<SubsidyRequest> {
+    console.log(data)
     const { institution_id, requester_id, department_id, church_id, project_activities, subsidy_status_id, project_id, ...rest } = data;
+    console.log("subsidy_status_id", subsidy_status_id)
 
-    const subsidyStatus = await this.prisma.subsidyStatus.findUnique({
+    if (project_activities.length === 0) {
+      throw new CustomGraphQLError('At least one ProjectActivity must be associated with the SubsidyRequest.', ErrorCode.BAD_REQUEST, 400);
+    }
+
+    const subsidyStatus = await this.prisma.subsidyStatus.findFirst({
       where: { id: subsidy_status_id, is_deleted: false },
     });
 
     if (!subsidyStatus) {
       throw new CustomGraphQLError(`SubsidyStatus with id ${subsidy_status_id} does not exist or has been deleted.`, ErrorCode.NOT_FOUND, 404);
+    }
+
+    const projectActivities = await this.projectActivityRespository.findManyByFilters({
+      id: { in: project_activities },
+      is_deleted: false,
+    });
+    if (projectActivities.length !== project_activities.length) {
+      throw new CustomGraphQLError(`One or more ProjectActivities do not exist or have been deleted.`, ErrorCode.NOT_FOUND, 404);
     }
 
     const subsidyRequest = await this.prisma.subsidyRequest.create({

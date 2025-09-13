@@ -69,7 +69,12 @@ export enum PermissionResolverName {
     updateSubsidyStatus = "updateSubsidyStatus",
     deleteSubsidyStatus = "deleteSubsidyStatus",
     addProjectVoluntary = "addProjectVoluntary",
-    removeProjectVoluntary = "removeProjectVoluntary"
+    removeProjectVoluntary = "removeProjectVoluntary",
+    projectActivities = "projectActivities",
+    projectActivity = "projectActivity",
+    createProjectActivity = "createProjectActivity",
+    updateProjectActivity = "updateProjectActivity",
+    deleteProjectActivity = "deleteProjectActivity"
 }
 
 

@@ -25,7 +25,8 @@
     "prisma:generate": "prisma generate",
     "prisma:studio": "prisma studio",
     "seed:permissions": "ts-node -r tsconfig-paths/register src/scripts/seed-permissions.ts",
-    "seed:developer": "ts-node -r tsconfig-paths/register src/scripts/seed-developer-role.ts"
+    "seed:developer": "ts-node -r tsconfig-paths/register src/scripts/seed-developer-role.ts",
+    "seed:all": "npm run seed:permissions && npm run seed:developer"
   },
   "dependencies": {
     "@nestjs/apollo": "^13.1.0",

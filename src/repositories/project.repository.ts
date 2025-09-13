@@ -16,6 +16,8 @@ export class ProjectRepository {
   ) {}
 
   async create(data: ProjectCreateDto, userId: string): Promise<Project> {
+    console.log(userId)
+    console.log(data)
     await this.institutionRepository.findById(data.institution_id);
     await this.departmentRepository.findById(data.department_id);
 

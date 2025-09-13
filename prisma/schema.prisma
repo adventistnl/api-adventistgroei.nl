@@ -115,6 +115,11 @@ enum PermissionResolverName {
   deleteSubsidyStatus
   addProjectVoluntary
   removeProjectVoluntary
+  projectActivities
+  projectActivity
+  createProjectActivity
+  updateProjectActivity
+  deleteProjectActivity
 }
 
 enum PermissionGroup {
@@ -128,7 +133,8 @@ enum PermissionGroup {
   DEPARTMENT
   COMMUNICATION
   DIRECT_MESSAGE
-  MISSION_PROJECT
+  PROJECT
+  ACTIVITY
   NOTIFICATION
   SETTING
   SUBSIDY_REQUEST

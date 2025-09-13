@@ -14,3 +14,4 @@ export * from './direct-message.repository';
 export * from './contact.repository';
 export * from './subsidy-status.repository';
 export * from './project-voluntary.repository';
+export * from './project-activity.repository';
