@@ -10,6 +10,7 @@ import { ProjectType } from '../prisma/project-type.enum';
 import { InstitutionCreateNestedOneWithoutProjectsInput } from '../institution/institution-create-nested-one-without-projects.input';
 import { VoluntariesOnProjectsCreateNestedManyWithoutProjectInput } from '../voluntaries-on-projects/voluntaries-on-projects-create-nested-many-without-project.input';
 import { ProjectActivityCreateNestedManyWithoutProjectInput } from '../project-activity/project-activity-create-nested-many-without-project.input';
+import { SubsidyRequestCreateNestedManyWithoutProjectInput } from '../subsidy-request/subsidy-request-create-nested-many-without-project.input';
 
 @InputType()
 export class ProjectCreateWithoutDepartmentInput {
@@ -69,4 +70,8 @@ export class ProjectCreateWithoutDepartmentInput {
     @Field(() => ProjectActivityCreateNestedManyWithoutProjectInput, {nullable:true})
     @Type(() => ProjectActivityCreateNestedManyWithoutProjectInput)
     activities?: ProjectActivityCreateNestedManyWithoutProjectInput;
+
+    @Field(() => SubsidyRequestCreateNestedManyWithoutProjectInput, {nullable:true})
+    @Type(() => SubsidyRequestCreateNestedManyWithoutProjectInput)
+    subsidies?: SubsidyRequestCreateNestedManyWithoutProjectInput;
 }

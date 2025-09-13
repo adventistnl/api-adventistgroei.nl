@@ -2,7 +2,6 @@ import { registerEnumType } from '@nestjs/graphql';
 
 export enum ProjectActivityScalarFieldEnum {
     id = "id",
-    subsidy_request_id = "subsidy_request_id",
     project_id = "project_id",
     name = "name",
     description = "description",

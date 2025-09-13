@@ -15,9 +15,6 @@ export class ProjectActivity {
     id!: string;
 
     @Field(() => String, {nullable:false})
-    subsidy_request_id!: string;
-
-    @Field(() => String, {nullable:false})
     project_id!: string;
 
     @Field(() => String, {nullable:false})
@@ -50,8 +47,8 @@ export class ProjectActivity {
     @Field(() => String, {nullable:true})
     deleted_by!: string | null;
 
-    @Field(() => SubsidyRequest, {nullable:false})
-    subsidy_request?: SubsidyRequest;
+    @Field(() => [SubsidyRequest], {nullable:true})
+    subsidy_request?: Array<SubsidyRequest>;
 
     @Field(() => Project, {nullable:false})
     project?: Project;

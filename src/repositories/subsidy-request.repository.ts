@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../services/prisma.service';
 import { SubsidyRequest } from '../@generated/subsidy-request/subsidy-request.model';
 import { SubsidyRequestCreateDto, SubsidyRequestUpdateDto } from '../dto/subsidy-request.dto';
-import { ProjectActivityInput } from '../dto/subsidy-request.dto';
 import { CustomGraphQLError, ErrorCode } from 'src/common/errors/custom-graphql-error';
 
 @Injectable()
@@ -23,9 +22,13 @@ export class SubsidyRequestRepository {
     const subsidyRequest = await this.prisma.subsidyRequest.create({
       data: {
         ...rest,
+        project: { connect: { id: project_id } },
         institution: { connect: { id: institution_id } },
         requester: { connect: { id: requester_id } },
         department: { connect: { id: department_id } },
+        project_activities: {
+          connect: project_activities.map((id: string) => ({ id })),
+        },
         church: { connect: { id: church_id } },
         subsidy_status: { connect: { id: subsidy_status_id } },
         created_by: userId,
@@ -33,23 +36,6 @@ export class SubsidyRequestRepository {
         is_deleted: false,
       },
     });
-
-    await Promise.all(
-      project_activities.map(async (activityData: ProjectActivityInput) => {
-         
-        const { ...activityDataWithoutRequestId } = activityData;
-        await this.prisma.projectActivity.create({
-          data: {
-            ...activityDataWithoutRequestId,
-            created_by: userId,
-            updated_by: userId,
-            subsidy_request: { connect: { id: subsidyRequest.id } },
-            subsidy_receipts: { create: [] },
-            project: { connect: { id: project_id } },
-          },
-        });
-      })
-    );
 
     return subsidyRequest;
   }

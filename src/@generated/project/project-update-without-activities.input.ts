@@ -12,6 +12,7 @@ import { NullableStringFieldUpdateOperationsInput } from '../prisma/nullable-str
 import { DepartmentUpdateOneRequiredWithoutProjectsNestedInput } from '../department/department-update-one-required-without-projects-nested.input';
 import { InstitutionUpdateOneWithoutProjectsNestedInput } from '../institution/institution-update-one-without-projects-nested.input';
 import { VoluntariesOnProjectsUpdateManyWithoutProjectNestedInput } from '../voluntaries-on-projects/voluntaries-on-projects-update-many-without-project-nested.input';
+import { SubsidyRequestUpdateManyWithoutProjectNestedInput } from '../subsidy-request/subsidy-request-update-many-without-project-nested.input';
 
 @InputType()
 export class ProjectUpdateWithoutActivitiesInput {
@@ -70,4 +71,8 @@ export class ProjectUpdateWithoutActivitiesInput {
     @Field(() => VoluntariesOnProjectsUpdateManyWithoutProjectNestedInput, {nullable:true})
     @Type(() => VoluntariesOnProjectsUpdateManyWithoutProjectNestedInput)
     voluntary_users?: VoluntariesOnProjectsUpdateManyWithoutProjectNestedInput;
+
+    @Field(() => SubsidyRequestUpdateManyWithoutProjectNestedInput, {nullable:true})
+    @Type(() => SubsidyRequestUpdateManyWithoutProjectNestedInput)
+    subsidies?: SubsidyRequestUpdateManyWithoutProjectNestedInput;
 }

@@ -4,7 +4,6 @@ import { ProjectActivityCreateWithoutSubsidy_requestInput } from './project-acti
 import { Type } from 'class-transformer';
 import { ProjectActivityCreateOrConnectWithoutSubsidy_requestInput } from './project-activity-create-or-connect-without-subsidy-request.input';
 import { ProjectActivityUpsertWithWhereUniqueWithoutSubsidy_requestInput } from './project-activity-upsert-with-where-unique-without-subsidy-request.input';
-import { ProjectActivityCreateManySubsidy_requestInputEnvelope } from './project-activity-create-many-subsidy-request-input-envelope.input';
 import { Prisma } from '@prisma/client';
 import { ProjectActivityWhereUniqueInput } from './project-activity-where-unique.input';
 import { ProjectActivityUpdateWithWhereUniqueWithoutSubsidy_requestInput } from './project-activity-update-with-where-unique-without-subsidy-request.input';
@@ -25,10 +24,6 @@ export class ProjectActivityUncheckedUpdateManyWithoutSubsidy_requestNestedInput
     @Field(() => [ProjectActivityUpsertWithWhereUniqueWithoutSubsidy_requestInput], {nullable:true})
     @Type(() => ProjectActivityUpsertWithWhereUniqueWithoutSubsidy_requestInput)
     upsert?: Array<ProjectActivityUpsertWithWhereUniqueWithoutSubsidy_requestInput>;
-
-    @Field(() => ProjectActivityCreateManySubsidy_requestInputEnvelope, {nullable:true})
-    @Type(() => ProjectActivityCreateManySubsidy_requestInputEnvelope)
-    createMany?: ProjectActivityCreateManySubsidy_requestInputEnvelope;
 
     @Field(() => [ProjectActivityWhereUniqueInput], {nullable:true})
     @Type(() => ProjectActivityWhereUniqueInput)

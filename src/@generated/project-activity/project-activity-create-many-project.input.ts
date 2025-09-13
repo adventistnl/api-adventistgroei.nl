@@ -13,9 +13,6 @@ export class ProjectActivityCreateManyProjectInput {
     id?: string;
 
     @Field(() => String, {nullable:false})
-    subsidy_request_id!: string;
-
-    @Field(() => String, {nullable:false})
     name!: string;
 
     @Field(() => String, {nullable:false})

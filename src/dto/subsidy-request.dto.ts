@@ -2,22 +2,6 @@ import { InputType, Field, Float } from '@nestjs/graphql';
 import { IsOptional, IsString, IsNumber } from 'class-validator';
 
 @InputType()
-@InputType()
-export class ProjectActivityInput {
-  @Field()
-  @IsString()
-  name: string;
-
-  @Field(() => Float)
-  @IsNumber()
-  budget_amount: number;
-
-  @Field({ nullable: true })
-  @IsString()
-  description: string;
-}
-
-@InputType()
 export class SubsidyRequestCreateDto {
   @Field()
   @IsString()
@@ -47,8 +31,8 @@ export class SubsidyRequestCreateDto {
   @IsString() 
   subsidy_status_id: string;
 
-  @Field(() => [ProjectActivityInput])
-  project_activities: ProjectActivityInput[];
+  @Field(() => [String])
+  project_activities: string[];
 
   @Field()
   @IsString()

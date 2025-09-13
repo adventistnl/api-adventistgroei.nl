@@ -9,6 +9,7 @@ import { DepartmentOrderByWithRelationInput } from '../department/department-ord
 import { ChurchOrderByWithRelationInput } from '../church/church-order-by-with-relation.input';
 import { SubsidyStatusOrderByWithRelationInput } from '../subsidy-status/subsidy-status-order-by-with-relation.input';
 import { ProjectActivityOrderByRelationAggregateInput } from '../project-activity/project-activity-order-by-relation-aggregate.input';
+import { ProjectOrderByWithRelationInput } from '../project/project-order-by-with-relation.input';
 
 @InputType()
 export class SubsidyRequestOrderByWithRelationInput {
@@ -17,25 +18,10 @@ export class SubsidyRequestOrderByWithRelationInput {
     id?: `${SortOrder}`;
 
     @Field(() => SortOrder, {nullable:true})
-    institution_id?: `${SortOrder}`;
-
-    @Field(() => SortOrder, {nullable:true})
-    requester_id?: `${SortOrder}`;
-
-    @Field(() => SortOrder, {nullable:true})
-    department_project_id?: `${SortOrder}`;
-
-    @Field(() => SortOrder, {nullable:true})
-    church_id?: `${SortOrder}`;
-
-    @Field(() => SortOrder, {nullable:true})
     description?: `${SortOrder}`;
 
     @Field(() => SortOrder, {nullable:true})
     total_budget?: `${SortOrder}`;
-
-    @Field(() => SortOrder, {nullable:true})
-    subsidy_statuses_id?: `${SortOrder}`;
 
     @Field(() => SortOrder, {nullable:true})
     created_at?: `${SortOrder}`;
@@ -57,6 +43,24 @@ export class SubsidyRequestOrderByWithRelationInput {
 
     @Field(() => SortOrderInput, {nullable:true})
     deleted_by?: SortOrderInput;
+
+    @Field(() => SortOrder, {nullable:true})
+    institution_id?: `${SortOrder}`;
+
+    @Field(() => SortOrder, {nullable:true})
+    requester_id?: `${SortOrder}`;
+
+    @Field(() => SortOrder, {nullable:true})
+    department_id?: `${SortOrder}`;
+
+    @Field(() => SortOrder, {nullable:true})
+    church_id?: `${SortOrder}`;
+
+    @Field(() => SortOrder, {nullable:true})
+    subsidy_statuses_id?: `${SortOrder}`;
+
+    @Field(() => SortOrder, {nullable:true})
+    project_id?: `${SortOrder}`;
 
     @Field(() => InstitutionOrderByWithRelationInput, {nullable:true})
     @Type(() => InstitutionOrderByWithRelationInput)
@@ -81,4 +85,8 @@ export class SubsidyRequestOrderByWithRelationInput {
     @Field(() => ProjectActivityOrderByRelationAggregateInput, {nullable:true})
     @Type(() => ProjectActivityOrderByRelationAggregateInput)
     project_activities?: ProjectActivityOrderByRelationAggregateInput;
+
+    @Field(() => ProjectOrderByWithRelationInput, {nullable:true})
+    @Type(() => ProjectOrderByWithRelationInput)
+    project?: ProjectOrderByWithRelationInput;
 }

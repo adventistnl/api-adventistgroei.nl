@@ -5,6 +5,7 @@ import { GraphQLDecimal } from 'prisma-graphql-type-decimal';
 import { transformToDecimal } from 'prisma-graphql-type-decimal';
 import { Transform } from 'class-transformer';
 import { Type } from 'class-transformer';
+import { SubsidyRequestUncheckedCreateNestedManyWithoutProject_activitiesInput } from '../subsidy-request/subsidy-request-unchecked-create-nested-many-without-project-activities.input';
 import { SubsidyReceiptUncheckedCreateNestedManyWithoutProject_activityInput } from '../subsidy-receipt/subsidy-receipt-unchecked-create-nested-many-without-project-activity.input';
 
 @InputType()
@@ -12,9 +13,6 @@ export class ProjectActivityUncheckedCreateInput {
 
     @Field(() => String, {nullable:true})
     id?: string;
-
-    @Field(() => String, {nullable:false})
-    subsidy_request_id!: string;
 
     @Field(() => String, {nullable:false})
     project_id!: string;
@@ -50,6 +48,10 @@ export class ProjectActivityUncheckedCreateInput {
 
     @Field(() => String, {nullable:true})
     deleted_by?: string;
+
+    @Field(() => SubsidyRequestUncheckedCreateNestedManyWithoutProject_activitiesInput, {nullable:true})
+    @Type(() => SubsidyRequestUncheckedCreateNestedManyWithoutProject_activitiesInput)
+    subsidy_request?: SubsidyRequestUncheckedCreateNestedManyWithoutProject_activitiesInput;
 
     @Field(() => SubsidyReceiptUncheckedCreateNestedManyWithoutProject_activityInput, {nullable:true})
     @Type(() => SubsidyReceiptUncheckedCreateNestedManyWithoutProject_activityInput)

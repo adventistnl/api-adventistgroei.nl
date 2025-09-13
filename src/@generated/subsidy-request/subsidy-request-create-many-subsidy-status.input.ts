@@ -13,18 +13,6 @@ export class SubsidyRequestCreateManySubsidy_statusInput {
     id?: string;
 
     @Field(() => String, {nullable:false})
-    institution_id!: string;
-
-    @Field(() => String, {nullable:false})
-    requester_id!: string;
-
-    @Field(() => String, {nullable:false})
-    department_project_id!: string;
-
-    @Field(() => String, {nullable:false})
-    church_id!: string;
-
-    @Field(() => String, {nullable:false})
     description!: string;
 
     @Field(() => GraphQLDecimal, {nullable:false})
@@ -52,4 +40,19 @@ export class SubsidyRequestCreateManySubsidy_statusInput {
 
     @Field(() => String, {nullable:true})
     deleted_by?: string;
+
+    @Field(() => String, {nullable:false})
+    institution_id!: string;
+
+    @Field(() => String, {nullable:false})
+    requester_id!: string;
+
+    @Field(() => String, {nullable:false})
+    department_id!: string;
+
+    @Field(() => String, {nullable:false})
+    church_id!: string;
+
+    @Field(() => String, {nullable:false})
+    project_id!: string;
 }

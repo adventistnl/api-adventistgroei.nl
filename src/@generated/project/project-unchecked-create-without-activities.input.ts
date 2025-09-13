@@ -8,6 +8,7 @@ import { Type } from 'class-transformer';
 import { LanguagePreference } from '../prisma/language-preference.enum';
 import { ProjectType } from '../prisma/project-type.enum';
 import { VoluntariesOnProjectsUncheckedCreateNestedManyWithoutProjectInput } from '../voluntaries-on-projects/voluntaries-on-projects-unchecked-create-nested-many-without-project.input';
+import { SubsidyRequestUncheckedCreateNestedManyWithoutProjectInput } from '../subsidy-request/subsidy-request-unchecked-create-nested-many-without-project.input';
 
 @InputType()
 export class ProjectUncheckedCreateWithoutActivitiesInput {
@@ -65,4 +66,8 @@ export class ProjectUncheckedCreateWithoutActivitiesInput {
     @Field(() => VoluntariesOnProjectsUncheckedCreateNestedManyWithoutProjectInput, {nullable:true})
     @Type(() => VoluntariesOnProjectsUncheckedCreateNestedManyWithoutProjectInput)
     voluntary_users?: VoluntariesOnProjectsUncheckedCreateNestedManyWithoutProjectInput;
+
+    @Field(() => SubsidyRequestUncheckedCreateNestedManyWithoutProjectInput, {nullable:true})
+    @Type(() => SubsidyRequestUncheckedCreateNestedManyWithoutProjectInput)
+    subsidies?: SubsidyRequestUncheckedCreateNestedManyWithoutProjectInput;
 }

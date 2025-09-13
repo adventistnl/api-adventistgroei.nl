@@ -9,6 +9,7 @@ import { Department } from '../department/department.model';
 import { Church } from '../church/church.model';
 import { SubsidyStatus } from '../subsidy-status/subsidy-status.model';
 import { ProjectActivity } from '../project-activity/project-activity.model';
+import { Project } from '../project/project.model';
 import { SubsidyRequestCount } from './subsidy-request-count.output';
 
 @ObjectType()
@@ -18,25 +19,10 @@ export class SubsidyRequest {
     id!: string;
 
     @Field(() => String, {nullable:false})
-    institution_id!: string;
-
-    @Field(() => String, {nullable:false})
-    requester_id!: string;
-
-    @Field(() => String, {nullable:false})
-    department_project_id!: string;
-
-    @Field(() => String, {nullable:false})
-    church_id!: string;
-
-    @Field(() => String, {nullable:false})
     description!: string;
 
     @Field(() => GraphQLDecimal, {nullable:false})
     total_budget!: Decimal;
-
-    @Field(() => String, {nullable:false})
-    subsidy_statuses_id!: string;
 
     @Field(() => Date, {nullable:false})
     created_at!: Date;
@@ -59,6 +45,24 @@ export class SubsidyRequest {
     @Field(() => String, {nullable:true})
     deleted_by!: string | null;
 
+    @Field(() => String, {nullable:false})
+    institution_id!: string;
+
+    @Field(() => String, {nullable:false})
+    requester_id!: string;
+
+    @Field(() => String, {nullable:false})
+    department_id!: string;
+
+    @Field(() => String, {nullable:false})
+    church_id!: string;
+
+    @Field(() => String, {nullable:false})
+    subsidy_statuses_id!: string;
+
+    @Field(() => String, {nullable:false})
+    project_id!: string;
+
     @Field(() => Institution, {nullable:false})
     institution?: Institution;
 
@@ -76,6 +80,9 @@ export class SubsidyRequest {
 
     @Field(() => [ProjectActivity], {nullable:true})
     project_activities?: Array<ProjectActivity>;
+
+    @Field(() => Project, {nullable:false})
+    project?: Project;
 
     @Field(() => SubsidyRequestCount, {nullable:false})
     _count?: SubsidyRequestCount;

@@ -16,25 +16,10 @@ export class SubsidyRequestOrderByWithAggregationInput {
     id?: `${SortOrder}`;
 
     @Field(() => SortOrder, {nullable:true})
-    institution_id?: `${SortOrder}`;
-
-    @Field(() => SortOrder, {nullable:true})
-    requester_id?: `${SortOrder}`;
-
-    @Field(() => SortOrder, {nullable:true})
-    department_project_id?: `${SortOrder}`;
-
-    @Field(() => SortOrder, {nullable:true})
-    church_id?: `${SortOrder}`;
-
-    @Field(() => SortOrder, {nullable:true})
     description?: `${SortOrder}`;
 
     @Field(() => SortOrder, {nullable:true})
     total_budget?: `${SortOrder}`;
-
-    @Field(() => SortOrder, {nullable:true})
-    subsidy_statuses_id?: `${SortOrder}`;
 
     @Field(() => SortOrder, {nullable:true})
     created_at?: `${SortOrder}`;
@@ -56,6 +41,24 @@ export class SubsidyRequestOrderByWithAggregationInput {
 
     @Field(() => SortOrderInput, {nullable:true})
     deleted_by?: SortOrderInput;
+
+    @Field(() => SortOrder, {nullable:true})
+    institution_id?: `${SortOrder}`;
+
+    @Field(() => SortOrder, {nullable:true})
+    requester_id?: `${SortOrder}`;
+
+    @Field(() => SortOrder, {nullable:true})
+    department_id?: `${SortOrder}`;
+
+    @Field(() => SortOrder, {nullable:true})
+    church_id?: `${SortOrder}`;
+
+    @Field(() => SortOrder, {nullable:true})
+    subsidy_statuses_id?: `${SortOrder}`;
+
+    @Field(() => SortOrder, {nullable:true})
+    project_id?: `${SortOrder}`;
 
     @Field(() => SubsidyRequestCountOrderByAggregateInput, {nullable:true})
     @Type(() => SubsidyRequestCountOrderByAggregateInput)

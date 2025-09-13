@@ -10,6 +10,7 @@ import { UserCreateNestedOneWithoutSubsidyRequestInput } from '../user/user-crea
 import { DepartmentCreateNestedOneWithoutSubsidy_requestsInput } from '../department/department-create-nested-one-without-subsidy-requests.input';
 import { ChurchCreateNestedOneWithoutSubsidy_requestsInput } from '../church/church-create-nested-one-without-subsidy-requests.input';
 import { SubsidyStatusCreateNestedOneWithoutSubsidy_requestsInput } from '../subsidy-status/subsidy-status-create-nested-one-without-subsidy-requests.input';
+import { ProjectCreateNestedOneWithoutSubsidiesInput } from '../project/project-create-nested-one-without-subsidies.input';
 
 @InputType()
 export class SubsidyRequestCreateWithoutProject_activitiesInput {
@@ -65,4 +66,8 @@ export class SubsidyRequestCreateWithoutProject_activitiesInput {
     @Field(() => SubsidyStatusCreateNestedOneWithoutSubsidy_requestsInput, {nullable:false})
     @Type(() => SubsidyStatusCreateNestedOneWithoutSubsidy_requestsInput)
     subsidy_status!: SubsidyStatusCreateNestedOneWithoutSubsidy_requestsInput;
+
+    @Field(() => ProjectCreateNestedOneWithoutSubsidiesInput, {nullable:false})
+    @Type(() => ProjectCreateNestedOneWithoutSubsidiesInput)
+    project!: ProjectCreateNestedOneWithoutSubsidiesInput;
 }

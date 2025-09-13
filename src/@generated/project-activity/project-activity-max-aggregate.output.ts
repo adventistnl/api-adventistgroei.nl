@@ -10,9 +10,6 @@ export class ProjectActivityMaxAggregate {
     id?: string;
 
     @Field(() => String, {nullable:true})
-    subsidy_request_id?: string;
-
-    @Field(() => String, {nullable:true})
     project_id?: string;
 
     @Field(() => String, {nullable:true})

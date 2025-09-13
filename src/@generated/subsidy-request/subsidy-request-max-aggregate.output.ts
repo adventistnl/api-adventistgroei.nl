@@ -10,25 +10,10 @@ export class SubsidyRequestMaxAggregate {
     id?: string;
 
     @Field(() => String, {nullable:true})
-    institution_id?: string;
-
-    @Field(() => String, {nullable:true})
-    requester_id?: string;
-
-    @Field(() => String, {nullable:true})
-    department_project_id?: string;
-
-    @Field(() => String, {nullable:true})
-    church_id?: string;
-
-    @Field(() => String, {nullable:true})
     description?: string;
 
     @Field(() => GraphQLDecimal, {nullable:true})
     total_budget?: Decimal;
-
-    @Field(() => String, {nullable:true})
-    subsidy_statuses_id?: string;
 
     @Field(() => Date, {nullable:true})
     created_at?: Date | string;
@@ -50,4 +35,22 @@ export class SubsidyRequestMaxAggregate {
 
     @Field(() => String, {nullable:true})
     deleted_by?: string;
+
+    @Field(() => String, {nullable:true})
+    institution_id?: string;
+
+    @Field(() => String, {nullable:true})
+    requester_id?: string;
+
+    @Field(() => String, {nullable:true})
+    department_id?: string;
+
+    @Field(() => String, {nullable:true})
+    church_id?: string;
+
+    @Field(() => String, {nullable:true})
+    subsidy_statuses_id?: string;
+
+    @Field(() => String, {nullable:true})
+    project_id?: string;
 }

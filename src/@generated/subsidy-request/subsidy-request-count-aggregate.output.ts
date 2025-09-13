@@ -9,25 +9,10 @@ export class SubsidyRequestCountAggregate {
     id!: number;
 
     @Field(() => Int, {nullable:false})
-    institution_id!: number;
-
-    @Field(() => Int, {nullable:false})
-    requester_id!: number;
-
-    @Field(() => Int, {nullable:false})
-    department_project_id!: number;
-
-    @Field(() => Int, {nullable:false})
-    church_id!: number;
-
-    @Field(() => Int, {nullable:false})
     description!: number;
 
     @Field(() => Int, {nullable:false})
     total_budget!: number;
-
-    @Field(() => Int, {nullable:false})
-    subsidy_statuses_id!: number;
 
     @Field(() => Int, {nullable:false})
     created_at!: number;
@@ -49,6 +34,24 @@ export class SubsidyRequestCountAggregate {
 
     @Field(() => Int, {nullable:false})
     deleted_by!: number;
+
+    @Field(() => Int, {nullable:false})
+    institution_id!: number;
+
+    @Field(() => Int, {nullable:false})
+    requester_id!: number;
+
+    @Field(() => Int, {nullable:false})
+    department_id!: number;
+
+    @Field(() => Int, {nullable:false})
+    church_id!: number;
+
+    @Field(() => Int, {nullable:false})
+    subsidy_statuses_id!: number;
+
+    @Field(() => Int, {nullable:false})
+    project_id!: number;
 
     @Field(() => Int, {nullable:false})
     _all!: number;

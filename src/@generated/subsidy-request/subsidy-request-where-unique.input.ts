@@ -14,6 +14,7 @@ import { DepartmentScalarRelationFilter } from '../department/department-scalar-
 import { ChurchScalarRelationFilter } from '../church/church-scalar-relation-filter.input';
 import { SubsidyStatusScalarRelationFilter } from '../subsidy-status/subsidy-status-scalar-relation-filter.input';
 import { ProjectActivityListRelationFilter } from '../project-activity/project-activity-list-relation-filter.input';
+import { ProjectScalarRelationFilter } from '../project/project-scalar-relation-filter.input';
 
 @InputType()
 export class SubsidyRequestWhereUniqueInput {
@@ -34,26 +35,11 @@ export class SubsidyRequestWhereUniqueInput {
     NOT?: Array<SubsidyRequestWhereInput>;
 
     @Field(() => StringFilter, {nullable:true})
-    institution_id?: StringFilter;
-
-    @Field(() => StringFilter, {nullable:true})
-    requester_id?: StringFilter;
-
-    @Field(() => StringFilter, {nullable:true})
-    department_project_id?: StringFilter;
-
-    @Field(() => StringFilter, {nullable:true})
-    church_id?: StringFilter;
-
-    @Field(() => StringFilter, {nullable:true})
     description?: StringFilter;
 
     @Field(() => DecimalFilter, {nullable:true})
     @Type(() => DecimalFilter)
     total_budget?: DecimalFilter;
-
-    @Field(() => StringFilter, {nullable:true})
-    subsidy_statuses_id?: StringFilter;
 
     @Field(() => DateTimeFilter, {nullable:true})
     created_at?: DateTimeFilter;
@@ -75,6 +61,24 @@ export class SubsidyRequestWhereUniqueInput {
 
     @Field(() => StringNullableFilter, {nullable:true})
     deleted_by?: StringNullableFilter;
+
+    @Field(() => StringFilter, {nullable:true})
+    institution_id?: StringFilter;
+
+    @Field(() => StringFilter, {nullable:true})
+    requester_id?: StringFilter;
+
+    @Field(() => StringFilter, {nullable:true})
+    department_id?: StringFilter;
+
+    @Field(() => StringFilter, {nullable:true})
+    church_id?: StringFilter;
+
+    @Field(() => StringFilter, {nullable:true})
+    subsidy_statuses_id?: StringFilter;
+
+    @Field(() => StringFilter, {nullable:true})
+    project_id?: StringFilter;
 
     @Field(() => InstitutionScalarRelationFilter, {nullable:true})
     @Type(() => InstitutionScalarRelationFilter)
@@ -99,4 +103,8 @@ export class SubsidyRequestWhereUniqueInput {
     @Field(() => ProjectActivityListRelationFilter, {nullable:true})
     @Type(() => ProjectActivityListRelationFilter)
     project_activities?: ProjectActivityListRelationFilter;
+
+    @Field(() => ProjectScalarRelationFilter, {nullable:true})
+    @Type(() => ProjectScalarRelationFilter)
+    project?: ProjectScalarRelationFilter;
 }

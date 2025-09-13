@@ -8,25 +8,10 @@ export class SubsidyRequestMaxAggregateInput {
     id?: true;
 
     @Field(() => Boolean, {nullable:true})
-    institution_id?: true;
-
-    @Field(() => Boolean, {nullable:true})
-    requester_id?: true;
-
-    @Field(() => Boolean, {nullable:true})
-    department_project_id?: true;
-
-    @Field(() => Boolean, {nullable:true})
-    church_id?: true;
-
-    @Field(() => Boolean, {nullable:true})
     description?: true;
 
     @Field(() => Boolean, {nullable:true})
     total_budget?: true;
-
-    @Field(() => Boolean, {nullable:true})
-    subsidy_statuses_id?: true;
 
     @Field(() => Boolean, {nullable:true})
     created_at?: true;
@@ -48,4 +33,22 @@ export class SubsidyRequestMaxAggregateInput {
 
     @Field(() => Boolean, {nullable:true})
     deleted_by?: true;
+
+    @Field(() => Boolean, {nullable:true})
+    institution_id?: true;
+
+    @Field(() => Boolean, {nullable:true})
+    requester_id?: true;
+
+    @Field(() => Boolean, {nullable:true})
+    department_id?: true;
+
+    @Field(() => Boolean, {nullable:true})
+    church_id?: true;
+
+    @Field(() => Boolean, {nullable:true})
+    subsidy_statuses_id?: true;
+
+    @Field(() => Boolean, {nullable:true})
+    project_id?: true;
 }

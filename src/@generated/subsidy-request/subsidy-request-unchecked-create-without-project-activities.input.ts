@@ -13,27 +13,12 @@ export class SubsidyRequestUncheckedCreateWithoutProject_activitiesInput {
     id?: string;
 
     @Field(() => String, {nullable:false})
-    institution_id!: string;
-
-    @Field(() => String, {nullable:false})
-    requester_id!: string;
-
-    @Field(() => String, {nullable:false})
-    department_project_id!: string;
-
-    @Field(() => String, {nullable:false})
-    church_id!: string;
-
-    @Field(() => String, {nullable:false})
     description!: string;
 
     @Field(() => GraphQLDecimal, {nullable:false})
     @Type(() => Object)
     @Transform(transformToDecimal)
     total_budget!: Decimal;
-
-    @Field(() => String, {nullable:false})
-    subsidy_statuses_id!: string;
 
     @Field(() => Date, {nullable:true})
     created_at?: Date | string;
@@ -55,4 +40,22 @@ export class SubsidyRequestUncheckedCreateWithoutProject_activitiesInput {
 
     @Field(() => String, {nullable:true})
     deleted_by?: string;
+
+    @Field(() => String, {nullable:false})
+    institution_id!: string;
+
+    @Field(() => String, {nullable:false})
+    requester_id!: string;
+
+    @Field(() => String, {nullable:false})
+    department_id!: string;
+
+    @Field(() => String, {nullable:false})
+    church_id!: string;
+
+    @Field(() => String, {nullable:false})
+    subsidy_statuses_id!: string;
+
+    @Field(() => String, {nullable:false})
+    project_id!: string;
 }

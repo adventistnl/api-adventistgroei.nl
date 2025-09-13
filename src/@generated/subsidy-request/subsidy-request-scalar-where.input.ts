@@ -27,26 +27,11 @@ export class SubsidyRequestScalarWhereInput {
     id?: StringFilter;
 
     @Field(() => StringFilter, {nullable:true})
-    institution_id?: StringFilter;
-
-    @Field(() => StringFilter, {nullable:true})
-    requester_id?: StringFilter;
-
-    @Field(() => StringFilter, {nullable:true})
-    department_project_id?: StringFilter;
-
-    @Field(() => StringFilter, {nullable:true})
-    church_id?: StringFilter;
-
-    @Field(() => StringFilter, {nullable:true})
     description?: StringFilter;
 
     @Field(() => DecimalFilter, {nullable:true})
     @Type(() => DecimalFilter)
     total_budget?: DecimalFilter;
-
-    @Field(() => StringFilter, {nullable:true})
-    subsidy_statuses_id?: StringFilter;
 
     @Field(() => DateTimeFilter, {nullable:true})
     created_at?: DateTimeFilter;
@@ -68,4 +53,22 @@ export class SubsidyRequestScalarWhereInput {
 
     @Field(() => StringNullableFilter, {nullable:true})
     deleted_by?: StringNullableFilter;
+
+    @Field(() => StringFilter, {nullable:true})
+    institution_id?: StringFilter;
+
+    @Field(() => StringFilter, {nullable:true})
+    requester_id?: StringFilter;
+
+    @Field(() => StringFilter, {nullable:true})
+    department_id?: StringFilter;
+
+    @Field(() => StringFilter, {nullable:true})
+    church_id?: StringFilter;
+
+    @Field(() => StringFilter, {nullable:true})
+    subsidy_statuses_id?: StringFilter;
+
+    @Field(() => StringFilter, {nullable:true})
+    project_id?: StringFilter;
 }
