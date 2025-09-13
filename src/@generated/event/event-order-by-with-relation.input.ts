@@ -6,6 +6,7 @@ import { ContactOrderByWithRelationInput } from '../contact/contact-order-by-wit
 import { Type } from 'class-transformer';
 import { EventRecipientOrderByRelationAggregateInput } from '../event-recipient/event-recipient-order-by-relation-aggregate.input';
 import { EventRegistrationOrderByRelationAggregateInput } from '../event-registration/event-registration-order-by-relation-aggregate.input';
+import { ProjectOrderByRelationAggregateInput } from '../project/project-order-by-relation-aggregate.input';
 
 @InputType()
 export class EventOrderByWithRelationInput {
@@ -39,6 +40,21 @@ export class EventOrderByWithRelationInput {
 
     @Field(() => SortOrder, {nullable:true})
     ticket_amount?: `${SortOrder}`;
+
+    @Field(() => SortOrderInput, {nullable:true})
+    location?: SortOrderInput;
+
+    @Field(() => SortOrder, {nullable:true})
+    is_private?: `${SortOrder}`;
+
+    @Field(() => SortOrder, {nullable:true})
+    required_volunteers?: `${SortOrder}`;
+
+    @Field(() => SortOrderInput, {nullable:true})
+    start_at?: SortOrderInput;
+
+    @Field(() => SortOrderInput, {nullable:true})
+    end_at?: SortOrderInput;
 
     @Field(() => SortOrder, {nullable:true})
     subscription_expires_at?: `${SortOrder}`;
@@ -75,4 +91,8 @@ export class EventOrderByWithRelationInput {
     @Field(() => EventRegistrationOrderByRelationAggregateInput, {nullable:true})
     @Type(() => EventRegistrationOrderByRelationAggregateInput)
     event_registrations?: EventRegistrationOrderByRelationAggregateInput;
+
+    @Field(() => ProjectOrderByRelationAggregateInput, {nullable:true})
+    @Type(() => ProjectOrderByRelationAggregateInput)
+    projects?: ProjectOrderByRelationAggregateInput;
 }

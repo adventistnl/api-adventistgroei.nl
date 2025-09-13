@@ -36,6 +36,21 @@ export class EventCountAggregate {
     ticket_amount!: number;
 
     @Field(() => Int, {nullable:false})
+    location!: number;
+
+    @Field(() => Int, {nullable:false})
+    is_private!: number;
+
+    @Field(() => Int, {nullable:false})
+    required_volunteers!: number;
+
+    @Field(() => Int, {nullable:false})
+    start_at!: number;
+
+    @Field(() => Int, {nullable:false})
+    end_at!: number;
+
+    @Field(() => Int, {nullable:false})
     subscription_expires_at!: number;
 
     @Field(() => Int, {nullable:false})

@@ -62,6 +62,9 @@ export class ProjectUncheckedUpdateWithoutVoluntary_usersInput {
     deleted_by?: NullableStringFieldUpdateOperationsInput;
 
     @Field(() => NullableStringFieldUpdateOperationsInput, {nullable:true})
+    event_id?: NullableStringFieldUpdateOperationsInput;
+
+    @Field(() => NullableStringFieldUpdateOperationsInput, {nullable:true})
     institution_id?: NullableStringFieldUpdateOperationsInput;
 
     @Field(() => ProjectActivityUncheckedUpdateManyWithoutProjectNestedInput, {nullable:true})

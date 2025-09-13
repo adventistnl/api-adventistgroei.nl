@@ -54,5 +54,8 @@ export class ProjectMinAggregate {
     deleted_by?: string;
 
     @Field(() => String, {nullable:true})
+    event_id?: string;
+
+    @Field(() => String, {nullable:true})
     institution_id?: string;
 }

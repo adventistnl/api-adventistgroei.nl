@@ -58,6 +58,9 @@ export class ProjectOrderByWithAggregationInput {
     deleted_by?: SortOrderInput;
 
     @Field(() => SortOrderInput, {nullable:true})
+    event_id?: SortOrderInput;
+
+    @Field(() => SortOrderInput, {nullable:true})
     institution_id?: SortOrderInput;
 
     @Field(() => ProjectCountOrderByAggregateInput, {nullable:true})

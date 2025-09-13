@@ -72,5 +72,8 @@ export class ProjectScalarWhereWithAggregatesInput {
     deleted_by?: StringNullableWithAggregatesFilter;
 
     @Field(() => StringNullableWithAggregatesFilter, {nullable:true})
+    event_id?: StringNullableWithAggregatesFilter;
+
+    @Field(() => StringNullableWithAggregatesFilter, {nullable:true})
     institution_id?: StringNullableWithAggregatesFilter;
 }

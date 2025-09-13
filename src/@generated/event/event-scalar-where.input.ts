@@ -8,9 +8,9 @@ import { EnumEventTypeFilter } from '../prisma/enum-event-type-filter.input';
 import { EnumLanguagePreferenceFilter } from '../prisma/enum-language-preference-filter.input';
 import { IntFilter } from '../prisma/int-filter.input';
 import { DecimalFilter } from '../prisma/decimal-filter.input';
-import { DateTimeFilter } from '../prisma/date-time-filter.input';
 import { BoolFilter } from '../prisma/bool-filter.input';
 import { DateTimeNullableFilter } from '../prisma/date-time-nullable-filter.input';
+import { DateTimeFilter } from '../prisma/date-time-filter.input';
 
 @InputType()
 export class EventScalarWhereInput {
@@ -57,6 +57,21 @@ export class EventScalarWhereInput {
     @Field(() => DecimalFilter, {nullable:true})
     @Type(() => DecimalFilter)
     ticket_amount?: DecimalFilter;
+
+    @Field(() => StringNullableFilter, {nullable:true})
+    location?: StringNullableFilter;
+
+    @Field(() => BoolFilter, {nullable:true})
+    is_private?: BoolFilter;
+
+    @Field(() => BoolFilter, {nullable:true})
+    required_volunteers?: BoolFilter;
+
+    @Field(() => DateTimeNullableFilter, {nullable:true})
+    start_at?: DateTimeNullableFilter;
+
+    @Field(() => DateTimeNullableFilter, {nullable:true})
+    end_at?: DateTimeNullableFilter;
 
     @Field(() => DateTimeFilter, {nullable:true})
     subscription_expires_at?: DateTimeFilter;

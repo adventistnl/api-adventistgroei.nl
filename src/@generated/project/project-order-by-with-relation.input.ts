@@ -4,6 +4,7 @@ import { SortOrder } from '../prisma/sort-order.enum';
 import { SortOrderInput } from '../prisma/sort-order.input';
 import { DepartmentOrderByWithRelationInput } from '../department/department-order-by-with-relation.input';
 import { Type } from 'class-transformer';
+import { EventOrderByWithRelationInput } from '../event/event-order-by-with-relation.input';
 import { InstitutionOrderByWithRelationInput } from '../institution/institution-order-by-with-relation.input';
 import { VoluntariesOnProjectsOrderByRelationAggregateInput } from '../voluntaries-on-projects/voluntaries-on-projects-order-by-relation-aggregate.input';
 import { ProjectActivityOrderByRelationAggregateInput } from '../project-activity/project-activity-order-by-relation-aggregate.input';
@@ -58,11 +59,18 @@ export class ProjectOrderByWithRelationInput {
     deleted_by?: SortOrderInput;
 
     @Field(() => SortOrderInput, {nullable:true})
+    event_id?: SortOrderInput;
+
+    @Field(() => SortOrderInput, {nullable:true})
     institution_id?: SortOrderInput;
 
     @Field(() => DepartmentOrderByWithRelationInput, {nullable:true})
     @Type(() => DepartmentOrderByWithRelationInput)
     department?: DepartmentOrderByWithRelationInput;
+
+    @Field(() => EventOrderByWithRelationInput, {nullable:true})
+    @Type(() => EventOrderByWithRelationInput)
+    event?: EventOrderByWithRelationInput;
 
     @Field(() => InstitutionOrderByWithRelationInput, {nullable:true})
     @Type(() => InstitutionOrderByWithRelationInput)

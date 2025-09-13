@@ -8,12 +8,13 @@ import { EnumLanguagePreferenceFieldUpdateOperationsInput } from '../prisma/enum
 import { IntFieldUpdateOperationsInput } from '../prisma/int-field-update-operations.input';
 import { DecimalFieldUpdateOperationsInput } from '../prisma/decimal-field-update-operations.input';
 import { Type } from 'class-transformer';
-import { DateTimeFieldUpdateOperationsInput } from '../prisma/date-time-field-update-operations.input';
 import { BoolFieldUpdateOperationsInput } from '../prisma/bool-field-update-operations.input';
 import { NullableDateTimeFieldUpdateOperationsInput } from '../prisma/nullable-date-time-field-update-operations.input';
+import { DateTimeFieldUpdateOperationsInput } from '../prisma/date-time-field-update-operations.input';
 import { ContactUpdateOneRequiredWithoutEventNestedInput } from '../contact/contact-update-one-required-without-event-nested.input';
 import { EventRecipientUpdateManyWithoutEventNestedInput } from '../event-recipient/event-recipient-update-many-without-event-nested.input';
 import { EventRegistrationUpdateManyWithoutEventNestedInput } from '../event-registration/event-registration-update-many-without-event-nested.input';
+import { ProjectUpdateManyWithoutEventNestedInput } from '../project/project-update-many-without-event-nested.input';
 
 @InputType()
 export class EventUpdateInput {
@@ -45,6 +46,21 @@ export class EventUpdateInput {
     @Field(() => DecimalFieldUpdateOperationsInput, {nullable:true})
     @Type(() => DecimalFieldUpdateOperationsInput)
     ticket_amount?: DecimalFieldUpdateOperationsInput;
+
+    @Field(() => NullableStringFieldUpdateOperationsInput, {nullable:true})
+    location?: NullableStringFieldUpdateOperationsInput;
+
+    @Field(() => BoolFieldUpdateOperationsInput, {nullable:true})
+    is_private?: BoolFieldUpdateOperationsInput;
+
+    @Field(() => BoolFieldUpdateOperationsInput, {nullable:true})
+    required_volunteers?: BoolFieldUpdateOperationsInput;
+
+    @Field(() => NullableDateTimeFieldUpdateOperationsInput, {nullable:true})
+    start_at?: NullableDateTimeFieldUpdateOperationsInput;
+
+    @Field(() => NullableDateTimeFieldUpdateOperationsInput, {nullable:true})
+    end_at?: NullableDateTimeFieldUpdateOperationsInput;
 
     @Field(() => DateTimeFieldUpdateOperationsInput, {nullable:true})
     subscription_expires_at?: DateTimeFieldUpdateOperationsInput;
@@ -81,4 +97,8 @@ export class EventUpdateInput {
     @Field(() => EventRegistrationUpdateManyWithoutEventNestedInput, {nullable:true})
     @Type(() => EventRegistrationUpdateManyWithoutEventNestedInput)
     event_registrations?: EventRegistrationUpdateManyWithoutEventNestedInput;
+
+    @Field(() => ProjectUpdateManyWithoutEventNestedInput, {nullable:true})
+    @Type(() => ProjectUpdateManyWithoutEventNestedInput)
+    projects?: ProjectUpdateManyWithoutEventNestedInput;
 }

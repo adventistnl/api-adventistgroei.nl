@@ -50,6 +50,9 @@ export class ProjectCountAggregateInput {
     deleted_by?: true;
 
     @Field(() => Boolean, {nullable:true})
+    event_id?: true;
+
+    @Field(() => Boolean, {nullable:true})
     institution_id?: true;
 
     @Field(() => Boolean, {nullable:true})

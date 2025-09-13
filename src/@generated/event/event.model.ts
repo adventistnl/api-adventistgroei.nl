@@ -10,6 +10,7 @@ import { Decimal } from '@prisma/client/runtime/library';
 import { Contact } from '../contact/contact.model';
 import { EventRecipient } from '../event-recipient/event-recipient.model';
 import { EventRegistration } from '../event-registration/event-registration.model';
+import { Project } from '../project/project.model';
 import { EventCount } from './event-count.output';
 
 @ObjectType()
@@ -45,6 +46,21 @@ export class Event {
     @Field(() => GraphQLDecimal, {nullable:false})
     ticket_amount!: Decimal;
 
+    @Field(() => String, {nullable:true})
+    location!: string | null;
+
+    @Field(() => Boolean, {defaultValue:false,nullable:false})
+    is_private!: boolean;
+
+    @Field(() => Boolean, {defaultValue:false,nullable:false})
+    required_volunteers!: boolean;
+
+    @Field(() => Date, {nullable:true})
+    start_at!: Date | null;
+
+    @Field(() => Date, {nullable:true})
+    end_at!: Date | null;
+
     @Field(() => Date, {nullable:false})
     subscription_expires_at!: Date;
 
@@ -77,6 +93,9 @@ export class Event {
 
     @Field(() => [EventRegistration], {nullable:true})
     event_registrations?: Array<EventRegistration>;
+
+    @Field(() => [Project], {nullable:true})
+    projects?: Array<Project>;
 
     @Field(() => EventCount, {nullable:false})
     _count?: EventCount;

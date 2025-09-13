@@ -45,6 +45,21 @@ export class EventCreateManyInput {
     @Transform(transformToDecimal)
     ticket_amount!: Decimal;
 
+    @Field(() => String, {nullable:true})
+    location?: string;
+
+    @Field(() => Boolean, {nullable:true})
+    is_private?: boolean;
+
+    @Field(() => Boolean, {nullable:true})
+    required_volunteers?: boolean;
+
+    @Field(() => Date, {nullable:true})
+    start_at?: Date | string;
+
+    @Field(() => Date, {nullable:true})
+    end_at?: Date | string;
+
     @Field(() => Date, {nullable:false})
     subscription_expires_at!: Date | string;
 

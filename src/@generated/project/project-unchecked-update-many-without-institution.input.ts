@@ -58,4 +58,7 @@ export class ProjectUncheckedUpdateManyWithoutInstitutionInput {
 
     @Field(() => NullableStringFieldUpdateOperationsInput, {nullable:true})
     deleted_by?: NullableStringFieldUpdateOperationsInput;
+
+    @Field(() => NullableStringFieldUpdateOperationsInput, {nullable:true})
+    event_id?: NullableStringFieldUpdateOperationsInput;
 }

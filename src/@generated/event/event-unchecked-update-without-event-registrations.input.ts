@@ -8,10 +8,11 @@ import { EnumLanguagePreferenceFieldUpdateOperationsInput } from '../prisma/enum
 import { IntFieldUpdateOperationsInput } from '../prisma/int-field-update-operations.input';
 import { DecimalFieldUpdateOperationsInput } from '../prisma/decimal-field-update-operations.input';
 import { Type } from 'class-transformer';
-import { DateTimeFieldUpdateOperationsInput } from '../prisma/date-time-field-update-operations.input';
 import { BoolFieldUpdateOperationsInput } from '../prisma/bool-field-update-operations.input';
 import { NullableDateTimeFieldUpdateOperationsInput } from '../prisma/nullable-date-time-field-update-operations.input';
+import { DateTimeFieldUpdateOperationsInput } from '../prisma/date-time-field-update-operations.input';
 import { EventRecipientUncheckedUpdateManyWithoutEventNestedInput } from '../event-recipient/event-recipient-unchecked-update-many-without-event-nested.input';
+import { ProjectUncheckedUpdateManyWithoutEventNestedInput } from '../project/project-unchecked-update-many-without-event-nested.input';
 
 @InputType()
 export class EventUncheckedUpdateWithoutEvent_registrationsInput {
@@ -47,6 +48,21 @@ export class EventUncheckedUpdateWithoutEvent_registrationsInput {
     @Type(() => DecimalFieldUpdateOperationsInput)
     ticket_amount?: DecimalFieldUpdateOperationsInput;
 
+    @Field(() => NullableStringFieldUpdateOperationsInput, {nullable:true})
+    location?: NullableStringFieldUpdateOperationsInput;
+
+    @Field(() => BoolFieldUpdateOperationsInput, {nullable:true})
+    is_private?: BoolFieldUpdateOperationsInput;
+
+    @Field(() => BoolFieldUpdateOperationsInput, {nullable:true})
+    required_volunteers?: BoolFieldUpdateOperationsInput;
+
+    @Field(() => NullableDateTimeFieldUpdateOperationsInput, {nullable:true})
+    start_at?: NullableDateTimeFieldUpdateOperationsInput;
+
+    @Field(() => NullableDateTimeFieldUpdateOperationsInput, {nullable:true})
+    end_at?: NullableDateTimeFieldUpdateOperationsInput;
+
     @Field(() => DateTimeFieldUpdateOperationsInput, {nullable:true})
     subscription_expires_at?: DateTimeFieldUpdateOperationsInput;
 
@@ -74,4 +90,8 @@ export class EventUncheckedUpdateWithoutEvent_registrationsInput {
     @Field(() => EventRecipientUncheckedUpdateManyWithoutEventNestedInput, {nullable:true})
     @Type(() => EventRecipientUncheckedUpdateManyWithoutEventNestedInput)
     event_recipients?: EventRecipientUncheckedUpdateManyWithoutEventNestedInput;
+
+    @Field(() => ProjectUncheckedUpdateManyWithoutEventNestedInput, {nullable:true})
+    @Type(() => ProjectUncheckedUpdateManyWithoutEventNestedInput)
+    projects?: ProjectUncheckedUpdateManyWithoutEventNestedInput;
 }

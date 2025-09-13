@@ -10,6 +10,7 @@ import { BoolFilter } from '../prisma/bool-filter.input';
 import { DateTimeNullableFilter } from '../prisma/date-time-nullable-filter.input';
 import { StringNullableFilter } from '../prisma/string-nullable-filter.input';
 import { DepartmentScalarRelationFilter } from '../department/department-scalar-relation-filter.input';
+import { EventNullableScalarRelationFilter } from '../event/event-nullable-scalar-relation-filter.input';
 import { InstitutionNullableScalarRelationFilter } from '../institution/institution-nullable-scalar-relation-filter.input';
 import { VoluntariesOnProjectsListRelationFilter } from '../voluntaries-on-projects/voluntaries-on-projects-list-relation-filter.input';
 import { ProjectActivityListRelationFilter } from '../project-activity/project-activity-list-relation-filter.input';
@@ -77,11 +78,18 @@ export class ProjectWhereInput {
     deleted_by?: StringNullableFilter;
 
     @Field(() => StringNullableFilter, {nullable:true})
+    event_id?: StringNullableFilter;
+
+    @Field(() => StringNullableFilter, {nullable:true})
     institution_id?: StringNullableFilter;
 
     @Field(() => DepartmentScalarRelationFilter, {nullable:true})
     @Type(() => DepartmentScalarRelationFilter)
     department?: DepartmentScalarRelationFilter;
+
+    @Field(() => EventNullableScalarRelationFilter, {nullable:true})
+    @Type(() => EventNullableScalarRelationFilter)
+    event?: EventNullableScalarRelationFilter;
 
     @Field(() => InstitutionNullableScalarRelationFilter, {nullable:true})
     @Type(() => InstitutionNullableScalarRelationFilter)

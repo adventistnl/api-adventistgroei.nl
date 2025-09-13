@@ -42,6 +42,21 @@ export class EventOrderByWithAggregationInput {
     @Field(() => SortOrder, {nullable:true})
     ticket_amount?: `${SortOrder}`;
 
+    @Field(() => SortOrderInput, {nullable:true})
+    location?: SortOrderInput;
+
+    @Field(() => SortOrder, {nullable:true})
+    is_private?: `${SortOrder}`;
+
+    @Field(() => SortOrder, {nullable:true})
+    required_volunteers?: `${SortOrder}`;
+
+    @Field(() => SortOrderInput, {nullable:true})
+    start_at?: SortOrderInput;
+
+    @Field(() => SortOrderInput, {nullable:true})
+    end_at?: SortOrderInput;
+
     @Field(() => SortOrder, {nullable:true})
     subscription_expires_at?: `${SortOrder}`;
 

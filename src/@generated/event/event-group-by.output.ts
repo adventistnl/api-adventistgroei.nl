@@ -45,6 +45,21 @@ export class EventGroupBy {
     @Field(() => GraphQLDecimal, {nullable:false})
     ticket_amount!: Decimal;
 
+    @Field(() => String, {nullable:true})
+    location?: string;
+
+    @Field(() => Boolean, {nullable:false})
+    is_private!: boolean;
+
+    @Field(() => Boolean, {nullable:false})
+    required_volunteers!: boolean;
+
+    @Field(() => Date, {nullable:true})
+    start_at?: Date | string;
+
+    @Field(() => Date, {nullable:true})
+    end_at?: Date | string;
+
     @Field(() => Date, {nullable:false})
     subscription_expires_at!: Date | string;
 

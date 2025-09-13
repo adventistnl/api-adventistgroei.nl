@@ -72,5 +72,8 @@ export class ProjectScalarWhereInput {
     deleted_by?: StringNullableFilter;
 
     @Field(() => StringNullableFilter, {nullable:true})
+    event_id?: StringNullableFilter;
+
+    @Field(() => StringNullableFilter, {nullable:true})
     institution_id?: StringNullableFilter;
 }

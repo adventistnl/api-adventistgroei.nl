@@ -6,6 +6,7 @@ import { Decimal } from '@prisma/client/runtime/library';
 import { LanguagePreference } from '../prisma/language-preference.enum';
 import { ProjectType } from '../prisma/project-type.enum';
 import { Department } from '../department/department.model';
+import { Event } from '../event/event.model';
 import { Institution } from '../institution/institution.model';
 import { VoluntariesOnProjects } from '../voluntaries-on-projects/voluntaries-on-projects.model';
 import { ProjectActivity } from '../project-activity/project-activity.model';
@@ -61,10 +62,16 @@ export class Project {
     deleted_by!: string | null;
 
     @Field(() => String, {nullable:true})
+    event_id!: string | null;
+
+    @Field(() => String, {nullable:true})
     institution_id!: string | null;
 
     @Field(() => Department, {nullable:false})
     department?: Department;
+
+    @Field(() => Event, {nullable:true})
+    event?: Event | null;
 
     @Field(() => Institution, {nullable:true})
     Institution?: Institution | null;

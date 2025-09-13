@@ -9,6 +9,7 @@ import { DateTimeFieldUpdateOperationsInput } from '../prisma/date-time-field-up
 import { BoolFieldUpdateOperationsInput } from '../prisma/bool-field-update-operations.input';
 import { NullableDateTimeFieldUpdateOperationsInput } from '../prisma/nullable-date-time-field-update-operations.input';
 import { NullableStringFieldUpdateOperationsInput } from '../prisma/nullable-string-field-update-operations.input';
+import { EventUpdateOneWithoutProjectsNestedInput } from '../event/event-update-one-without-projects-nested.input';
 import { InstitutionUpdateOneWithoutProjectsNestedInput } from '../institution/institution-update-one-without-projects-nested.input';
 import { VoluntariesOnProjectsUpdateManyWithoutProjectNestedInput } from '../voluntaries-on-projects/voluntaries-on-projects-update-many-without-project-nested.input';
 import { ProjectActivityUpdateManyWithoutProjectNestedInput } from '../project-activity/project-activity-update-many-without-project-nested.input';
@@ -59,6 +60,10 @@ export class ProjectUpdateWithoutDepartmentInput {
 
     @Field(() => NullableStringFieldUpdateOperationsInput, {nullable:true})
     deleted_by?: NullableStringFieldUpdateOperationsInput;
+
+    @Field(() => EventUpdateOneWithoutProjectsNestedInput, {nullable:true})
+    @Type(() => EventUpdateOneWithoutProjectsNestedInput)
+    event?: EventUpdateOneWithoutProjectsNestedInput;
 
     @Field(() => InstitutionUpdateOneWithoutProjectsNestedInput, {nullable:true})
     @Type(() => InstitutionUpdateOneWithoutProjectsNestedInput)

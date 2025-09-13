@@ -51,6 +51,9 @@ export class ProjectCountAggregate {
     deleted_by!: number;
 
     @Field(() => Int, {nullable:false})
+    event_id!: number;
+
+    @Field(() => Int, {nullable:false})
     institution_id!: number;
 
     @Field(() => Int, {nullable:false})

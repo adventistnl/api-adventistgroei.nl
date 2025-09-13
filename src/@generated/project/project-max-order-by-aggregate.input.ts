@@ -51,5 +51,8 @@ export class ProjectMaxOrderByAggregateInput {
     deleted_by?: `${SortOrder}`;
 
     @Field(() => SortOrder, {nullable:true})
+    event_id?: `${SortOrder}`;
+
+    @Field(() => SortOrder, {nullable:true})
     institution_id?: `${SortOrder}`;
 }

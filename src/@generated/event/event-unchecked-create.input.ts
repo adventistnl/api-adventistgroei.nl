@@ -11,6 +11,7 @@ import { Transform } from 'class-transformer';
 import { Type } from 'class-transformer';
 import { EventRecipientUncheckedCreateNestedManyWithoutEventInput } from '../event-recipient/event-recipient-unchecked-create-nested-many-without-event.input';
 import { EventRegistrationUncheckedCreateNestedManyWithoutEventInput } from '../event-registration/event-registration-unchecked-create-nested-many-without-event.input';
+import { ProjectUncheckedCreateNestedManyWithoutEventInput } from '../project/project-unchecked-create-nested-many-without-event.input';
 
 @InputType()
 export class EventUncheckedCreateInput {
@@ -47,6 +48,21 @@ export class EventUncheckedCreateInput {
     @Transform(transformToDecimal)
     ticket_amount!: Decimal;
 
+    @Field(() => String, {nullable:true})
+    location?: string;
+
+    @Field(() => Boolean, {nullable:true})
+    is_private?: boolean;
+
+    @Field(() => Boolean, {nullable:true})
+    required_volunteers?: boolean;
+
+    @Field(() => Date, {nullable:true})
+    start_at?: Date | string;
+
+    @Field(() => Date, {nullable:true})
+    end_at?: Date | string;
+
     @Field(() => Date, {nullable:false})
     subscription_expires_at!: Date | string;
 
@@ -78,4 +94,8 @@ export class EventUncheckedCreateInput {
     @Field(() => EventRegistrationUncheckedCreateNestedManyWithoutEventInput, {nullable:true})
     @Type(() => EventRegistrationUncheckedCreateNestedManyWithoutEventInput)
     event_registrations?: EventRegistrationUncheckedCreateNestedManyWithoutEventInput;
+
+    @Field(() => ProjectUncheckedCreateNestedManyWithoutEventInput, {nullable:true})
+    @Type(() => ProjectUncheckedCreateNestedManyWithoutEventInput)
+    projects?: ProjectUncheckedCreateNestedManyWithoutEventInput;
 }

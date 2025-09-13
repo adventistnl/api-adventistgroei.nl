@@ -10,4 +10,7 @@ export class EventCount {
 
     @Field(() => Int, {nullable:false})
     event_registrations?: number;
+
+    @Field(() => Int, {nullable:false})
+    projects?: number;
 }
