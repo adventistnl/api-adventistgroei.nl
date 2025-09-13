@@ -37,8 +37,6 @@ export class DepartmentRepository {
       throw new CustomGraphQLError('Church not found', ErrorCode.NOT_FOUND, 404);
     }
     const annual_budget = Prisma.Decimal(data.annual_budget);
-    console.log("data", data);
-    console.log("annual_budget", annual_budget);
     return this.prisma.department.create({
       data: {
         ...data,

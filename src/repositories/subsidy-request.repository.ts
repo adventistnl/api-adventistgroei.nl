@@ -14,9 +14,7 @@ export class SubsidyRequestRepository {
   ) {}
 
   async create(data: SubsidyRequestCreateDto, userId: string): Promise<SubsidyRequest> {
-    console.log(data)
     const { institution_id, requester_id, department_id, church_id, project_activities, subsidy_status_id, project_id, ...rest } = data;
-    console.log("subsidy_status_id", subsidy_status_id)
 
     if (project_activities.length === 0) {
       throw new CustomGraphQLError('At least one ProjectActivity must be associated with the SubsidyRequest.', ErrorCode.BAD_REQUEST, 400);

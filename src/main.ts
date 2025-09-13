@@ -16,8 +16,7 @@ async function bootstrap() {
   });
 
   await app.listen(Number(PORT));
-  console.info(`Application is running on: http://localhost:${PORT}`);
-  console.log('Memória usada:', process.memoryUsage());
+  console.info(`Application is running on Port: ${PORT}`);
 }
 
 void bootstrap();

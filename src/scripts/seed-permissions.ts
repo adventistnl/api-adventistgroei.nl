@@ -96,7 +96,6 @@ async function main() {
       },
     });
   }
-  console.log('Permissions seeded successfully');
 }
 
 main()

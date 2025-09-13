@@ -30,7 +30,6 @@ export class AuthService {
   }
 
   async login(input: LoginInput): Promise<AuthModel> {
-    console.log("input", input);
     const user = await this.userService.findByEmail(input.email);
     if (!user) {
       throw new CustomGraphQLError('Invalid credentials. check your email', ErrorCode.UNAUTHORIZED, 401);
