@@ -15,30 +15,31 @@ export class UserResolver {
   @Mutation(() => UserModel)
   async createUser(
     @Args('data') data: UserCreateDto,
-  ): Promise<User> {
+  ): Promise<Omit<User, 'password'>> {
     return await this.userService.createUser(data);
   }
 
   @Permission()
   @Query(() => [UserModel])
-  async users(): Promise<User[]> {
+  async users(): Promise<Omit<User, 'password'>[]> {
     return await this.userService.getUsers();
   }
 
   @Permission()
   @Query(() => UserModel, { nullable: true })
-  async user(@Args('id') id: string): Promise<User | null> {
+  async user(@Args('id') id: string): Promise<Omit<User, 'password'> | null> {
     return await this.userService.getUserById(id);
   }
 
   @Permission()
   @Mutation(() => UserModel)
   async updateUser(
+    @Args('id') id: string,
     @Args('data') data: UserUpdateDto,
     @Context() context: { userId: string },
-  ): Promise<User> {
-    const userId = context.userId;
-    return await this.userService.updateUser(data, userId);
+  ): Promise<Omit<User, 'password'>> {
+    const requester_id = context.userId;
+    return await this.userService.updateUser(id, data, requester_id);
   }
 
   @Permission()
@@ -46,7 +47,7 @@ export class UserResolver {
   async deleteUser(
     @Args('id') id: string,
     @Context() context: { userId: string },
-  ): Promise<User> {
+  ): Promise<Omit<User, 'password'>> {
     const userId = context.userId;
     return await this.userService.deleteUser(id, userId);
   }

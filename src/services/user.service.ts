@@ -8,23 +8,23 @@ import { UserWithRoles } from 'src/models';
 export class UserService {
   constructor(private readonly userRepository: UserRepository) {}
 
-  async createUser(data: UserCreateDto): Promise<User> {
+  async createUser(data: UserCreateDto): Promise<Omit<User, 'password'>> {
     return await this.userRepository.create(data);
   }
 
-  async updateUser(data: UserUpdateDto, userId: string): Promise<User> {
-    return await this.userRepository.update(data, userId);
+  async updateUser(user_to_update_id: string, data: UserUpdateDto, requester_id: string): Promise<Omit<User, 'password'>> {
+    return await this.userRepository.update(user_to_update_id, data, requester_id);
   }
 
-  async deleteUser(id: string, userId: string): Promise<User> {
+  async deleteUser(id: string, userId: string): Promise<Omit<User, 'password'>> {
     return await this.userRepository.softDelete(id, userId);
   }
 
-  async getUsers(): Promise<User[]> {
+  async getUsers(): Promise<Omit<User, 'password'>[]> {
     return await this.userRepository.findAll();
   }
 
-  async getUserById(id: string): Promise<User | null> {
+  async getUserById(id: string): Promise<Omit<User, 'password'> | null> {
     return await this.userRepository.findById(id);
   }
 

@@ -102,7 +102,9 @@ export class ContactRepository {
   }
 
   async findById(id: string): Promise<Contact | null> {
-    return this.prisma.contact.findUnique({ where: { id } });
+    const res = await this.prisma.contact.findUnique({ where: { id } });
+    if (!res) throw new CustomGraphQLError(`Contact not found`, ErrorCode.NOT_FOUND, 404);
+    return res
   }
 
   async findAll(): Promise<Contact[]> {

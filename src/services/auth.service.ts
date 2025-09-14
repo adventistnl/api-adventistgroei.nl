@@ -19,6 +19,7 @@ export class AuthService {
   ): Promise<Omit<UserWithRoles, 'password'> | null> {
     const user = await this.userService.findByEmail(email);
     if (!user) return null;
+    if (!user.password) return null
     const bcrypt = await import('bcryptjs');
     const isValid = await bcrypt.compare(password, user.password);
     if (isValid) {
@@ -31,14 +32,12 @@ export class AuthService {
 
   async login(input: LoginInput): Promise<AuthModel> {
     const user = await this.userService.findByEmail(input.email);
-    if (!user) {
-      throw new CustomGraphQLError('Invalid credentials. check your email', ErrorCode.UNAUTHORIZED, 401);
-    }
+    if (!user) throw new CustomGraphQLError('Invalid credentials', ErrorCode.UNAUTHORIZED, 401);
+    if (!user.password) throw new CustomGraphQLError('Invalid credentials', ErrorCode.UNAUTHORIZED, 401);
     const bcrypt = await import('bcryptjs');
     const isValid = await bcrypt.compare(input.password, user.password);
-    if (!isValid) {
-      throw new CustomGraphQLError('Invalid credentials. check your password', ErrorCode.UNAUTHORIZED, 401);
-    }
+    if (!isValid) throw new CustomGraphQLError('Invalid credentials', ErrorCode.UNAUTHORIZED, 401);
+
     // Remover o campo password explicitamente
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { password, ...userWithoutPassword } = user;

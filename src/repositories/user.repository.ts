@@ -8,6 +8,7 @@ import { LanguagePreference } from '../@generated/prisma/language-preference.enu
 import { DepartmentRepository } from './department.repository';
 import { InstitutionRepository } from './institution.repository';
 import { ChurchRepository } from './church.repository';
+import { ContactRepository } from './contact.repository';
 
 @Injectable()
 export class UserRepository {
@@ -16,10 +17,11 @@ export class UserRepository {
     private readonly departmentRepository: DepartmentRepository,
     private readonly institutioRepository: InstitutionRepository,
     private readonly churchRepository: ChurchRepository,
+    private readonly contactRepository: ContactRepository
     
   ) {}
 
-  async create(data: UserCreateDto): Promise<User> {
+  async create(data: UserCreateDto): Promise<Omit<User, 'password'>> {
     const { contact, church_id, department_id, institution_id, ...rest } = data;
 
     // os métodos já estouram erros caso não encontrem
@@ -55,35 +57,47 @@ export class UserRepository {
     return await this.prisma.user.create({ data: userData });
   }
 
-  async update(data: UserUpdateDto, userId: string): Promise<User> {
-    const user = await this.prisma.user.findUnique({ where: { id: data.id } });
+  async update(user_to_update_id: string, data: UserUpdateDto, requester_id: string): Promise<Omit<User, 'password'>> {
+    const user = await this.prisma.user.findUnique({ where: { id: user_to_update_id } });
     if (!user) throw new Error('User not found');
-    const contactId = user.contact_id;
-    if (data.contact && contactId) {
-      await this.prisma.contact.update({
-        where: { id: contactId },
-        data: {
-          ...data.contact,
-          updated_by: userId,
-        },
-      });
-    }
+
+    const { contact_id, church_id, department_id, institution_id, ...rest } = data;
+
+    // os métodos já estouram erros caso não encontrem
+    if (institution_id) await this.institutioRepository.findById(institution_id);
+    if (church_id) await this.churchRepository.findById(church_id);
+    if (department_id) await this.departmentRepository.findById(department_id);
+    if (contact_id) await this.contactRepository.findById(contact_id);
+
+    const filteredData = Object.fromEntries(
+      Object.entries(rest).filter(([_, value]) => value !== undefined)
+    );
+
+    const contactData = contact_id && data.contact
+      ? { connect: { id: contact_id }, update: { ...data.contact, updated_by: requester_id } }
+      : contact_id
+      ? { connect: { id: contact_id } }
+      : data.contact
+      ? {
+          upsert: {
+            create: { ...data.contact, is_primary: true, created_by: requester_id, updated_by: requester_id },
+            update: { ...data.contact, updated_by: requester_id },
+          },
+        }
+      : undefined;
+
     return await this.prisma.user.update({
-      where: { id: data.id },
+      omit: { password: true },
+      where: { id: user_to_update_id },
       data: {
-        institution_id: data.institution_id,
-        church_id: data.church_id ? data.church_id : '',
-        name: data.name,
-        email: data.email,
-        password: data.password,
-        language_preference: data.language_preference,
-        contact_id: contactId,
-        updated_by: userId,
+        ...filteredData,
+        updated_by: requester_id,
+        contact: contactData,
       },
     });
   }
 
-  async softDelete(id: string, userId: string): Promise<User> {
+  async softDelete(id: string, userId: string): Promise<Omit<User, 'password'>> {
     return await this.prisma.user.update({
       where: { id },
       data: {
@@ -95,11 +109,11 @@ export class UserRepository {
     });
   }
 
-  async findAll(): Promise<User[]> {
+  async findAll(): Promise<Omit<User, 'password'>[]> {
     return await this.prisma.user.findMany({ where: { is_deleted: false } });
   }
 
-  async findById(id: string): Promise<User | null> {
+  async findById(id: string): Promise<Omit<User, 'password'> | null> {
     return await this.prisma.user.findUnique({
       where: { id, is_deleted: false },
     });

@@ -15,8 +15,8 @@ export class UserModel {
   @Field()
   institution_id: string;
 
-  @Field()
-  password: string;
+  @Field(() => String, { nullable: true })
+  password?: string;
 
   @Field(() => String, { nullable: true })
   church_id: string | null;
