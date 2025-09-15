@@ -48,10 +48,11 @@ export class InstitutionResolver {
   @Mutation(() => Institution)
   async updateInstitution(
     @Args('data') data: InstitutionUpdateDto,
+    @Args('id') id: string,
     @Context() context: { userId: string },
   ): Promise<Institution> {
     const userId = context.userId;
-    return await this.institutionService.updateInstitution(data, userId);
+    return await this.institutionService.updateInstitution(id, data, userId);
   }
 
   @Permission()

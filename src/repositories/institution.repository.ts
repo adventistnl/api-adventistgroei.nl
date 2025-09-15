@@ -41,31 +41,33 @@ export class InstitutionRepository {
   }
 
   async update(
+    institution_id: string,
     data: InstitutionUpdateDto,
     userId: string,
   ): Promise<Institution> {
     // Atualiza dados básicos e o contato, se enviado
-    const institution = await this.prisma.institution.findUnique({
-      where: { id: data.id },
-    });
-    if (!institution) throw new Error('Institution not found');
-    const contactId = institution.contact_id;
-    if (data.contact && contactId) {
-      await this.prisma.contact.update({
-        where: { id: contactId },
-        data: {
-          ...data.contact,
-          updated_by: userId,
-        },
-      });
-    }
+    const institution = await this.findById(institution_id);
+
     return await this.prisma.institution.update({
-      where: { id: data.id },
+      where: { id: institution_id },
       data: {
         name: data.name,
         denomination: data.denomination,
         language_preference: data.language_preference,
-        contact_id: contactId,
+        contact: data.contact
+          ? institution?.contact_id ? {
+              update: {
+                ...data.contact,
+                updated_by: userId,
+              },
+            } : {
+              create: {
+                ...data.contact,
+                is_primary: true,
+                created_by: userId,
+                updated_by: userId,
+              },
+            } : undefined,
         updated_by: userId,
       },
     });

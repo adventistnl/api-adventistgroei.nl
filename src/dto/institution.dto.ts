@@ -24,11 +24,6 @@ export class InstitutionCreateDto {
 
 @InputType()
 export class InstitutionUpdateDto extends PartialType(InstitutionCreateDto) {
-  @Field()
-  @IsNotEmpty()
-  @IsString()
-  id: string;
-
   @Field({ nullable: true })
   @IsOptional()
   @IsString()

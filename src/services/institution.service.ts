@@ -33,10 +33,11 @@ export class InstitutionService {
   }
 
   async updateInstitution(
+    institution_id: string,
     data: InstitutionUpdateDto,
     userId: string,
   ): Promise<Institution> {
-    return await this.institutionRepository.update(data, userId);
+    return await this.institutionRepository.update(institution_id, data, userId);
   }
 
   async deleteInstitution(id: string, userId: string): Promise<Institution> {
