@@ -25,18 +25,21 @@ export class DepartmentResolver {
 
   @Permission()
   @Mutation(() => Department)
-  async createDepartment(@Args('data') data: DepartmentCreateDto, @Context() context: { userId: string }): Promise<Department> {
+  async createDepartment(
+    @Args('data') data: DepartmentCreateDto,
+    @Context() context: { userId: string }
+  ): Promise<Department> {
     return this.departmentService.createDepartment(data, context.userId);
   }
 
   @Permission()
   @Mutation(() => Department)
   async updateDepartment(
+    @Args('id') id: string,
     @Args('data') data: DepartmentUpdateDto,
-    @Args('department_id') department_id: string,
     @Context() context: { userId: string }
   ): Promise<Department> {
-    return this.departmentService.updateDepartment(department_id, data, context.userId);
+    return this.departmentService.updateDepartment(id, data, context.userId);
   }
 
   @Permission()

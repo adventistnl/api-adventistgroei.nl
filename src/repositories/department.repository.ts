@@ -28,53 +28,83 @@ export class DepartmentRepository {
   }
 
   async create(data: DepartmentCreateDto, userId: string): Promise<Department> {
-    const institution = await this.institutionRepository.findById(data.institution);
-    if (!institution) {
-      throw new CustomGraphQLError('Institution not found', ErrorCode.NOT_FOUND, 404);
+    await this.institutionRepository.findById(data.institution);
+    await this.churchRepository.findById(data.church);
+
+    let contactId: string | undefined;
+    if (data.contact) {
+      const contact = await this.prisma.contact.create({
+        data: {
+          name: data.contact.name,
+          phone: data.contact.phone,
+          email: data.contact.email,
+          is_primary: false, // Valor padrão para is_primary
+          created_by: userId,
+          updated_by: userId,
+        },
+      });
+      contactId = contact.id;
     }
-    const church = await this.churchRepository.findById(data.church);
-    if (!church) {
-      throw new CustomGraphQLError('Church not found', ErrorCode.NOT_FOUND, 404);
-    }
-    const annual_budget = Prisma.Decimal(data.annual_budget);
+
     return this.prisma.department.create({
       data: {
-        ...data,
-        created_by: userId,
-        updated_by: userId,
-        annual_budget: annual_budget,
+        name: data.name,
+        description: data.description,
+        annual_budget: new Prisma.Decimal(data.annual_budget),
         institution: { connect: { id: data.institution } },
         church: { connect: { id: data.church } },
+        contact: contactId ? { connect: { id: contactId } } : undefined,
+        created_by: userId,
+        updated_by: userId,
       },
     });
   }
 
-  async update(id: string, data: DepartmentUpdateDto, userId: string): Promise<Department> {
-    const department = await this.findById(id);
-    if (!department) {
-      throw new CustomGraphQLError('Department not found', ErrorCode.NOT_FOUND, 404);
-    }
-    if(data.institution_id) {
-      const institution = await this.institutionRepository.findById(data.institution_id);
-      if (!institution) {
-        throw new CustomGraphQLError('Institution not found', ErrorCode.NOT_FOUND, 404);
-      }
-    }
-    if(data.church_id) {
-      const church = await this.churchRepository.findById(data.church_id);
-      if (!church) {
-        throw new CustomGraphQLError('Church not found', ErrorCode.NOT_FOUND, 404);
-        }
+  async update(departmentId: string, data: DepartmentUpdateDto, userId: string): Promise<Department> {
+    if (data.institution_id) {
+      await this.institutionRepository.findById(data.institution_id);
     }
 
-    return this.prisma.department.update({ where: { id }, data: {
-      updated_by: { set: userId },
-      name: data.name ? { set: data.name } : undefined,
-      description: data.description ? { set: data.description } : undefined,
-      annual_budget: data.annual_budget ? { set: Prisma.Decimal(data.annual_budget) } : undefined,
-      institution: data.institution_id ? { connect: { id: data.institution_id } } : undefined,
-      church: data.church_id ? { connect: { id: data.church_id } } : undefined,
-    } });
+    if (data.church_id) {
+      await this.churchRepository.findById(data.church_id);
+    }
+
+    const existingDepartment = await this.findById(departmentId);
+    if (!existingDepartment) {
+      throw new CustomGraphQLError('Department not found', ErrorCode.NOT_FOUND, 404);
+    }
+
+    let contactData;
+    if (data.contact) {
+      contactData = existingDepartment.contact_id
+        ? {
+            update: {
+              ...data.contact,
+              updated_by: userId,
+            },
+          }
+        : {
+            create: {
+              ...data.contact,
+              is_primary: false,
+              created_by: userId,
+              updated_by: userId,
+            },
+          };
+    }
+
+    return this.prisma.department.update({
+      where: { id: departmentId },
+      data: {
+        name: data.name ?? undefined,
+        description: data.description ?? undefined,
+        annual_budget: data.annual_budget ? new Prisma.Decimal(data.annual_budget) : undefined,
+        institution: data.institution_id ? { connect: { id: data.institution_id } } : undefined,
+        church: data.church_id ? { connect: { id: data.church_id } } : undefined,
+        contact: contactData,
+        updated_by: userId,
+      },
+    });
   }
 
   async delete(id: string): Promise<Department> {

@@ -24,8 +24,8 @@ export class DepartmentService {
     return this.departmentRepository.create(data, userId);
   }
 
-  async updateDepartment(department_id: string, data: DepartmentUpdateDto, userId: string): Promise<Department> {
-    return this.departmentRepository.update(department_id, data, userId);
+  async updateDepartment(departmentId: string, data: DepartmentUpdateDto, userId: string): Promise<Department> {
+    return this.departmentRepository.update(departmentId, data, userId);
   }
 
   async deleteDepartment(id: string): Promise<Department> {
