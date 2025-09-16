@@ -46,10 +46,11 @@ export class RegionResolver {
   @Mutation(() => RegionModel)
   async updateRegion(
     @Args('data') data: RegionUpdateDto,
+    @Args('id') id: string,
     @Context() context: { userId: string },
   ): Promise<Region> {
     const userId = context.userId;
-    return await this.regionService.updateRegion(data, userId);
+    return await this.regionService.updateRegion(id, data, userId);
   }
 
   @Permission()

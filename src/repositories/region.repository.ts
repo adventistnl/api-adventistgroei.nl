@@ -1,11 +1,17 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from '../services/prisma.service';
 import { RegionCreateDto, RegionUpdateDto } from '../dto/region.dto';
 import { Region } from '@prisma/client';
+import { CustomGraphQLError, ErrorCode } from '../common/errors/custom-graphql-error';
+import { PrismaService } from '../services';
+import { InstitutionRepository } from './institution.repository';
 
 @Injectable()
 export class RegionRepository {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly institutionRepository: InstitutionRepository
+    
+  ) {}
 
   async findAll(): Promise<Region[]> {
     const regions = await this.prisma.region.findMany();
@@ -14,65 +20,64 @@ export class RegionRepository {
 
   async findById(id: string): Promise<Region | null> {
     const r = await this.prisma.region.findUnique({ where: { id } });
-    if (!r) return null;
+    if (!r) throw new CustomGraphQLError('Region not found', ErrorCode.NOT_FOUND, 404);
     return r;
   }
 
   async create(data: RegionCreateDto, userId: string): Promise<Region> {
-    let contactId: string | null = null;
-    if (data.contact) {
-      const contact = await this.prisma.contact.create({
-        data: {
-          ...data.contact,
-          created_by: userId,
-          updated_by: userId,
-          is_primary: true,
-        },
-      });
-      contactId = contact.id;
+    await this.institutionRepository.findById(data.institution_id);
+    if (data.parent_region_id) {
+      const parent_region = await this.prisma.region.findUnique({ where: { id: data.parent_region_id } });
+      if (!parent_region) throw new CustomGraphQLError('Parent region not found', ErrorCode.NOT_FOUND, 404);
     }
+
     return await this.prisma.region.create({
       data: {
-        institution_id: data.institution_id,
+        institution: { connect: { id: data.institution_id } },
+        parent_region: data.parent_region_id ? { connect: { id: data.parent_region_id } } : undefined,
         name: data.name,
-        parent_region_id: data.parent_region_id ?? null,
-        contact_id: contactId,
+        contact: data.contact ? {
+          create: {
+            ...data.contact,
+            is_primary: true,
+            created_by: userId,
+            updated_by: userId,
+          }
+        } : undefined,
         created_by: userId,
         updated_by: userId,
       },
     });
   }
 
-  async update(data: RegionUpdateDto, userId: string): Promise<Region> {
-    let contactId = data.contact_id ?? null;
-    if (data.contact) {
-      if (contactId) {
-        await this.prisma.contact.update({
-          where: { id: contactId },
-          data: {
-            ...data.contact,
-            updated_by: userId,
-          },
-        });
-      } else {
-        const contact = await this.prisma.contact.create({
-          data: {
-            ...data.contact,
-            created_by: userId,
-            updated_by: userId,
-            is_primary: false,
-          },
-        });
-        contactId = contact.id;
-      }
+  async update(regionId: string, data: RegionUpdateDto, userId: string): Promise<Region> {
+    const region = await this.findById(regionId);
+    if (data.institution_id) await this.institutionRepository.findById(data.institution_id);
+    if (data.parent_region_id) {
+      const parent_region = await this.prisma.region.findUnique({ where: { id: data.parent_region_id } });
+      if (!parent_region) throw new CustomGraphQLError('Parent region not found', ErrorCode.NOT_FOUND, 404);
     }
+
     return await this.prisma.region.update({
-      where: { id: data.id },
+      where: { id: regionId },
       data: {
-        institution_id: data.institution_id,
+        institution: data.institution_id ? { connect: { id: data.institution_id } } : undefined,
+        parent_region: data.parent_region_id ? { connect: { id: data.parent_region_id } } : undefined,
         name: data.name,
-        parent_region_id: data.parent_region_id ?? null,
-        contact_id: contactId,
+        contact: data.contact
+          ? region?.contact_id ? {
+              update: {
+                ...data.contact,
+                updated_by: userId,
+              },
+            } : {
+              create: {
+                ...data.contact,
+                is_primary: true,
+                created_by: userId,
+                updated_by: userId,
+              },
+            } : undefined,
         updated_by: userId,
       },
     });

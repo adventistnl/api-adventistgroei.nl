@@ -11,8 +11,8 @@ export class RegionService {
     return await this.regionRepository.create(data, userId);
   }
 
-  async updateRegion(data: RegionUpdateDto, userId: string): Promise<Region> {
-    return await this.regionRepository.update(data, userId);
+  async updateRegion(regionId: string, data: RegionUpdateDto, userId: string): Promise<Region> {
+    return await this.regionRepository.update(regionId, data, userId);
   }
 
   async deleteRegion(id: string, userId: string): Promise<Region> {

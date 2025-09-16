@@ -1,26 +1,44 @@
-import { InputType, Field, PartialType } from '@nestjs/graphql';
+import { InputType, Field } from '@nestjs/graphql';
 import { ContactCreateDto } from './contact.dto';
+import { IsOptional, IsString } from 'class-validator';
 
 @InputType()
 export class RegionCreateDto {
   @Field()
+  @IsString()
   institution_id: string;
 
   @Field()
+  @IsString()
   name: string;
 
   @Field({ nullable: true })
+  @IsString()
   parent_region_id?: string;
 
   @Field(() => ContactCreateDto, { nullable: true })
+  @IsOptional()
   contact?: ContactCreateDto;
 }
 
 @InputType()
-export class RegionUpdateDto extends PartialType(RegionCreateDto) {
-  @Field()
-  id: string;
+export class RegionUpdateDto {
+  @Field({ nullable: true })
+  @IsString()
+  @IsOptional()
+  institution_id?: string;
 
   @Field({ nullable: true })
-  contact_id?: string;
+  @IsString()
+  @IsOptional()
+  name?: string;
+
+  @Field({ nullable: true })
+  @IsString()
+  @IsOptional()
+  parent_region_id?: string;
+
+  @Field(() => ContactCreateDto, { nullable: true })
+  @IsOptional()
+  contact?: ContactCreateDto;
 }
