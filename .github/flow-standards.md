@@ -174,3 +174,69 @@ async create(data: DepartmentCreateDto, userId: string): Promise<Department> {
   });
 }
 ```
+
+---
+
+## **Exemplo de Atualização com Contato Existente ou Novo**
+
+#### Repository:
+```typescript
+async update(churchId: string, data: ChurchUpdateDto, userId: string): Promise<Church> {
+  const church = await this.prisma.church.findUnique({
+    where: { id: churchId },
+  });
+  if (!church) {
+    throw new CustomGraphQLError('Church not found', ErrorCode.NOT_FOUND, 404);
+  }
+
+  let contactData;
+  if (data.contact) {
+    contactData = church.contact_id
+      ? {
+          update: {
+            ...data.contact,
+            updated_by: userId,
+          },
+        }
+      : {
+          create: {
+            ...data.contact,
+            is_primary: true,
+            created_by: userId,
+            updated_by: userId,
+          },
+        };
+  }
+
+  return await this.prisma.church.update({
+    where: { id: churchId },
+    data: {
+      institution_id: data.institution_id,
+      name: data.name,
+      region_id: data.region_id,
+      contact: contactData,
+      updated_by: userId,
+    },
+  });
+}
+```
+
+#### Service:
+```typescript
+async updateChurch(data: ChurchUpdateDto, userId: string): Promise<Church> {
+  return await this.churchRepository.update(data, userId);
+}
+```
+
+#### Resolver:
+```typescript
+@Permission()
+@Mutation(() => ChurchModel)
+async updateChurch(
+  @Args('data') data: ChurchUpdateDto,
+  @Context() context: { userId: string },
+): Promise<Church> {
+  const userId = context.userId;
+  return await this.churchService.updateChurch(data, userId);
+}
+```
