@@ -5,3 +5,5 @@ export * from './region.model';
 export * from './church.model';
 export * from './department.model';
 export * from './user.model';
+export * from './invite.model';
+export * from './contact.model';

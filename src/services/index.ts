@@ -17,3 +17,4 @@ export * from './contact.service';
 export * from './subsidy-status.service';
 export * from './project-voluntary.service';
 export * from './project-activity.service';
+export * from './invite.service';

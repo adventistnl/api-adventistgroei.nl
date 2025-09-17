@@ -12,6 +12,7 @@ export * from './project.repository';
 export * from './subsidy-request.repository';
 export * from './direct-message.repository';
 export * from './contact.repository';
-export * from './subsidy-status.repository';
 export * from './project-voluntary.repository';
 export * from './project-activity.repository';
+export * from './invite.repository';
+export * from './subsidy-status.repository';
