@@ -16,6 +16,7 @@ export class InviteRepository {
     await this.userRepository.findById(data.inviter_id);
     const token = this.jwtService.sign({ ...data }, { expiresIn: '2d' });
     const url = `${this.BASE_URL}/register?token=${token}`;
+
     return { token, url };
   }
 }
