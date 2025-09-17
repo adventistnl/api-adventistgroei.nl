@@ -11,12 +11,15 @@ export class ChurchService {
     return await this.churchRepository.create(data, userId);
   }
 
-  async updateChurch(data: ChurchUpdateDto, userId: string): Promise<Church> {
-    return await this.churchRepository.update(data, userId);
+  async updateChurch(churchId: string, data: ChurchUpdateDto, userId: string): Promise<Church> {
+    return await this.churchRepository.update(churchId, data, userId);
   }
 
-  async deleteChurch(id: string, userId: string): Promise<Church> {
-    return await this.churchRepository.softDelete(id, userId);
+  async deleteChurch(churchId: string, userId: string): Promise<Church> {
+    // Validação de existência
+    await this.churchRepository.findById(churchId);
+
+    return await this.churchRepository.softDelete(churchId, userId);
   }
 
   async getChurches(): Promise<Church[]> {

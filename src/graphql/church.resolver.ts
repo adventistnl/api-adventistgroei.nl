@@ -37,20 +37,20 @@ export class ChurchResolver {
   @Permission()
   @Mutation(() => ChurchModel)
   async updateChurch(
+    @Args('id') id: string,
     @Args('data') data: ChurchUpdateDto,
     @Context() context: { userId: string },
   ): Promise<Church> {
-    const userId = context.userId;
-    return await this.churchService.updateChurch(data, userId);
+    return await this.churchService.updateChurch(id, data, context.userId);
   }
 
   @Permission()
   @Mutation(() => ChurchModel)
   async deleteChurch(
-    @Args('id') id: string,
+    @Args('id') churchId: string,
     @Context() context: { userId: string },
   ): Promise<Church> {
     const userId = context.userId;
-    return await this.churchService.deleteChurch(id, userId);
+    return await this.churchService.deleteChurch(churchId, userId);
   }
 }

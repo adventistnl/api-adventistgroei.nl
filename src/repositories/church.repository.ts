@@ -3,13 +3,22 @@ import { PrismaService } from '../services/prisma.service';
 import { ChurchCreateDto, ChurchUpdateDto } from '../dto/church.dto';
 import { Church } from '@prisma/client';
 import { CustomGraphQLError, ErrorCode } from 'src/common/errors/custom-graphql-error';
+import { InstitutionRepository } from './institution.repository';
+import { RegionRepository } from './region.repository';
 
 @Injectable()
 export class ChurchRepository {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly prisma: PrismaService,
+    private readonly institutionRepository: InstitutionRepository,
+    private readonly regionRepository: RegionRepository
+  ) {}
 
   async create(data: ChurchCreateDto, userId: string): Promise<Church> {
-    let contactId: string | null = null;
+    // Validação de relacionamentos
+    await this.validateInstitution(data.institution_id);
+    await this.validateRegion(data.region_id);
+
+    let contactId: string | undefined = undefined;
     if (data.contact) {
       const contact = await this.prisma.contact.create({
         data: {
@@ -21,12 +30,13 @@ export class ChurchRepository {
       });
       contactId = contact.id;
     }
+
     return await this.prisma.church.create({
       data: {
-        institution_id: data.institution_id,
+        institution: { connect: { id: data.institution_id } },
+        region: { connect: { id: data.region_id } },
         name: data.name,
-        region_id: data.region_id,
-        contact_id: contactId,
+        contact:  contactId ? { connect: { id: contactId } } : undefined,
         created_by: userId,
         updated_by: userId,
         is_deleted: false,
@@ -34,28 +44,17 @@ export class ChurchRepository {
     });
   }
 
-  async update(data: ChurchUpdateDto, userId: string): Promise<Church> {
-    const church = await this.prisma.church.findUnique({
-      where: { id: data.id },
-    });
-    if (!church) throw new Error('Church not found');
-    const contactId = church.contact_id;
-    if (data.contact && contactId) {
-      await this.prisma.contact.update({
-        where: { id: contactId },
-        data: {
-          ...data.contact,
-          updated_by: userId,
-        },
-      });
-    }
+  async update(churchId: string, data: ChurchUpdateDto, userId: string): Promise<Church> {
+    await this.findById(churchId)
+    if (data.region_id) await this.regionRepository.findById(data.region_id)
+    if (data.institution_id) await this.institutionRepository.findById(data.institution_id)
     return await this.prisma.church.update({
-      where: { id: data.id },
+      where: { id: churchId },
       data: {
-        institution_id: data.institution_id,
+        institution: { connect: { id: data.institution_id } },
         name: data.name,
-        region_id: data.region_id,
-        contact_id: contactId,
+        region: { connect: { id: data.region_id } },
+        contact: { update: { ...data.contact, updated_by: userId }},
         updated_by: userId,
       },
     });
@@ -78,11 +77,15 @@ export class ChurchRepository {
   }
 
   async findById(id: string): Promise<Church | null> {
-    const res = await this.prisma.church.findUnique({
-      where: { id, is_deleted: false },
+    const church = await this.prisma.church.findUnique({
+      where: { id },
     });
-    if (!res) throw new CustomGraphQLError('Church not found', ErrorCode.NOT_FOUND, 404);
-    return res;
+
+    if (!church || church.is_deleted) {
+      throw new CustomGraphQLError('Church not found', ErrorCode.NOT_FOUND, 404);
+    }
+
+    return church;
   }
 
   async findOneByFilters(filters: Partial<Record<keyof Church, any>>): Promise<Church | null> {
@@ -117,5 +120,19 @@ export class ChurchRepository {
         ...filters,
       },
     });
+  }
+
+  async validateInstitution(institutionId: string): Promise<void> {
+    const institution = await this.prisma.institution.findUnique({ where: { id: institutionId } });
+    if (!institution) {
+      throw new CustomGraphQLError('Institution not found', ErrorCode.NOT_FOUND, 404);
+    }
+  }
+
+  async validateRegion(regionId: string): Promise<void> {
+    const region = await this.prisma.region.findUnique({ where: { id: regionId } });
+    if (!region) {
+      throw new CustomGraphQLError('Region not found', ErrorCode.NOT_FOUND, 404);
+    }
   }
 }
