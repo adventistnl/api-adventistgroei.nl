@@ -1,4 +1,5 @@
 import { Resolver, Mutation, Args } from '@nestjs/graphql';
+import { InviteEmailDto } from 'src/dto/email.dto';
 import { EmailService } from 'src/services/email.service';
 
 @Resolver()
@@ -7,11 +8,9 @@ export class EmailResolver {
 
   @Mutation(() => Boolean, { description: 'Send an invitation email' })
   async sendInviteEmail(
-    @Args('to') to: string,
-    @Args('inviter_id') inviter_id: string,
-    @Args('url') url: string,
+    @Args('data') data: InviteEmailDto,
   ): Promise<boolean> {
-      await this.emailService.sendInviteEmail(to, inviter_id, url);
+      await this.emailService.sendInviteEmail(data);
       return true;
   }
 }

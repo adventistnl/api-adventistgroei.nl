@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InviteUserDto } from 'src/dto/invite.dto';
-import { InviteModel } from 'src/models/invite.model';
+import { InviteModel, ValidateOutputModel } from 'src/models/invite.model';
 import { InviteRepository } from 'src/repositories/invite.repository';
 
 @Injectable()
@@ -14,5 +14,10 @@ export class InviteService {
   ): Promise<InviteModel> {
     const res = await this.inviteRepository.inviteUser(data);
     return res;
+  }
+
+  validateInviteToken(token: string): ValidateOutputModel {
+    const payload = this.inviteRepository.validateInviteToken(token);
+    return payload;
   }
 }

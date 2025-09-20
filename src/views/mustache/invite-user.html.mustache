@@ -4,19 +4,70 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Convite para Registro</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f9;
+      margin: 0;
+      padding: 0;
+    }
+    .email-container {
+      max-width: 600px;
+      margin: 0 auto;
+      background: #ffffff;
+      border-radius: 8px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+    }
+    .email-header {
+      background-color: #f4f4f9;
+      color: #777777;
+      text-align: center;
+      padding: 20px;
+    }
+    .email-header img {
+      max-width: 100px;
+      margin-bottom: 10px;
+      background: transparent;
+    }
+    .email-body {
+      padding: 20px;
+      color: #333333;
+      line-height: 1.6;
+    }
+    .email-body a {
+      color: #777777;
+      text-decoration: none;
+      font-weight: bold;
+    }
+    .email-footer {
+      text-align: center;
+      padding: 10px;
+      font-size: 12px;
+      color: #777777;
+      background-color: #f4f4f9;
+    }
+  </style>
 </head>
 <body>
-  <div style="font-family: Arial, sans-serif; line-height: 1.6;">
-    <h2>Olá!</h2>
-    <p>Você foi convidado por <strong>{{inviterName}}</strong> para se registrar na nossa plataforma.</p>
-    <p>Por favor, clique no link abaixo para completar seu registro:</p>
-    <p>
-      <a href="{{url}}" style="color: #1a73e8; text-decoration: none;">Complete seu registro</a>
-    </p>
-    <p><em>Este link expira em 2 dias.</em></p>
-    <p>Se você não esperava receber este convite, por favor ignore este email.</p>
-    <hr>
-    <p>Atenciosamente,<br>A equipe Adventist Groei</p>
+  <div class="email-container">
+    <div class="email-header">
+      <img style="mix-blend-mode: multiply;" src="https://w7.pngwing.com/pngs/867/673/png-transparent-kress-memorial-seventh-day-adventist-church-kempton-park-central-seventh-day-adventist-church-christian-church-logo-s.png" alt="Adventist Church Logo">
+      <h1>Convite para Registro</h1>
+    </div>
+    <div class="email-body">
+      <h2>Olá!</h2>
+      <p>Você foi convidado por <strong>{{inviterName}}</strong> para se registrar na nossa plataforma.</p>
+      <p>Por favor, clique no botão abaixo para completar seu registro:</p>
+      <p style="text-align: center;">
+        <a href="{{url}}" style="display: inline-block; background-color: #333333; color: #f4f4f9; padding: 10px 20px; border-radius: 5px; text-decoration: none;">Complete seu registro</a>
+      </p>
+      <p><em>Este link expira em 2 dias.</em></p>
+      <p>Se você não esperava receber este convite, por favor ignore este email.</p>
+    </div>
+    <div class="email-footer">
+      <p>Atenciosamente,<br>A equipe Adventist Groei</p>
+    </div>
   </div>
 </body>
 </html>

@@ -1,6 +1,5 @@
 import { IsNotEmpty, IsString, IsOptional, IsArray } from 'class-validator';
 import { InputType, Field } from '@nestjs/graphql';
-import { LanguagePreference } from 'src/@generated/prisma/language-preference.enum';
 
 @InputType()
 export class InviteUserDto {
@@ -24,7 +23,13 @@ export class InviteUserDto {
   @IsString()
   inviter_id: string;
 
-  @Field(() => LanguagePreference, { nullable: true })
+  @Field(() => String, { nullable: true })
+  @IsString()
   @IsOptional()
-  language_preference?: LanguagePreference;
+  language_preference?: string;
+  
+  @Field(() => String, { nullable: true })
+  @IsString()
+  @IsOptional()
+  message?: string;
 }

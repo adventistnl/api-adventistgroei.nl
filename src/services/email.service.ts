@@ -5,6 +5,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { CustomGraphQLError, ErrorCode } from 'src/common/errors/custom-graphql-error';
 import { UserService } from './user.service';
+import { InviteEmailDto } from 'src/dto/email.dto';
 
 @Injectable()
 export class EmailService {
@@ -19,17 +20,17 @@ export class EmailService {
   }
   sendgridEmail: string = process.env.SENDGRID_EMAIL || '';
 
-  async sendInviteEmail(to: string, inviterId: string, url: string): Promise<void> {
-    const inviter = await this.userService.getUserById(inviterId);
+  async sendInviteEmail(data: InviteEmailDto): Promise<void> {
+    const inviter = await this.userService.getUserById(data.inviter_id);
     if (!inviter) throw new CustomGraphQLError('Inviter not found', ErrorCode.NOT_FOUND, 404);
 
     const subject = 'Invitation to Adventist Groei';
-    const templateName = 'invite-user';
     const templateData = {
       inviterName: inviter.name,
-      url,
+      url: data.url,
+      message: data.message,
     };
-    await this.sendEmail(to, subject, templateName, templateData);
+    await this.sendEmail(data.to, subject, 'invite-user', templateData);
   }
   
   renderMustacheTemplate(templateName: string, vars: { [x: string]: any }): string {
