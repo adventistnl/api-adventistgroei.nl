@@ -22,8 +22,11 @@ export class UserRepository {
   ) {}
 
   async create(data: UserCreateDto): Promise<Omit<User, 'password'>> {
-    const { contact, church_id, department_id, institution_id, ...rest } = data;
+    const { contact, church_id, department_id, institution_id, language_preference, ...rest } = data;
 
+    if (!Object.values(LanguagePreference).includes(language_preference as LanguagePreference)) {
+      throw new Error('Invalid language preference');
+    }
     // os métodos já estouram erros caso não encontrem
     // Verificar se a institution existe
     await this.institutioRepository.findById(institution_id);
@@ -46,6 +49,7 @@ export class UserRepository {
     const hashedPassword = await bcrypt.hash(data.password, 10);
     const userData = {
       ...rest,
+      language_preference: LanguagePreference[language_preference],
       church: { connect: { id: church_id } },
       department: { connect: { id: department_id } },
       institution: { connect: { id: institution_id } },

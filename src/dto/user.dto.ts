@@ -17,8 +17,8 @@ export class UserCreateDto {
   @IsString()
   password: string;
   
-  @Field(() => LanguagePreference)
-  language_preference: LanguagePreference;
+  @Field(() => String)
+  language_preference: string;
 
   @Field()
   @IsString()
