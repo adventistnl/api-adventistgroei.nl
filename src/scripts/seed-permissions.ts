@@ -77,7 +77,9 @@ const permissions = [
   { name: 'createProjectActivity', description: 'Create a project activity', resolver_name: 'createProjectActivity' as PermissionResolverName, group: 'ACTIVITY' as PermissionGroup, key_code: 'ACTIVITY_CREATE' },
   { name: 'updateProjectActivity', description: 'Update a project activity', resolver_name: 'updateProjectActivity' as PermissionResolverName, group: 'ACTIVITY' as PermissionGroup, key_code: 'ACTIVITY_UPDATE' },
   { name: 'deleteProjectActivity', description: 'Delete a project activity', resolver_name: 'deleteProjectActivity' as PermissionResolverName, group: 'ACTIVITY' as PermissionGroup, key_code: 'ACTIVITY_DELETE' },
-  
+  { name: 'sendInviteEmail', description: 'Send an invitation email', resolver_name: 'sendInviteEmail' as PermissionResolverName, group: 'EMAIL_SEND' as PermissionGroup, key_code: 'EMAIL_SEND' },
+  { name: 'inviteUser', description: 'Invite a user', resolver_name: 'inviteUser' as PermissionResolverName, group: 'INVITE' as PermissionGroup, key_code: 'USER_INVITE' },
+  { name: 'validateInviteToken', description: 'Validate an invite token', resolver_name: 'validateInviteToken' as PermissionResolverName, group: 'INVITE' as PermissionGroup, key_code: 'INVITE_TOKEN_VALIDATE' },
 ];
 
 async function main() {

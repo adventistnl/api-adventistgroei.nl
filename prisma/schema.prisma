@@ -120,6 +120,9 @@ enum PermissionResolverName {
   createProjectActivity
   updateProjectActivity
   deleteProjectActivity
+  sendInviteEmail
+  inviteUser
+  validateInviteToken
 }
 
 enum PermissionGroup {
@@ -139,6 +142,8 @@ enum PermissionGroup {
   SETTING
   SUBSIDY_REQUEST
   SUBSIDY_STATUS
+  EMAIL_SEND
+  INVITE
 }
 
 enum CommunicationType {
