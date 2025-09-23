@@ -34,6 +34,9 @@ export class ProjectUncheckedUpdateWithoutActivitiesInput {
     @Field(() => StringFieldUpdateOperationsInput, {nullable:true})
     media_link?: StringFieldUpdateOperationsInput;
 
+    @Field(() => StringFieldUpdateOperationsInput, {nullable:true})
+    owner_id?: StringFieldUpdateOperationsInput;
+
     @Field(() => EnumLanguagePreferenceFieldUpdateOperationsInput, {nullable:true})
     language_preference?: EnumLanguagePreferenceFieldUpdateOperationsInput;
 

@@ -24,6 +24,9 @@ export class ProjectCountAggregate {
     media_link!: number;
 
     @Field(() => Int, {nullable:false})
+    owner_id!: number;
+
+    @Field(() => Int, {nullable:false})
     language_preference!: number;
 
     @Field(() => Int, {nullable:false})

@@ -11,6 +11,7 @@ import { BoolFilter } from '../prisma/bool-filter.input';
 import { DateTimeNullableFilter } from '../prisma/date-time-nullable-filter.input';
 import { StringNullableFilter } from '../prisma/string-nullable-filter.input';
 import { DepartmentScalarRelationFilter } from '../department/department-scalar-relation-filter.input';
+import { UserScalarRelationFilter } from '../user/user-scalar-relation-filter.input';
 import { EventNullableScalarRelationFilter } from '../event/event-nullable-scalar-relation-filter.input';
 import { InstitutionNullableScalarRelationFilter } from '../institution/institution-nullable-scalar-relation-filter.input';
 import { VoluntariesOnProjectsListRelationFilter } from '../voluntaries-on-projects/voluntaries-on-projects-list-relation-filter.input';
@@ -51,6 +52,9 @@ export class ProjectWhereUniqueInput {
     @Field(() => StringFilter, {nullable:true})
     media_link?: StringFilter;
 
+    @Field(() => StringFilter, {nullable:true})
+    owner_id?: StringFilter;
+
     @Field(() => EnumLanguagePreferenceFilter, {nullable:true})
     language_preference?: EnumLanguagePreferenceFilter;
 
@@ -87,6 +91,10 @@ export class ProjectWhereUniqueInput {
     @Field(() => DepartmentScalarRelationFilter, {nullable:true})
     @Type(() => DepartmentScalarRelationFilter)
     department?: DepartmentScalarRelationFilter;
+
+    @Field(() => UserScalarRelationFilter, {nullable:true})
+    @Type(() => UserScalarRelationFilter)
+    owner?: UserScalarRelationFilter;
 
     @Field(() => EventNullableScalarRelationFilter, {nullable:true})
     @Type(() => EventNullableScalarRelationFilter)

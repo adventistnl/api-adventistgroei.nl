@@ -5,19 +5,22 @@ import { ProjectCreateDto, ProjectUpdateDto } from '../dto/project.dto';
 import { Decimal } from '@prisma/client/runtime/library';
 import { InstitutionRepository } from './institution.repository';
 import { DepartmentRepository } from './department.repository';
+import { UserRepository } from './user.repository';
 
 @Injectable()
 export class ProjectRepository {
   constructor(
     private readonly prisma: PrismaService,
     private readonly institutionRepository: InstitutionRepository,
-    private readonly departmentRepository: DepartmentRepository
+    private readonly departmentRepository: DepartmentRepository,
+    private readonly userRepository: UserRepository
 
   ) {}
 
   async create(data: ProjectCreateDto, userId: string): Promise<Project> {
     await this.institutionRepository.findById(data.institution_id);
     await this.departmentRepository.findById(data.department_id);
+    await this.userRepository.findById(data.owner_id);
 
     return this.prisma.project.create({
       data: {
@@ -27,27 +30,32 @@ export class ProjectRepository {
         budget: new Decimal(data.budget),
         media_link: data.media_link,
         type: data.type,
-        department: { connect: { id: data.department_id } },
         created_by: userId,
         updated_by: userId,
         is_deleted: false,
+        department: { connect: { id: data.department_id } },
+        owner: {connect: {id: data.owner_id}},
         Institution: { connect: { id: data.institution_id } },
       },
     });
   }
 
   async update(id: string, data: ProjectUpdateDto, userId: string): Promise<Project> {
-    const { institution_id, department_id, ...rest } = data;
+    const { institution_id, department_id, owner_id, ...rest } = data;
     if (institution_id) {
       await this.institutionRepository.findById(institution_id);
     }
     if (department_id) {
       await this.departmentRepository.findById(department_id);
     }
+    if (owner_id) {
+      await this.userRepository.findById(owner_id);
+    }
     return this.prisma.project.update({
       where: { id },
       data: {
         Institution: institution_id ? { connect: { id: institution_id } } : undefined,
+        owner: owner_id ? { connect: { id: owner_id } } : undefined,
         budget: rest.budget ? new Decimal(rest.budget) : undefined,
         department: department_id ? { connect: { id: department_id } } : undefined,
         title: rest.title,

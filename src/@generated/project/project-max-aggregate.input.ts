@@ -23,6 +23,9 @@ export class ProjectMaxAggregateInput {
     media_link?: true;
 
     @Field(() => Boolean, {nullable:true})
+    owner_id?: true;
+
+    @Field(() => Boolean, {nullable:true})
     language_preference?: true;
 
     @Field(() => Boolean, {nullable:true})

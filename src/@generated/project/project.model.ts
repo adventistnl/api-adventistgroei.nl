@@ -6,6 +6,7 @@ import { Decimal } from '@prisma/client/runtime/library';
 import { LanguagePreference } from '../prisma/language-preference.enum';
 import { ProjectType } from '../prisma/project-type.enum';
 import { Department } from '../department/department.model';
+import { User } from '../user/user.model';
 import { Event } from '../event/event.model';
 import { Institution } from '../institution/institution.model';
 import { VoluntariesOnProjects } from '../voluntaries-on-projects/voluntaries-on-projects.model';
@@ -33,6 +34,9 @@ export class Project {
 
     @Field(() => String, {nullable:false})
     media_link!: string;
+
+    @Field(() => String, {nullable:false})
+    owner_id!: string;
 
     @Field(() => LanguagePreference, {nullable:false})
     language_preference!: `${LanguagePreference}`;
@@ -69,6 +73,9 @@ export class Project {
 
     @Field(() => Department, {nullable:false})
     department?: Department;
+
+    @Field(() => User, {nullable:false})
+    owner?: User;
 
     @Field(() => Event, {nullable:true})
     event?: Event | null;

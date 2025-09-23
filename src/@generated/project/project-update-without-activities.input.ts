@@ -10,6 +10,7 @@ import { BoolFieldUpdateOperationsInput } from '../prisma/bool-field-update-oper
 import { NullableDateTimeFieldUpdateOperationsInput } from '../prisma/nullable-date-time-field-update-operations.input';
 import { NullableStringFieldUpdateOperationsInput } from '../prisma/nullable-string-field-update-operations.input';
 import { DepartmentUpdateOneRequiredWithoutProjectsNestedInput } from '../department/department-update-one-required-without-projects-nested.input';
+import { UserUpdateOneRequiredWithoutProjectNestedInput } from '../user/user-update-one-required-without-project-nested.input';
 import { EventUpdateOneWithoutProjectsNestedInput } from '../event/event-update-one-without-projects-nested.input';
 import { InstitutionUpdateOneWithoutProjectsNestedInput } from '../institution/institution-update-one-without-projects-nested.input';
 import { VoluntariesOnProjectsUpdateManyWithoutProjectNestedInput } from '../voluntaries-on-projects/voluntaries-on-projects-update-many-without-project-nested.input';
@@ -64,6 +65,10 @@ export class ProjectUpdateWithoutActivitiesInput {
     @Field(() => DepartmentUpdateOneRequiredWithoutProjectsNestedInput, {nullable:true})
     @Type(() => DepartmentUpdateOneRequiredWithoutProjectsNestedInput)
     department?: DepartmentUpdateOneRequiredWithoutProjectsNestedInput;
+
+    @Field(() => UserUpdateOneRequiredWithoutProjectNestedInput, {nullable:true})
+    @Type(() => UserUpdateOneRequiredWithoutProjectNestedInput)
+    owner?: UserUpdateOneRequiredWithoutProjectNestedInput;
 
     @Field(() => EventUpdateOneWithoutProjectsNestedInput, {nullable:true})
     @Type(() => EventUpdateOneWithoutProjectsNestedInput)

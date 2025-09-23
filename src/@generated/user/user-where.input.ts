@@ -21,6 +21,7 @@ import { CommunicationListRelationFilter } from '../communication/communication-
 import { SubsidyRequestListRelationFilter } from '../subsidy-request/subsidy-request-list-relation-filter.input';
 import { SubsidyStatusListRelationFilter } from '../subsidy-status/subsidy-status-list-relation-filter.input';
 import { VoluntariesOnProjectsListRelationFilter } from '../voluntaries-on-projects/voluntaries-on-projects-list-relation-filter.input';
+import { ProjectListRelationFilter } from '../project/project-list-relation-filter.input';
 
 @InputType()
 export class UserWhereInput {
@@ -132,4 +133,8 @@ export class UserWhereInput {
     @Field(() => VoluntariesOnProjectsListRelationFilter, {nullable:true})
     @Type(() => VoluntariesOnProjectsListRelationFilter)
     voluntary_projects?: VoluntariesOnProjectsListRelationFilter;
+
+    @Field(() => ProjectListRelationFilter, {nullable:true})
+    @Type(() => ProjectListRelationFilter)
+    Project?: ProjectListRelationFilter;
 }

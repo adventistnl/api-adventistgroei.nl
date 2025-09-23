@@ -15,6 +15,7 @@ import { EventRecipientCreateNestedManyWithoutUserInput } from '../event-recipie
 import { CommunicationCreateNestedManyWithoutAuthorInput } from '../communication/communication-create-nested-many-without-author.input';
 import { SubsidyRequestCreateNestedManyWithoutRequesterInput } from '../subsidy-request/subsidy-request-create-nested-many-without-requester.input';
 import { SubsidyStatusCreateNestedManyWithoutAssigned_userInput } from '../subsidy-status/subsidy-status-create-nested-many-without-assigned-user.input';
+import { ProjectCreateNestedManyWithoutOwnerInput } from '../project/project-create-nested-many-without-owner.input';
 
 @InputType()
 export class UserCreateWithoutVoluntary_projectsInput {
@@ -101,4 +102,8 @@ export class UserCreateWithoutVoluntary_projectsInput {
     @Field(() => SubsidyStatusCreateNestedManyWithoutAssigned_userInput, {nullable:true})
     @Type(() => SubsidyStatusCreateNestedManyWithoutAssigned_userInput)
     SubsidyStatus?: SubsidyStatusCreateNestedManyWithoutAssigned_userInput;
+
+    @Field(() => ProjectCreateNestedManyWithoutOwnerInput, {nullable:true})
+    @Type(() => ProjectCreateNestedManyWithoutOwnerInput)
+    Project?: ProjectCreateNestedManyWithoutOwnerInput;
 }

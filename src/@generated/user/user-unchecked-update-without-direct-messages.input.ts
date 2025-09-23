@@ -16,6 +16,7 @@ import { CommunicationUncheckedUpdateManyWithoutAuthorNestedInput } from '../com
 import { SubsidyRequestUncheckedUpdateManyWithoutRequesterNestedInput } from '../subsidy-request/subsidy-request-unchecked-update-many-without-requester-nested.input';
 import { SubsidyStatusUncheckedUpdateManyWithoutAssigned_userNestedInput } from '../subsidy-status/subsidy-status-unchecked-update-many-without-assigned-user-nested.input';
 import { VoluntariesOnProjectsUncheckedUpdateManyWithoutUserNestedInput } from '../voluntaries-on-projects/voluntaries-on-projects-unchecked-update-many-without-user-nested.input';
+import { ProjectUncheckedUpdateManyWithoutOwnerNestedInput } from '../project/project-unchecked-update-many-without-owner-nested.input';
 
 @InputType()
 export class UserUncheckedUpdateWithoutDirect_messagesInput {
@@ -99,4 +100,8 @@ export class UserUncheckedUpdateWithoutDirect_messagesInput {
     @Field(() => VoluntariesOnProjectsUncheckedUpdateManyWithoutUserNestedInput, {nullable:true})
     @Type(() => VoluntariesOnProjectsUncheckedUpdateManyWithoutUserNestedInput)
     voluntary_projects?: VoluntariesOnProjectsUncheckedUpdateManyWithoutUserNestedInput;
+
+    @Field(() => ProjectUncheckedUpdateManyWithoutOwnerNestedInput, {nullable:true})
+    @Type(() => ProjectUncheckedUpdateManyWithoutOwnerNestedInput)
+    Project?: ProjectUncheckedUpdateManyWithoutOwnerNestedInput;
 }

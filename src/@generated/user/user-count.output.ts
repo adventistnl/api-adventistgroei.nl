@@ -34,4 +34,7 @@ export class UserCount {
 
     @Field(() => Int, {nullable:false})
     voluntary_projects?: number;
+
+    @Field(() => Int, {nullable:false})
+    Project?: number;
 }

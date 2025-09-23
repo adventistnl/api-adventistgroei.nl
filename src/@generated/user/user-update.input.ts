@@ -21,6 +21,7 @@ import { CommunicationUpdateManyWithoutAuthorNestedInput } from '../communicatio
 import { SubsidyRequestUpdateManyWithoutRequesterNestedInput } from '../subsidy-request/subsidy-request-update-many-without-requester-nested.input';
 import { SubsidyStatusUpdateManyWithoutAssigned_userNestedInput } from '../subsidy-status/subsidy-status-update-many-without-assigned-user-nested.input';
 import { VoluntariesOnProjectsUpdateManyWithoutUserNestedInput } from '../voluntaries-on-projects/voluntaries-on-projects-update-many-without-user-nested.input';
+import { ProjectUpdateManyWithoutOwnerNestedInput } from '../project/project-update-many-without-owner-nested.input';
 
 @InputType()
 export class UserUpdateInput {
@@ -111,4 +112,8 @@ export class UserUpdateInput {
     @Field(() => VoluntariesOnProjectsUpdateManyWithoutUserNestedInput, {nullable:true})
     @Type(() => VoluntariesOnProjectsUpdateManyWithoutUserNestedInput)
     voluntary_projects?: VoluntariesOnProjectsUpdateManyWithoutUserNestedInput;
+
+    @Field(() => ProjectUpdateManyWithoutOwnerNestedInput, {nullable:true})
+    @Type(() => ProjectUpdateManyWithoutOwnerNestedInput)
+    Project?: ProjectUpdateManyWithoutOwnerNestedInput;
 }

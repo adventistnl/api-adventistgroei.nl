@@ -4,6 +4,7 @@ import { SortOrder } from '../prisma/sort-order.enum';
 import { SortOrderInput } from '../prisma/sort-order.input';
 import { DepartmentOrderByWithRelationInput } from '../department/department-order-by-with-relation.input';
 import { Type } from 'class-transformer';
+import { UserOrderByWithRelationInput } from '../user/user-order-by-with-relation.input';
 import { EventOrderByWithRelationInput } from '../event/event-order-by-with-relation.input';
 import { InstitutionOrderByWithRelationInput } from '../institution/institution-order-by-with-relation.input';
 import { VoluntariesOnProjectsOrderByRelationAggregateInput } from '../voluntaries-on-projects/voluntaries-on-projects-order-by-relation-aggregate.input';
@@ -30,6 +31,9 @@ export class ProjectOrderByWithRelationInput {
 
     @Field(() => SortOrder, {nullable:true})
     media_link?: `${SortOrder}`;
+
+    @Field(() => SortOrder, {nullable:true})
+    owner_id?: `${SortOrder}`;
 
     @Field(() => SortOrder, {nullable:true})
     language_preference?: `${SortOrder}`;
@@ -67,6 +71,10 @@ export class ProjectOrderByWithRelationInput {
     @Field(() => DepartmentOrderByWithRelationInput, {nullable:true})
     @Type(() => DepartmentOrderByWithRelationInput)
     department?: DepartmentOrderByWithRelationInput;
+
+    @Field(() => UserOrderByWithRelationInput, {nullable:true})
+    @Type(() => UserOrderByWithRelationInput)
+    owner?: UserOrderByWithRelationInput;
 
     @Field(() => EventOrderByWithRelationInput, {nullable:true})
     @Type(() => EventOrderByWithRelationInput)

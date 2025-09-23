@@ -24,6 +24,9 @@ export class ProjectMinOrderByAggregateInput {
     media_link?: `${SortOrder}`;
 
     @Field(() => SortOrder, {nullable:true})
+    owner_id?: `${SortOrder}`;
+
+    @Field(() => SortOrder, {nullable:true})
     language_preference?: `${SortOrder}`;
 
     @Field(() => SortOrder, {nullable:true})

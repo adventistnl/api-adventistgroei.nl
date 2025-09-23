@@ -44,6 +44,9 @@ export class ProjectScalarWhereInput {
     @Field(() => StringFilter, {nullable:true})
     media_link?: StringFilter;
 
+    @Field(() => StringFilter, {nullable:true})
+    owner_id?: StringFilter;
+
     @Field(() => EnumLanguagePreferenceFilter, {nullable:true})
     language_preference?: EnumLanguagePreferenceFilter;
 

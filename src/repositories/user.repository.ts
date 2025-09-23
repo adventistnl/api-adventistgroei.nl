@@ -9,6 +9,7 @@ import { DepartmentRepository } from './department.repository';
 import { InstitutionRepository } from './institution.repository';
 import { ChurchRepository } from './church.repository';
 import { ContactRepository } from './contact.repository';
+import { CustomGraphQLError, ErrorCode } from 'src/common/errors/custom-graphql-error';
 
 @Injectable()
 export class UserRepository {
@@ -118,9 +119,11 @@ export class UserRepository {
   }
 
   async findById(id: string): Promise<Omit<User, 'password'> | null> {
-    return await this.prisma.user.findUnique({
+    const user = await this.prisma.user.findUnique({
       where: { id, is_deleted: false },
     });
+    if (!user) throw new CustomGraphQLError('User not found', ErrorCode.NOT_FOUND, 404);
+    return user;
   }
 
   async findByEmail(email: string): Promise<UserWithRoles | null> {

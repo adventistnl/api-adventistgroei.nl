@@ -37,6 +37,10 @@ export class ProjectCreateDto {
   @Field()
   @IsString()
   institution_id: string;
+
+  @Field()
+  @IsString()
+  owner_id: string;
 }
 
 @InputType()
@@ -79,4 +83,9 @@ export class ProjectUpdateDto {
   @IsOptional()
   @IsString()
   institution_id?: string;
+
+  @Field({ nullable: true })
+  @IsOptional()
+  @IsString()
+  owner_id?: string;
 }

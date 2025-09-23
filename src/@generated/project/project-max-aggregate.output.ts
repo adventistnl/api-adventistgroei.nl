@@ -26,6 +26,9 @@ export class ProjectMaxAggregate {
     @Field(() => String, {nullable:true})
     media_link?: string;
 
+    @Field(() => String, {nullable:true})
+    owner_id?: string;
+
     @Field(() => LanguagePreference, {nullable:true})
     language_preference?: `${LanguagePreference}`;
 

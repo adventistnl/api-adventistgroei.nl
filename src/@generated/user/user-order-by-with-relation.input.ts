@@ -17,6 +17,7 @@ import { CommunicationOrderByRelationAggregateInput } from '../communication/com
 import { SubsidyRequestOrderByRelationAggregateInput } from '../subsidy-request/subsidy-request-order-by-relation-aggregate.input';
 import { SubsidyStatusOrderByRelationAggregateInput } from '../subsidy-status/subsidy-status-order-by-relation-aggregate.input';
 import { VoluntariesOnProjectsOrderByRelationAggregateInput } from '../voluntaries-on-projects/voluntaries-on-projects-order-by-relation-aggregate.input';
+import { ProjectOrderByRelationAggregateInput } from '../project/project-order-by-relation-aggregate.input';
 
 @InputType()
 export class UserOrderByWithRelationInput {
@@ -119,4 +120,8 @@ export class UserOrderByWithRelationInput {
     @Field(() => VoluntariesOnProjectsOrderByRelationAggregateInput, {nullable:true})
     @Type(() => VoluntariesOnProjectsOrderByRelationAggregateInput)
     voluntary_projects?: VoluntariesOnProjectsOrderByRelationAggregateInput;
+
+    @Field(() => ProjectOrderByRelationAggregateInput, {nullable:true})
+    @Type(() => ProjectOrderByRelationAggregateInput)
+    Project?: ProjectOrderByRelationAggregateInput;
 }

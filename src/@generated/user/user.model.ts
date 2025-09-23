@@ -16,6 +16,7 @@ import { Communication } from '../communication/communication.model';
 import { SubsidyRequest } from '../subsidy-request/subsidy-request.model';
 import { SubsidyStatus } from '../subsidy-status/subsidy-status.model';
 import { VoluntariesOnProjects } from '../voluntaries-on-projects/voluntaries-on-projects.model';
+import { Project } from '../project/project.model';
 import { UserCount } from './user-count.output';
 
 @ObjectType()
@@ -110,6 +111,9 @@ export class User {
 
     @Field(() => [VoluntariesOnProjects], {nullable:true})
     voluntary_projects?: Array<VoluntariesOnProjects>;
+
+    @Field(() => [Project], {nullable:true})
+    Project?: Array<Project>;
 
     @Field(() => UserCount, {nullable:false})
     _count?: UserCount;

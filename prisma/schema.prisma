@@ -327,6 +327,7 @@ model User {
   SubsidyRequest            SubsidyRequest[]
   SubsidyStatus             SubsidyStatus[]
   voluntary_projects        VoluntariesOnProjects[]
+  Project                   Project[]
 }
 
 model Project {
@@ -337,6 +338,8 @@ model Project {
   description         String
   budget              Decimal
   media_link          String
+  owner_id            String
+  owner               User                    @relation(fields: [owner_id], references: [id])
   language_preference LanguagePreference
   type                ProjectType
   created_at          DateTime                @default(now())
@@ -536,8 +539,8 @@ model Event {
   max_participants        Int
   ticket_amount           Decimal
   location                String?
-  is_private              Boolean                 @default(false)
-  required_volunteers     Boolean                 @default(false)
+  is_private              Boolean             @default(false)
+  required_volunteers     Boolean             @default(false)
   start_at                DateTime?
   end_at                  DateTime?
   subscription_expires_at DateTime
