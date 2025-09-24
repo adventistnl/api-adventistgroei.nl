@@ -51,6 +51,8 @@ enum PermissionResolverName {
   createUser
   updateUser
   deleteUser
+  addRoleToUser
+  removeRoleFromUser
   createInstitution
   institutions
   institution
@@ -371,6 +373,7 @@ model Role {
   id                        String                   @id @default(uuid())
   name                      String
   description               String
+  color                     String?                  @default("#3b82f6")
   key_code                  String                   @unique
   created_at                DateTime                 @default(now())
   updated_at                DateTime                 @updatedAt

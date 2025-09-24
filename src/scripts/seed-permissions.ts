@@ -8,6 +8,8 @@ const permissions = [
   { name: 'createUser', description: 'Create a user', resolver_name: 'createUser' as PermissionResolverName, group: 'USER' as PermissionGroup, key_code: 'USER_CREATE' },
   { name: 'updateUser', description: 'Update a user', resolver_name: 'updateUser' as PermissionResolverName, group: 'USER' as PermissionGroup, key_code: 'USER_UPDATE' },
   { name: 'deleteUser', description: 'Delete a user', resolver_name: 'deleteUser' as PermissionResolverName, group: 'USER' as PermissionGroup, key_code: 'USER_DELETE' },
+  { name: 'addRoleToUser', description: 'Add role to user', resolver_name: 'addRoleToUser' as PermissionResolverName, group: 'USER' as PermissionGroup, key_code: 'USER_ROLE_ADD' },
+  { name: 'removeRoleFromUser', description: 'Remove role from user', resolver_name: 'removeRoleFromUser' as PermissionResolverName, group: 'USER' as PermissionGroup, key_code: 'USER_ROLE_REMOVE' },
   { name: 'createInstitution', description: 'Create an institution', resolver_name: 'createInstitution' as PermissionResolverName, group: 'INSTITUTION' as PermissionGroup, key_code: 'INSTITUTION_CREATE' },
   { name: 'institutions', description: 'Access to institutions', resolver_name: 'institutions' as PermissionResolverName, group: 'INSTITUTION' as PermissionGroup, key_code: 'INSTITUTIONS_ACCESS' },
   { name: 'institution', description: 'Access to a single institution', resolver_name: 'institution' as PermissionResolverName, group: 'INSTITUTION' as PermissionGroup, key_code: 'INSTITUTION_ACCESS' },

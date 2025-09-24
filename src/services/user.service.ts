@@ -31,4 +31,12 @@ export class UserService {
   async findByEmail(email: string): Promise<UserWithRoles | null> {
     return await this.userRepository.findByEmail(email);
   }
+
+  async addRoleToUser(userId: string, roleId: string, requesterId: string): Promise<Omit<User, 'password'>> {
+    return await this.userRepository.addRoleToUser(userId, roleId, requesterId);
+  }
+
+  async removeRoleFromUser(userId: string, roleId: string, requesterId: string): Promise<Omit<User, 'password'>> {
+    return await this.userRepository.removeRoleFromUser(userId, roleId, requesterId);
+  }
 }

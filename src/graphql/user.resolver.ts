@@ -51,4 +51,26 @@ export class UserResolver {
     const userId = context.userId;
     return await this.userService.deleteUser(id, userId);
   }
+
+  @Permission()
+  @Mutation(() => UserModel)
+  async addRoleToUser(
+    @Args('userId') userId: string,
+    @Args('roleId') roleId: string,
+    @Context() context: { userId: string },
+  ): Promise<Omit<User, 'password'>> {
+    const requester_id = context.userId;
+    return await this.userService.addRoleToUser(userId, roleId, requester_id);
+  }
+
+  @Permission()
+  @Mutation(() => UserModel)
+  async removeRoleFromUser(
+    @Args('userId') userId: string,
+    @Args('roleId') roleId: string,
+    @Context() context: { userId: string },
+  ): Promise<Omit<User, 'password'>> {
+    const requester_id = context.userId;
+    return await this.userService.removeRoleFromUser(userId, roleId, requester_id);
+  }
 }

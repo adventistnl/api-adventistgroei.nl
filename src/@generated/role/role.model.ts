@@ -18,6 +18,9 @@ export class Role {
     @Field(() => String, {nullable:false})
     description!: string;
 
+    @Field(() => String, {defaultValue:'#3b82f6',nullable:true})
+    color!: string | null;
+
     @Field(() => String, {nullable:false})
     key_code!: string;
 

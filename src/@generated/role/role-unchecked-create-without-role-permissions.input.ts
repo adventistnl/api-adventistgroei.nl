@@ -15,6 +15,9 @@ export class RoleUncheckedCreateWithoutRole_permissionsInput {
     @Field(() => String, {nullable:false})
     description!: string;
 
+    @Field(() => String, {nullable:true})
+    color?: string;
+
     @Field(() => String, {nullable:false})
     key_code!: string;
 

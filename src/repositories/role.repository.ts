@@ -100,7 +100,23 @@ export class RoleRepository {
         role_permissions: {
           include: { permission: true },
         },
+        user_roles: { select: { user_id: true, is_deleted: false }},
       },
+      
     });
   }
+
+  async getUserRolesByRoleId(roleId: string): Promise<Array<{ user_id: string; is_deleted: boolean }>> {
+    // Busca todos os vínculos e faz join para pegar o is_deleted do usuário
+    const userRoles = await this.prisma.userRole.findMany({
+      where: { role_id: roleId },
+      select: {
+        user_id: true,
+        user: { select: { is_deleted: true } },
+      },
+    });
+    // Retorna no formato desejado
+    return userRoles.map(ur => ({ user_id: ur.user_id, is_deleted: ur.user.is_deleted }));
+  }
+  
 }

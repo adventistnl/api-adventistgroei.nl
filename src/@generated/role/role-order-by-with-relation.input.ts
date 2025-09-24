@@ -18,6 +18,9 @@ export class RoleOrderByWithRelationInput {
     @Field(() => SortOrder, {nullable:true})
     description?: `${SortOrder}`;
 
+    @Field(() => SortOrderInput, {nullable:true})
+    color?: SortOrderInput;
+
     @Field(() => SortOrder, {nullable:true})
     key_code?: `${SortOrder}`;
 

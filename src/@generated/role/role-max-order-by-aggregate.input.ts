@@ -15,6 +15,9 @@ export class RoleMaxOrderByAggregateInput {
     description?: `${SortOrder}`;
 
     @Field(() => SortOrder, {nullable:true})
+    color?: `${SortOrder}`;
+
+    @Field(() => SortOrder, {nullable:true})
     key_code?: `${SortOrder}`;
 
     @Field(() => SortOrder, {nullable:true})

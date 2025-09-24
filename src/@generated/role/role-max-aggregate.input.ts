@@ -14,6 +14,9 @@ export class RoleMaxAggregateInput {
     description?: true;
 
     @Field(() => Boolean, {nullable:true})
+    color?: true;
+
+    @Field(() => Boolean, {nullable:true})
     key_code?: true;
 
     @Field(() => Boolean, {nullable:true})

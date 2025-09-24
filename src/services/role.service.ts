@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { RoleRepository } from '../repositories/role.repository';
 import { CreateRoleInput, UpdateRoleInput } from '../dto/role.dto';
-import { RoleModel, PermissionModel } from '../models';
+import { PermissionGroupPermissionsModel, RoleAssignmentModel, RoleModel } from '../models';
 
 @Injectable()
 export class RoleService {
@@ -44,6 +44,10 @@ export class RoleService {
     const roles = await this.roleRepository.findAll();
     return roles.map((role) => this.toModel(role));
   }
+  async getUserIdsByRole(roleId: string): Promise<RoleAssignmentModel[]> {
+    const userIds = (await this.roleRepository.getUserRolesByRoleId(roleId));
+    return userIds;
+  }
 
   // Agrupa permissions por group
   private toModel(role: {
@@ -51,16 +55,16 @@ export class RoleService {
     name: string;
     description: string;
     key_code: string;
-    role_permissions?: { permission: PermissionModel }[];
+    role_permissions?: { permission: PermissionGroupPermissionsModel }[];
+    user_roles?: Array<{ user_id: string; is_deleted?: boolean }>
   }): RoleModel {
-    const permissions: PermissionModel[] = Array.isArray(role.role_permissions)
-      ? role.role_permissions
-          .map((rp) => rp.permission)
-          .filter((perm): perm is PermissionModel => !!perm)
+    const permissions = Array.isArray(role.role_permissions)
+      ? role.role_permissions.map((rp) => rp.permission).filter((p): p is PermissionGroupPermissionsModel => !!p)
       : [];
-    const grouped: Record<string, PermissionModel[]> = {};
+    const grouped: Record<string, any[]> = {};
     for (const perm of permissions) {
-      const group = perm && perm.group ? perm.group : 'OUTRO';
+      const groupCandidate = perm.group;
+      const group = typeof groupCandidate === 'string' && groupCandidate.length > 0 ? groupCandidate : 'OUTRO';
       if (!grouped[group]) grouped[group] = [];
       grouped[group].push(perm);
     }

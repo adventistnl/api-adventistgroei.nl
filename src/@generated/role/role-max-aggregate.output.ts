@@ -14,6 +14,9 @@ export class RoleMaxAggregate {
     description?: string;
 
     @Field(() => String, {nullable:true})
+    color?: string;
+
+    @Field(() => String, {nullable:true})
     key_code?: string;
 
     @Field(() => Date, {nullable:true})

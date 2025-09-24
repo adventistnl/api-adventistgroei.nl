@@ -1,7 +1,7 @@
-import { Resolver, Query, Mutation, Args, Context } from '@nestjs/graphql';
+import { Resolver, Query, Mutation, Args, Context, ResolveField, Parent } from '@nestjs/graphql';
 import { RoleService } from '../services/role.service';
 import { CreateRoleInput, UpdateRoleInput } from '../dto/role.dto';
-import { RoleModel } from '../models/role.model';
+import { RoleAssignmentModel, RoleModel } from '../models/role.model';
 import { Permission } from '../middlewares/permissions.decorator';
 import { UseGuards } from '@nestjs/common';
 import { PermissionsGuard } from '../middlewares/permissions.guard';
@@ -48,5 +48,10 @@ export class RoleResolver {
   @Permission()
   async role(@Args('id') id: string): Promise<RoleModel | null> {
     return this.roleService.findById(id);
+  }
+
+  @ResolveField(() => [RoleAssignmentModel], { nullable: 'itemsAndList' })
+  async users(@Parent() role: RoleModel): Promise<RoleAssignmentModel[]> {
+    return this.roleService.getUserIdsByRole(role.id);
   }
 }

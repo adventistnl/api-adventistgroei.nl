@@ -28,6 +28,7 @@ export class PermissionsGuard implements CanActivate {
       where: { id: userId },
       include: {
         user_roles: {
+          where: { is_deleted: false },
           include: {
             role: {
               include: {

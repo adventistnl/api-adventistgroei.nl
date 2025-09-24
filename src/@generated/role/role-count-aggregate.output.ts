@@ -15,6 +15,9 @@ export class RoleCountAggregate {
     description!: number;
 
     @Field(() => Int, {nullable:false})
+    color!: number;
+
+    @Field(() => Int, {nullable:false})
     key_code!: number;
 
     @Field(() => Int, {nullable:false})

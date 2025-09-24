@@ -206,4 +206,73 @@ export class UserRepository {
       },
     });
   }
+
+  async addRoleToUser(userId: string, roleId: string, requesterId: string): Promise<Omit<User, 'password'>> {
+    const existingUserRole = await this.prisma.userRole.findFirst({
+      where: {
+        user_id: userId,
+        role_id: roleId,
+        is_deleted: false,
+      },
+    });
+
+    if (existingUserRole) {
+      throw new CustomGraphQLError('User already has this role.', ErrorCode.BAD_REQUEST, 400);
+    }
+    
+    // Upsert userRole (cria se não existe, ou reativa se foi deletado)
+    await this.prisma.userRole.upsert({
+      where: { id: `${userId}_${roleId}` },
+      update: { is_deleted: false, updated_by: requesterId, deleted_at: null, deleted_by: null },
+      create: {
+        id: `${userId}_${roleId}`,
+        user_id: userId,
+        role_id: roleId,
+        created_by: requesterId,
+        updated_by: requesterId,
+      },
+    });
+
+    // Retornar usuário atualizado
+    const user = await this.prisma.user.findUnique({ where: { id: userId } });
+    if (!user) {
+      // Isso não deve acontecer em um fluxo normal, mas é uma boa prática de segurança
+      throw new CustomGraphQLError('User not found after role assignment.', ErrorCode.INTERNAL_SERVER_ERROR, 500);
+    }
+    const { password, ...result } = user;
+    return result;
+  }
+
+  async removeRoleFromUser(userId: string, roleId: string, requesterId: string): Promise<Omit<User, 'password'>> {
+    const userRole = await this.prisma.userRole.findFirst({
+      where: {
+        user_id: userId,
+        role_id: roleId,
+        is_deleted: false,
+      },
+    });
+
+    if (!userRole) {
+      throw new CustomGraphQLError('User does not have this role.', ErrorCode.BAD_REQUEST, 400);
+    }
+
+    await this.prisma.userRole.update({
+      where: {
+        id: userRole.id,
+      },
+      data: {
+        is_deleted: true,
+        deleted_at: new Date(),
+        deleted_by: requesterId,
+        updated_by: requesterId,
+      },
+    });
+
+    const user = await this.prisma.user.findUnique({ where: { id: userId } });
+    if (!user) {
+      throw new CustomGraphQLError('User not found after role removal.', ErrorCode.INTERNAL_SERVER_ERROR, 500);
+    }
+    const { password, ...result } = user;
+    return result;
+  }
 }

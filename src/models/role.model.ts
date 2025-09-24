@@ -16,6 +16,9 @@ export class RoleModel {
   @Field()
   key_code: string;
 
+  @Field({ nullable: true })
+  color?: string;
+
   @Field(() => [PermissionGroupPermissionsModel])
   permissions: PermissionGroupPermissionsModel[];
 }
@@ -27,4 +30,13 @@ export class PermissionGroupPermissionsModel {
 
   @Field(() => [PermissionModel])
   data: PermissionModel[];
+}
+
+@ObjectType()
+export class RoleAssignmentModel {
+  @Field()
+  user_id: string;
+
+  @Field()
+  is_deleted: boolean;
 }
