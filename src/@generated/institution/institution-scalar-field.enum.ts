@@ -4,6 +4,7 @@ export enum InstitutionScalarFieldEnum {
     id = "id",
     name = "name",
     denomination = "denomination",
+    description = "description",
     language_preference = "language_preference",
     contact_id = "contact_id",
     created_at = "created_at",

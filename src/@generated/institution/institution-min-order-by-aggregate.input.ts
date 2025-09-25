@@ -15,6 +15,9 @@ export class InstitutionMinOrderByAggregateInput {
     denomination?: `${SortOrder}`;
 
     @Field(() => SortOrder, {nullable:true})
+    description?: `${SortOrder}`;
+
+    @Field(() => SortOrder, {nullable:true})
     language_preference?: `${SortOrder}`;
 
     @Field(() => SortOrder, {nullable:true})

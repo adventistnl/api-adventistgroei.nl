@@ -18,6 +18,11 @@ export class InstitutionCreateDto {
   @Field(() => LanguagePreference, { nullable: true })
   language_preference: LanguagePreference;
 
+  @Field({ nullable: true })
+  @IsOptional()
+  @IsString()
+  description?: string;
+
   @Field(() => ContactCreateDto, { nullable: true })
   contact?: ContactCreateDto;
 }
@@ -33,6 +38,11 @@ export class InstitutionUpdateDto extends PartialType(InstitutionCreateDto) {
   @IsOptional()
   @IsString()
   denomination?: string;
+
+  @Field({ nullable: true })
+  @IsOptional()
+  @IsString()
+  description?: string;
 
   @Field(() => LanguagePreference, { nullable: true })
   @IsOptional()

@@ -26,6 +26,9 @@ export class InstitutionCreateInput {
     @Field(() => String, {nullable:false})
     denomination!: string;
 
+    @Field(() => String, {nullable:true})
+    description?: string;
+
     @Field(() => LanguagePreference, {nullable:false})
     language_preference!: `${LanguagePreference}`;
 

@@ -27,6 +27,9 @@ export class InstitutionOrderByWithRelationInput {
     @Field(() => SortOrder, {nullable:true})
     denomination?: `${SortOrder}`;
 
+    @Field(() => SortOrderInput, {nullable:true})
+    description?: SortOrderInput;
+
     @Field(() => SortOrder, {nullable:true})
     language_preference?: `${SortOrder}`;
 

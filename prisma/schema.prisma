@@ -181,6 +181,7 @@ model Institution {
   id                  String             @id @default(uuid())
   name                String
   denomination        String
+  description         String?
   language_preference LanguagePreference
   contact_id          String?            @unique
   contact             Contact?           @relation(fields: [contact_id], references: [id])

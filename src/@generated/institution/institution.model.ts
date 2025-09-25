@@ -27,6 +27,9 @@ export class Institution {
     @Field(() => String, {nullable:false})
     denomination!: string;
 
+    @Field(() => String, {nullable:true})
+    description!: string | null;
+
     @Field(() => LanguagePreference, {nullable:false})
     language_preference!: `${LanguagePreference}`;
 
