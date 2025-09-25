@@ -4,8 +4,9 @@ import {
   InstitutionCreateDto,
   InstitutionUpdateDto,
 } from '../dto/institution.dto';
-import { Institution } from '@prisma/client';
+import { Institution, LanguagePreference } from '@prisma/client';
 import { CustomGraphQLError, ErrorCode } from 'src/common/errors/custom-graphql-error';
+import { validateAndConvertLanguagePreference } from 'src/common/utils/language-preference.util';
 
 @Injectable()
 export class InstitutionRepository {
@@ -29,9 +30,10 @@ export class InstitutionRepository {
     }
     return await this.prisma.institution.create({
       data: {
+        description: data.description,
         name: data.name,
         denomination: data.denomination,
-        language_preference: data.language_preference,
+        language_preference: validateAndConvertLanguagePreference(data.language_preference),
         contact_id: contactId,
         created_by: userId,
         updated_by: userId,
@@ -47,13 +49,16 @@ export class InstitutionRepository {
   ): Promise<Institution> {
     // Atualiza dados básicos e o contato, se enviado
     const institution = await this.findById(institution_id);
+    let language_preference: LanguagePreference | undefined = undefined;
+    if (data.language_preference) language_preference = validateAndConvertLanguagePreference(data.language_preference);
 
     return await this.prisma.institution.update({
       where: { id: institution_id },
       data: {
+        description: data.description,
         name: data.name,
         denomination: data.denomination,
-        language_preference: data.language_preference,
+        language_preference,
         contact: data.contact
           ? institution?.contact_id ? {
               update: {
@@ -88,13 +93,35 @@ export class InstitutionRepository {
   async findAll(): Promise<Institution[]> {
     return await this.prisma.institution.findMany({
       where: { is_deleted: false },
+      include: {
+        _count: {
+          select: {
+            regions: true,
+            churches: true,
+            departments: true,
+            users: true,
+            // Adicione outros relacionamentos se necessário
+          },
+        },
+      },
     });
   }
 
   async findById(id: string): Promise<Institution | null> {
     const institution = await this.prisma.institution.findUnique({
       where: { id, is_deleted: false },
-     });
+      include: {
+        _count: {
+          select: {
+            regions: true,
+            churches: true,
+            departments: true,
+            users: true,
+            // Adicione outros relacionamentos se necessário
+          },
+        },
+      },
+    });
     if (!institution) {
       throw new CustomGraphQLError('Institution not found', ErrorCode.NOT_FOUND, 404);
     }

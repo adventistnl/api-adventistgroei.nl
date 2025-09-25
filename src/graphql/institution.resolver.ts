@@ -1,4 +1,4 @@
-import { Resolver, Mutation, Args, Query, Context, ResolveField, Parent } from '@nestjs/graphql';
+import { Resolver, Mutation, Args, Query, Context, ResolveField, Parent, Int } from '@nestjs/graphql';
 import { InstitutionService } from '../services/institution.service';
 import { Institution } from '../@generated/institution/institution.model';
 import { Permission } from '../middlewares/permissions.decorator';
@@ -16,6 +16,7 @@ import { Project } from 'src/@generated/project/project.model';
 import { DirectMessage } from 'src/@generated/direct-message/direct-message.model';
 import { SubsidyRequest } from 'src/@generated/subsidy-request/subsidy-request.model';
 import { Contact } from 'src/@generated/contact/contact.model';
+
 
 @Resolver(() => Institution)
 @UseGuards(PermissionsGuard)
@@ -119,4 +120,30 @@ export class InstitutionResolver {
   async contact(@Parent() institution: Institution) {
     return await this.institutionService.getContactByInstitutionId(institution.id);
   }
+  
+  @ResolveField(() => Int, { name: 'regions_count' })
+  regionsCount(@Parent() institution: Institution) {
+    return institution._count?.regions ?? 0;
+  }
+
+  @ResolveField(() => Int, { name: 'churches_count' })
+  churchesCount(@Parent() institution: Institution) {
+    return institution._count?.churches ?? 0;
+  }
+
+  @ResolveField(() => Int, { name: 'departments_count' })
+  departmentsCount(@Parent() institution: Institution) {
+    return institution._count?.departments ?? 0;
+  }
+
+  @ResolveField(() => Int, { name: 'users_count' })
+  usersCount(@Parent() institution: Institution) {
+    return institution._count?.users ?? 0;
+  }
+
+  // @ResolveField(() => Int, { name: 'members_count' })
+  // membersCount(@Parent() institution: Institution) {
+  //   // Ajuste conforme sua modelagem se não existir em _count
+  //   return institution._count?.members ?? 0;
+  // }
 }
