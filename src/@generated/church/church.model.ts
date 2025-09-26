@@ -4,6 +4,7 @@ import { ID } from '@nestjs/graphql';
 import { Institution } from '../institution/institution.model';
 import { Region } from '../region/region.model';
 import { Contact } from '../contact/contact.model';
+import { AnnualBudget } from '../annual-budget/annual-budget.model';
 import { Department } from '../department/department.model';
 import { User } from '../user/user.model';
 import { SubsidyRequest } from '../subsidy-request/subsidy-request.model';
@@ -26,6 +27,9 @@ export class Church {
 
     @Field(() => String, {nullable:true})
     contact_id!: string | null;
+
+    @Field(() => String, {nullable:true})
+    annual_budget_id!: string | null;
 
     @Field(() => Date, {nullable:false})
     created_at!: Date;
@@ -56,6 +60,9 @@ export class Church {
 
     @Field(() => Contact, {nullable:true})
     contact?: Contact | null;
+
+    @Field(() => AnnualBudget, {nullable:true})
+    annual_budget?: AnnualBudget | null;
 
     @Field(() => [Department], {nullable:true})
     departments?: Array<Department>;

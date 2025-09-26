@@ -21,6 +21,9 @@ export class ChurchMinOrderByAggregateInput {
     contact_id?: `${SortOrder}`;
 
     @Field(() => SortOrder, {nullable:true})
+    annual_budget_id?: `${SortOrder}`;
+
+    @Field(() => SortOrder, {nullable:true})
     created_at?: `${SortOrder}`;
 
     @Field(() => SortOrder, {nullable:true})

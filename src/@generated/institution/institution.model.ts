@@ -3,6 +3,7 @@ import { ObjectType } from '@nestjs/graphql';
 import { ID } from '@nestjs/graphql';
 import { LanguagePreference } from '../prisma/language-preference.enum';
 import { Contact } from '../contact/contact.model';
+import { AnnualBudget } from '../annual-budget/annual-budget.model';
 import { Region } from '../region/region.model';
 import { Church } from '../church/church.model';
 import { Department } from '../department/department.model';
@@ -36,6 +37,9 @@ export class Institution {
     @Field(() => String, {nullable:true})
     contact_id!: string | null;
 
+    @Field(() => String, {nullable:true})
+    annual_budget_id!: string | null;
+
     @Field(() => Date, {nullable:false})
     created_at!: Date;
 
@@ -59,6 +63,9 @@ export class Institution {
 
     @Field(() => Contact, {nullable:true})
     contact?: Contact | null;
+
+    @Field(() => AnnualBudget, {nullable:true})
+    annual_budget?: AnnualBudget | null;
 
     @Field(() => [Region], {nullable:true})
     regions?: Array<Region>;

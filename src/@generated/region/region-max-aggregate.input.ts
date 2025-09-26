@@ -20,6 +20,9 @@ export class RegionMaxAggregateInput {
     contact_id?: true;
 
     @Field(() => Boolean, {nullable:true})
+    annual_budget_id?: true;
+
+    @Field(() => Boolean, {nullable:true})
     created_at?: true;
 
     @Field(() => Boolean, {nullable:true})

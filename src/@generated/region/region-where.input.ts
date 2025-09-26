@@ -10,6 +10,7 @@ import { Type } from 'class-transformer';
 import { RegionNullableScalarRelationFilter } from './region-nullable-scalar-relation-filter.input';
 import { RegionListRelationFilter } from './region-list-relation-filter.input';
 import { ContactNullableScalarRelationFilter } from '../contact/contact-nullable-scalar-relation-filter.input';
+import { AnnualBudgetNullableScalarRelationFilter } from '../annual-budget/annual-budget-nullable-scalar-relation-filter.input';
 import { ChurchListRelationFilter } from '../church/church-list-relation-filter.input';
 
 @InputType()
@@ -39,6 +40,9 @@ export class RegionWhereInput {
     @Field(() => StringNullableFilter, {nullable:true})
     contact_id?: StringNullableFilter;
 
+    @Field(() => StringNullableFilter, {nullable:true})
+    annual_budget_id?: StringNullableFilter;
+
     @Field(() => DateTimeFilter, {nullable:true})
     created_at?: DateTimeFilter;
 
@@ -65,14 +69,20 @@ export class RegionWhereInput {
     institution?: InstitutionScalarRelationFilter;
 
     @Field(() => RegionNullableScalarRelationFilter, {nullable:true})
+    @Type(() => RegionNullableScalarRelationFilter)
     parent_region?: RegionNullableScalarRelationFilter;
 
     @Field(() => RegionListRelationFilter, {nullable:true})
+    @Type(() => RegionListRelationFilter)
     children?: RegionListRelationFilter;
 
     @Field(() => ContactNullableScalarRelationFilter, {nullable:true})
     @Type(() => ContactNullableScalarRelationFilter)
     contact?: ContactNullableScalarRelationFilter;
+
+    @Field(() => AnnualBudgetNullableScalarRelationFilter, {nullable:true})
+    @Type(() => AnnualBudgetNullableScalarRelationFilter)
+    annual_budget?: AnnualBudgetNullableScalarRelationFilter;
 
     @Field(() => ChurchListRelationFilter, {nullable:true})
     @Type(() => ChurchListRelationFilter)

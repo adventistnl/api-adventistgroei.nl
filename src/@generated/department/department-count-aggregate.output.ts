@@ -24,6 +24,9 @@ export class DepartmentCountAggregate {
     annual_budget!: number;
 
     @Field(() => Int, {nullable:false})
+    annual_budget_id!: number;
+
+    @Field(() => Int, {nullable:false})
     contact_id!: number;
 
     @Field(() => Int, {nullable:false})

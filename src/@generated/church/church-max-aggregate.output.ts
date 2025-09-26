@@ -19,6 +19,9 @@ export class ChurchMaxAggregate {
     @Field(() => String, {nullable:true})
     contact_id?: string;
 
+    @Field(() => String, {nullable:true})
+    annual_budget_id?: string;
+
     @Field(() => Date, {nullable:true})
     created_at?: Date | string;
 

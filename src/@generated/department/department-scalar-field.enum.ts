@@ -7,6 +7,7 @@ export enum DepartmentScalarFieldEnum {
     name = "name",
     description = "description",
     annual_budget = "annual_budget",
+    annual_budget_id = "annual_budget_id",
     contact_id = "contact_id",
     created_at = "created_at",
     updated_at = "updated_at",

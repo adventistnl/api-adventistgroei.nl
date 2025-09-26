@@ -18,6 +18,7 @@ import { SubsidyRequestOrderByRelationAggregateInput } from '../subsidy-request/
 import { SubsidyStatusOrderByRelationAggregateInput } from '../subsidy-status/subsidy-status-order-by-relation-aggregate.input';
 import { VoluntariesOnProjectsOrderByRelationAggregateInput } from '../voluntaries-on-projects/voluntaries-on-projects-order-by-relation-aggregate.input';
 import { ProjectOrderByRelationAggregateInput } from '../project/project-order-by-relation-aggregate.input';
+import { AnnualBudgetOrderByRelationAggregateInput } from '../annual-budget/annual-budget-order-by-relation-aggregate.input';
 
 @InputType()
 export class UserOrderByWithRelationInput {
@@ -124,4 +125,8 @@ export class UserOrderByWithRelationInput {
     @Field(() => ProjectOrderByRelationAggregateInput, {nullable:true})
     @Type(() => ProjectOrderByRelationAggregateInput)
     Project?: ProjectOrderByRelationAggregateInput;
+
+    @Field(() => AnnualBudgetOrderByRelationAggregateInput, {nullable:true})
+    @Type(() => AnnualBudgetOrderByRelationAggregateInput)
+    approved_annual_budgets?: AnnualBudgetOrderByRelationAggregateInput;
 }

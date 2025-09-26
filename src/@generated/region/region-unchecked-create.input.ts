@@ -1,8 +1,8 @@
 import { Field } from '@nestjs/graphql';
 import { InputType } from '@nestjs/graphql';
 import { RegionUncheckedCreateNestedManyWithoutParent_regionInput } from './region-unchecked-create-nested-many-without-parent-region.input';
-import { ChurchUncheckedCreateNestedManyWithoutRegionInput } from '../church/church-unchecked-create-nested-many-without-region.input';
 import { Type } from 'class-transformer';
+import { ChurchUncheckedCreateNestedManyWithoutRegionInput } from '../church/church-unchecked-create-nested-many-without-region.input';
 
 @InputType()
 export class RegionUncheckedCreateInput {
@@ -21,6 +21,9 @@ export class RegionUncheckedCreateInput {
 
     @Field(() => String, {nullable:true})
     contact_id?: string;
+
+    @Field(() => String, {nullable:true})
+    annual_budget_id?: string;
 
     @Field(() => Date, {nullable:true})
     created_at?: Date | string;
@@ -44,6 +47,7 @@ export class RegionUncheckedCreateInput {
     deleted_by?: string;
 
     @Field(() => RegionUncheckedCreateNestedManyWithoutParent_regionInput, {nullable:true})
+    @Type(() => RegionUncheckedCreateNestedManyWithoutParent_regionInput)
     children?: RegionUncheckedCreateNestedManyWithoutParent_regionInput;
 
     @Field(() => ChurchUncheckedCreateNestedManyWithoutRegionInput, {nullable:true})

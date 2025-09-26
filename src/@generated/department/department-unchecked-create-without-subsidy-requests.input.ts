@@ -34,6 +34,9 @@ export class DepartmentUncheckedCreateWithoutSubsidy_requestsInput {
     annual_budget!: Decimal;
 
     @Field(() => String, {nullable:true})
+    annual_budget_id?: string;
+
+    @Field(() => String, {nullable:true})
     contact_id?: string;
 
     @Field(() => Date, {nullable:true})

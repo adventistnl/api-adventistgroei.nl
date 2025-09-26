@@ -23,6 +23,7 @@ import { SubsidyRequestListRelationFilter } from '../subsidy-request/subsidy-req
 import { SubsidyStatusListRelationFilter } from '../subsidy-status/subsidy-status-list-relation-filter.input';
 import { VoluntariesOnProjectsListRelationFilter } from '../voluntaries-on-projects/voluntaries-on-projects-list-relation-filter.input';
 import { ProjectListRelationFilter } from '../project/project-list-relation-filter.input';
+import { AnnualBudgetListRelationFilter } from '../annual-budget/annual-budget-list-relation-filter.input';
 
 @InputType()
 export class UserWhereUniqueInput {
@@ -138,4 +139,8 @@ export class UserWhereUniqueInput {
     @Field(() => ProjectListRelationFilter, {nullable:true})
     @Type(() => ProjectListRelationFilter)
     Project?: ProjectListRelationFilter;
+
+    @Field(() => AnnualBudgetListRelationFilter, {nullable:true})
+    @Type(() => AnnualBudgetListRelationFilter)
+    approved_annual_budgets?: AnnualBudgetListRelationFilter;
 }

@@ -9,6 +9,7 @@ import { NullableDateTimeFieldUpdateOperationsInput } from '../prisma/nullable-d
 import { NullableStringFieldUpdateOperationsInput } from '../prisma/nullable-string-field-update-operations.input';
 import { InstitutionUpdateOneRequiredWithoutDepartmentsNestedInput } from '../institution/institution-update-one-required-without-departments-nested.input';
 import { ChurchUpdateOneRequiredWithoutDepartmentsNestedInput } from '../church/church-update-one-required-without-departments-nested.input';
+import { AnnualBudgetUpdateOneWithoutDepartmentsNestedInput } from '../annual-budget/annual-budget-update-one-without-departments-nested.input';
 import { ContactUpdateOneWithoutDepartmentNestedInput } from '../contact/contact-update-one-without-department-nested.input';
 import { SubsidyStatusUpdateManyWithoutDepartmentNestedInput } from '../subsidy-status/subsidy-status-update-many-without-department-nested.input';
 import { ProjectUpdateManyWithoutDepartmentNestedInput } from '../project/project-update-many-without-department-nested.input';
@@ -59,6 +60,10 @@ export class DepartmentUpdateWithoutSubsidy_requestsInput {
     @Field(() => ChurchUpdateOneRequiredWithoutDepartmentsNestedInput, {nullable:true})
     @Type(() => ChurchUpdateOneRequiredWithoutDepartmentsNestedInput)
     church?: ChurchUpdateOneRequiredWithoutDepartmentsNestedInput;
+
+    @Field(() => AnnualBudgetUpdateOneWithoutDepartmentsNestedInput, {nullable:true})
+    @Type(() => AnnualBudgetUpdateOneWithoutDepartmentsNestedInput)
+    annual_budget_ref?: AnnualBudgetUpdateOneWithoutDepartmentsNestedInput;
 
     @Field(() => ContactUpdateOneWithoutDepartmentNestedInput, {nullable:true})
     @Type(() => ContactUpdateOneWithoutDepartmentNestedInput)

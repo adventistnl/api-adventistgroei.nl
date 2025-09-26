@@ -5,6 +5,7 @@ import { GraphQLDecimal } from 'prisma-graphql-type-decimal';
 import { Decimal } from '@prisma/client/runtime/library';
 import { Institution } from '../institution/institution.model';
 import { Church } from '../church/church.model';
+import { AnnualBudget } from '../annual-budget/annual-budget.model';
 import { Contact } from '../contact/contact.model';
 import { SubsidyStatus } from '../subsidy-status/subsidy-status.model';
 import { Project } from '../project/project.model';
@@ -35,6 +36,9 @@ export class Department {
     annual_budget!: Decimal;
 
     @Field(() => String, {nullable:true})
+    annual_budget_id!: string | null;
+
+    @Field(() => String, {nullable:true})
     contact_id!: string | null;
 
     @Field(() => Date, {nullable:false})
@@ -63,6 +67,9 @@ export class Department {
 
     @Field(() => Church, {nullable:false})
     church?: Church;
+
+    @Field(() => AnnualBudget, {nullable:true})
+    annual_budget_ref?: AnnualBudget | null;
 
     @Field(() => Contact, {nullable:true})
     contact?: Contact | null;

@@ -3,6 +3,7 @@ import { InputType } from '@nestjs/graphql';
 import { LanguagePreference } from '../prisma/language-preference.enum';
 import { ContactCreateNestedOneWithoutInstitutionInput } from '../contact/contact-create-nested-one-without-institution.input';
 import { Type } from 'class-transformer';
+import { AnnualBudgetCreateNestedOneWithoutInstitutionsInput } from '../annual-budget/annual-budget-create-nested-one-without-institutions.input';
 import { RegionCreateNestedManyWithoutInstitutionInput } from '../region/region-create-nested-many-without-institution.input';
 import { ChurchCreateNestedManyWithoutInstitutionInput } from '../church/church-create-nested-many-without-institution.input';
 import { DepartmentCreateNestedManyWithoutInstitutionInput } from '../department/department-create-nested-many-without-institution.input';
@@ -56,7 +57,12 @@ export class InstitutionCreateWithoutNotificationsInput {
     @Type(() => ContactCreateNestedOneWithoutInstitutionInput)
     contact?: ContactCreateNestedOneWithoutInstitutionInput;
 
+    @Field(() => AnnualBudgetCreateNestedOneWithoutInstitutionsInput, {nullable:true})
+    @Type(() => AnnualBudgetCreateNestedOneWithoutInstitutionsInput)
+    annual_budget?: AnnualBudgetCreateNestedOneWithoutInstitutionsInput;
+
     @Field(() => RegionCreateNestedManyWithoutInstitutionInput, {nullable:true})
+    @Type(() => RegionCreateNestedManyWithoutInstitutionInput)
     regions?: RegionCreateNestedManyWithoutInstitutionInput;
 
     @Field(() => ChurchCreateNestedManyWithoutInstitutionInput, {nullable:true})

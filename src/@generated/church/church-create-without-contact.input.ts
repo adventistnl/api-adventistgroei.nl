@@ -3,6 +3,7 @@ import { InputType } from '@nestjs/graphql';
 import { InstitutionCreateNestedOneWithoutChurchesInput } from '../institution/institution-create-nested-one-without-churches.input';
 import { Type } from 'class-transformer';
 import { RegionCreateNestedOneWithoutChurchesInput } from '../region/region-create-nested-one-without-churches.input';
+import { AnnualBudgetCreateNestedOneWithoutChurchesInput } from '../annual-budget/annual-budget-create-nested-one-without-churches.input';
 import { DepartmentCreateNestedManyWithoutChurchInput } from '../department/department-create-nested-many-without-church.input';
 import { UserCreateNestedManyWithoutChurchInput } from '../user/user-create-nested-many-without-church.input';
 import { SubsidyRequestCreateNestedManyWithoutChurchInput } from '../subsidy-request/subsidy-request-create-nested-many-without-church.input';
@@ -42,7 +43,12 @@ export class ChurchCreateWithoutContactInput {
     institution!: InstitutionCreateNestedOneWithoutChurchesInput;
 
     @Field(() => RegionCreateNestedOneWithoutChurchesInput, {nullable:false})
+    @Type(() => RegionCreateNestedOneWithoutChurchesInput)
     region!: RegionCreateNestedOneWithoutChurchesInput;
+
+    @Field(() => AnnualBudgetCreateNestedOneWithoutChurchesInput, {nullable:true})
+    @Type(() => AnnualBudgetCreateNestedOneWithoutChurchesInput)
+    annual_budget?: AnnualBudgetCreateNestedOneWithoutChurchesInput;
 
     @Field(() => DepartmentCreateNestedManyWithoutChurchInput, {nullable:true})
     @Type(() => DepartmentCreateNestedManyWithoutChurchInput)

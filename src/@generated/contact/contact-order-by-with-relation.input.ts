@@ -78,6 +78,7 @@ export class ContactOrderByWithRelationInput {
     Institution?: InstitutionOrderByWithRelationInput;
 
     @Field(() => RegionOrderByRelationAggregateInput, {nullable:true})
+    @Type(() => RegionOrderByRelationAggregateInput)
     Region?: RegionOrderByRelationAggregateInput;
 
     @Field(() => ChurchOrderByRelationAggregateInput, {nullable:true})

@@ -6,6 +6,7 @@ import { DateTimeFieldUpdateOperationsInput } from '../prisma/date-time-field-up
 import { BoolFieldUpdateOperationsInput } from '../prisma/bool-field-update-operations.input';
 import { NullableDateTimeFieldUpdateOperationsInput } from '../prisma/nullable-date-time-field-update-operations.input';
 import { RegionUncheckedUpdateManyWithoutParent_regionNestedInput } from './region-unchecked-update-many-without-parent-region-nested.input';
+import { Type } from 'class-transformer';
 
 @InputType()
 export class RegionUncheckedUpdateWithoutChurchesInput {
@@ -24,6 +25,9 @@ export class RegionUncheckedUpdateWithoutChurchesInput {
 
     @Field(() => NullableStringFieldUpdateOperationsInput, {nullable:true})
     contact_id?: NullableStringFieldUpdateOperationsInput;
+
+    @Field(() => NullableStringFieldUpdateOperationsInput, {nullable:true})
+    annual_budget_id?: NullableStringFieldUpdateOperationsInput;
 
     @Field(() => DateTimeFieldUpdateOperationsInput, {nullable:true})
     created_at?: DateTimeFieldUpdateOperationsInput;
@@ -47,5 +51,6 @@ export class RegionUncheckedUpdateWithoutChurchesInput {
     deleted_by?: NullableStringFieldUpdateOperationsInput;
 
     @Field(() => RegionUncheckedUpdateManyWithoutParent_regionNestedInput, {nullable:true})
+    @Type(() => RegionUncheckedUpdateManyWithoutParent_regionNestedInput)
     children?: RegionUncheckedUpdateManyWithoutParent_regionNestedInput;
 }

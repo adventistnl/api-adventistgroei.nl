@@ -9,6 +9,7 @@ import { InstitutionUpdateOneRequiredWithoutChurchesNestedInput } from '../insti
 import { Type } from 'class-transformer';
 import { RegionUpdateOneRequiredWithoutChurchesNestedInput } from '../region/region-update-one-required-without-churches-nested.input';
 import { ContactUpdateOneWithoutChurchNestedInput } from '../contact/contact-update-one-without-church-nested.input';
+import { AnnualBudgetUpdateOneWithoutChurchesNestedInput } from '../annual-budget/annual-budget-update-one-without-churches-nested.input';
 import { DepartmentUpdateManyWithoutChurchNestedInput } from '../department/department-update-many-without-church-nested.input';
 import { SubsidyRequestUpdateManyWithoutChurchNestedInput } from '../subsidy-request/subsidy-request-update-many-without-church-nested.input';
 
@@ -47,11 +48,16 @@ export class ChurchUpdateWithoutUsersInput {
     institution?: InstitutionUpdateOneRequiredWithoutChurchesNestedInput;
 
     @Field(() => RegionUpdateOneRequiredWithoutChurchesNestedInput, {nullable:true})
+    @Type(() => RegionUpdateOneRequiredWithoutChurchesNestedInput)
     region?: RegionUpdateOneRequiredWithoutChurchesNestedInput;
 
     @Field(() => ContactUpdateOneWithoutChurchNestedInput, {nullable:true})
     @Type(() => ContactUpdateOneWithoutChurchNestedInput)
     contact?: ContactUpdateOneWithoutChurchNestedInput;
+
+    @Field(() => AnnualBudgetUpdateOneWithoutChurchesNestedInput, {nullable:true})
+    @Type(() => AnnualBudgetUpdateOneWithoutChurchesNestedInput)
+    annual_budget?: AnnualBudgetUpdateOneWithoutChurchesNestedInput;
 
     @Field(() => DepartmentUpdateManyWithoutChurchNestedInput, {nullable:true})
     @Type(() => DepartmentUpdateManyWithoutChurchNestedInput)

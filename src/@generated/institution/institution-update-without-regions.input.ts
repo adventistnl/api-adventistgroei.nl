@@ -8,6 +8,7 @@ import { BoolFieldUpdateOperationsInput } from '../prisma/bool-field-update-oper
 import { NullableDateTimeFieldUpdateOperationsInput } from '../prisma/nullable-date-time-field-update-operations.input';
 import { ContactUpdateOneWithoutInstitutionNestedInput } from '../contact/contact-update-one-without-institution-nested.input';
 import { Type } from 'class-transformer';
+import { AnnualBudgetUpdateOneWithoutInstitutionsNestedInput } from '../annual-budget/annual-budget-update-one-without-institutions-nested.input';
 import { ChurchUpdateManyWithoutInstitutionNestedInput } from '../church/church-update-many-without-institution-nested.input';
 import { DepartmentUpdateManyWithoutInstitutionNestedInput } from '../department/department-update-many-without-institution-nested.input';
 import { UserUpdateManyWithoutInstitutionNestedInput } from '../user/user-update-many-without-institution-nested.input';
@@ -60,6 +61,10 @@ export class InstitutionUpdateWithoutRegionsInput {
     @Field(() => ContactUpdateOneWithoutInstitutionNestedInput, {nullable:true})
     @Type(() => ContactUpdateOneWithoutInstitutionNestedInput)
     contact?: ContactUpdateOneWithoutInstitutionNestedInput;
+
+    @Field(() => AnnualBudgetUpdateOneWithoutInstitutionsNestedInput, {nullable:true})
+    @Type(() => AnnualBudgetUpdateOneWithoutInstitutionsNestedInput)
+    annual_budget?: AnnualBudgetUpdateOneWithoutInstitutionsNestedInput;
 
     @Field(() => ChurchUpdateManyWithoutInstitutionNestedInput, {nullable:true})
     @Type(() => ChurchUpdateManyWithoutInstitutionNestedInput)

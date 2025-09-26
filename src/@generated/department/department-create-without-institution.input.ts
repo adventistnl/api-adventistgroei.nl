@@ -6,6 +6,7 @@ import { transformToDecimal } from 'prisma-graphql-type-decimal';
 import { Transform } from 'class-transformer';
 import { Type } from 'class-transformer';
 import { ChurchCreateNestedOneWithoutDepartmentsInput } from '../church/church-create-nested-one-without-departments.input';
+import { AnnualBudgetCreateNestedOneWithoutDepartmentsInput } from '../annual-budget/annual-budget-create-nested-one-without-departments.input';
 import { ContactCreateNestedOneWithoutDepartmentInput } from '../contact/contact-create-nested-one-without-department.input';
 import { SubsidyStatusCreateNestedManyWithoutDepartmentInput } from '../subsidy-status/subsidy-status-create-nested-many-without-department.input';
 import { ProjectCreateNestedManyWithoutDepartmentInput } from '../project/project-create-nested-many-without-department.input';
@@ -54,6 +55,10 @@ export class DepartmentCreateWithoutInstitutionInput {
     @Field(() => ChurchCreateNestedOneWithoutDepartmentsInput, {nullable:false})
     @Type(() => ChurchCreateNestedOneWithoutDepartmentsInput)
     church!: ChurchCreateNestedOneWithoutDepartmentsInput;
+
+    @Field(() => AnnualBudgetCreateNestedOneWithoutDepartmentsInput, {nullable:true})
+    @Type(() => AnnualBudgetCreateNestedOneWithoutDepartmentsInput)
+    annual_budget_ref?: AnnualBudgetCreateNestedOneWithoutDepartmentsInput;
 
     @Field(() => ContactCreateNestedOneWithoutDepartmentInput, {nullable:true})
     @Type(() => ContactCreateNestedOneWithoutDepartmentInput)

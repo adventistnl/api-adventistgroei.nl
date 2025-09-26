@@ -91,6 +91,7 @@ export class ContactWhereUniqueInput {
     Institution?: InstitutionNullableScalarRelationFilter;
 
     @Field(() => RegionListRelationFilter, {nullable:true})
+    @Type(() => RegionListRelationFilter)
     Region?: RegionListRelationFilter;
 
     @Field(() => ChurchListRelationFilter, {nullable:true})

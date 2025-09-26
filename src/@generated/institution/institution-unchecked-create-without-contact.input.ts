@@ -2,8 +2,8 @@ import { Field } from '@nestjs/graphql';
 import { InputType } from '@nestjs/graphql';
 import { LanguagePreference } from '../prisma/language-preference.enum';
 import { RegionUncheckedCreateNestedManyWithoutInstitutionInput } from '../region/region-unchecked-create-nested-many-without-institution.input';
-import { ChurchUncheckedCreateNestedManyWithoutInstitutionInput } from '../church/church-unchecked-create-nested-many-without-institution.input';
 import { Type } from 'class-transformer';
+import { ChurchUncheckedCreateNestedManyWithoutInstitutionInput } from '../church/church-unchecked-create-nested-many-without-institution.input';
 import { DepartmentUncheckedCreateNestedManyWithoutInstitutionInput } from '../department/department-unchecked-create-nested-many-without-institution.input';
 import { UserUncheckedCreateNestedManyWithoutInstitutionInput } from '../user/user-unchecked-create-nested-many-without-institution.input';
 import { CommunicationUncheckedCreateNestedManyWithoutInstitutionInput } from '../communication/communication-unchecked-create-nested-many-without-institution.input';
@@ -31,6 +31,9 @@ export class InstitutionUncheckedCreateWithoutContactInput {
     @Field(() => LanguagePreference, {nullable:false})
     language_preference!: `${LanguagePreference}`;
 
+    @Field(() => String, {nullable:true})
+    annual_budget_id?: string;
+
     @Field(() => Date, {nullable:true})
     created_at?: Date | string;
 
@@ -53,6 +56,7 @@ export class InstitutionUncheckedCreateWithoutContactInput {
     deleted_by?: string;
 
     @Field(() => RegionUncheckedCreateNestedManyWithoutInstitutionInput, {nullable:true})
+    @Type(() => RegionUncheckedCreateNestedManyWithoutInstitutionInput)
     regions?: RegionUncheckedCreateNestedManyWithoutInstitutionInput;
 
     @Field(() => ChurchUncheckedCreateNestedManyWithoutInstitutionInput, {nullable:true})

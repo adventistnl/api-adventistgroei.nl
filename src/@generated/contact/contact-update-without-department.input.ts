@@ -80,6 +80,7 @@ export class ContactUpdateWithoutDepartmentInput {
     Institution?: InstitutionUpdateOneWithoutContactNestedInput;
 
     @Field(() => RegionUpdateManyWithoutContactNestedInput, {nullable:true})
+    @Type(() => RegionUpdateManyWithoutContactNestedInput)
     Region?: RegionUpdateManyWithoutContactNestedInput;
 
     @Field(() => ChurchUpdateManyWithoutContactNestedInput, {nullable:true})

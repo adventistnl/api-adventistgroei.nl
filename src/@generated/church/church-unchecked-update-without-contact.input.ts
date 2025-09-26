@@ -1,10 +1,10 @@
 import { Field } from '@nestjs/graphql';
 import { InputType } from '@nestjs/graphql';
 import { StringFieldUpdateOperationsInput } from '../prisma/string-field-update-operations.input';
+import { NullableStringFieldUpdateOperationsInput } from '../prisma/nullable-string-field-update-operations.input';
 import { DateTimeFieldUpdateOperationsInput } from '../prisma/date-time-field-update-operations.input';
 import { BoolFieldUpdateOperationsInput } from '../prisma/bool-field-update-operations.input';
 import { NullableDateTimeFieldUpdateOperationsInput } from '../prisma/nullable-date-time-field-update-operations.input';
-import { NullableStringFieldUpdateOperationsInput } from '../prisma/nullable-string-field-update-operations.input';
 import { DepartmentUncheckedUpdateManyWithoutChurchNestedInput } from '../department/department-unchecked-update-many-without-church-nested.input';
 import { Type } from 'class-transformer';
 import { UserUncheckedUpdateManyWithoutChurchNestedInput } from '../user/user-unchecked-update-many-without-church-nested.input';
@@ -24,6 +24,9 @@ export class ChurchUncheckedUpdateWithoutContactInput {
 
     @Field(() => StringFieldUpdateOperationsInput, {nullable:true})
     region_id?: StringFieldUpdateOperationsInput;
+
+    @Field(() => NullableStringFieldUpdateOperationsInput, {nullable:true})
+    annual_budget_id?: NullableStringFieldUpdateOperationsInput;
 
     @Field(() => DateTimeFieldUpdateOperationsInput, {nullable:true})
     created_at?: DateTimeFieldUpdateOperationsInput;

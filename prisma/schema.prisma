@@ -176,6 +176,14 @@ enum ProjectType {
   OTHER
 }
 
+// Enum para status do orçamento anual
+enum AnnualBudgetStatus {
+  PLANNED
+  APROVED
+  IN_PROGRESS
+  CLOSED
+}
+
 // Models
 model Institution {
   id                  String             @id @default(uuid())
@@ -185,6 +193,8 @@ model Institution {
   language_preference LanguagePreference
   contact_id          String?            @unique
   contact             Contact?           @relation(fields: [contact_id], references: [id])
+  annual_budget_id    String?
+  annual_budget       AnnualBudget?      @relation(fields: [annual_budget_id], references: [id])
   created_at          DateTime           @default(now())
   updated_at          DateTime           @updatedAt
   created_by          String
@@ -205,20 +215,22 @@ model Institution {
 }
 
 model Region {
-  id               String      @id @default(uuid())
+  id               String        @id @default(uuid())
   institution_id   String
-  institution      Institution @relation(fields: [institution_id], references: [id])
+  institution      Institution   @relation(fields: [institution_id], references: [id])
   name             String
   parent_region_id String?
-  parent_region    Region?     @relation("ParentRegion", fields: [parent_region_id], references: [id])
-  children         Region[]    @relation("ParentRegion")
+  parent_region    Region?       @relation("ParentRegion", fields: [parent_region_id], references: [id])
+  children         Region[]      @relation("ParentRegion")
   contact_id       String?
-  contact          Contact?    @relation(fields: [contact_id], references: [id])
-  created_at       DateTime    @default(now())
-  updated_at       DateTime    @updatedAt
+  contact          Contact?      @relation(fields: [contact_id], references: [id])
+  annual_budget_id String?
+  annual_budget    AnnualBudget? @relation(fields: [annual_budget_id], references: [id])
+  created_at       DateTime      @default(now())
+  updated_at       DateTime      @updatedAt
   created_by       String
   updated_by       String
-  is_deleted       Boolean     @default(false)
+  is_deleted       Boolean       @default(false)
   deleted_at       DateTime?
   deleted_by       String?
   churches         Church[]
@@ -233,6 +245,8 @@ model Church {
   region           Region           @relation(fields: [region_id], references: [id])
   contact_id       String?
   contact          Contact?         @relation(fields: [contact_id], references: [id])
+  annual_budget_id String?
+  annual_budget    AnnualBudget?    @relation(fields: [annual_budget_id], references: [id])
   created_at       DateTime         @default(now())
   updated_at       DateTime         @updatedAt
   created_by       String
@@ -246,28 +260,54 @@ model Church {
 }
 
 model Department {
-  id               String           @id @default(uuid())
-  institution_id   String
-  institution      Institution      @relation(fields: [institution_id], references: [id])
-  church_id        String
-  church           Church           @relation(fields: [church_id], references: [id])
-  name             String
-  description      String
-  annual_budget    Decimal
-  contact_id       String?
-  contact          Contact?         @relation(fields: [contact_id], references: [id])
-  created_at       DateTime         @default(now())
-  updated_at       DateTime         @updatedAt
-  created_by       String
-  updated_by       String
-  is_deleted       Boolean          @default(false)
-  deleted_at       DateTime?
-  deleted_by       String?
-  subsidy_statuses SubsidyStatus[]
-  projects         Project[]
-  annual_reports   AnnualReport[]
-  subsidy_requests SubsidyRequest[]
-  users            User[]
+  id                String           @id @default(uuid())
+  institution_id    String
+  institution       Institution      @relation(fields: [institution_id], references: [id])
+  church_id         String
+  church            Church           @relation(fields: [church_id], references: [id])
+  name              String
+  description       String
+  annual_budget     Decimal
+  annual_budget_id  String?
+  annual_budget_ref AnnualBudget?    @relation("DepartmentAnnualBudget", fields: [annual_budget_id], references: [id])
+  contact_id        String?
+  contact           Contact?         @relation(fields: [contact_id], references: [id])
+  created_at        DateTime         @default(now())
+  updated_at        DateTime         @updatedAt
+  created_by        String
+  updated_by        String
+  is_deleted        Boolean          @default(false)
+  deleted_at        DateTime?
+  deleted_by        String?
+  subsidy_statuses  SubsidyStatus[]
+  projects          Project[]
+  annual_reports    AnnualReport[]
+  subsidy_requests  SubsidyRequest[]
+  users             User[]
+}
+
+// Modelo AnnualBudget
+model AnnualBudget {
+  id             String             @id @default(uuid())
+  year           Int
+  planned_budget Decimal
+  total_expenses Decimal
+  balance        Decimal
+  notes          String?
+  approved_by    String?
+  approved_user  User?              @relation("ApprovedAnnualBudgets", fields: [approved_by], references: [id])
+  status         AnnualBudgetStatus @default(PLANNED)
+  created_at     DateTime           @default(now())
+  updated_at     DateTime           @updatedAt
+  created_by     String
+  updated_by     String
+  is_deleted     Boolean            @default(false)
+  deleted_at     DateTime?
+  deleted_by     String?
+  institutions   Institution[]
+  regions        Region[]
+  churches       Church[]
+  departments    Department[]       @relation("DepartmentAnnualBudget")
 }
 
 model Contact {
@@ -331,6 +371,7 @@ model User {
   SubsidyStatus             SubsidyStatus[]
   voluntary_projects        VoluntariesOnProjects[]
   Project                   Project[]
+  approved_annual_budgets   AnnualBudget[]           @relation("ApprovedAnnualBudgets")
 }
 
 model Project {

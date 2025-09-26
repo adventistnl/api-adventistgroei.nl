@@ -7,8 +7,8 @@ import { DateTimeFieldUpdateOperationsInput } from '../prisma/date-time-field-up
 import { BoolFieldUpdateOperationsInput } from '../prisma/bool-field-update-operations.input';
 import { NullableDateTimeFieldUpdateOperationsInput } from '../prisma/nullable-date-time-field-update-operations.input';
 import { RegionUncheckedUpdateManyWithoutInstitutionNestedInput } from '../region/region-unchecked-update-many-without-institution-nested.input';
-import { ChurchUncheckedUpdateManyWithoutInstitutionNestedInput } from '../church/church-unchecked-update-many-without-institution-nested.input';
 import { Type } from 'class-transformer';
+import { ChurchUncheckedUpdateManyWithoutInstitutionNestedInput } from '../church/church-unchecked-update-many-without-institution-nested.input';
 import { DepartmentUncheckedUpdateManyWithoutInstitutionNestedInput } from '../department/department-unchecked-update-many-without-institution-nested.input';
 import { UserUncheckedUpdateManyWithoutInstitutionNestedInput } from '../user/user-unchecked-update-many-without-institution-nested.input';
 import { CommunicationUncheckedUpdateManyWithoutInstitutionNestedInput } from '../communication/communication-unchecked-update-many-without-institution-nested.input';
@@ -38,6 +38,9 @@ export class InstitutionUncheckedUpdateWithoutProjectsInput {
     @Field(() => NullableStringFieldUpdateOperationsInput, {nullable:true})
     contact_id?: NullableStringFieldUpdateOperationsInput;
 
+    @Field(() => NullableStringFieldUpdateOperationsInput, {nullable:true})
+    annual_budget_id?: NullableStringFieldUpdateOperationsInput;
+
     @Field(() => DateTimeFieldUpdateOperationsInput, {nullable:true})
     created_at?: DateTimeFieldUpdateOperationsInput;
 
@@ -60,6 +63,7 @@ export class InstitutionUncheckedUpdateWithoutProjectsInput {
     deleted_by?: NullableStringFieldUpdateOperationsInput;
 
     @Field(() => RegionUncheckedUpdateManyWithoutInstitutionNestedInput, {nullable:true})
+    @Type(() => RegionUncheckedUpdateManyWithoutInstitutionNestedInput)
     regions?: RegionUncheckedUpdateManyWithoutInstitutionNestedInput;
 
     @Field(() => ChurchUncheckedUpdateManyWithoutInstitutionNestedInput, {nullable:true})

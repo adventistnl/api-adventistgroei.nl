@@ -17,6 +17,7 @@ import { SubsidyRequest } from '../subsidy-request/subsidy-request.model';
 import { SubsidyStatus } from '../subsidy-status/subsidy-status.model';
 import { VoluntariesOnProjects } from '../voluntaries-on-projects/voluntaries-on-projects.model';
 import { Project } from '../project/project.model';
+import { AnnualBudget } from '../annual-budget/annual-budget.model';
 import { UserCount } from './user-count.output';
 
 @ObjectType()
@@ -114,6 +115,9 @@ export class User {
 
     @Field(() => [Project], {nullable:true})
     Project?: Array<Project>;
+
+    @Field(() => [AnnualBudget], {nullable:true})
+    approved_annual_budgets?: Array<AnnualBudget>;
 
     @Field(() => UserCount, {nullable:false})
     _count?: UserCount;

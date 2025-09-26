@@ -37,4 +37,7 @@ export class UserCount {
 
     @Field(() => Int, {nullable:false})
     Project?: number;
+
+    @Field(() => Int, {nullable:false})
+    approved_annual_budgets?: number;
 }

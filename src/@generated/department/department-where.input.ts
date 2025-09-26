@@ -9,6 +9,7 @@ import { BoolFilter } from '../prisma/bool-filter.input';
 import { DateTimeNullableFilter } from '../prisma/date-time-nullable-filter.input';
 import { InstitutionScalarRelationFilter } from '../institution/institution-scalar-relation-filter.input';
 import { ChurchScalarRelationFilter } from '../church/church-scalar-relation-filter.input';
+import { AnnualBudgetNullableScalarRelationFilter } from '../annual-budget/annual-budget-nullable-scalar-relation-filter.input';
 import { ContactNullableScalarRelationFilter } from '../contact/contact-nullable-scalar-relation-filter.input';
 import { SubsidyStatusListRelationFilter } from '../subsidy-status/subsidy-status-list-relation-filter.input';
 import { ProjectListRelationFilter } from '../project/project-list-relation-filter.input';
@@ -51,6 +52,9 @@ export class DepartmentWhereInput {
     annual_budget?: DecimalFilter;
 
     @Field(() => StringNullableFilter, {nullable:true})
+    annual_budget_id?: StringNullableFilter;
+
+    @Field(() => StringNullableFilter, {nullable:true})
     contact_id?: StringNullableFilter;
 
     @Field(() => DateTimeFilter, {nullable:true})
@@ -81,6 +85,10 @@ export class DepartmentWhereInput {
     @Field(() => ChurchScalarRelationFilter, {nullable:true})
     @Type(() => ChurchScalarRelationFilter)
     church?: ChurchScalarRelationFilter;
+
+    @Field(() => AnnualBudgetNullableScalarRelationFilter, {nullable:true})
+    @Type(() => AnnualBudgetNullableScalarRelationFilter)
+    annual_budget_ref?: AnnualBudgetNullableScalarRelationFilter;
 
     @Field(() => ContactNullableScalarRelationFilter, {nullable:true})
     @Type(() => ContactNullableScalarRelationFilter)

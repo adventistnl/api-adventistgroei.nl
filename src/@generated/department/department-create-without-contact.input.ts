@@ -7,6 +7,7 @@ import { Transform } from 'class-transformer';
 import { Type } from 'class-transformer';
 import { InstitutionCreateNestedOneWithoutDepartmentsInput } from '../institution/institution-create-nested-one-without-departments.input';
 import { ChurchCreateNestedOneWithoutDepartmentsInput } from '../church/church-create-nested-one-without-departments.input';
+import { AnnualBudgetCreateNestedOneWithoutDepartmentsInput } from '../annual-budget/annual-budget-create-nested-one-without-departments.input';
 import { SubsidyStatusCreateNestedManyWithoutDepartmentInput } from '../subsidy-status/subsidy-status-create-nested-many-without-department.input';
 import { ProjectCreateNestedManyWithoutDepartmentInput } from '../project/project-create-nested-many-without-department.input';
 import { AnnualReportCreateNestedManyWithoutDepartmentInput } from '../annual-report/annual-report-create-nested-many-without-department.input';
@@ -58,6 +59,10 @@ export class DepartmentCreateWithoutContactInput {
     @Field(() => ChurchCreateNestedOneWithoutDepartmentsInput, {nullable:false})
     @Type(() => ChurchCreateNestedOneWithoutDepartmentsInput)
     church!: ChurchCreateNestedOneWithoutDepartmentsInput;
+
+    @Field(() => AnnualBudgetCreateNestedOneWithoutDepartmentsInput, {nullable:true})
+    @Type(() => AnnualBudgetCreateNestedOneWithoutDepartmentsInput)
+    annual_budget_ref?: AnnualBudgetCreateNestedOneWithoutDepartmentsInput;
 
     @Field(() => SubsidyStatusCreateNestedManyWithoutDepartmentInput, {nullable:true})
     @Type(() => SubsidyStatusCreateNestedManyWithoutDepartmentInput)

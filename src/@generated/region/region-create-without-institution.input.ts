@@ -1,9 +1,10 @@
 import { Field } from '@nestjs/graphql';
 import { InputType } from '@nestjs/graphql';
 import { RegionCreateNestedOneWithoutChildrenInput } from './region-create-nested-one-without-children.input';
+import { Type } from 'class-transformer';
 import { RegionCreateNestedManyWithoutParent_regionInput } from './region-create-nested-many-without-parent-region.input';
 import { ContactCreateNestedOneWithoutRegionInput } from '../contact/contact-create-nested-one-without-region.input';
-import { Type } from 'class-transformer';
+import { AnnualBudgetCreateNestedOneWithoutRegionsInput } from '../annual-budget/annual-budget-create-nested-one-without-regions.input';
 import { ChurchCreateNestedManyWithoutRegionInput } from '../church/church-create-nested-many-without-region.input';
 
 @InputType()
@@ -37,14 +38,20 @@ export class RegionCreateWithoutInstitutionInput {
     deleted_by?: string;
 
     @Field(() => RegionCreateNestedOneWithoutChildrenInput, {nullable:true})
+    @Type(() => RegionCreateNestedOneWithoutChildrenInput)
     parent_region?: RegionCreateNestedOneWithoutChildrenInput;
 
     @Field(() => RegionCreateNestedManyWithoutParent_regionInput, {nullable:true})
+    @Type(() => RegionCreateNestedManyWithoutParent_regionInput)
     children?: RegionCreateNestedManyWithoutParent_regionInput;
 
     @Field(() => ContactCreateNestedOneWithoutRegionInput, {nullable:true})
     @Type(() => ContactCreateNestedOneWithoutRegionInput)
     contact?: ContactCreateNestedOneWithoutRegionInput;
+
+    @Field(() => AnnualBudgetCreateNestedOneWithoutRegionsInput, {nullable:true})
+    @Type(() => AnnualBudgetCreateNestedOneWithoutRegionsInput)
+    annual_budget?: AnnualBudgetCreateNestedOneWithoutRegionsInput;
 
     @Field(() => ChurchCreateNestedManyWithoutRegionInput, {nullable:true})
     @Type(() => ChurchCreateNestedManyWithoutRegionInput)

@@ -43,6 +43,9 @@ export class DepartmentScalarWhereWithAggregatesInput {
     annual_budget?: DecimalWithAggregatesFilter;
 
     @Field(() => StringNullableWithAggregatesFilter, {nullable:true})
+    annual_budget_id?: StringNullableWithAggregatesFilter;
+
+    @Field(() => StringNullableWithAggregatesFilter, {nullable:true})
     contact_id?: StringNullableWithAggregatesFilter;
 
     @Field(() => DateTimeWithAggregatesFilter, {nullable:true})

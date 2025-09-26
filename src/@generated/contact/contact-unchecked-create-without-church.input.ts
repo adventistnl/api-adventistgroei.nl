@@ -75,6 +75,7 @@ export class ContactUncheckedCreateWithoutChurchInput {
     Institution?: InstitutionUncheckedCreateNestedOneWithoutContactInput;
 
     @Field(() => RegionUncheckedCreateNestedManyWithoutContactInput, {nullable:true})
+    @Type(() => RegionUncheckedCreateNestedManyWithoutContactInput)
     Region?: RegionUncheckedCreateNestedManyWithoutContactInput;
 
     @Field(() => DepartmentUncheckedCreateNestedManyWithoutContactInput, {nullable:true})
