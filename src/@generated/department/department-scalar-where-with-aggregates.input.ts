@@ -1,8 +1,6 @@
 import { Field } from '@nestjs/graphql';
 import { InputType } from '@nestjs/graphql';
-import { Type } from 'class-transformer';
 import { StringWithAggregatesFilter } from '../prisma/string-with-aggregates-filter.input';
-import { DecimalWithAggregatesFilter } from '../prisma/decimal-with-aggregates-filter.input';
 import { StringNullableWithAggregatesFilter } from '../prisma/string-nullable-with-aggregates-filter.input';
 import { DateTimeWithAggregatesFilter } from '../prisma/date-time-with-aggregates-filter.input';
 import { BoolWithAggregatesFilter } from '../prisma/bool-with-aggregates-filter.input';
@@ -12,15 +10,12 @@ import { DateTimeNullableWithAggregatesFilter } from '../prisma/date-time-nullab
 export class DepartmentScalarWhereWithAggregatesInput {
 
     @Field(() => [DepartmentScalarWhereWithAggregatesInput], {nullable:true})
-    @Type(() => DepartmentScalarWhereWithAggregatesInput)
     AND?: Array<DepartmentScalarWhereWithAggregatesInput>;
 
     @Field(() => [DepartmentScalarWhereWithAggregatesInput], {nullable:true})
-    @Type(() => DepartmentScalarWhereWithAggregatesInput)
     OR?: Array<DepartmentScalarWhereWithAggregatesInput>;
 
     @Field(() => [DepartmentScalarWhereWithAggregatesInput], {nullable:true})
-    @Type(() => DepartmentScalarWhereWithAggregatesInput)
     NOT?: Array<DepartmentScalarWhereWithAggregatesInput>;
 
     @Field(() => StringWithAggregatesFilter, {nullable:true})
@@ -37,10 +32,6 @@ export class DepartmentScalarWhereWithAggregatesInput {
 
     @Field(() => StringWithAggregatesFilter, {nullable:true})
     description?: StringWithAggregatesFilter;
-
-    @Field(() => DecimalWithAggregatesFilter, {nullable:true})
-    @Type(() => DecimalWithAggregatesFilter)
-    annual_budget?: DecimalWithAggregatesFilter;
 
     @Field(() => StringNullableWithAggregatesFilter, {nullable:true})
     annual_budget_id?: StringNullableWithAggregatesFilter;

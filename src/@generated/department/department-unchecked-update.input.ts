@@ -1,13 +1,12 @@
 import { Field } from '@nestjs/graphql';
 import { InputType } from '@nestjs/graphql';
 import { StringFieldUpdateOperationsInput } from '../prisma/string-field-update-operations.input';
-import { DecimalFieldUpdateOperationsInput } from '../prisma/decimal-field-update-operations.input';
-import { Type } from 'class-transformer';
 import { NullableStringFieldUpdateOperationsInput } from '../prisma/nullable-string-field-update-operations.input';
 import { DateTimeFieldUpdateOperationsInput } from '../prisma/date-time-field-update-operations.input';
 import { BoolFieldUpdateOperationsInput } from '../prisma/bool-field-update-operations.input';
 import { NullableDateTimeFieldUpdateOperationsInput } from '../prisma/nullable-date-time-field-update-operations.input';
 import { SubsidyStatusUncheckedUpdateManyWithoutDepartmentNestedInput } from '../subsidy-status/subsidy-status-unchecked-update-many-without-department-nested.input';
+import { Type } from 'class-transformer';
 import { ProjectUncheckedUpdateManyWithoutDepartmentNestedInput } from '../project/project-unchecked-update-many-without-department-nested.input';
 import { AnnualReportUncheckedUpdateManyWithoutDepartmentNestedInput } from '../annual-report/annual-report-unchecked-update-many-without-department-nested.input';
 import { SubsidyRequestUncheckedUpdateManyWithoutDepartmentNestedInput } from '../subsidy-request/subsidy-request-unchecked-update-many-without-department-nested.input';
@@ -30,10 +29,6 @@ export class DepartmentUncheckedUpdateInput {
 
     @Field(() => StringFieldUpdateOperationsInput, {nullable:true})
     description?: StringFieldUpdateOperationsInput;
-
-    @Field(() => DecimalFieldUpdateOperationsInput, {nullable:true})
-    @Type(() => DecimalFieldUpdateOperationsInput)
-    annual_budget?: DecimalFieldUpdateOperationsInput;
 
     @Field(() => NullableStringFieldUpdateOperationsInput, {nullable:true})
     annual_budget_id?: NullableStringFieldUpdateOperationsInput;
@@ -71,7 +66,6 @@ export class DepartmentUncheckedUpdateInput {
     projects?: ProjectUncheckedUpdateManyWithoutDepartmentNestedInput;
 
     @Field(() => AnnualReportUncheckedUpdateManyWithoutDepartmentNestedInput, {nullable:true})
-    @Type(() => AnnualReportUncheckedUpdateManyWithoutDepartmentNestedInput)
     annual_reports?: AnnualReportUncheckedUpdateManyWithoutDepartmentNestedInput;
 
     @Field(() => SubsidyRequestUncheckedUpdateManyWithoutDepartmentNestedInput, {nullable:true})

@@ -1,11 +1,7 @@
 import { Field } from '@nestjs/graphql';
 import { InputType } from '@nestjs/graphql';
-import { Decimal } from '@prisma/client/runtime/library';
-import { GraphQLDecimal } from 'prisma-graphql-type-decimal';
-import { transformToDecimal } from 'prisma-graphql-type-decimal';
-import { Transform } from 'class-transformer';
-import { Type } from 'class-transformer';
 import { InstitutionCreateNestedOneWithoutDepartmentsInput } from '../institution/institution-create-nested-one-without-departments.input';
+import { Type } from 'class-transformer';
 import { ChurchCreateNestedOneWithoutDepartmentsInput } from '../church/church-create-nested-one-without-departments.input';
 import { AnnualBudgetCreateNestedOneWithoutDepartmentsInput } from '../annual-budget/annual-budget-create-nested-one-without-departments.input';
 import { ContactCreateNestedOneWithoutDepartmentInput } from '../contact/contact-create-nested-one-without-department.input';
@@ -25,11 +21,6 @@ export class DepartmentCreateWithoutUsersInput {
 
     @Field(() => String, {nullable:false})
     description!: string;
-
-    @Field(() => GraphQLDecimal, {nullable:false})
-    @Type(() => Object)
-    @Transform(transformToDecimal)
-    annual_budget!: Decimal;
 
     @Field(() => Date, {nullable:true})
     created_at?: Date | string;
@@ -62,7 +53,7 @@ export class DepartmentCreateWithoutUsersInput {
 
     @Field(() => AnnualBudgetCreateNestedOneWithoutDepartmentsInput, {nullable:true})
     @Type(() => AnnualBudgetCreateNestedOneWithoutDepartmentsInput)
-    annual_budget_ref?: AnnualBudgetCreateNestedOneWithoutDepartmentsInput;
+    annual_budget?: AnnualBudgetCreateNestedOneWithoutDepartmentsInput;
 
     @Field(() => ContactCreateNestedOneWithoutDepartmentInput, {nullable:true})
     @Type(() => ContactCreateNestedOneWithoutDepartmentInput)
@@ -77,7 +68,6 @@ export class DepartmentCreateWithoutUsersInput {
     projects?: ProjectCreateNestedManyWithoutDepartmentInput;
 
     @Field(() => AnnualReportCreateNestedManyWithoutDepartmentInput, {nullable:true})
-    @Type(() => AnnualReportCreateNestedManyWithoutDepartmentInput)
     annual_reports?: AnnualReportCreateNestedManyWithoutDepartmentInput;
 
     @Field(() => SubsidyRequestCreateNestedManyWithoutDepartmentInput, {nullable:true})

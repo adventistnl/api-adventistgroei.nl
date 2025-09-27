@@ -267,9 +267,8 @@ model Department {
   church            Church           @relation(fields: [church_id], references: [id])
   name              String
   description       String
-  annual_budget     Decimal
   annual_budget_id  String?
-  annual_budget_ref AnnualBudget?    @relation("DepartmentAnnualBudget", fields: [annual_budget_id], references: [id])
+  annual_budget     AnnualBudget?    @relation(fields: [annual_budget_id], references: [id])
   contact_id        String?
   contact           Contact?         @relation(fields: [contact_id], references: [id])
   created_at        DateTime         @default(now())
@@ -307,7 +306,7 @@ model AnnualBudget {
   institutions   Institution[]
   regions        Region[]
   churches       Church[]
-  departments    Department[]       @relation("DepartmentAnnualBudget")
+  departments    Department[]
 }
 
 model Contact {

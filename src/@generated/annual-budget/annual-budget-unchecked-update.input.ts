@@ -12,7 +12,7 @@ import { NullableDateTimeFieldUpdateOperationsInput } from '../prisma/nullable-d
 import { InstitutionUncheckedUpdateManyWithoutAnnual_budgetNestedInput } from '../institution/institution-unchecked-update-many-without-annual-budget-nested.input';
 import { RegionUncheckedUpdateManyWithoutAnnual_budgetNestedInput } from '../region/region-unchecked-update-many-without-annual-budget-nested.input';
 import { ChurchUncheckedUpdateManyWithoutAnnual_budgetNestedInput } from '../church/church-unchecked-update-many-without-annual-budget-nested.input';
-import { DepartmentUncheckedUpdateManyWithoutAnnual_budget_refNestedInput } from '../department/department-unchecked-update-many-without-annual-budget-ref-nested.input';
+import { DepartmentUncheckedUpdateManyWithoutAnnual_budgetNestedInput } from '../department/department-unchecked-update-many-without-annual-budget-nested.input';
 
 @InputType()
 export class AnnualBudgetUncheckedUpdateInput {
@@ -77,7 +77,7 @@ export class AnnualBudgetUncheckedUpdateInput {
     @Type(() => ChurchUncheckedUpdateManyWithoutAnnual_budgetNestedInput)
     churches?: ChurchUncheckedUpdateManyWithoutAnnual_budgetNestedInput;
 
-    @Field(() => DepartmentUncheckedUpdateManyWithoutAnnual_budget_refNestedInput, {nullable:true})
-    @Type(() => DepartmentUncheckedUpdateManyWithoutAnnual_budget_refNestedInput)
-    departments?: DepartmentUncheckedUpdateManyWithoutAnnual_budget_refNestedInput;
+    @Field(() => DepartmentUncheckedUpdateManyWithoutAnnual_budgetNestedInput, {nullable:true})
+    @Type(() => DepartmentUncheckedUpdateManyWithoutAnnual_budgetNestedInput)
+    departments?: DepartmentUncheckedUpdateManyWithoutAnnual_budgetNestedInput;
 }

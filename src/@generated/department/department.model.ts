@@ -1,8 +1,6 @@
 import { Field } from '@nestjs/graphql';
 import { ObjectType } from '@nestjs/graphql';
 import { ID } from '@nestjs/graphql';
-import { GraphQLDecimal } from 'prisma-graphql-type-decimal';
-import { Decimal } from '@prisma/client/runtime/library';
 import { Institution } from '../institution/institution.model';
 import { Church } from '../church/church.model';
 import { AnnualBudget } from '../annual-budget/annual-budget.model';
@@ -31,9 +29,6 @@ export class Department {
 
     @Field(() => String, {nullable:false})
     description!: string;
-
-    @Field(() => GraphQLDecimal, {nullable:false})
-    annual_budget!: Decimal;
 
     @Field(() => String, {nullable:true})
     annual_budget_id!: string | null;
@@ -69,7 +64,7 @@ export class Department {
     church?: Church;
 
     @Field(() => AnnualBudget, {nullable:true})
-    annual_budget_ref?: AnnualBudget | null;
+    annual_budget?: AnnualBudget | null;
 
     @Field(() => Contact, {nullable:true})
     contact?: Contact | null;

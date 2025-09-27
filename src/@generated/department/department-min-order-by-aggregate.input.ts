@@ -21,9 +21,6 @@ export class DepartmentMinOrderByAggregateInput {
     description?: `${SortOrder}`;
 
     @Field(() => SortOrder, {nullable:true})
-    annual_budget?: `${SortOrder}`;
-
-    @Field(() => SortOrder, {nullable:true})
     annual_budget_id?: `${SortOrder}`;
 
     @Field(() => SortOrder, {nullable:true})

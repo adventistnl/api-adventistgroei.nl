@@ -31,9 +31,6 @@ export class DepartmentOrderByWithRelationInput {
     @Field(() => SortOrder, {nullable:true})
     description?: `${SortOrder}`;
 
-    @Field(() => SortOrder, {nullable:true})
-    annual_budget?: `${SortOrder}`;
-
     @Field(() => SortOrderInput, {nullable:true})
     annual_budget_id?: SortOrderInput;
 
@@ -71,7 +68,7 @@ export class DepartmentOrderByWithRelationInput {
 
     @Field(() => AnnualBudgetOrderByWithRelationInput, {nullable:true})
     @Type(() => AnnualBudgetOrderByWithRelationInput)
-    annual_budget_ref?: AnnualBudgetOrderByWithRelationInput;
+    annual_budget?: AnnualBudgetOrderByWithRelationInput;
 
     @Field(() => ContactOrderByWithRelationInput, {nullable:true})
     @Type(() => ContactOrderByWithRelationInput)
@@ -86,7 +83,6 @@ export class DepartmentOrderByWithRelationInput {
     projects?: ProjectOrderByRelationAggregateInput;
 
     @Field(() => AnnualReportOrderByRelationAggregateInput, {nullable:true})
-    @Type(() => AnnualReportOrderByRelationAggregateInput)
     annual_reports?: AnnualReportOrderByRelationAggregateInput;
 
     @Field(() => SubsidyRequestOrderByRelationAggregateInput, {nullable:true})

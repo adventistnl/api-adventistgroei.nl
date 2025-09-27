@@ -13,7 +13,7 @@ import { UserUpdateOneWithoutApproved_annual_budgetsNestedInput } from '../user/
 import { InstitutionUpdateManyWithoutAnnual_budgetNestedInput } from '../institution/institution-update-many-without-annual-budget-nested.input';
 import { RegionUpdateManyWithoutAnnual_budgetNestedInput } from '../region/region-update-many-without-annual-budget-nested.input';
 import { ChurchUpdateManyWithoutAnnual_budgetNestedInput } from '../church/church-update-many-without-annual-budget-nested.input';
-import { DepartmentUpdateManyWithoutAnnual_budget_refNestedInput } from '../department/department-update-many-without-annual-budget-ref-nested.input';
+import { DepartmentUpdateManyWithoutAnnual_budgetNestedInput } from '../department/department-update-many-without-annual-budget-nested.input';
 
 @InputType()
 export class AnnualBudgetUpdateInput {
@@ -79,7 +79,7 @@ export class AnnualBudgetUpdateInput {
     @Type(() => ChurchUpdateManyWithoutAnnual_budgetNestedInput)
     churches?: ChurchUpdateManyWithoutAnnual_budgetNestedInput;
 
-    @Field(() => DepartmentUpdateManyWithoutAnnual_budget_refNestedInput, {nullable:true})
-    @Type(() => DepartmentUpdateManyWithoutAnnual_budget_refNestedInput)
-    departments?: DepartmentUpdateManyWithoutAnnual_budget_refNestedInput;
+    @Field(() => DepartmentUpdateManyWithoutAnnual_budgetNestedInput, {nullable:true})
+    @Type(() => DepartmentUpdateManyWithoutAnnual_budgetNestedInput)
+    departments?: DepartmentUpdateManyWithoutAnnual_budgetNestedInput;
 }

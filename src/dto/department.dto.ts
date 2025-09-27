@@ -1,6 +1,7 @@
 import { InputType, Field } from '@nestjs/graphql';
-import { IsString, IsOptional, IsNumber, ValidateNested } from 'class-validator';
+import { IsString, IsOptional, ValidateNested } from 'class-validator';
 import { ContactCreateDto } from './contact.dto';
+import { AnnualBudgetCreateDto, AnnualBudgetUpdateDto } from './annual_budget.dto';
 
 @InputType()
 export class DepartmentCreateDto {
@@ -13,8 +14,7 @@ export class DepartmentCreateDto {
   description: string;
 
   @Field()
-  @IsNumber()
-  annual_budget: number;
+  annual_budget: AnnualBudgetCreateDto;
 
   @Field()
   @IsString()
@@ -44,8 +44,7 @@ export class DepartmentUpdateDto {
 
   @Field({ nullable: true })
   @IsOptional()
-  @IsNumber()
-  annual_budget?: number;
+  annual_budget?: AnnualBudgetUpdateDto;
 
   @Field({ nullable: true })
   @IsOptional()

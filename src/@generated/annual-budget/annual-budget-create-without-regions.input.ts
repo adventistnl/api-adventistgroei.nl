@@ -10,7 +10,7 @@ import { AnnualBudgetStatus } from '../prisma/annual-budget-status.enum';
 import { UserCreateNestedOneWithoutApproved_annual_budgetsInput } from '../user/user-create-nested-one-without-approved-annual-budgets.input';
 import { InstitutionCreateNestedManyWithoutAnnual_budgetInput } from '../institution/institution-create-nested-many-without-annual-budget.input';
 import { ChurchCreateNestedManyWithoutAnnual_budgetInput } from '../church/church-create-nested-many-without-annual-budget.input';
-import { DepartmentCreateNestedManyWithoutAnnual_budget_refInput } from '../department/department-create-nested-many-without-annual-budget-ref.input';
+import { DepartmentCreateNestedManyWithoutAnnual_budgetInput } from '../department/department-create-nested-many-without-annual-budget.input';
 
 @InputType()
 export class AnnualBudgetCreateWithoutRegionsInput {
@@ -75,7 +75,7 @@ export class AnnualBudgetCreateWithoutRegionsInput {
     @Type(() => ChurchCreateNestedManyWithoutAnnual_budgetInput)
     churches?: ChurchCreateNestedManyWithoutAnnual_budgetInput;
 
-    @Field(() => DepartmentCreateNestedManyWithoutAnnual_budget_refInput, {nullable:true})
-    @Type(() => DepartmentCreateNestedManyWithoutAnnual_budget_refInput)
-    departments?: DepartmentCreateNestedManyWithoutAnnual_budget_refInput;
+    @Field(() => DepartmentCreateNestedManyWithoutAnnual_budgetInput, {nullable:true})
+    @Type(() => DepartmentCreateNestedManyWithoutAnnual_budgetInput)
+    departments?: DepartmentCreateNestedManyWithoutAnnual_budgetInput;
 }

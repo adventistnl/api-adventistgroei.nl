@@ -46,11 +46,22 @@ export class DepartmentRepository {
       contactId = contact.id;
     }
 
+    const annual_budget = await this.prisma.annualBudget.create({
+      data: {
+        balance: new Prisma.Decimal(data.annual_budget.balance),
+        planned_budget: new Prisma.Decimal(data.annual_budget.planned_budget),
+        total_expenses: new Prisma.Decimal(data.annual_budget.total_expenses),
+        year: data.annual_budget.year,
+        created_by: userId,
+        updated_by: userId,
+      },
+    });
+
     return this.prisma.department.create({
       data: {
         name: data.name,
         description: data.description,
-        annual_budget: new Prisma.Decimal(data.annual_budget),
+        annual_budget: { connect: { id: annual_budget.id } },
         institution: { connect: { id: data.institution } },
         church: { connect: { id: data.church } },
         contact: contactId ? { connect: { id: contactId } } : undefined,
@@ -98,7 +109,7 @@ export class DepartmentRepository {
       data: {
         name: data.name ?? undefined,
         description: data.description ?? undefined,
-        annual_budget: data.annual_budget ? new Prisma.Decimal(data.annual_budget) : undefined,
+        annual_budget: data.annual_budget ? { update: data.annual_budget } : undefined,
         institution: data.institution_id ? { connect: { id: data.institution_id } } : undefined,
         church: data.church_id ? { connect: { id: data.church_id } } : undefined,
         contact: contactData,

@@ -1,11 +1,7 @@
 import { Field } from '@nestjs/graphql';
 import { InputType } from '@nestjs/graphql';
-import { Decimal } from '@prisma/client/runtime/library';
-import { GraphQLDecimal } from 'prisma-graphql-type-decimal';
-import { transformToDecimal } from 'prisma-graphql-type-decimal';
-import { Transform } from 'class-transformer';
-import { Type } from 'class-transformer';
 import { SubsidyStatusUncheckedCreateNestedManyWithoutDepartmentInput } from '../subsidy-status/subsidy-status-unchecked-create-nested-many-without-department.input';
+import { Type } from 'class-transformer';
 import { ProjectUncheckedCreateNestedManyWithoutDepartmentInput } from '../project/project-unchecked-create-nested-many-without-department.input';
 import { AnnualReportUncheckedCreateNestedManyWithoutDepartmentInput } from '../annual-report/annual-report-unchecked-create-nested-many-without-department.input';
 import { SubsidyRequestUncheckedCreateNestedManyWithoutDepartmentInput } from '../subsidy-request/subsidy-request-unchecked-create-nested-many-without-department.input';
@@ -27,11 +23,6 @@ export class DepartmentUncheckedCreateWithoutUsersInput {
 
     @Field(() => String, {nullable:false})
     description!: string;
-
-    @Field(() => GraphQLDecimal, {nullable:false})
-    @Type(() => Object)
-    @Transform(transformToDecimal)
-    annual_budget!: Decimal;
 
     @Field(() => String, {nullable:true})
     annual_budget_id?: string;
@@ -69,7 +60,6 @@ export class DepartmentUncheckedCreateWithoutUsersInput {
     projects?: ProjectUncheckedCreateNestedManyWithoutDepartmentInput;
 
     @Field(() => AnnualReportUncheckedCreateNestedManyWithoutDepartmentInput, {nullable:true})
-    @Type(() => AnnualReportUncheckedCreateNestedManyWithoutDepartmentInput)
     annual_reports?: AnnualReportUncheckedCreateNestedManyWithoutDepartmentInput;
 
     @Field(() => SubsidyRequestUncheckedCreateNestedManyWithoutDepartmentInput, {nullable:true})

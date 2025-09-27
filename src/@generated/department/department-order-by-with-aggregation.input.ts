@@ -3,11 +3,8 @@ import { InputType } from '@nestjs/graphql';
 import { SortOrder } from '../prisma/sort-order.enum';
 import { SortOrderInput } from '../prisma/sort-order.input';
 import { DepartmentCountOrderByAggregateInput } from './department-count-order-by-aggregate.input';
-import { Type } from 'class-transformer';
-import { DepartmentAvgOrderByAggregateInput } from './department-avg-order-by-aggregate.input';
 import { DepartmentMaxOrderByAggregateInput } from './department-max-order-by-aggregate.input';
 import { DepartmentMinOrderByAggregateInput } from './department-min-order-by-aggregate.input';
-import { DepartmentSumOrderByAggregateInput } from './department-sum-order-by-aggregate.input';
 
 @InputType()
 export class DepartmentOrderByWithAggregationInput {
@@ -26,9 +23,6 @@ export class DepartmentOrderByWithAggregationInput {
 
     @Field(() => SortOrder, {nullable:true})
     description?: `${SortOrder}`;
-
-    @Field(() => SortOrder, {nullable:true})
-    annual_budget?: `${SortOrder}`;
 
     @Field(() => SortOrderInput, {nullable:true})
     annual_budget_id?: SortOrderInput;
@@ -58,22 +52,11 @@ export class DepartmentOrderByWithAggregationInput {
     deleted_by?: SortOrderInput;
 
     @Field(() => DepartmentCountOrderByAggregateInput, {nullable:true})
-    @Type(() => DepartmentCountOrderByAggregateInput)
     _count?: DepartmentCountOrderByAggregateInput;
 
-    @Field(() => DepartmentAvgOrderByAggregateInput, {nullable:true})
-    @Type(() => DepartmentAvgOrderByAggregateInput)
-    _avg?: DepartmentAvgOrderByAggregateInput;
-
     @Field(() => DepartmentMaxOrderByAggregateInput, {nullable:true})
-    @Type(() => DepartmentMaxOrderByAggregateInput)
     _max?: DepartmentMaxOrderByAggregateInput;
 
     @Field(() => DepartmentMinOrderByAggregateInput, {nullable:true})
-    @Type(() => DepartmentMinOrderByAggregateInput)
     _min?: DepartmentMinOrderByAggregateInput;
-
-    @Field(() => DepartmentSumOrderByAggregateInput, {nullable:true})
-    @Type(() => DepartmentSumOrderByAggregateInput)
-    _sum?: DepartmentSumOrderByAggregateInput;
 }

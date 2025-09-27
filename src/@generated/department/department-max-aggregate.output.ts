@@ -1,7 +1,5 @@
 import { Field } from '@nestjs/graphql';
 import { ObjectType } from '@nestjs/graphql';
-import { Decimal } from '@prisma/client/runtime/library';
-import { GraphQLDecimal } from 'prisma-graphql-type-decimal';
 
 @ObjectType()
 export class DepartmentMaxAggregate {
@@ -20,9 +18,6 @@ export class DepartmentMaxAggregate {
 
     @Field(() => String, {nullable:true})
     description?: string;
-
-    @Field(() => GraphQLDecimal, {nullable:true})
-    annual_budget?: Decimal;
 
     @Field(() => String, {nullable:true})
     annual_budget_id?: string;

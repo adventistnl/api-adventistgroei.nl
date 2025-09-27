@@ -1,13 +1,12 @@
 import { Field } from '@nestjs/graphql';
 import { InputType } from '@nestjs/graphql';
 import { StringFieldUpdateOperationsInput } from '../prisma/string-field-update-operations.input';
-import { DecimalFieldUpdateOperationsInput } from '../prisma/decimal-field-update-operations.input';
-import { Type } from 'class-transformer';
 import { DateTimeFieldUpdateOperationsInput } from '../prisma/date-time-field-update-operations.input';
 import { BoolFieldUpdateOperationsInput } from '../prisma/bool-field-update-operations.input';
 import { NullableDateTimeFieldUpdateOperationsInput } from '../prisma/nullable-date-time-field-update-operations.input';
 import { NullableStringFieldUpdateOperationsInput } from '../prisma/nullable-string-field-update-operations.input';
 import { InstitutionUpdateOneRequiredWithoutDepartmentsNestedInput } from '../institution/institution-update-one-required-without-departments-nested.input';
+import { Type } from 'class-transformer';
 import { ChurchUpdateOneRequiredWithoutDepartmentsNestedInput } from '../church/church-update-one-required-without-departments-nested.input';
 import { AnnualBudgetUpdateOneWithoutDepartmentsNestedInput } from '../annual-budget/annual-budget-update-one-without-departments-nested.input';
 import { ContactUpdateOneWithoutDepartmentNestedInput } from '../contact/contact-update-one-without-department-nested.input';
@@ -28,10 +27,6 @@ export class DepartmentUpdateInput {
 
     @Field(() => StringFieldUpdateOperationsInput, {nullable:true})
     description?: StringFieldUpdateOperationsInput;
-
-    @Field(() => DecimalFieldUpdateOperationsInput, {nullable:true})
-    @Type(() => DecimalFieldUpdateOperationsInput)
-    annual_budget?: DecimalFieldUpdateOperationsInput;
 
     @Field(() => DateTimeFieldUpdateOperationsInput, {nullable:true})
     created_at?: DateTimeFieldUpdateOperationsInput;
@@ -64,7 +59,7 @@ export class DepartmentUpdateInput {
 
     @Field(() => AnnualBudgetUpdateOneWithoutDepartmentsNestedInput, {nullable:true})
     @Type(() => AnnualBudgetUpdateOneWithoutDepartmentsNestedInput)
-    annual_budget_ref?: AnnualBudgetUpdateOneWithoutDepartmentsNestedInput;
+    annual_budget?: AnnualBudgetUpdateOneWithoutDepartmentsNestedInput;
 
     @Field(() => ContactUpdateOneWithoutDepartmentNestedInput, {nullable:true})
     @Type(() => ContactUpdateOneWithoutDepartmentNestedInput)
@@ -79,7 +74,6 @@ export class DepartmentUpdateInput {
     projects?: ProjectUpdateManyWithoutDepartmentNestedInput;
 
     @Field(() => AnnualReportUpdateManyWithoutDepartmentNestedInput, {nullable:true})
-    @Type(() => AnnualReportUpdateManyWithoutDepartmentNestedInput)
     annual_reports?: AnnualReportUpdateManyWithoutDepartmentNestedInput;
 
     @Field(() => SubsidyRequestUpdateManyWithoutDepartmentNestedInput, {nullable:true})
