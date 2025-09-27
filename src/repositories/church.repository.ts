@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../services/prisma.service';
 import { ChurchCreateDto, ChurchUpdateDto } from '../dto/church.dto';
-import { Church } from '@prisma/client';
+import { Church, Prisma } from '@prisma/client';
 import { CustomGraphQLError, ErrorCode } from 'src/common/errors/custom-graphql-error';
 import { InstitutionRepository } from './institution.repository';
 import { RegionRepository } from './region.repository';
@@ -31,6 +31,16 @@ export class ChurchRepository {
       contactId = contact.id;
     }
 
+    const annualBudget = await this.prisma.annualBudget.create({
+      data: {
+        balance: new Prisma.Decimal(data.annual_budget.balance),
+        planned_budget: new Prisma.Decimal(data.annual_budget.planned_budget),
+        total_expenses: new Prisma.Decimal(data.annual_budget.total_expenses),
+        year: data.annual_budget.year,
+        created_by: userId,
+        updated_by: userId,
+      },
+    });
     return await this.prisma.church.create({
       data: {
         institution: { connect: { id: data.institution_id } },
@@ -40,6 +50,7 @@ export class ChurchRepository {
         created_by: userId,
         updated_by: userId,
         is_deleted: false,
+        annual_budget: { connect: { id: annualBudget.id } },
       },
     });
   }
@@ -54,7 +65,8 @@ export class ChurchRepository {
         institution: { connect: { id: data.institution_id } },
         name: data.name,
         region: { connect: { id: data.region_id } },
-        contact: { update: { ...data.contact, updated_by: userId }},
+        contact: data.contact ? { update: { ...data.contact, updated_by: userId }} : undefined,
+        annual_budget: data.annual_budget ? { update: data.annual_budget } : undefined,
         updated_by: userId,
       },
     });

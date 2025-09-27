@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { RegionCreateDto, RegionUpdateDto } from '../dto/region.dto';
-import { Region } from '@prisma/client';
+import { Region, Prisma } from '@prisma/client';
 import { CustomGraphQLError, ErrorCode } from '../common/errors/custom-graphql-error';
 import { PrismaService } from '../services';
 import { InstitutionRepository } from './institution.repository';
@@ -30,10 +30,20 @@ export class RegionRepository {
       const parent_region = await this.prisma.region.findUnique({ where: { id: data.parent_region_id } });
       if (!parent_region) throw new CustomGraphQLError('Parent region not found', ErrorCode.NOT_FOUND, 404);
     }
-
+    const annualBudget = await this.prisma.annualBudget.create({
+      data: {
+        balance: new Prisma.Decimal(data.annual_budget.balance),
+        planned_budget: new Prisma.Decimal(data.annual_budget.planned_budget),
+        total_expenses: new Prisma.Decimal(data.annual_budget.total_expenses),
+        year: data.annual_budget.year,
+        created_by: userId,
+        updated_by: userId,
+      },
+    });
     return await this.prisma.region.create({
       data: {
         institution: { connect: { id: data.institution_id } },
+        annual_budget: { connect: { id: annualBudget.id } },
         parent_region: data.parent_region_id ? { connect: { id: data.parent_region_id } } : undefined,
         name: data.name,
         contact: data.contact ? {
@@ -78,6 +88,7 @@ export class RegionRepository {
                 updated_by: userId,
               },
             } : undefined,
+        annual_budget: data.annual_budget ? { update: data.annual_budget } : undefined,
         updated_by: userId,
       },
     });

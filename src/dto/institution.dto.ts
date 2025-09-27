@@ -1,6 +1,7 @@
 import { IsNotEmpty, IsString, IsOptional } from 'class-validator';
-import { InputType, Field, PartialType } from '@nestjs/graphql';
+import { InputType, Field } from '@nestjs/graphql';
 import { ContactCreateDto } from './contact.dto';
+import { AnnualBudgetCreateDto, AnnualBudgetUpdateDto } from './annual_budget.dto';
 
 @InputType()
 export class InstitutionCreateDto {
@@ -26,10 +27,13 @@ export class InstitutionCreateDto {
 
   @Field(() => ContactCreateDto, { nullable: true })
   contact?: ContactCreateDto;
+
+  @Field()
+  annual_budget: AnnualBudgetCreateDto;
 }
 
 @InputType()
-export class InstitutionUpdateDto extends PartialType(InstitutionCreateDto) {
+export class InstitutionUpdateDto {
   @Field({ nullable: true })
   @IsOptional()
   @IsString()
@@ -49,4 +53,11 @@ export class InstitutionUpdateDto extends PartialType(InstitutionCreateDto) {
   @IsOptional()
   @IsString()
   language_preference?: string;
+
+  @Field({ nullable: true })
+  @IsOptional()
+  annual_budget?: AnnualBudgetUpdateDto;
+
+  @Field(() => ContactCreateDto, { nullable: true })
+  contact?: ContactCreateDto;
 }
