@@ -40,4 +40,7 @@ export class SubsidyReceiptCountOrderByAggregateInput {
 
     @Field(() => SortOrder, {nullable:true})
     deleted_by?: `${SortOrder}`;
+
+    @Field(() => SortOrder, {nullable:true})
+    subsidy_request_id?: `${SortOrder}`;
 }

@@ -15,6 +15,7 @@ import { InstitutionUpdateOneWithoutProjectsNestedInput } from '../institution/i
 import { VoluntariesOnProjectsUpdateManyWithoutProjectNestedInput } from '../voluntaries-on-projects/voluntaries-on-projects-update-many-without-project-nested.input';
 import { ProjectActivityUpdateManyWithoutProjectNestedInput } from '../project-activity/project-activity-update-many-without-project-nested.input';
 import { SubsidyRequestUpdateManyWithoutProjectNestedInput } from '../subsidy-request/subsidy-request-update-many-without-project-nested.input';
+import { SpecialProjectsUpdateManyWithoutProjectNestedInput } from '../special-projects/special-projects-update-many-without-project-nested.input';
 
 @InputType()
 export class ProjectUpdateWithoutDepartmentInput {
@@ -85,4 +86,8 @@ export class ProjectUpdateWithoutDepartmentInput {
     @Field(() => SubsidyRequestUpdateManyWithoutProjectNestedInput, {nullable:true})
     @Type(() => SubsidyRequestUpdateManyWithoutProjectNestedInput)
     subsidies?: SubsidyRequestUpdateManyWithoutProjectNestedInput;
+
+    @Field(() => SpecialProjectsUpdateManyWithoutProjectNestedInput, {nullable:true})
+    @Type(() => SpecialProjectsUpdateManyWithoutProjectNestedInput)
+    special_projects?: SpecialProjectsUpdateManyWithoutProjectNestedInput;
 }

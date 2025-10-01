@@ -10,6 +10,7 @@ import { InstitutionOrderByWithRelationInput } from '../institution/institution-
 import { VoluntariesOnProjectsOrderByRelationAggregateInput } from '../voluntaries-on-projects/voluntaries-on-projects-order-by-relation-aggregate.input';
 import { ProjectActivityOrderByRelationAggregateInput } from '../project-activity/project-activity-order-by-relation-aggregate.input';
 import { SubsidyRequestOrderByRelationAggregateInput } from '../subsidy-request/subsidy-request-order-by-relation-aggregate.input';
+import { SpecialProjectsOrderByRelationAggregateInput } from '../special-projects/special-projects-order-by-relation-aggregate.input';
 
 @InputType()
 export class ProjectOrderByWithRelationInput {
@@ -95,4 +96,8 @@ export class ProjectOrderByWithRelationInput {
     @Field(() => SubsidyRequestOrderByRelationAggregateInput, {nullable:true})
     @Type(() => SubsidyRequestOrderByRelationAggregateInput)
     subsidies?: SubsidyRequestOrderByRelationAggregateInput;
+
+    @Field(() => SpecialProjectsOrderByRelationAggregateInput, {nullable:true})
+    @Type(() => SpecialProjectsOrderByRelationAggregateInput)
+    special_projects?: SpecialProjectsOrderByRelationAggregateInput;
 }

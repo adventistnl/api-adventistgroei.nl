@@ -14,6 +14,7 @@ import { ChurchScalarRelationFilter } from '../church/church-scalar-relation-fil
 import { SubsidyStatusScalarRelationFilter } from '../subsidy-status/subsidy-status-scalar-relation-filter.input';
 import { ProjectActivityListRelationFilter } from '../project-activity/project-activity-list-relation-filter.input';
 import { ProjectScalarRelationFilter } from '../project/project-scalar-relation-filter.input';
+import { SubsidyReceiptListRelationFilter } from '../subsidy-receipt/subsidy-receipt-list-relation-filter.input';
 
 @InputType()
 export class SubsidyRequestWhereInput {
@@ -106,4 +107,8 @@ export class SubsidyRequestWhereInput {
     @Field(() => ProjectScalarRelationFilter, {nullable:true})
     @Type(() => ProjectScalarRelationFilter)
     project?: ProjectScalarRelationFilter;
+
+    @Field(() => SubsidyReceiptListRelationFilter, {nullable:true})
+    @Type(() => SubsidyReceiptListRelationFilter)
+    subsidy_receipts?: SubsidyReceiptListRelationFilter;
 }

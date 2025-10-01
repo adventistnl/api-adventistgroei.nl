@@ -15,6 +15,7 @@ import { EventUpdateOneWithoutProjectsNestedInput } from '../event/event-update-
 import { InstitutionUpdateOneWithoutProjectsNestedInput } from '../institution/institution-update-one-without-projects-nested.input';
 import { VoluntariesOnProjectsUpdateManyWithoutProjectNestedInput } from '../voluntaries-on-projects/voluntaries-on-projects-update-many-without-project-nested.input';
 import { ProjectActivityUpdateManyWithoutProjectNestedInput } from '../project-activity/project-activity-update-many-without-project-nested.input';
+import { SpecialProjectsUpdateManyWithoutProjectNestedInput } from '../special-projects/special-projects-update-many-without-project-nested.input';
 
 @InputType()
 export class ProjectUpdateWithoutSubsidiesInput {
@@ -85,4 +86,8 @@ export class ProjectUpdateWithoutSubsidiesInput {
     @Field(() => ProjectActivityUpdateManyWithoutProjectNestedInput, {nullable:true})
     @Type(() => ProjectActivityUpdateManyWithoutProjectNestedInput)
     activities?: ProjectActivityUpdateManyWithoutProjectNestedInput;
+
+    @Field(() => SpecialProjectsUpdateManyWithoutProjectNestedInput, {nullable:true})
+    @Type(() => SpecialProjectsUpdateManyWithoutProjectNestedInput)
+    special_projects?: SpecialProjectsUpdateManyWithoutProjectNestedInput;
 }

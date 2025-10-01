@@ -9,6 +9,7 @@ import { NullableStringFieldUpdateOperationsInput } from '../prisma/nullable-str
 import { UserUpdateOneRequiredWithoutSubsidyStatusNestedInput } from '../user/user-update-one-required-without-subsidy-status-nested.input';
 import { Type } from 'class-transformer';
 import { SubsidyRequestUpdateManyWithoutSubsidy_statusNestedInput } from '../subsidy-request/subsidy-request-update-many-without-subsidy-status-nested.input';
+import { SpecialProjectsUpdateManyWithoutSubsidy_statusNestedInput } from '../special-projects/special-projects-update-many-without-subsidy-status-nested.input';
 
 @InputType()
 export class SubsidyStatusUpdateWithoutDepartmentInput {
@@ -53,4 +54,8 @@ export class SubsidyStatusUpdateWithoutDepartmentInput {
     @Field(() => SubsidyRequestUpdateManyWithoutSubsidy_statusNestedInput, {nullable:true})
     @Type(() => SubsidyRequestUpdateManyWithoutSubsidy_statusNestedInput)
     subsidy_requests?: SubsidyRequestUpdateManyWithoutSubsidy_statusNestedInput;
+
+    @Field(() => SpecialProjectsUpdateManyWithoutSubsidy_statusNestedInput, {nullable:true})
+    @Type(() => SpecialProjectsUpdateManyWithoutSubsidy_statusNestedInput)
+    special_projects?: SpecialProjectsUpdateManyWithoutSubsidy_statusNestedInput;
 }

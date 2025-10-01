@@ -4,6 +4,7 @@ import { Int } from '@nestjs/graphql';
 import { DepartmentCreateNestedOneWithoutSubsidy_statusesInput } from '../department/department-create-nested-one-without-subsidy-statuses.input';
 import { Type } from 'class-transformer';
 import { SubsidyRequestCreateNestedManyWithoutSubsidy_statusInput } from '../subsidy-request/subsidy-request-create-nested-many-without-subsidy-status.input';
+import { SpecialProjectsCreateNestedManyWithoutSubsidy_statusInput } from '../special-projects/special-projects-create-nested-many-without-subsidy-status.input';
 
 @InputType()
 export class SubsidyStatusCreateWithoutAssigned_userInput {
@@ -48,4 +49,8 @@ export class SubsidyStatusCreateWithoutAssigned_userInput {
     @Field(() => SubsidyRequestCreateNestedManyWithoutSubsidy_statusInput, {nullable:true})
     @Type(() => SubsidyRequestCreateNestedManyWithoutSubsidy_statusInput)
     subsidy_requests?: SubsidyRequestCreateNestedManyWithoutSubsidy_statusInput;
+
+    @Field(() => SpecialProjectsCreateNestedManyWithoutSubsidy_statusInput, {nullable:true})
+    @Type(() => SpecialProjectsCreateNestedManyWithoutSubsidy_statusInput)
+    special_projects?: SpecialProjectsCreateNestedManyWithoutSubsidy_statusInput;
 }

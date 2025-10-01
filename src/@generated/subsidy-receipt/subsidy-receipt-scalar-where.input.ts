@@ -59,4 +59,7 @@ export class SubsidyReceiptScalarWhereInput {
 
     @Field(() => StringNullableFilter, {nullable:true})
     deleted_by?: StringNullableFilter;
+
+    @Field(() => StringNullableFilter, {nullable:true})
+    subsidy_request_id?: StringNullableFilter;
 }

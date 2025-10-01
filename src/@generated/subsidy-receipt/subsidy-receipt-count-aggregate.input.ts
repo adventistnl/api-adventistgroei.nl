@@ -41,5 +41,8 @@ export class SubsidyReceiptCountAggregateInput {
     deleted_by?: true;
 
     @Field(() => Boolean, {nullable:true})
+    subsidy_request_id?: true;
+
+    @Field(() => Boolean, {nullable:true})
     _all?: true;
 }

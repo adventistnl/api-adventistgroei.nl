@@ -13,4 +13,7 @@ export class ProjectCount {
 
     @Field(() => Int, {nullable:false})
     subsidies?: number;
+
+    @Field(() => Int, {nullable:false})
+    special_projects?: number;
 }

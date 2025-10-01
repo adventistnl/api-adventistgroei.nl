@@ -46,4 +46,7 @@ export class SubsidyReceiptUncheckedCreateInput {
 
     @Field(() => String, {nullable:true})
     deleted_by?: string;
+
+    @Field(() => String, {nullable:true})
+    subsidy_request_id?: string;
 }

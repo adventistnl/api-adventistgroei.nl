@@ -42,5 +42,8 @@ export class SubsidyReceiptCountAggregate {
     deleted_by!: number;
 
     @Field(() => Int, {nullable:false})
+    subsidy_request_id!: number;
+
+    @Field(() => Int, {nullable:false})
     _all!: number;
 }

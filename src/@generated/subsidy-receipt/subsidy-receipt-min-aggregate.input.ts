@@ -39,4 +39,7 @@ export class SubsidyReceiptMinAggregateInput {
 
     @Field(() => Boolean, {nullable:true})
     deleted_by?: true;
+
+    @Field(() => Boolean, {nullable:true})
+    subsidy_request_id?: true;
 }

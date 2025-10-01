@@ -13,6 +13,7 @@ import { EventCreateNestedOneWithoutProjectsInput } from '../event/event-create-
 import { InstitutionCreateNestedOneWithoutProjectsInput } from '../institution/institution-create-nested-one-without-projects.input';
 import { ProjectActivityCreateNestedManyWithoutProjectInput } from '../project-activity/project-activity-create-nested-many-without-project.input';
 import { SubsidyRequestCreateNestedManyWithoutProjectInput } from '../subsidy-request/subsidy-request-create-nested-many-without-project.input';
+import { SpecialProjectsCreateNestedManyWithoutProjectInput } from '../special-projects/special-projects-create-nested-many-without-project.input';
 
 @InputType()
 export class ProjectCreateWithoutVoluntary_usersInput {
@@ -84,4 +85,8 @@ export class ProjectCreateWithoutVoluntary_usersInput {
     @Field(() => SubsidyRequestCreateNestedManyWithoutProjectInput, {nullable:true})
     @Type(() => SubsidyRequestCreateNestedManyWithoutProjectInput)
     subsidies?: SubsidyRequestCreateNestedManyWithoutProjectInput;
+
+    @Field(() => SpecialProjectsCreateNestedManyWithoutProjectInput, {nullable:true})
+    @Type(() => SpecialProjectsCreateNestedManyWithoutProjectInput)
+    special_projects?: SpecialProjectsCreateNestedManyWithoutProjectInput;
 }

@@ -11,6 +11,7 @@ import { DepartmentScalarRelationFilter } from '../department/department-scalar-
 import { Type } from 'class-transformer';
 import { UserScalarRelationFilter } from '../user/user-scalar-relation-filter.input';
 import { SubsidyRequestListRelationFilter } from '../subsidy-request/subsidy-request-list-relation-filter.input';
+import { SpecialProjectsListRelationFilter } from '../special-projects/special-projects-list-relation-filter.input';
 
 @InputType()
 export class SubsidyStatusWhereUniqueInput {
@@ -74,4 +75,8 @@ export class SubsidyStatusWhereUniqueInput {
     @Field(() => SubsidyRequestListRelationFilter, {nullable:true})
     @Type(() => SubsidyRequestListRelationFilter)
     subsidy_requests?: SubsidyRequestListRelationFilter;
+
+    @Field(() => SpecialProjectsListRelationFilter, {nullable:true})
+    @Type(() => SpecialProjectsListRelationFilter)
+    special_projects?: SpecialProjectsListRelationFilter;
 }

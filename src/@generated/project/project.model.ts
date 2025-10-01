@@ -12,6 +12,7 @@ import { Institution } from '../institution/institution.model';
 import { VoluntariesOnProjects } from '../voluntaries-on-projects/voluntaries-on-projects.model';
 import { ProjectActivity } from '../project-activity/project-activity.model';
 import { SubsidyRequest } from '../subsidy-request/subsidy-request.model';
+import { SpecialProjects } from '../special-projects/special-projects.model';
 import { ProjectCount } from './project-count.output';
 
 @ObjectType()
@@ -91,6 +92,9 @@ export class Project {
 
     @Field(() => [SubsidyRequest], {nullable:true})
     subsidies?: Array<SubsidyRequest>;
+
+    @Field(() => [SpecialProjects], {nullable:true})
+    special_projects?: Array<SpecialProjects>;
 
     @Field(() => ProjectCount, {nullable:false})
     _count?: ProjectCount;

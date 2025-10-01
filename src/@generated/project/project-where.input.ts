@@ -16,6 +16,7 @@ import { InstitutionNullableScalarRelationFilter } from '../institution/institut
 import { VoluntariesOnProjectsListRelationFilter } from '../voluntaries-on-projects/voluntaries-on-projects-list-relation-filter.input';
 import { ProjectActivityListRelationFilter } from '../project-activity/project-activity-list-relation-filter.input';
 import { SubsidyRequestListRelationFilter } from '../subsidy-request/subsidy-request-list-relation-filter.input';
+import { SpecialProjectsListRelationFilter } from '../special-projects/special-projects-list-relation-filter.input';
 
 @InputType()
 export class ProjectWhereInput {
@@ -114,4 +115,8 @@ export class ProjectWhereInput {
     @Field(() => SubsidyRequestListRelationFilter, {nullable:true})
     @Type(() => SubsidyRequestListRelationFilter)
     subsidies?: SubsidyRequestListRelationFilter;
+
+    @Field(() => SpecialProjectsListRelationFilter, {nullable:true})
+    @Type(() => SpecialProjectsListRelationFilter)
+    special_projects?: SpecialProjectsListRelationFilter;
 }

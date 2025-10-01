@@ -13,6 +13,7 @@ import { DepartmentUpdateOneRequiredWithoutSubsidy_requestsNestedInput } from '.
 import { ChurchUpdateOneRequiredWithoutSubsidy_requestsNestedInput } from '../church/church-update-one-required-without-subsidy-requests-nested.input';
 import { ProjectActivityUpdateManyWithoutSubsidy_requestNestedInput } from '../project-activity/project-activity-update-many-without-subsidy-request-nested.input';
 import { ProjectUpdateOneRequiredWithoutSubsidiesNestedInput } from '../project/project-update-one-required-without-subsidies-nested.input';
+import { SubsidyReceiptUpdateManyWithoutSubsidy_requestNestedInput } from '../subsidy-receipt/subsidy-receipt-update-many-without-subsidy-request-nested.input';
 
 @InputType()
 export class SubsidyRequestUpdateWithoutSubsidy_statusInput {
@@ -71,4 +72,8 @@ export class SubsidyRequestUpdateWithoutSubsidy_statusInput {
     @Field(() => ProjectUpdateOneRequiredWithoutSubsidiesNestedInput, {nullable:true})
     @Type(() => ProjectUpdateOneRequiredWithoutSubsidiesNestedInput)
     project?: ProjectUpdateOneRequiredWithoutSubsidiesNestedInput;
+
+    @Field(() => SubsidyReceiptUpdateManyWithoutSubsidy_requestNestedInput, {nullable:true})
+    @Type(() => SubsidyReceiptUpdateManyWithoutSubsidy_requestNestedInput)
+    subsidy_receipts?: SubsidyReceiptUpdateManyWithoutSubsidy_requestNestedInput;
 }

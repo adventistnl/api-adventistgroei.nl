@@ -7,4 +7,7 @@ export class SubsidyRequestCount {
 
     @Field(() => Int, {nullable:false})
     project_activities?: number;
+
+    @Field(() => Int, {nullable:false})
+    subsidy_receipts?: number;
 }

@@ -6,6 +6,7 @@ import { DepartmentOrderByWithRelationInput } from '../department/department-ord
 import { Type } from 'class-transformer';
 import { UserOrderByWithRelationInput } from '../user/user-order-by-with-relation.input';
 import { SubsidyRequestOrderByRelationAggregateInput } from '../subsidy-request/subsidy-request-order-by-relation-aggregate.input';
+import { SpecialProjectsOrderByRelationAggregateInput } from '../special-projects/special-projects-order-by-relation-aggregate.input';
 
 @InputType()
 export class SubsidyStatusOrderByWithRelationInput {
@@ -60,4 +61,8 @@ export class SubsidyStatusOrderByWithRelationInput {
     @Field(() => SubsidyRequestOrderByRelationAggregateInput, {nullable:true})
     @Type(() => SubsidyRequestOrderByRelationAggregateInput)
     subsidy_requests?: SubsidyRequestOrderByRelationAggregateInput;
+
+    @Field(() => SpecialProjectsOrderByRelationAggregateInput, {nullable:true})
+    @Type(() => SpecialProjectsOrderByRelationAggregateInput)
+    special_projects?: SpecialProjectsOrderByRelationAggregateInput;
 }

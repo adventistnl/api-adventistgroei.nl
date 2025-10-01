@@ -4,6 +4,7 @@ import { SortOrder } from '../prisma/sort-order.enum';
 import { SortOrderInput } from '../prisma/sort-order.input';
 import { ProjectActivityOrderByWithRelationInput } from '../project-activity/project-activity-order-by-with-relation.input';
 import { Type } from 'class-transformer';
+import { SubsidyRequestOrderByWithRelationInput } from '../subsidy-request/subsidy-request-order-by-with-relation.input';
 
 @InputType()
 export class SubsidyReceiptOrderByWithRelationInput {
@@ -44,7 +45,14 @@ export class SubsidyReceiptOrderByWithRelationInput {
     @Field(() => SortOrderInput, {nullable:true})
     deleted_by?: SortOrderInput;
 
+    @Field(() => SortOrderInput, {nullable:true})
+    subsidy_request_id?: SortOrderInput;
+
     @Field(() => ProjectActivityOrderByWithRelationInput, {nullable:true})
     @Type(() => ProjectActivityOrderByWithRelationInput)
     project_activity?: ProjectActivityOrderByWithRelationInput;
+
+    @Field(() => SubsidyRequestOrderByWithRelationInput, {nullable:true})
+    @Type(() => SubsidyRequestOrderByWithRelationInput)
+    subsidy_request?: SubsidyRequestOrderByWithRelationInput;
 }

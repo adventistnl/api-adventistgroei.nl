@@ -44,4 +44,7 @@ export class SubsidyReceiptUncheckedUpdateManyWithoutProject_activityInput {
 
     @Field(() => NullableStringFieldUpdateOperationsInput, {nullable:true})
     deleted_by?: NullableStringFieldUpdateOperationsInput;
+
+    @Field(() => NullableStringFieldUpdateOperationsInput, {nullable:true})
+    subsidy_request_id?: NullableStringFieldUpdateOperationsInput;
 }

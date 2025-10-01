@@ -10,6 +10,7 @@ import { DepartmentUpdateOneRequiredWithoutSubsidy_statusesNestedInput } from '.
 import { Type } from 'class-transformer';
 import { UserUpdateOneRequiredWithoutSubsidyStatusNestedInput } from '../user/user-update-one-required-without-subsidy-status-nested.input';
 import { SubsidyRequestUpdateManyWithoutSubsidy_statusNestedInput } from '../subsidy-request/subsidy-request-update-many-without-subsidy-status-nested.input';
+import { SpecialProjectsUpdateManyWithoutSubsidy_statusNestedInput } from '../special-projects/special-projects-update-many-without-subsidy-status-nested.input';
 
 @InputType()
 export class SubsidyStatusUpdateInput {
@@ -58,4 +59,8 @@ export class SubsidyStatusUpdateInput {
     @Field(() => SubsidyRequestUpdateManyWithoutSubsidy_statusNestedInput, {nullable:true})
     @Type(() => SubsidyRequestUpdateManyWithoutSubsidy_statusNestedInput)
     subsidy_requests?: SubsidyRequestUpdateManyWithoutSubsidy_statusNestedInput;
+
+    @Field(() => SpecialProjectsUpdateManyWithoutSubsidy_statusNestedInput, {nullable:true})
+    @Type(() => SpecialProjectsUpdateManyWithoutSubsidy_statusNestedInput)
+    special_projects?: SpecialProjectsUpdateManyWithoutSubsidy_statusNestedInput;
 }

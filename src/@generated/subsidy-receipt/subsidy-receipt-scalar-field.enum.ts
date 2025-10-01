@@ -12,7 +12,8 @@ export enum SubsidyReceiptScalarFieldEnum {
     updated_by = "updated_by",
     is_deleted = "is_deleted",
     deleted_at = "deleted_at",
-    deleted_by = "deleted_by"
+    deleted_by = "deleted_by",
+    subsidy_request_id = "subsidy_request_id"
 }
 
 

@@ -5,6 +5,7 @@ import { Int } from '@nestjs/graphql';
 import { Department } from '../department/department.model';
 import { User } from '../user/user.model';
 import { SubsidyRequest } from '../subsidy-request/subsidy-request.model';
+import { SpecialProjects } from '../special-projects/special-projects.model';
 import { SubsidyStatusCount } from './subsidy-status-count.output';
 
 @ObjectType()
@@ -57,6 +58,9 @@ export class SubsidyStatus {
 
     @Field(() => [SubsidyRequest], {nullable:true})
     subsidy_requests?: Array<SubsidyRequest>;
+
+    @Field(() => [SpecialProjects], {nullable:true})
+    special_projects?: Array<SpecialProjects>;
 
     @Field(() => SubsidyStatusCount, {nullable:false})
     _count?: SubsidyStatusCount;
