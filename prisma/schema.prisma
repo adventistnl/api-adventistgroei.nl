@@ -179,7 +179,7 @@ enum ProjectType {
 // Enum para status do orçamento anual
 enum AnnualBudgetStatus {
   PLANNED
-  APROVED
+  APPROVED
   IN_PROGRESS
   CLOSED
 }
