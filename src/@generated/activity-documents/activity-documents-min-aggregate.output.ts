@@ -27,4 +27,7 @@ export class ActivityDocumentsMinAggregate {
 
     @Field(() => Date, {nullable:true})
     validated_at?: Date | string;
+
+    @Field(() => String, {nullable:true})
+    project_activity_id?: string;
 }

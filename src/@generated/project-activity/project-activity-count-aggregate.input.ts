@@ -41,5 +41,14 @@ export class ProjectActivityCountAggregateInput {
     deleted_by?: true;
 
     @Field(() => Boolean, {nullable:true})
+    deadline?: true;
+
+    @Field(() => Boolean, {nullable:true})
+    owner_id?: true;
+
+    @Field(() => Boolean, {nullable:true})
+    tags?: true;
+
+    @Field(() => Boolean, {nullable:true})
     _all?: true;
 }

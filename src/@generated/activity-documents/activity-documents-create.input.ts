@@ -1,5 +1,7 @@
 import { Field } from '@nestjs/graphql';
 import { InputType } from '@nestjs/graphql';
+import { ProjectActivityCreateNestedOneWithoutActivity_documentsInput } from '../project-activity/project-activity-create-nested-one-without-activity-documents.input';
+import { Type } from 'class-transformer';
 
 @InputType()
 export class ActivityDocumentsCreateInput {
@@ -27,4 +29,8 @@ export class ActivityDocumentsCreateInput {
 
     @Field(() => Date, {nullable:true})
     validated_at?: Date | string;
+
+    @Field(() => ProjectActivityCreateNestedOneWithoutActivity_documentsInput, {nullable:true})
+    @Type(() => ProjectActivityCreateNestedOneWithoutActivity_documentsInput)
+    project_activity?: ProjectActivityCreateNestedOneWithoutActivity_documentsInput;
 }

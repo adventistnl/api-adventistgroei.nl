@@ -43,7 +43,7 @@ export class SpecialProjectsScalarWhereWithAggregatesInput {
     budget?: DecimalNullableWithAggregatesFilter;
 
     @Field(() => StringWithAggregatesFilter, {nullable:true})
-    subsidy_statuses_id?: StringWithAggregatesFilter;
+    subsidy_status_id?: StringWithAggregatesFilter;
 
     @Field(() => StringWithAggregatesFilter, {nullable:true})
     type?: StringWithAggregatesFilter;

@@ -24,7 +24,7 @@ export class SpecialProjectsCountAggregate {
     budget!: number;
 
     @Field(() => Int, {nullable:false})
-    subsidy_statuses_id!: number;
+    subsidy_status_id!: number;
 
     @Field(() => Int, {nullable:false})
     type!: number;

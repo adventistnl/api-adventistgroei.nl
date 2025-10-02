@@ -1,48 +1,116 @@
-import { InputType, Field, Float, ID } from '@nestjs/graphql';
-import { IsNotEmpty, IsOptional, IsString, IsUUID, IsNumber } from 'class-validator';
+import { InputType, Field } from '@nestjs/graphql';
+import { IsOptional, IsString, IsNumber, IsDateString, IsEnum } from 'class-validator';
+import { ActivityTags } from 'src/@generated/prisma/activity-tags.enum';
+import { EntityType } from 'src/@generated/prisma/entity-type.enum';
+
 
 @InputType()
-export class CreateProjectActivityInput {
-  @Field(() => String)
-  @IsNotEmpty()
-  name: string;
+export class ActivityFundingCreateDto {
+  @Field()
+  @IsNumber()
+  entity_contribution_amount: number;
 
-  @Field(() => String)
-  @IsNotEmpty()
-  description: string;
+  @Field()
+  @IsNumber()
+  entity_contribution_percent: number;
 
-  @Field(() => Float)
-  @IsNotEmpty()
-  budget_amount: number;
+  @Field(() => EntityType)
+  @IsEnum(EntityType)
+  entity_type: EntityType;
 
-  @Field(() => String)
-  @IsNotEmpty()
-  project_id: string;
+  @Field()
+  @IsString()
+  entity_id: string;
 }
 
 @InputType()
-export class UpdateProjectActivityInput {
-  @Field(() => ID)
-  @IsUUID()
+export class ProjectActivityCreateDto {
+  @Field()
+  @IsString()
+  name: string;
+
+  @Field()
+  @IsString()
+  description: string;
+
+  @Field()
+  @IsNumber()
+  budget_amount: number;
+
+  @Field()
+  @IsDateString()
+  deadline: string;
+
+  @Field()
+  @IsString()
+  owner_id: string;
+
+  @Field(() => [ActivityTags])
+  tags: ActivityTags[];
+
+  @Field(() => ActivityFundingCreateDto)
+  activity_funding: ActivityFundingCreateDto;
+}
+
+@InputType()
+export class ActivityFundingUpdateDto {
+  @Field({ nullable: true })
+  @IsOptional()
+  @IsNumber()
+  entity_contribution_amount?: number;
+
+  @Field({ nullable: true })
+  @IsOptional()
+  @IsNumber()
+  entity_contribution_percent?: number;
+
+  @Field(() => EntityType, { nullable: true })
+  @IsOptional()
+  @IsEnum(EntityType)
+  entity_type?: EntityType;
+
+  @Field({ nullable: true })
+  @IsOptional()
+  @IsString()
+  entity_id?: string;
+}
+
+@InputType()
+export class ProjectActivityUpdateDto {
+  @Field()
+  @IsString()
   id: string;
 
-  @Field(() => String, { nullable: true })
+  @Field({ nullable: true })
   @IsOptional()
   @IsString()
   name?: string;
 
-  @Field(() => String, { nullable: true })
+  @Field({ nullable: true })
   @IsOptional()
   @IsString()
   description?: string;
 
-  @Field(() => Float, { nullable: true })
+  @Field({ nullable: true })
   @IsOptional()
   @IsNumber()
   budget_amount?: number;
 
-  @Field(() => String, { nullable: true })
+  @Field({ nullable: true })
   @IsOptional()
-  @IsUUID()
-  project_id?: string;
+  @IsDateString()
+  deadline?: string;
+
+  @Field({ nullable: true })
+  @IsOptional()
+  @IsString()
+  owner_id?: string;
+
+  @Field(() => [ActivityTags], { nullable: true })
+  @IsOptional()
+  tags?: ActivityTags[];
+
+  @Field(() => ActivityFundingUpdateDto, { nullable: true })
+  @IsOptional()
+  activity_funding?: ActivityFundingUpdateDto;
 }

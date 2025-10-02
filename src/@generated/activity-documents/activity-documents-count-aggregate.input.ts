@@ -29,5 +29,8 @@ export class ActivityDocumentsCountAggregateInput {
     validated_at?: true;
 
     @Field(() => Boolean, {nullable:true})
+    project_activity_id?: true;
+
+    @Field(() => Boolean, {nullable:true})
     _all?: true;
 }

@@ -38,6 +38,9 @@ export class ProjectMaxAggregateInput {
     updated_at?: true;
 
     @Field(() => Boolean, {nullable:true})
+    deadline?: true;
+
+    @Field(() => Boolean, {nullable:true})
     created_by?: true;
 
     @Field(() => Boolean, {nullable:true})

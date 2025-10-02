@@ -25,7 +25,7 @@ export class SpecialProjectsMaxAggregate {
     budget?: Decimal;
 
     @Field(() => String, {nullable:true})
-    subsidy_statuses_id?: string;
+    subsidy_status_id?: string;
 
     @Field(() => String, {nullable:true})
     type?: string;

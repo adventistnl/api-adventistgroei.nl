@@ -7,8 +7,8 @@ import { GraphQLDecimal } from 'prisma-graphql-type-decimal';
 export class ActivityFundingSumAggregate {
 
     @Field(() => GraphQLDecimal, {nullable:true})
-    contribution_amount?: Decimal;
+    entity_contribution_amount?: Decimal;
 
     @Field(() => GraphQLDecimal, {nullable:true})
-    contribution_percent?: Decimal;
+    entity_contribution_percent?: Decimal;
 }

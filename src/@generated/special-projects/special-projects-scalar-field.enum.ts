@@ -7,7 +7,7 @@ export enum SpecialProjectsScalarFieldEnum {
     project_id = "project_id",
     justification_note = "justification_note",
     budget = "budget",
-    subsidy_statuses_id = "subsidy_statuses_id",
+    subsidy_status_id = "subsidy_status_id",
     type = "type",
     location_church_plant = "location_church_plant",
     created_at = "created_at",

@@ -27,7 +27,7 @@ export class SpecialProjectsUncheckedCreateWithoutProjectInput {
     budget?: Decimal;
 
     @Field(() => String, {nullable:false})
-    subsidy_statuses_id!: string;
+    subsidy_status_id!: string;
 
     @Field(() => String, {nullable:false})
     type!: string;

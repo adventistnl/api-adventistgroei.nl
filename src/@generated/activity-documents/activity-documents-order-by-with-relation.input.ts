@@ -2,6 +2,8 @@ import { Field } from '@nestjs/graphql';
 import { InputType } from '@nestjs/graphql';
 import { SortOrder } from '../prisma/sort-order.enum';
 import { SortOrderInput } from '../prisma/sort-order.input';
+import { ProjectActivityOrderByWithRelationInput } from '../project-activity/project-activity-order-by-with-relation.input';
+import { Type } from 'class-transformer';
 
 @InputType()
 export class ActivityDocumentsOrderByWithRelationInput {
@@ -29,4 +31,11 @@ export class ActivityDocumentsOrderByWithRelationInput {
 
     @Field(() => SortOrderInput, {nullable:true})
     validated_at?: SortOrderInput;
+
+    @Field(() => SortOrderInput, {nullable:true})
+    project_activity_id?: SortOrderInput;
+
+    @Field(() => ProjectActivityOrderByWithRelationInput, {nullable:true})
+    @Type(() => ProjectActivityOrderByWithRelationInput)
+    project_activity?: ProjectActivityOrderByWithRelationInput;
 }

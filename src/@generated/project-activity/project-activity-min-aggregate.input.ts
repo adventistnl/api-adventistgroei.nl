@@ -39,4 +39,10 @@ export class ProjectActivityMinAggregateInput {
 
     @Field(() => Boolean, {nullable:true})
     deleted_by?: true;
+
+    @Field(() => Boolean, {nullable:true})
+    deadline?: true;
+
+    @Field(() => Boolean, {nullable:true})
+    owner_id?: true;
 }

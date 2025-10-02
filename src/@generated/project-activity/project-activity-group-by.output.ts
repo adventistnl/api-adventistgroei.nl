@@ -2,6 +2,7 @@ import { Field } from '@nestjs/graphql';
 import { ObjectType } from '@nestjs/graphql';
 import { Decimal } from '@prisma/client/runtime/library';
 import { GraphQLDecimal } from 'prisma-graphql-type-decimal';
+import { ActivityTags } from '../prisma/activity-tags.enum';
 import { ProjectActivityCountAggregate } from './project-activity-count-aggregate.output';
 import { ProjectActivityAvgAggregate } from './project-activity-avg-aggregate.output';
 import { ProjectActivitySumAggregate } from './project-activity-sum-aggregate.output';
@@ -46,6 +47,15 @@ export class ProjectActivityGroupBy {
 
     @Field(() => String, {nullable:true})
     deleted_by?: string;
+
+    @Field(() => Date, {nullable:false})
+    deadline!: Date | string;
+
+    @Field(() => String, {nullable:false})
+    owner_id!: string;
+
+    @Field(() => [ActivityTags], {nullable:true})
+    tags?: Array<`${ActivityTags}`>;
 
     @Field(() => ProjectActivityCountAggregate, {nullable:true})
     _count?: ProjectActivityCountAggregate;

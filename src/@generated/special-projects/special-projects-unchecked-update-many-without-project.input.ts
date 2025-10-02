@@ -28,7 +28,7 @@ export class SpecialProjectsUncheckedUpdateManyWithoutProjectInput {
     budget?: NullableDecimalFieldUpdateOperationsInput;
 
     @Field(() => StringFieldUpdateOperationsInput, {nullable:true})
-    subsidy_statuses_id?: StringFieldUpdateOperationsInput;
+    subsidy_status_id?: StringFieldUpdateOperationsInput;
 
     @Field(() => StringFieldUpdateOperationsInput, {nullable:true})
     type?: StringFieldUpdateOperationsInput;

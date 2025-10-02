@@ -41,4 +41,10 @@ export class ProjectActivityMinAggregate {
 
     @Field(() => String, {nullable:true})
     deleted_by?: string;
+
+    @Field(() => Date, {nullable:true})
+    deadline?: Date | string;
+
+    @Field(() => String, {nullable:true})
+    owner_id?: string;
 }

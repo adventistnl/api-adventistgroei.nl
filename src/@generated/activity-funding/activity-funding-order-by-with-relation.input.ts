@@ -1,6 +1,9 @@
 import { Field } from '@nestjs/graphql';
 import { InputType } from '@nestjs/graphql';
 import { SortOrder } from '../prisma/sort-order.enum';
+import { SortOrderInput } from '../prisma/sort-order.input';
+import { ProjectActivityOrderByWithRelationInput } from '../project-activity/project-activity-order-by-with-relation.input';
+import { Type } from 'class-transformer';
 
 @InputType()
 export class ActivityFundingOrderByWithRelationInput {
@@ -18,10 +21,10 @@ export class ActivityFundingOrderByWithRelationInput {
     entity_id?: `${SortOrder}`;
 
     @Field(() => SortOrder, {nullable:true})
-    contribution_amount?: `${SortOrder}`;
+    entity_contribution_amount?: `${SortOrder}`;
 
     @Field(() => SortOrder, {nullable:true})
-    contribution_percent?: `${SortOrder}`;
+    entity_contribution_percent?: `${SortOrder}`;
 
     @Field(() => SortOrder, {nullable:true})
     validated?: `${SortOrder}`;
@@ -31,4 +34,11 @@ export class ActivityFundingOrderByWithRelationInput {
 
     @Field(() => SortOrder, {nullable:true})
     updated_at?: `${SortOrder}`;
+
+    @Field(() => SortOrderInput, {nullable:true})
+    project_activity_id?: SortOrderInput;
+
+    @Field(() => ProjectActivityOrderByWithRelationInput, {nullable:true})
+    @Type(() => ProjectActivityOrderByWithRelationInput)
+    project_activity?: ProjectActivityOrderByWithRelationInput;
 }

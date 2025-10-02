@@ -1,10 +1,12 @@
 import { Field } from '@nestjs/graphql';
 import { InputType } from '@nestjs/graphql';
 import { StringFieldUpdateOperationsInput } from '../prisma/string-field-update-operations.input';
+import { EnumEntityTypeFieldUpdateOperationsInput } from '../prisma/enum-entity-type-field-update-operations.input';
 import { DecimalFieldUpdateOperationsInput } from '../prisma/decimal-field-update-operations.input';
 import { Type } from 'class-transformer';
 import { BoolFieldUpdateOperationsInput } from '../prisma/bool-field-update-operations.input';
 import { DateTimeFieldUpdateOperationsInput } from '../prisma/date-time-field-update-operations.input';
+import { ProjectActivityUpdateOneWithoutActivity_fundingNestedInput } from '../project-activity/project-activity-update-one-without-activity-funding-nested.input';
 
 @InputType()
 export class ActivityFundingUpdateInput {
@@ -15,19 +17,19 @@ export class ActivityFundingUpdateInput {
     @Field(() => StringFieldUpdateOperationsInput, {nullable:true})
     activity_id?: StringFieldUpdateOperationsInput;
 
-    @Field(() => StringFieldUpdateOperationsInput, {nullable:true})
-    entity_type?: StringFieldUpdateOperationsInput;
+    @Field(() => EnumEntityTypeFieldUpdateOperationsInput, {nullable:true})
+    entity_type?: EnumEntityTypeFieldUpdateOperationsInput;
 
     @Field(() => StringFieldUpdateOperationsInput, {nullable:true})
     entity_id?: StringFieldUpdateOperationsInput;
 
     @Field(() => DecimalFieldUpdateOperationsInput, {nullable:true})
     @Type(() => DecimalFieldUpdateOperationsInput)
-    contribution_amount?: DecimalFieldUpdateOperationsInput;
+    entity_contribution_amount?: DecimalFieldUpdateOperationsInput;
 
     @Field(() => DecimalFieldUpdateOperationsInput, {nullable:true})
     @Type(() => DecimalFieldUpdateOperationsInput)
-    contribution_percent?: DecimalFieldUpdateOperationsInput;
+    entity_contribution_percent?: DecimalFieldUpdateOperationsInput;
 
     @Field(() => BoolFieldUpdateOperationsInput, {nullable:true})
     validated?: BoolFieldUpdateOperationsInput;
@@ -37,4 +39,8 @@ export class ActivityFundingUpdateInput {
 
     @Field(() => DateTimeFieldUpdateOperationsInput, {nullable:true})
     updated_at?: DateTimeFieldUpdateOperationsInput;
+
+    @Field(() => ProjectActivityUpdateOneWithoutActivity_fundingNestedInput, {nullable:true})
+    @Type(() => ProjectActivityUpdateOneWithoutActivity_fundingNestedInput)
+    project_activity?: ProjectActivityUpdateOneWithoutActivity_fundingNestedInput;
 }

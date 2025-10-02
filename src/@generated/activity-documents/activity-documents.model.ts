@@ -1,6 +1,7 @@
 import { Field } from '@nestjs/graphql';
 import { ObjectType } from '@nestjs/graphql';
 import { ID } from '@nestjs/graphql';
+import { ProjectActivity } from '../project-activity/project-activity.model';
 
 @ObjectType()
 export class ActivityDocuments {
@@ -28,4 +29,10 @@ export class ActivityDocuments {
 
     @Field(() => Date, {nullable:true})
     validated_at!: Date | null;
+
+    @Field(() => String, {nullable:true})
+    project_activity_id!: string | null;
+
+    @Field(() => ProjectActivity, {nullable:true})
+    project_activity?: ProjectActivity | null;
 }

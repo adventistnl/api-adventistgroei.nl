@@ -51,6 +51,9 @@ export class Project {
     @Field(() => Date, {nullable:false})
     updated_at!: Date;
 
+    @Field(() => Date, {nullable:false})
+    deadline!: Date;
+
     @Field(() => String, {nullable:false})
     created_by!: string;
 

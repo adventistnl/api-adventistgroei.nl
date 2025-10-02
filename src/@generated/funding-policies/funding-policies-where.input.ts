@@ -2,6 +2,7 @@ import { Field } from '@nestjs/graphql';
 import { InputType } from '@nestjs/graphql';
 import { Type } from 'class-transformer';
 import { StringFilter } from '../prisma/string-filter.input';
+import { EnumEntityTypeFilter } from '../prisma/enum-entity-type-filter.input';
 import { DecimalFilter } from '../prisma/decimal-filter.input';
 import { IntFilter } from '../prisma/int-filter.input';
 import { DateTimeFilter } from '../prisma/date-time-filter.input';
@@ -24,8 +25,8 @@ export class FundingPoliciesWhereInput {
     @Field(() => StringFilter, {nullable:true})
     id?: StringFilter;
 
-    @Field(() => StringFilter, {nullable:true})
-    entity_type?: StringFilter;
+    @Field(() => EnumEntityTypeFilter, {nullable:true})
+    entity_type?: EnumEntityTypeFilter;
 
     @Field(() => StringFilter, {nullable:true})
     entity_id?: StringFilter;

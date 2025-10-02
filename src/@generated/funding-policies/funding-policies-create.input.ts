@@ -1,5 +1,6 @@
 import { Field } from '@nestjs/graphql';
 import { InputType } from '@nestjs/graphql';
+import { EntityType } from '../prisma/entity-type.enum';
 import { Decimal } from '@prisma/client/runtime/library';
 import { GraphQLDecimal } from 'prisma-graphql-type-decimal';
 import { transformToDecimal } from 'prisma-graphql-type-decimal';
@@ -13,8 +14,8 @@ export class FundingPoliciesCreateInput {
     @Field(() => String, {nullable:true})
     id?: string;
 
-    @Field(() => String, {nullable:false})
-    entity_type!: string;
+    @Field(() => EntityType, {nullable:false})
+    entity_type!: `${EntityType}`;
 
     @Field(() => String, {nullable:false})
     entity_id!: string;

@@ -33,6 +33,9 @@ export class ActivityDocumentsOrderByWithAggregationInput {
     @Field(() => SortOrderInput, {nullable:true})
     validated_at?: SortOrderInput;
 
+    @Field(() => SortOrderInput, {nullable:true})
+    project_activity_id?: SortOrderInput;
+
     @Field(() => ActivityDocumentsCountOrderByAggregateInput, {nullable:true})
     _count?: ActivityDocumentsCountOrderByAggregateInput;
 

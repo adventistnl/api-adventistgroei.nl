@@ -1,10 +1,10 @@
 import { Resolver, Query, Mutation, Args, Context, ID } from '@nestjs/graphql';
 import { ProjectActivityService } from '../services/project-activity.service';
-import { CreateProjectActivityInput, UpdateProjectActivityInput } from '../dto/project-activity.dto';
 import { UseGuards } from '@nestjs/common';
 import { PermissionsGuard } from '../middlewares/permissions.guard';
 import { ProjectActivity } from 'src/@generated/project-activity/project-activity.model';
 import { Permission } from 'src/middlewares';
+import { ProjectActivityCreateDto, ProjectActivityUpdateDto } from 'src/dto/project-activity.dto';
 
 @Resolver(() => ProjectActivity)
 export class ProjectActivityResolver {
@@ -24,25 +24,25 @@ export class ProjectActivityResolver {
     return this.service.findById(id);
   }
 
-  @Mutation(() => ProjectActivity)
-  @UseGuards(PermissionsGuard)
-  @Permission()
-  async createProjectActivity(
-    @Args('input') input: CreateProjectActivityInput,
-    @Context('userId') userId: string,
-  ) {
-    return this.service.create(input, userId);
-  }
+  // @Mutation(() => ProjectActivity)
+  // @UseGuards(PermissionsGuard)
+  // @Permission()
+  // async createProjectActivity(
+  //   @Args('input') input: ProjectActivityCreateDto,
+  //   @Context('userId') userId: string,
+  // ) {
+  //   return this.service.create(input, userId);
+  // }
 
-  @Mutation(() => ProjectActivity)
-  @UseGuards(PermissionsGuard)
-  @Permission()
-  async updateProjectActivity(
-    @Args('input') input: UpdateProjectActivityInput,
-    @Context('userId') userId: string,
-  ) {
-    return this.service.update(input, userId);
-  }
+  // @Mutation(() => ProjectActivity)
+  // @UseGuards(PermissionsGuard)
+  // @Permission()
+  // async updateProjectActivity(
+  //   @Args('input') input: ProjectActivityUpdateDto,
+  //   @Context('userId') userId: string,
+  // ) {
+  //   return this.service.update(input, userId);
+  // }
 
   @Mutation(() => ProjectActivity)
   @UseGuards(PermissionsGuard)

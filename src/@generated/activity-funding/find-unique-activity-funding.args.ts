@@ -9,5 +9,5 @@ export class FindUniqueActivityFundingArgs {
 
     @Field(() => ActivityFundingWhereUniqueInput, {nullable:false})
     @Type(() => ActivityFundingWhereUniqueInput)
-    where!: Prisma.AtLeast<ActivityFundingWhereUniqueInput, 'id'>;
+    where!: Prisma.AtLeast<ActivityFundingWhereUniqueInput, 'id' | 'project_activity_id'>;
 }

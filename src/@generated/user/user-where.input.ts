@@ -23,6 +23,7 @@ import { SubsidyStatusListRelationFilter } from '../subsidy-status/subsidy-statu
 import { VoluntariesOnProjectsListRelationFilter } from '../voluntaries-on-projects/voluntaries-on-projects-list-relation-filter.input';
 import { ProjectListRelationFilter } from '../project/project-list-relation-filter.input';
 import { AnnualBudgetListRelationFilter } from '../annual-budget/annual-budget-list-relation-filter.input';
+import { ProjectActivityListRelationFilter } from '../project-activity/project-activity-list-relation-filter.input';
 
 @InputType()
 export class UserWhereInput {
@@ -142,4 +143,8 @@ export class UserWhereInput {
     @Field(() => AnnualBudgetListRelationFilter, {nullable:true})
     @Type(() => AnnualBudgetListRelationFilter)
     approved_annual_budgets?: AnnualBudgetListRelationFilter;
+
+    @Field(() => ProjectActivityListRelationFilter, {nullable:true})
+    @Type(() => ProjectActivityListRelationFilter)
+    project_activities?: ProjectActivityListRelationFilter;
 }

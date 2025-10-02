@@ -45,7 +45,7 @@ export class SpecialProjectsWhereInput {
     budget?: DecimalNullableFilter;
 
     @Field(() => StringFilter, {nullable:true})
-    subsidy_statuses_id?: StringFilter;
+    subsidy_status_id?: StringFilter;
 
     @Field(() => StringFilter, {nullable:true})
     type?: StringFilter;

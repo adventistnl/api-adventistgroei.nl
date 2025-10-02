@@ -25,7 +25,7 @@ export class ActivityFundingAggregateArgs {
 
     @Field(() => ActivityFundingWhereUniqueInput, {nullable:true})
     @Type(() => ActivityFundingWhereUniqueInput)
-    cursor?: Prisma.AtLeast<ActivityFundingWhereUniqueInput, 'id'>;
+    cursor?: Prisma.AtLeast<ActivityFundingWhereUniqueInput, 'id' | 'project_activity_id'>;
 
     @Field(() => Int, {nullable:true})
     take?: number;

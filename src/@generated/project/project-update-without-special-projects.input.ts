@@ -48,6 +48,9 @@ export class ProjectUpdateWithoutSpecial_projectsInput {
     @Field(() => DateTimeFieldUpdateOperationsInput, {nullable:true})
     updated_at?: DateTimeFieldUpdateOperationsInput;
 
+    @Field(() => DateTimeFieldUpdateOperationsInput, {nullable:true})
+    deadline?: DateTimeFieldUpdateOperationsInput;
+
     @Field(() => StringFieldUpdateOperationsInput, {nullable:true})
     created_by?: StringFieldUpdateOperationsInput;
 

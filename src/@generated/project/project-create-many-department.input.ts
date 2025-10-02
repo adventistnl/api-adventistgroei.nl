@@ -43,6 +43,9 @@ export class ProjectCreateManyDepartmentInput {
     @Field(() => Date, {nullable:true})
     updated_at?: Date | string;
 
+    @Field(() => Date, {nullable:false})
+    deadline!: Date | string;
+
     @Field(() => String, {nullable:false})
     created_by!: string;
 

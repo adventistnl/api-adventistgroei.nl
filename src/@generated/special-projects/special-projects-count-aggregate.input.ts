@@ -23,7 +23,7 @@ export class SpecialProjectsCountAggregateInput {
     budget?: true;
 
     @Field(() => Boolean, {nullable:true})
-    subsidy_statuses_id?: true;
+    subsidy_status_id?: true;
 
     @Field(() => Boolean, {nullable:true})
     type?: true;

@@ -32,7 +32,7 @@ export class SpecialProjectsOrderByWithAggregationInput {
     budget?: SortOrderInput;
 
     @Field(() => SortOrder, {nullable:true})
-    subsidy_statuses_id?: `${SortOrder}`;
+    subsidy_status_id?: `${SortOrder}`;
 
     @Field(() => SortOrder, {nullable:true})
     type?: `${SortOrder}`;

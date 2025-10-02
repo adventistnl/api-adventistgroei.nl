@@ -27,4 +27,7 @@ export class ActivityDocumentsCreateManyInput {
 
     @Field(() => Date, {nullable:true})
     validated_at?: Date | string;
+
+    @Field(() => String, {nullable:true})
+    project_activity_id?: string;
 }

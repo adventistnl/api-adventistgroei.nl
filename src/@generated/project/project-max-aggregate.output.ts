@@ -41,6 +41,9 @@ export class ProjectMaxAggregate {
     @Field(() => Date, {nullable:true})
     updated_at?: Date | string;
 
+    @Field(() => Date, {nullable:true})
+    deadline?: Date | string;
+
     @Field(() => String, {nullable:true})
     created_by?: string;
 

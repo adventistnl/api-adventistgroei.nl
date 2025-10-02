@@ -1,40 +1,42 @@
 import { Injectable } from '@nestjs/common';
 import { ProjectActivity } from 'src/@generated/project-activity/project-activity.model';
 import { CustomGraphQLError, ErrorCode } from 'src/common/errors/custom-graphql-error';
-import { CreateProjectActivityInput, UpdateProjectActivityInput } from 'src/dto/project-activity.dto';
+import { ProjectActivityCreateDto, ProjectActivityUpdateDto } from 'src/dto/project-activity.dto';
 import { PrismaService } from 'src/services';
 
 @Injectable()
 export class ProjectActivityRepository {
   constructor(private readonly prisma: PrismaService) {}
 
-  async create(data: CreateProjectActivityInput, userId: string): Promise<ProjectActivity> {
-    try {
-      return await this.prisma.projectActivity.create({
-        data: {
-          ...data,
-          created_by: userId,
-          updated_by: userId,
-        },
-      });
-    } catch {
-      throw new CustomGraphQLError('Erro ao criar ProjectActivity', ErrorCode.INTERNAL_SERVER_ERROR, 500);
-    }
-  }
+  // async create(data: ProjectActivityCreateDto, userId: string): Promise<ProjectActivity> {
+  //   try {
+  //     return await this.prisma.projectActivity.create({
+  //       data: {
+  //         ...data,
+  //         created_by: userId,
+  //         updated_by: userId,
+  //         deadline: data.deadline || new Date(), // Adicionando valor padrão para deadline
+  //         owner_id: data.owner_id || '', // Garantir que owner_id seja fornecido
+  //       },
+  //     });
+  //   } catch {
+  //     throw new CustomGraphQLError('Erro ao criar ProjectActivity', ErrorCode.INTERNAL_SERVER_ERROR, 500);
+  //   }
+  // }
 
-  async update(data: UpdateProjectActivityInput, userId: string): Promise<ProjectActivity> {
-    try {
-      return await this.prisma.projectActivity.update({
-        where: { id: data.id },
-        data: {
-          ...data,
-          updated_by: userId,
-        },
-      });
-    } catch {
-      throw new CustomGraphQLError('Erro ao atualizar ProjectActivity', ErrorCode.INTERNAL_SERVER_ERROR, 500);
-    }
-  }
+  // async update(data: ProjectActivityUpdateDto, userId: string): Promise<ProjectActivity> {
+  //   try {
+  //     return await this.prisma.projectActivity.update({
+  //       where: { id: data.id },
+  //       data: {
+  //         ...data,
+  //         updated_by: userId,
+  //       },
+  //     });
+  //   } catch {
+  //     throw new CustomGraphQLError('Erro ao atualizar ProjectActivity', ErrorCode.INTERNAL_SERVER_ERROR, 500);
+  //   }
+  // }
 
   async findById(id: string): Promise<ProjectActivity | null> {
     return this.prisma.projectActivity.findUnique({ where: { id, is_deleted: false } });

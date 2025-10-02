@@ -5,6 +5,7 @@ import { GraphQLDecimal } from 'prisma-graphql-type-decimal';
 import { transformToDecimal } from 'prisma-graphql-type-decimal';
 import { Transform } from 'class-transformer';
 import { Type } from 'class-transformer';
+import { ProjectActivityCreatetagsInput } from './project-activity-createtags.input';
 
 @InputType()
 export class ProjectActivityCreateManyInput {
@@ -46,4 +47,14 @@ export class ProjectActivityCreateManyInput {
 
     @Field(() => String, {nullable:true})
     deleted_by?: string;
+
+    @Field(() => Date, {nullable:false})
+    deadline!: Date | string;
+
+    @Field(() => String, {nullable:false})
+    owner_id!: string;
+
+    @Field(() => ProjectActivityCreatetagsInput, {nullable:true})
+    @Type(() => ProjectActivityCreatetagsInput)
+    tags?: ProjectActivityCreatetagsInput;
 }

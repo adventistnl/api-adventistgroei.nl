@@ -4,6 +4,7 @@ import { StringWithAggregatesFilter } from '../prisma/string-with-aggregates-fil
 import { BoolWithAggregatesFilter } from '../prisma/bool-with-aggregates-filter.input';
 import { DateTimeWithAggregatesFilter } from '../prisma/date-time-with-aggregates-filter.input';
 import { DateTimeNullableWithAggregatesFilter } from '../prisma/date-time-nullable-with-aggregates-filter.input';
+import { StringNullableWithAggregatesFilter } from '../prisma/string-nullable-with-aggregates-filter.input';
 
 @InputType()
 export class ActivityDocumentsScalarWhereWithAggregatesInput {
@@ -40,4 +41,7 @@ export class ActivityDocumentsScalarWhereWithAggregatesInput {
 
     @Field(() => DateTimeNullableWithAggregatesFilter, {nullable:true})
     validated_at?: DateTimeNullableWithAggregatesFilter;
+
+    @Field(() => StringNullableWithAggregatesFilter, {nullable:true})
+    project_activity_id?: StringNullableWithAggregatesFilter;
 }

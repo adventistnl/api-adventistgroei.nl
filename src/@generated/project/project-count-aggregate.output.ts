@@ -39,6 +39,9 @@ export class ProjectCountAggregate {
     updated_at!: number;
 
     @Field(() => Int, {nullable:false})
+    deadline!: number;
+
+    @Field(() => Int, {nullable:false})
     created_by!: number;
 
     @Field(() => Int, {nullable:false})

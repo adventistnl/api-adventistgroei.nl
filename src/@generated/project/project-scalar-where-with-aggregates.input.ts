@@ -59,6 +59,9 @@ export class ProjectScalarWhereWithAggregatesInput {
     @Field(() => DateTimeWithAggregatesFilter, {nullable:true})
     updated_at?: DateTimeWithAggregatesFilter;
 
+    @Field(() => DateTimeWithAggregatesFilter, {nullable:true})
+    deadline?: DateTimeWithAggregatesFilter;
+
     @Field(() => StringWithAggregatesFilter, {nullable:true})
     created_by?: StringWithAggregatesFilter;
 

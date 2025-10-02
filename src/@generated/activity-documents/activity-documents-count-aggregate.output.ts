@@ -30,5 +30,8 @@ export class ActivityDocumentsCountAggregate {
     validated_at!: number;
 
     @Field(() => Int, {nullable:false})
+    project_activity_id!: number;
+
+    @Field(() => Int, {nullable:false})
     _all!: number;
 }

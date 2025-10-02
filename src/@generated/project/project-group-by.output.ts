@@ -46,6 +46,9 @@ export class ProjectGroupBy {
     @Field(() => Date, {nullable:false})
     updated_at!: Date | string;
 
+    @Field(() => Date, {nullable:false})
+    deadline!: Date | string;
+
     @Field(() => String, {nullable:false})
     created_by!: string;
 

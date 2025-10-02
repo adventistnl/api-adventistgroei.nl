@@ -27,4 +27,7 @@ export class ActivityDocumentsMaxAggregateInput {
 
     @Field(() => Boolean, {nullable:true})
     validated_at?: true;
+
+    @Field(() => Boolean, {nullable:true})
+    project_activity_id?: true;
 }

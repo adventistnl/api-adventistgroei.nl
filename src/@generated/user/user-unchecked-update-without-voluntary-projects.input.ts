@@ -18,6 +18,7 @@ import { SubsidyRequestUncheckedUpdateManyWithoutRequesterNestedInput } from '..
 import { SubsidyStatusUncheckedUpdateManyWithoutAssigned_userNestedInput } from '../subsidy-status/subsidy-status-unchecked-update-many-without-assigned-user-nested.input';
 import { ProjectUncheckedUpdateManyWithoutOwnerNestedInput } from '../project/project-unchecked-update-many-without-owner-nested.input';
 import { AnnualBudgetUncheckedUpdateManyWithoutApproved_userNestedInput } from '../annual-budget/annual-budget-unchecked-update-many-without-approved-user-nested.input';
+import { ProjectActivityUncheckedUpdateManyWithoutOwnerNestedInput } from '../project-activity/project-activity-unchecked-update-many-without-owner-nested.input';
 
 @InputType()
 export class UserUncheckedUpdateWithoutVoluntary_projectsInput {
@@ -108,4 +109,8 @@ export class UserUncheckedUpdateWithoutVoluntary_projectsInput {
     @Field(() => AnnualBudgetUncheckedUpdateManyWithoutApproved_userNestedInput, {nullable:true})
     @Type(() => AnnualBudgetUncheckedUpdateManyWithoutApproved_userNestedInput)
     approved_annual_budgets?: AnnualBudgetUncheckedUpdateManyWithoutApproved_userNestedInput;
+
+    @Field(() => ProjectActivityUncheckedUpdateManyWithoutOwnerNestedInput, {nullable:true})
+    @Type(() => ProjectActivityUncheckedUpdateManyWithoutOwnerNestedInput)
+    project_activities?: ProjectActivityUncheckedUpdateManyWithoutOwnerNestedInput;
 }

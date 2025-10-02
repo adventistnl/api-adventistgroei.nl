@@ -185,6 +185,27 @@ enum AnnualBudgetStatus {
   CLOSED
 }
 
+enum ActivityTags {
+  EQUIPMENT
+  MATERIALS
+  SERVICES
+  TRAVEL
+  EVENT
+  TRANSPORT
+  MARKETING
+  REFORM
+  TRAINING
+  FEEDING
+  ACCOMMODATION
+}
+
+enum EntityType {
+  INSTITUTION
+  REGION
+  CHURCH
+  DEPARTMENT
+  USER
+}
 // Models
 model Institution {
   id                  String             @id @default(uuid())
@@ -372,6 +393,7 @@ model User {
   voluntary_projects        VoluntariesOnProjects[]
   Project                   Project[]
   approved_annual_budgets   AnnualBudget[]           @relation("ApprovedAnnualBudgets")
+  project_activities        ProjectActivity[]
 }
 
 model Project {
@@ -381,13 +403,13 @@ model Project {
   title               String
   description         String
   budget              Decimal
-  media_link          String
   owner_id            String
   owner               User                    @relation(fields: [owner_id], references: [id])
   language_preference LanguagePreference
   type                ProjectType
   created_at          DateTime                @default(now())
   updated_at          DateTime                @updatedAt
+  deadline            DateTime
   created_by          String
   updated_by          String
   is_deleted          Boolean                 @default(false)
@@ -505,21 +527,27 @@ model SubsidyRequest {
 }
 
 model ProjectActivity {
-  id               String           @id @default(uuid())
-  subsidy_request  SubsidyRequest[]
-  project_id       String
-  project          Project          @relation(fields: [project_id], references: [id])
-  name             String
-  description      String
-  budget_amount    Decimal
-  created_at       DateTime         @default(now())
-  updated_at       DateTime         @updatedAt
-  created_by       String
-  updated_by       String
-  is_deleted       Boolean          @default(false)
-  deleted_at       DateTime?
-  deleted_by       String?
-  subsidy_receipts SubsidyReceipt[]
+  id                  String              @id @default(uuid())
+  subsidy_request     SubsidyRequest[]
+  project_id          String
+  project             Project             @relation(fields: [project_id], references: [id])
+  name                String
+  description         String
+  budget_amount       Decimal
+  created_at          DateTime            @default(now())
+  updated_at          DateTime            @updatedAt
+  created_by          String
+  updated_by          String
+  is_deleted          Boolean             @default(false)
+  deleted_at          DateTime?
+  deleted_by          String?
+  subsidy_receipts    SubsidyReceipt[]
+  activity_documents  ActivityDocuments[]
+  deadline            DateTime
+  owner_id            String
+  owner               User                @relation(fields: [owner_id], references: [id])
+  tags                ActivityTags[]
+  activity_funding    ActivityFunding?    @relation("ActivityFundingToProjectActivity")
 }
 
 model SubsidyReceipt {
@@ -753,7 +781,7 @@ model Setting {
 
 model FundingPolicies {
   id          String   @id @default(uuid())
-  entity_type String
+  entity_type EntityType
   entity_id   String
   max_percent Decimal
   annual_cap  Decimal
@@ -764,26 +792,26 @@ model FundingPolicies {
 }
 
 model ActivityFunding {
-  id                   String   @id @default(uuid())
-  activity_id          String
-  entity_type          String
-  entity_id            String
-  contribution_amount  Decimal
-  contribution_percent Decimal
-  validated            Boolean  @default(false)
-  created_at           DateTime @default(now())
-  updated_at           DateTime @updatedAt
+  id                          String              @id @default(uuid())
+  activity_id               String
+  activity                  ProjectActivity     @relation(fields: [activity_id], references: [id])
+  entity_contribution_amount Decimal
+  entity_contribution_percent Float
+  entity_type               EntityType
+  entity_id                 String
 }
 
 model ActivityDocuments {
-  id           String    @id @default(uuid())
-  activity_id  String
-  file_url     String
-  type         String
-  is_validated Boolean   @default(false)
-  uploaded_by  String
-  created_at   DateTime  @default(now())
-  validated_at DateTime?
+  id                  String           @id @default(uuid())
+  activity_id         String
+  file_url            String
+  type                String
+  is_validated        Boolean          @default(false)
+  uploaded_by         String
+  created_at          DateTime         @default(now())
+  validated_at        DateTime?
+  project_activity_id  String?
+  project_activity     ProjectActivity? @relation(fields: [project_activity_id], references: [id])
 }
 
 model SpecialProjects {
@@ -793,7 +821,7 @@ model SpecialProjects {
   project_id            String?
   justification_note    String?
   budget                Decimal?
-  subsidy_statuses_id   String
+  subsidy_status_id   String
   type                  String
   location_church_plant String?
   created_at            DateTime  @default(now())
@@ -806,5 +834,5 @@ model SpecialProjects {
 
   // Opposite relations
   project        Project?       @relation(fields: [project_id], references: [id])
-  subsidy_status SubsidyStatus? @relation(fields: [subsidy_statuses_id], references: [id])
+  subsidy_status SubsidyStatus? @relation(fields: [subsidy_status_id], references: [id])
 }

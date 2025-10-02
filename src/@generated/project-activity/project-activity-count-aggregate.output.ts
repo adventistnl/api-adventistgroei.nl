@@ -42,5 +42,14 @@ export class ProjectActivityCountAggregate {
     deleted_by!: number;
 
     @Field(() => Int, {nullable:false})
+    deadline!: number;
+
+    @Field(() => Int, {nullable:false})
+    owner_id!: number;
+
+    @Field(() => Int, {nullable:false})
+    tags!: number;
+
+    @Field(() => Int, {nullable:false})
     _all!: number;
 }

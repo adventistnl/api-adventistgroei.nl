@@ -1,6 +1,7 @@
 import { Field } from '@nestjs/graphql';
 import { InputType } from '@nestjs/graphql';
 import { StringFieldUpdateOperationsInput } from '../prisma/string-field-update-operations.input';
+import { EnumEntityTypeFieldUpdateOperationsInput } from '../prisma/enum-entity-type-field-update-operations.input';
 import { DecimalFieldUpdateOperationsInput } from '../prisma/decimal-field-update-operations.input';
 import { Type } from 'class-transformer';
 import { IntFieldUpdateOperationsInput } from '../prisma/int-field-update-operations.input';
@@ -12,8 +13,8 @@ export class FundingPoliciesUpdateManyMutationInput {
     @Field(() => StringFieldUpdateOperationsInput, {nullable:true})
     id?: StringFieldUpdateOperationsInput;
 
-    @Field(() => StringFieldUpdateOperationsInput, {nullable:true})
-    entity_type?: StringFieldUpdateOperationsInput;
+    @Field(() => EnumEntityTypeFieldUpdateOperationsInput, {nullable:true})
+    entity_type?: EnumEntityTypeFieldUpdateOperationsInput;
 
     @Field(() => StringFieldUpdateOperationsInput, {nullable:true})
     entity_id?: StringFieldUpdateOperationsInput;

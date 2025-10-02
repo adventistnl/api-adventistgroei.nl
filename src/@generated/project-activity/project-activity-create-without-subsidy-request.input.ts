@@ -5,8 +5,12 @@ import { GraphQLDecimal } from 'prisma-graphql-type-decimal';
 import { transformToDecimal } from 'prisma-graphql-type-decimal';
 import { Transform } from 'class-transformer';
 import { Type } from 'class-transformer';
+import { ProjectActivityCreatetagsInput } from './project-activity-createtags.input';
 import { ProjectCreateNestedOneWithoutActivitiesInput } from '../project/project-create-nested-one-without-activities.input';
 import { SubsidyReceiptCreateNestedManyWithoutProject_activityInput } from '../subsidy-receipt/subsidy-receipt-create-nested-many-without-project-activity.input';
+import { ActivityDocumentsCreateNestedManyWithoutProject_activityInput } from '../activity-documents/activity-documents-create-nested-many-without-project-activity.input';
+import { ActivityFundingCreateNestedOneWithoutProject_activityInput } from '../activity-funding/activity-funding-create-nested-one-without-project-activity.input';
+import { UserCreateNestedOneWithoutProject_activitiesInput } from '../user/user-create-nested-one-without-project-activities.input';
 
 @InputType()
 export class ProjectActivityCreateWithoutSubsidy_requestInput {
@@ -46,6 +50,13 @@ export class ProjectActivityCreateWithoutSubsidy_requestInput {
     @Field(() => String, {nullable:true})
     deleted_by?: string;
 
+    @Field(() => Date, {nullable:false})
+    deadline!: Date | string;
+
+    @Field(() => ProjectActivityCreatetagsInput, {nullable:true})
+    @Type(() => ProjectActivityCreatetagsInput)
+    tags?: ProjectActivityCreatetagsInput;
+
     @Field(() => ProjectCreateNestedOneWithoutActivitiesInput, {nullable:false})
     @Type(() => ProjectCreateNestedOneWithoutActivitiesInput)
     project!: ProjectCreateNestedOneWithoutActivitiesInput;
@@ -53,4 +64,16 @@ export class ProjectActivityCreateWithoutSubsidy_requestInput {
     @Field(() => SubsidyReceiptCreateNestedManyWithoutProject_activityInput, {nullable:true})
     @Type(() => SubsidyReceiptCreateNestedManyWithoutProject_activityInput)
     subsidy_receipts?: SubsidyReceiptCreateNestedManyWithoutProject_activityInput;
+
+    @Field(() => ActivityDocumentsCreateNestedManyWithoutProject_activityInput, {nullable:true})
+    @Type(() => ActivityDocumentsCreateNestedManyWithoutProject_activityInput)
+    activity_documents?: ActivityDocumentsCreateNestedManyWithoutProject_activityInput;
+
+    @Field(() => ActivityFundingCreateNestedOneWithoutProject_activityInput, {nullable:true})
+    @Type(() => ActivityFundingCreateNestedOneWithoutProject_activityInput)
+    activity_funding?: ActivityFundingCreateNestedOneWithoutProject_activityInput;
+
+    @Field(() => UserCreateNestedOneWithoutProject_activitiesInput, {nullable:false})
+    @Type(() => UserCreateNestedOneWithoutProject_activitiesInput)
+    owner!: UserCreateNestedOneWithoutProject_activitiesInput;
 }

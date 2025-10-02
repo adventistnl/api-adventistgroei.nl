@@ -7,8 +7,12 @@ import { DateTimeFieldUpdateOperationsInput } from '../prisma/date-time-field-up
 import { BoolFieldUpdateOperationsInput } from '../prisma/bool-field-update-operations.input';
 import { NullableDateTimeFieldUpdateOperationsInput } from '../prisma/nullable-date-time-field-update-operations.input';
 import { NullableStringFieldUpdateOperationsInput } from '../prisma/nullable-string-field-update-operations.input';
+import { ProjectActivityUpdatetagsInput } from './project-activity-updatetags.input';
 import { SubsidyRequestUpdateManyWithoutProject_activitiesNestedInput } from '../subsidy-request/subsidy-request-update-many-without-project-activities-nested.input';
 import { SubsidyReceiptUpdateManyWithoutProject_activityNestedInput } from '../subsidy-receipt/subsidy-receipt-update-many-without-project-activity-nested.input';
+import { ActivityDocumentsUpdateManyWithoutProject_activityNestedInput } from '../activity-documents/activity-documents-update-many-without-project-activity-nested.input';
+import { ActivityFundingUpdateOneWithoutProject_activityNestedInput } from '../activity-funding/activity-funding-update-one-without-project-activity-nested.input';
+import { UserUpdateOneRequiredWithoutProject_activitiesNestedInput } from '../user/user-update-one-required-without-project-activities-nested.input';
 
 @InputType()
 export class ProjectActivityUpdateWithoutProjectInput {
@@ -47,6 +51,13 @@ export class ProjectActivityUpdateWithoutProjectInput {
     @Field(() => NullableStringFieldUpdateOperationsInput, {nullable:true})
     deleted_by?: NullableStringFieldUpdateOperationsInput;
 
+    @Field(() => DateTimeFieldUpdateOperationsInput, {nullable:true})
+    deadline?: DateTimeFieldUpdateOperationsInput;
+
+    @Field(() => ProjectActivityUpdatetagsInput, {nullable:true})
+    @Type(() => ProjectActivityUpdatetagsInput)
+    tags?: ProjectActivityUpdatetagsInput;
+
     @Field(() => SubsidyRequestUpdateManyWithoutProject_activitiesNestedInput, {nullable:true})
     @Type(() => SubsidyRequestUpdateManyWithoutProject_activitiesNestedInput)
     subsidy_request?: SubsidyRequestUpdateManyWithoutProject_activitiesNestedInput;
@@ -54,4 +65,16 @@ export class ProjectActivityUpdateWithoutProjectInput {
     @Field(() => SubsidyReceiptUpdateManyWithoutProject_activityNestedInput, {nullable:true})
     @Type(() => SubsidyReceiptUpdateManyWithoutProject_activityNestedInput)
     subsidy_receipts?: SubsidyReceiptUpdateManyWithoutProject_activityNestedInput;
+
+    @Field(() => ActivityDocumentsUpdateManyWithoutProject_activityNestedInput, {nullable:true})
+    @Type(() => ActivityDocumentsUpdateManyWithoutProject_activityNestedInput)
+    activity_documents?: ActivityDocumentsUpdateManyWithoutProject_activityNestedInput;
+
+    @Field(() => ActivityFundingUpdateOneWithoutProject_activityNestedInput, {nullable:true})
+    @Type(() => ActivityFundingUpdateOneWithoutProject_activityNestedInput)
+    activity_funding?: ActivityFundingUpdateOneWithoutProject_activityNestedInput;
+
+    @Field(() => UserUpdateOneRequiredWithoutProject_activitiesNestedInput, {nullable:true})
+    @Type(() => UserUpdateOneRequiredWithoutProject_activitiesNestedInput)
+    owner?: UserUpdateOneRequiredWithoutProject_activitiesNestedInput;
 }

@@ -1,0 +1,30 @@
+import { Field } from '@nestjs/graphql';
+import { InputType } from '@nestjs/graphql';
+
+@InputType()
+export class ActivityDocumentsCreateWithoutProject_activityInput {
+
+    @Field(() => String, {nullable:true})
+    id?: string;
+
+    @Field(() => String, {nullable:false})
+    activity_id!: string;
+
+    @Field(() => String, {nullable:false})
+    file_url!: string;
+
+    @Field(() => String, {nullable:false})
+    type!: string;
+
+    @Field(() => Boolean, {nullable:true})
+    is_validated?: boolean;
+
+    @Field(() => String, {nullable:false})
+    uploaded_by!: string;
+
+    @Field(() => Date, {nullable:true})
+    created_at?: Date | string;
+
+    @Field(() => Date, {nullable:true})
+    validated_at?: Date | string;
+}

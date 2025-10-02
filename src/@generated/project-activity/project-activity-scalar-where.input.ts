@@ -7,6 +7,7 @@ import { DateTimeFilter } from '../prisma/date-time-filter.input';
 import { BoolFilter } from '../prisma/bool-filter.input';
 import { DateTimeNullableFilter } from '../prisma/date-time-nullable-filter.input';
 import { StringNullableFilter } from '../prisma/string-nullable-filter.input';
+import { EnumActivityTagsNullableListFilter } from '../prisma/enum-activity-tags-nullable-list-filter.input';
 
 @InputType()
 export class ProjectActivityScalarWhereInput {
@@ -59,4 +60,13 @@ export class ProjectActivityScalarWhereInput {
 
     @Field(() => StringNullableFilter, {nullable:true})
     deleted_by?: StringNullableFilter;
+
+    @Field(() => DateTimeFilter, {nullable:true})
+    deadline?: DateTimeFilter;
+
+    @Field(() => StringFilter, {nullable:true})
+    owner_id?: StringFilter;
+
+    @Field(() => EnumActivityTagsNullableListFilter, {nullable:true})
+    tags?: EnumActivityTagsNullableListFilter;
 }

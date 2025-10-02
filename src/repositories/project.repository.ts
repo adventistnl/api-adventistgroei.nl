@@ -6,6 +6,7 @@ import { Decimal } from '@prisma/client/runtime/library';
 import { InstitutionRepository } from './institution.repository';
 import { DepartmentRepository } from './department.repository';
 import { UserRepository } from './user.repository';
+import { EntityType } from '../@generated/prisma/entity-type.enum';
 
 @Injectable()
 export class ProjectRepository {
@@ -22,26 +23,58 @@ export class ProjectRepository {
     await this.departmentRepository.findById(data.department_id);
     await this.userRepository.findById(data.owner_id);
 
-    return this.prisma.project.create({
+    const createdProject = await this.prisma.project.create({
       data: {
         title: data.title,
         description: data.description,
         language_preference: data.language_preference,
         budget: new Decimal(data.budget),
-        media_link: data.media_link,
         type: data.type,
+        deadline: new Date(data.deadline),
         created_by: userId,
         updated_by: userId,
         is_deleted: false,
         department: { connect: { id: data.department_id } },
-        owner: {connect: {id: data.owner_id}},
+        owner: { connect: { id: data.owner_id } },
         Institution: { connect: { id: data.institution_id } },
+        media_link: '', // Adicionando valor padrão para o campo obrigatório
       },
     });
-  }
 
+    for (const activity of data.activities) {
+      const createdActivity = await this.prisma.projectActivity.create({
+        data: {
+          project: { connect: { id: createdProject.id } },
+          name: activity.name,
+          description: activity.description,
+          budget_amount: new Decimal(activity.budget_amount),
+          deadline: new Date(activity.deadline),
+          owner: { connect: { id: activity.owner_id } },
+          tags: activity.tags,
+          created_by: userId,
+          updated_by: userId,
+        },
+      });
+
+      if (activity.activity_funding) {
+        await this.prisma.activityFunding.create({
+          data: {
+            activity_id: createdActivity.id,
+            entity_contribution_amount: new Decimal(activity.activity_funding.entity_contribution_amount),
+            entity_contribution_percent: activity.activity_funding.entity_contribution_percent,
+            entity_type: activity.activity_funding.entity_type,
+            entity_id: activity.activity_funding.entity_id,
+          },
+        });
+      }
+    }
+
+    return createdProject;
+  }
+  
   async update(id: string, data: ProjectUpdateDto, userId: string): Promise<Project> {
-    const { institution_id, department_id, owner_id, ...rest } = data;
+    const { institution_id, department_id, owner_id, activities, ...rest } = data;
+
     if (institution_id) {
       await this.institutionRepository.findById(institution_id);
     }
@@ -51,20 +84,88 @@ export class ProjectRepository {
     if (owner_id) {
       await this.userRepository.findById(owner_id);
     }
+
+    const updateData: any = {
+      Institution: institution_id ? { connect: { id: institution_id } } : undefined,
+      owner: owner_id ? { connect: { id: owner_id } } : undefined,
+      department: department_id ? { connect: { id: department_id } } : undefined,
+      budget: rest.budget ? new Decimal(rest.budget) : undefined,
+      title: rest.title,
+      description: rest.description,
+      language_preference: rest.language_preference,
+      type: rest.type,
+      deadline: rest.deadline ? new Date(rest.deadline) : undefined,
+      updated_by: userId,
+    };
+
+    if (activities) {
+      for (const activity of activities) {
+        if (activity.id) {
+          // Atualizar atividade existente
+          const updateActivityData: any = {
+            name: activity.name,
+            description: activity.description,
+            budget_amount: activity.budget_amount ? new Decimal(activity.budget_amount) : undefined,
+            deadline: activity.deadline ? new Date(activity.deadline) : undefined,
+            owner: activity.owner_id ? { connect: { id: activity.owner_id } } : undefined,
+            tags: activity.tags,
+            updated_by: userId,
+          };
+
+          if (activity.activity_funding) {
+            updateActivityData.activity_funding = activity.activity_funding
+              ? {
+                  update: {
+                    entity_contribution_amount: activity.activity_funding.entity_contribution_amount
+                      ? new Decimal(activity.activity_funding.entity_contribution_amount)
+                      : undefined,
+                    entity_contribution_percent: activity.activity_funding.entity_contribution_percent,
+                    entity_type: activity.activity_funding.entity_type,
+                    entity_id: activity.activity_funding.entity_id,
+                  },
+                }
+              : undefined;
+          }
+
+          await this.prisma.projectActivity.update({
+            where: { id: activity.id },
+            data: updateActivityData,
+          });
+        } else {
+          // Criar nova atividade
+          await this.prisma.projectActivity.create({
+            data: {
+              project: { connect: { id } },
+              name: activity.name || '', // Garantir que seja uma string válida
+              description: activity.description || '', // Garantir que seja uma string válida
+              budget_amount: activity.budget_amount ? new Decimal(activity.budget_amount) : new Decimal(0), // Valor padrão
+              deadline: activity.deadline ? new Date(activity.deadline) : new Date(), // Valor padrão
+              owner: { connect: { id: activity.owner_id } },
+              tags: activity.tags,
+              created_by: userId,
+              updated_by: userId,
+              activity_funding: activity.activity_funding
+                ? {
+                    create: {
+                      activity_id: activity.id || '', // Garantir que seja fornecido um ID válido
+                      entity_contribution_amount: activity.activity_funding.entity_contribution_amount
+                        ? new Decimal(activity.activity_funding.entity_contribution_amount)
+                        : new Decimal(0), // Valor padrão
+                      entity_contribution_percent: activity.activity_funding.entity_contribution_percent || 0, // Valor padrão
+                      entity_type: activity.activity_funding.entity_type || EntityType.USER, // Ajuste para valor válido
+                      entity_id: activity.activity_funding.entity_id || '', // Garantir string válida
+                    },
+                  }
+                : undefined,
+            },
+          });
+        }
+      }
+    }
+
     return this.prisma.project.update({
       where: { id },
-      data: {
-        Institution: institution_id ? { connect: { id: institution_id } } : undefined,
-        owner: owner_id ? { connect: { id: owner_id } } : undefined,
-        budget: rest.budget ? new Decimal(rest.budget) : undefined,
-        department: department_id ? { connect: { id: department_id } } : undefined,
-        title: rest.title,
-        description: rest.description,
-        language_preference: rest.language_preference,
-        media_link: rest.media_link,
-        type: rest.type,
-        updated_by: userId,
-      },
+      data: updateData,
     });
   }
 
@@ -83,11 +184,21 @@ export class ProjectRepository {
   async findById(id: string): Promise<Project | null> {
     return this.prisma.project.findUnique({
       where: { id, is_deleted: false },
+      include: {
+        owner: true, // Inclui o relacionamento com o proprietário
+        department: true,
+        Institution: true,
+        activities: {
+          include: {
+            owner: true, // Inclui o relacionamento com o proprietário da atividade
+          },
+        },
+      },
     });
   }
 
   async findManyByFilters(filters: Partial<Record<keyof Project, any>>): Promise<Project[]> {
-  const allowedKeys: (keyof Project)[] = ['institution_id', 'title', 'description', 'is_deleted', 'type'];
+    const allowedKeys: (keyof Project)[] = ['institution_id', 'title', 'description', 'is_deleted', 'type'];
 
     for (const key of Object.keys(filters)) {
       if (!allowedKeys.includes(key as keyof Project)) {
@@ -99,6 +210,16 @@ export class ProjectRepository {
       where: {
         ...filters,
         is_deleted: false,
+      },
+      include: {
+        owner: true, // Inclui o relacionamento com o proprietário
+        department: true,
+        Institution: true,
+        activities: {
+          include: {
+            owner: true, // Inclui o relacionamento com o proprietário da atividade
+          },
+        },
       },
     });
   }
@@ -117,10 +238,32 @@ export class ProjectRepository {
         ...filters,
         is_deleted: false,
       },
+      include: {
+        owner: true, // Inclui o relacionamento com o proprietário
+        department: true,
+        Institution: true,
+        activities: {
+          include: {
+            owner: true, // Inclui o relacionamento com o proprietário da atividade
+          },
+        },
+      },
     });
   }
 
   async findAll(): Promise<Project[]> {
-    return this.prisma.project.findMany({ where: { is_deleted: false } });
+    return this.prisma.project.findMany({
+      where: { is_deleted: false },
+      include: {
+        owner: true, // Inclui o relacionamento com o proprietário
+        department: true,
+        Institution: true,
+        activities: {
+          include: {
+            owner: true, // Inclui o relacionamento com o proprietário da atividade
+          },
+        },
+      },
+    });
   }
 }

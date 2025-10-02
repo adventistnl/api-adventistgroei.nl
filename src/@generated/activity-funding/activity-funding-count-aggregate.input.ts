@@ -17,10 +17,10 @@ export class ActivityFundingCountAggregateInput {
     entity_id?: true;
 
     @Field(() => Boolean, {nullable:true})
-    contribution_amount?: true;
+    entity_contribution_amount?: true;
 
     @Field(() => Boolean, {nullable:true})
-    contribution_percent?: true;
+    entity_contribution_percent?: true;
 
     @Field(() => Boolean, {nullable:true})
     validated?: true;
@@ -30,6 +30,9 @@ export class ActivityFundingCountAggregateInput {
 
     @Field(() => Boolean, {nullable:true})
     updated_at?: true;
+
+    @Field(() => Boolean, {nullable:true})
+    project_activity_id?: true;
 
     @Field(() => Boolean, {nullable:true})
     _all?: true;

@@ -1,5 +1,6 @@
 import { Field } from '@nestjs/graphql';
 import { InputType } from '@nestjs/graphql';
+import { EntityType } from '../prisma/entity-type.enum';
 import { Decimal } from '@prisma/client/runtime/library';
 import { GraphQLDecimal } from 'prisma-graphql-type-decimal';
 import { transformToDecimal } from 'prisma-graphql-type-decimal';
@@ -15,8 +16,8 @@ export class ActivityFundingCreateManyInput {
     @Field(() => String, {nullable:false})
     activity_id!: string;
 
-    @Field(() => String, {nullable:false})
-    entity_type!: string;
+    @Field(() => EntityType, {nullable:false})
+    entity_type!: `${EntityType}`;
 
     @Field(() => String, {nullable:false})
     entity_id!: string;
@@ -24,12 +25,12 @@ export class ActivityFundingCreateManyInput {
     @Field(() => GraphQLDecimal, {nullable:false})
     @Type(() => Object)
     @Transform(transformToDecimal)
-    contribution_amount!: Decimal;
+    entity_contribution_amount!: Decimal;
 
     @Field(() => GraphQLDecimal, {nullable:false})
     @Type(() => Object)
     @Transform(transformToDecimal)
-    contribution_percent!: Decimal;
+    entity_contribution_percent!: Decimal;
 
     @Field(() => Boolean, {nullable:true})
     validated?: boolean;
@@ -39,4 +40,7 @@ export class ActivityFundingCreateManyInput {
 
     @Field(() => Date, {nullable:true})
     updated_at?: Date | string;
+
+    @Field(() => String, {nullable:true})
+    project_activity_id?: string;
 }

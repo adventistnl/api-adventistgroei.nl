@@ -6,8 +6,8 @@ import { SortOrder } from '../prisma/sort-order.enum';
 export class ActivityFundingSumOrderByAggregateInput {
 
     @Field(() => SortOrder, {nullable:true})
-    contribution_amount?: `${SortOrder}`;
+    entity_contribution_amount?: `${SortOrder}`;
 
     @Field(() => SortOrder, {nullable:true})
-    contribution_percent?: `${SortOrder}`;
+    entity_contribution_percent?: `${SortOrder}`;
 }

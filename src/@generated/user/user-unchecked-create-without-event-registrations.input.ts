@@ -13,6 +13,7 @@ import { SubsidyStatusUncheckedCreateNestedManyWithoutAssigned_userInput } from 
 import { VoluntariesOnProjectsUncheckedCreateNestedManyWithoutUserInput } from '../voluntaries-on-projects/voluntaries-on-projects-unchecked-create-nested-many-without-user.input';
 import { ProjectUncheckedCreateNestedManyWithoutOwnerInput } from '../project/project-unchecked-create-nested-many-without-owner.input';
 import { AnnualBudgetUncheckedCreateNestedManyWithoutApproved_userInput } from '../annual-budget/annual-budget-unchecked-create-nested-many-without-approved-user.input';
+import { ProjectActivityUncheckedCreateNestedManyWithoutOwnerInput } from '../project-activity/project-activity-unchecked-create-nested-many-without-owner.input';
 
 @InputType()
 export class UserUncheckedCreateWithoutEvent_registrationsInput {
@@ -103,4 +104,8 @@ export class UserUncheckedCreateWithoutEvent_registrationsInput {
     @Field(() => AnnualBudgetUncheckedCreateNestedManyWithoutApproved_userInput, {nullable:true})
     @Type(() => AnnualBudgetUncheckedCreateNestedManyWithoutApproved_userInput)
     approved_annual_budgets?: AnnualBudgetUncheckedCreateNestedManyWithoutApproved_userInput;
+
+    @Field(() => ProjectActivityUncheckedCreateNestedManyWithoutOwnerInput, {nullable:true})
+    @Type(() => ProjectActivityUncheckedCreateNestedManyWithoutOwnerInput)
+    project_activities?: ProjectActivityUncheckedCreateNestedManyWithoutOwnerInput;
 }

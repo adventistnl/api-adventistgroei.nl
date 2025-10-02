@@ -28,4 +28,7 @@ export class ActivityDocumentsMaxOrderByAggregateInput {
 
     @Field(() => SortOrder, {nullable:true})
     validated_at?: `${SortOrder}`;
+
+    @Field(() => SortOrder, {nullable:true})
+    project_activity_id?: `${SortOrder}`;
 }

@@ -4,6 +4,9 @@ import { StringFilter } from '../prisma/string-filter.input';
 import { BoolFilter } from '../prisma/bool-filter.input';
 import { DateTimeFilter } from '../prisma/date-time-filter.input';
 import { DateTimeNullableFilter } from '../prisma/date-time-nullable-filter.input';
+import { StringNullableFilter } from '../prisma/string-nullable-filter.input';
+import { ProjectActivityNullableScalarRelationFilter } from '../project-activity/project-activity-nullable-scalar-relation-filter.input';
+import { Type } from 'class-transformer';
 
 @InputType()
 export class ActivityDocumentsWhereInput {
@@ -40,4 +43,11 @@ export class ActivityDocumentsWhereInput {
 
     @Field(() => DateTimeNullableFilter, {nullable:true})
     validated_at?: DateTimeNullableFilter;
+
+    @Field(() => StringNullableFilter, {nullable:true})
+    project_activity_id?: StringNullableFilter;
+
+    @Field(() => ProjectActivityNullableScalarRelationFilter, {nullable:true})
+    @Type(() => ProjectActivityNullableScalarRelationFilter)
+    project_activity?: ProjectActivityNullableScalarRelationFilter;
 }

@@ -12,7 +12,10 @@ export enum ProjectActivityScalarFieldEnum {
     updated_by = "updated_by",
     is_deleted = "is_deleted",
     deleted_at = "deleted_at",
-    deleted_by = "deleted_by"
+    deleted_by = "deleted_by",
+    deadline = "deadline",
+    owner_id = "owner_id",
+    tags = "tags"
 }
 
 

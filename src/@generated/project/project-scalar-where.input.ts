@@ -59,6 +59,9 @@ export class ProjectScalarWhereInput {
     @Field(() => DateTimeFilter, {nullable:true})
     updated_at?: DateTimeFilter;
 
+    @Field(() => DateTimeFilter, {nullable:true})
+    deadline?: DateTimeFilter;
+
     @Field(() => StringFilter, {nullable:true})
     created_by?: StringFilter;
 

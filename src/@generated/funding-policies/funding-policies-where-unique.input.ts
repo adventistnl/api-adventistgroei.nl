@@ -2,6 +2,7 @@ import { Field } from '@nestjs/graphql';
 import { InputType } from '@nestjs/graphql';
 import { FundingPoliciesWhereInput } from './funding-policies-where.input';
 import { Type } from 'class-transformer';
+import { EnumEntityTypeFilter } from '../prisma/enum-entity-type-filter.input';
 import { StringFilter } from '../prisma/string-filter.input';
 import { DecimalFilter } from '../prisma/decimal-filter.input';
 import { IntFilter } from '../prisma/int-filter.input';
@@ -25,8 +26,8 @@ export class FundingPoliciesWhereUniqueInput {
     @Type(() => FundingPoliciesWhereInput)
     NOT?: Array<FundingPoliciesWhereInput>;
 
-    @Field(() => StringFilter, {nullable:true})
-    entity_type?: StringFilter;
+    @Field(() => EnumEntityTypeFilter, {nullable:true})
+    entity_type?: EnumEntityTypeFilter;
 
     @Field(() => StringFilter, {nullable:true})
     entity_id?: StringFilter;

@@ -1,7 +1,8 @@
 import { InputType, Field } from '@nestjs/graphql';
-import { IsOptional, IsString, IsEnum, IsNumber } from 'class-validator';
+import { IsOptional, IsString, IsEnum, IsNumber, IsDateString } from 'class-validator';
 import { LanguagePreference } from '../@generated/prisma/language-preference.enum';
 import { ProjectType } from '../@generated/prisma/project-type.enum';
+import { ProjectActivityCreateDto, ProjectActivityUpdateDto } from './project-activity.dto';
 
 @InputType()
 export class ProjectCreateDto {
@@ -21,11 +22,6 @@ export class ProjectCreateDto {
   @IsNumber()
   budget: number;
 
-  @Field()
-  @IsOptional()
-  @IsString()
-  media_link: string;
-
   @Field(() => ProjectType)
   @IsEnum(ProjectType)
   type: ProjectType;
@@ -41,7 +37,16 @@ export class ProjectCreateDto {
   @Field()
   @IsString()
   owner_id: string;
+
+  @Field()
+  @IsDateString()
+  deadline: string;
+
+  @Field(() => [ProjectActivityCreateDto])
+  activities: ProjectActivityCreateDto[];
 }
+
+
 
 @InputType()
 export class ProjectUpdateDto {
@@ -65,11 +70,6 @@ export class ProjectUpdateDto {
   @IsNumber()
   budget?: number;
 
-  @Field({ nullable: true })
-  @IsOptional()
-  @IsString()
-  media_link?: string;
-
   @Field(() => ProjectType, { nullable: true })
   @IsOptional()
   @IsEnum(ProjectType)
@@ -88,4 +88,14 @@ export class ProjectUpdateDto {
   @IsOptional()
   @IsString()
   owner_id?: string;
+  
+  @Field({ nullable: true })
+  @IsOptional()
+  @IsDateString()
+  deadline?: string;
+
+  @Field(() => [ProjectActivityUpdateDto], { nullable: true })
+  @IsOptional()
+  activities?: ProjectActivityUpdateDto[];
+  
 }

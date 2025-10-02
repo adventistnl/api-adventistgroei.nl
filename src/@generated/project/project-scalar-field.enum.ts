@@ -12,6 +12,7 @@ export enum ProjectScalarFieldEnum {
     type = "type",
     created_at = "created_at",
     updated_at = "updated_at",
+    deadline = "deadline",
     created_by = "created_by",
     updated_by = "updated_by",
     is_deleted = "is_deleted",

@@ -39,6 +39,9 @@ export class ProjectCountOrderByAggregateInput {
     updated_at?: `${SortOrder}`;
 
     @Field(() => SortOrder, {nullable:true})
+    deadline?: `${SortOrder}`;
+
+    @Field(() => SortOrder, {nullable:true})
     created_by?: `${SortOrder}`;
 
     @Field(() => SortOrder, {nullable:true})

@@ -40,4 +40,10 @@ export class ProjectActivityMinOrderByAggregateInput {
 
     @Field(() => SortOrder, {nullable:true})
     deleted_by?: `${SortOrder}`;
+
+    @Field(() => SortOrder, {nullable:true})
+    deadline?: `${SortOrder}`;
+
+    @Field(() => SortOrder, {nullable:true})
+    owner_id?: `${SortOrder}`;
 }

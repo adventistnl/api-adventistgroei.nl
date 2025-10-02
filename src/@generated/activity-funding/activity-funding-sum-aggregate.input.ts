@@ -5,8 +5,8 @@ import { InputType } from '@nestjs/graphql';
 export class ActivityFundingSumAggregateInput {
 
     @Field(() => Boolean, {nullable:true})
-    contribution_amount?: true;
+    entity_contribution_amount?: true;
 
     @Field(() => Boolean, {nullable:true})
-    contribution_percent?: true;
+    entity_contribution_percent?: true;
 }

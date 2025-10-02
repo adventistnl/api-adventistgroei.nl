@@ -7,9 +7,13 @@ import { DateTimeFilter } from '../prisma/date-time-filter.input';
 import { BoolFilter } from '../prisma/bool-filter.input';
 import { DateTimeNullableFilter } from '../prisma/date-time-nullable-filter.input';
 import { StringNullableFilter } from '../prisma/string-nullable-filter.input';
+import { EnumActivityTagsNullableListFilter } from '../prisma/enum-activity-tags-nullable-list-filter.input';
 import { SubsidyRequestListRelationFilter } from '../subsidy-request/subsidy-request-list-relation-filter.input';
 import { ProjectScalarRelationFilter } from '../project/project-scalar-relation-filter.input';
 import { SubsidyReceiptListRelationFilter } from '../subsidy-receipt/subsidy-receipt-list-relation-filter.input';
+import { ActivityDocumentsListRelationFilter } from '../activity-documents/activity-documents-list-relation-filter.input';
+import { ActivityFundingNullableScalarRelationFilter } from '../activity-funding/activity-funding-nullable-scalar-relation-filter.input';
+import { UserScalarRelationFilter } from '../user/user-scalar-relation-filter.input';
 
 @InputType()
 export class ProjectActivityWhereInput {
@@ -63,6 +67,15 @@ export class ProjectActivityWhereInput {
     @Field(() => StringNullableFilter, {nullable:true})
     deleted_by?: StringNullableFilter;
 
+    @Field(() => DateTimeFilter, {nullable:true})
+    deadline?: DateTimeFilter;
+
+    @Field(() => StringFilter, {nullable:true})
+    owner_id?: StringFilter;
+
+    @Field(() => EnumActivityTagsNullableListFilter, {nullable:true})
+    tags?: EnumActivityTagsNullableListFilter;
+
     @Field(() => SubsidyRequestListRelationFilter, {nullable:true})
     @Type(() => SubsidyRequestListRelationFilter)
     subsidy_request?: SubsidyRequestListRelationFilter;
@@ -74,4 +87,16 @@ export class ProjectActivityWhereInput {
     @Field(() => SubsidyReceiptListRelationFilter, {nullable:true})
     @Type(() => SubsidyReceiptListRelationFilter)
     subsidy_receipts?: SubsidyReceiptListRelationFilter;
+
+    @Field(() => ActivityDocumentsListRelationFilter, {nullable:true})
+    @Type(() => ActivityDocumentsListRelationFilter)
+    activity_documents?: ActivityDocumentsListRelationFilter;
+
+    @Field(() => ActivityFundingNullableScalarRelationFilter, {nullable:true})
+    @Type(() => ActivityFundingNullableScalarRelationFilter)
+    activity_funding?: ActivityFundingNullableScalarRelationFilter;
+
+    @Field(() => UserScalarRelationFilter, {nullable:true})
+    @Type(() => UserScalarRelationFilter)
+    owner?: UserScalarRelationFilter;
 }

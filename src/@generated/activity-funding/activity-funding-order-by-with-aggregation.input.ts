@@ -1,6 +1,7 @@
 import { Field } from '@nestjs/graphql';
 import { InputType } from '@nestjs/graphql';
 import { SortOrder } from '../prisma/sort-order.enum';
+import { SortOrderInput } from '../prisma/sort-order.input';
 import { ActivityFundingCountOrderByAggregateInput } from './activity-funding-count-order-by-aggregate.input';
 import { Type } from 'class-transformer';
 import { ActivityFundingAvgOrderByAggregateInput } from './activity-funding-avg-order-by-aggregate.input';
@@ -24,10 +25,10 @@ export class ActivityFundingOrderByWithAggregationInput {
     entity_id?: `${SortOrder}`;
 
     @Field(() => SortOrder, {nullable:true})
-    contribution_amount?: `${SortOrder}`;
+    entity_contribution_amount?: `${SortOrder}`;
 
     @Field(() => SortOrder, {nullable:true})
-    contribution_percent?: `${SortOrder}`;
+    entity_contribution_percent?: `${SortOrder}`;
 
     @Field(() => SortOrder, {nullable:true})
     validated?: `${SortOrder}`;
@@ -37,6 +38,9 @@ export class ActivityFundingOrderByWithAggregationInput {
 
     @Field(() => SortOrder, {nullable:true})
     updated_at?: `${SortOrder}`;
+
+    @Field(() => SortOrderInput, {nullable:true})
+    project_activity_id?: SortOrderInput;
 
     @Field(() => ActivityFundingCountOrderByAggregateInput, {nullable:true})
     @Type(() => ActivityFundingCountOrderByAggregateInput)

@@ -2,6 +2,7 @@ import { Field } from '@nestjs/graphql';
 import { InputType } from '@nestjs/graphql';
 import { Type } from 'class-transformer';
 import { StringWithAggregatesFilter } from '../prisma/string-with-aggregates-filter.input';
+import { EnumEntityTypeWithAggregatesFilter } from '../prisma/enum-entity-type-with-aggregates-filter.input';
 import { DecimalWithAggregatesFilter } from '../prisma/decimal-with-aggregates-filter.input';
 import { IntWithAggregatesFilter } from '../prisma/int-with-aggregates-filter.input';
 import { DateTimeWithAggregatesFilter } from '../prisma/date-time-with-aggregates-filter.input';
@@ -24,8 +25,8 @@ export class FundingPoliciesScalarWhereWithAggregatesInput {
     @Field(() => StringWithAggregatesFilter, {nullable:true})
     id?: StringWithAggregatesFilter;
 
-    @Field(() => StringWithAggregatesFilter, {nullable:true})
-    entity_type?: StringWithAggregatesFilter;
+    @Field(() => EnumEntityTypeWithAggregatesFilter, {nullable:true})
+    entity_type?: EnumEntityTypeWithAggregatesFilter;
 
     @Field(() => StringWithAggregatesFilter, {nullable:true})
     entity_id?: StringWithAggregatesFilter;

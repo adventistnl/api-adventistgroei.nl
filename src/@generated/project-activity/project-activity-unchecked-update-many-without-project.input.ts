@@ -7,6 +7,7 @@ import { DateTimeFieldUpdateOperationsInput } from '../prisma/date-time-field-up
 import { BoolFieldUpdateOperationsInput } from '../prisma/bool-field-update-operations.input';
 import { NullableDateTimeFieldUpdateOperationsInput } from '../prisma/nullable-date-time-field-update-operations.input';
 import { NullableStringFieldUpdateOperationsInput } from '../prisma/nullable-string-field-update-operations.input';
+import { ProjectActivityUpdatetagsInput } from './project-activity-updatetags.input';
 
 @InputType()
 export class ProjectActivityUncheckedUpdateManyWithoutProjectInput {
@@ -44,4 +45,14 @@ export class ProjectActivityUncheckedUpdateManyWithoutProjectInput {
 
     @Field(() => NullableStringFieldUpdateOperationsInput, {nullable:true})
     deleted_by?: NullableStringFieldUpdateOperationsInput;
+
+    @Field(() => DateTimeFieldUpdateOperationsInput, {nullable:true})
+    deadline?: DateTimeFieldUpdateOperationsInput;
+
+    @Field(() => StringFieldUpdateOperationsInput, {nullable:true})
+    owner_id?: StringFieldUpdateOperationsInput;
+
+    @Field(() => ProjectActivityUpdatetagsInput, {nullable:true})
+    @Type(() => ProjectActivityUpdatetagsInput)
+    tags?: ProjectActivityUpdatetagsInput;
 }

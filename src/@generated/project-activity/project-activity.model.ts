@@ -3,9 +3,13 @@ import { ObjectType } from '@nestjs/graphql';
 import { ID } from '@nestjs/graphql';
 import { GraphQLDecimal } from 'prisma-graphql-type-decimal';
 import { Decimal } from '@prisma/client/runtime/library';
+import { ActivityTags } from '../prisma/activity-tags.enum';
 import { SubsidyRequest } from '../subsidy-request/subsidy-request.model';
 import { Project } from '../project/project.model';
 import { SubsidyReceipt } from '../subsidy-receipt/subsidy-receipt.model';
+import { ActivityDocuments } from '../activity-documents/activity-documents.model';
+import { ActivityFunding } from '../activity-funding/activity-funding.model';
+import { User } from '../user/user.model';
 import { ProjectActivityCount } from './project-activity-count.output';
 
 @ObjectType()
@@ -47,6 +51,15 @@ export class ProjectActivity {
     @Field(() => String, {nullable:true})
     deleted_by!: string | null;
 
+    @Field(() => Date, {nullable:false})
+    deadline!: Date;
+
+    @Field(() => String, {nullable:false})
+    owner_id!: string;
+
+    @Field(() => [ActivityTags], {nullable:true})
+    tags!: Array<`${ActivityTags}`>;
+
     @Field(() => [SubsidyRequest], {nullable:true})
     subsidy_request?: Array<SubsidyRequest>;
 
@@ -55,6 +68,15 @@ export class ProjectActivity {
 
     @Field(() => [SubsidyReceipt], {nullable:true})
     subsidy_receipts?: Array<SubsidyReceipt>;
+
+    @Field(() => [ActivityDocuments], {nullable:true})
+    activity_documents?: Array<ActivityDocuments>;
+
+    @Field(() => ActivityFunding, {nullable:true})
+    activity_funding?: ActivityFunding | null;
+
+    @Field(() => User, {nullable:false})
+    owner?: User;
 
     @Field(() => ProjectActivityCount, {nullable:false})
     _count?: ProjectActivityCount;

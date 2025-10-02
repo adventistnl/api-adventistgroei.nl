@@ -7,8 +7,11 @@ import { DateTimeFieldUpdateOperationsInput } from '../prisma/date-time-field-up
 import { BoolFieldUpdateOperationsInput } from '../prisma/bool-field-update-operations.input';
 import { NullableDateTimeFieldUpdateOperationsInput } from '../prisma/nullable-date-time-field-update-operations.input';
 import { NullableStringFieldUpdateOperationsInput } from '../prisma/nullable-string-field-update-operations.input';
+import { ProjectActivityUpdatetagsInput } from './project-activity-updatetags.input';
 import { SubsidyRequestUncheckedUpdateManyWithoutProject_activitiesNestedInput } from '../subsidy-request/subsidy-request-unchecked-update-many-without-project-activities-nested.input';
 import { SubsidyReceiptUncheckedUpdateManyWithoutProject_activityNestedInput } from '../subsidy-receipt/subsidy-receipt-unchecked-update-many-without-project-activity-nested.input';
+import { ActivityDocumentsUncheckedUpdateManyWithoutProject_activityNestedInput } from '../activity-documents/activity-documents-unchecked-update-many-without-project-activity-nested.input';
+import { ActivityFundingUncheckedUpdateOneWithoutProject_activityNestedInput } from '../activity-funding/activity-funding-unchecked-update-one-without-project-activity-nested.input';
 
 @InputType()
 export class ProjectActivityUncheckedUpdateInput {
@@ -50,6 +53,16 @@ export class ProjectActivityUncheckedUpdateInput {
     @Field(() => NullableStringFieldUpdateOperationsInput, {nullable:true})
     deleted_by?: NullableStringFieldUpdateOperationsInput;
 
+    @Field(() => DateTimeFieldUpdateOperationsInput, {nullable:true})
+    deadline?: DateTimeFieldUpdateOperationsInput;
+
+    @Field(() => StringFieldUpdateOperationsInput, {nullable:true})
+    owner_id?: StringFieldUpdateOperationsInput;
+
+    @Field(() => ProjectActivityUpdatetagsInput, {nullable:true})
+    @Type(() => ProjectActivityUpdatetagsInput)
+    tags?: ProjectActivityUpdatetagsInput;
+
     @Field(() => SubsidyRequestUncheckedUpdateManyWithoutProject_activitiesNestedInput, {nullable:true})
     @Type(() => SubsidyRequestUncheckedUpdateManyWithoutProject_activitiesNestedInput)
     subsidy_request?: SubsidyRequestUncheckedUpdateManyWithoutProject_activitiesNestedInput;
@@ -57,4 +70,12 @@ export class ProjectActivityUncheckedUpdateInput {
     @Field(() => SubsidyReceiptUncheckedUpdateManyWithoutProject_activityNestedInput, {nullable:true})
     @Type(() => SubsidyReceiptUncheckedUpdateManyWithoutProject_activityNestedInput)
     subsidy_receipts?: SubsidyReceiptUncheckedUpdateManyWithoutProject_activityNestedInput;
+
+    @Field(() => ActivityDocumentsUncheckedUpdateManyWithoutProject_activityNestedInput, {nullable:true})
+    @Type(() => ActivityDocumentsUncheckedUpdateManyWithoutProject_activityNestedInput)
+    activity_documents?: ActivityDocumentsUncheckedUpdateManyWithoutProject_activityNestedInput;
+
+    @Field(() => ActivityFundingUncheckedUpdateOneWithoutProject_activityNestedInput, {nullable:true})
+    @Type(() => ActivityFundingUncheckedUpdateOneWithoutProject_activityNestedInput)
+    activity_funding?: ActivityFundingUncheckedUpdateOneWithoutProject_activityNestedInput;
 }

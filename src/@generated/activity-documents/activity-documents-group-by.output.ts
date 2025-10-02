@@ -31,6 +31,9 @@ export class ActivityDocumentsGroupBy {
     @Field(() => Date, {nullable:true})
     validated_at?: Date | string;
 
+    @Field(() => String, {nullable:true})
+    project_activity_id?: string;
+
     @Field(() => ActivityDocumentsCountAggregate, {nullable:true})
     _count?: ActivityDocumentsCountAggregate;
 
