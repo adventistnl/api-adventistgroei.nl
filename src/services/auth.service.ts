@@ -37,8 +37,6 @@ export class AuthService {
     const isValid = await bcrypt.compare(input.password, user.password);
     if (!isValid) throw new CustomGraphQLError('Invalid credentials', ErrorCode.UNAUTHORIZED, 401);
 
-    // Remover o campo password explicitamente
-    console.log(user);
     const { password, ...userWithoutPassword } = user;
     const payload = { sub: user.id, email: user.email };
     return {

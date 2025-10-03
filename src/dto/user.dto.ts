@@ -1,5 +1,4 @@
 import { InputType, Field } from '@nestjs/graphql';
-import { LanguagePreference } from 'src/@generated/prisma/language-preference.enum';
 import { ContactCreateDto } from './contact.dto';
 import { IsString  } from 'class-validator';
 
@@ -46,8 +45,8 @@ export class UserUpdateDto {
   @IsString()
   email?: string;
   
-  @Field(() => LanguagePreference, { nullable: true })
-  language_preference?: LanguagePreference;
+  @Field(() => String, { nullable: true })
+  language_preference?: string;
 
   @Field({ nullable: true })
   @IsString()
@@ -63,7 +62,10 @@ export class UserUpdateDto {
 
   @Field({ nullable: true })
   contact_id?: string;
-  
+
+  @Field(() => Boolean, { nullable: true })
+  is_deleted?: boolean;
+
   @Field(() => ContactCreateDto, { nullable: true })
   contact?: ContactCreateDto;
 }

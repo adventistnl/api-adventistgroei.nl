@@ -65,7 +65,9 @@ export class UserRepository {
   async update(user_to_update_id: string, data: UserUpdateDto, requester_id: string): Promise<Omit<User, 'password'>> {
     const user = await this.prisma.user.findUnique({ where: { id: user_to_update_id } });
     if (!user) throw new Error('User not found');
-
+    if (data.language_preference && !Object.values(LanguagePreference).includes(data.language_preference as LanguagePreference)) {
+      throw new Error('Invalid language preference');
+    }
     const { contact_id, church_id, department_id, institution_id, ...rest } = data;
 
     // os métodos já estouram erros caso não encontrem
@@ -96,6 +98,7 @@ export class UserRepository {
       where: { id: user_to_update_id },
       data: {
         ...filteredData,
+        language_preference: data.language_preference ? LanguagePreference[data.language_preference] : undefined,
         updated_by: requester_id,
         contact: contactData,
       },
@@ -201,8 +204,14 @@ export class UserRepository {
 
     return this.prisma.user.findMany({
       where: {
-        is_deleted: false,
         ...filters,
+      },
+      include: {
+        contact: true,
+        institution: true,
+        church: true,
+        department: true,
+        user_roles: { include: { role: true }, where: { is_deleted: false } },
       },
     });
   }

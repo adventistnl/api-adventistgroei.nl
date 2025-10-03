@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { ProjectActivity } from 'src/@generated/project-activity/project-activity.model';
 import { CustomGraphQLError, ErrorCode } from 'src/common/errors/custom-graphql-error';
-import { ProjectActivityCreateDto, ProjectActivityUpdateDto } from 'src/dto/project-activity.dto';
+// import { ProjectActivityCreateDto, ProjectActivityUpdateDto } from 'src/dto/project-activity.dto';
 import { PrismaService } from 'src/services';
 
 @Injectable()
