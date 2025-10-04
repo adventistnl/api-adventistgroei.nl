@@ -48,6 +48,9 @@ export class Permission {
     @Field(() => String, {nullable:true})
     deleted_by!: string | null;
 
+    @Field(() => Boolean, {defaultValue:false,nullable:false})
+    disabled_to_client!: boolean;
+
     @Field(() => [RolePermission], {nullable:true})
     role_permissions?: Array<RolePermission>;
 

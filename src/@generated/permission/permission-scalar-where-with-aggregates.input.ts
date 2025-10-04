@@ -58,4 +58,7 @@ export class PermissionScalarWhereWithAggregatesInput {
 
     @Field(() => StringNullableWithAggregatesFilter, {nullable:true})
     deleted_by?: StringNullableWithAggregatesFilter;
+
+    @Field(() => BoolWithAggregatesFilter, {nullable:true})
+    disabled_to_client?: BoolWithAggregatesFilter;
 }

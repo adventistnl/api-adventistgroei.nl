@@ -454,20 +454,21 @@ model Role {
 }
 
 model Permission {
-  id               String                 @id @default(uuid())
-  name             String
-  description      String
-  key_code         String                 @unique
-  resolver_name    PermissionResolverName @unique
-  group            PermissionGroup?
-  created_at       DateTime               @default(now())
-  updated_at       DateTime               @updatedAt
-  created_by       String
-  updated_by       String
-  is_deleted       Boolean                @default(false)
-  deleted_at       DateTime?
-  deleted_by       String?
-  role_permissions RolePermission[]
+  id                 String                 @id @default(uuid())
+  name               String
+  description        String
+  key_code           String                 @unique
+  resolver_name      PermissionResolverName @unique
+  group              PermissionGroup?
+  created_at         DateTime               @default(now())
+  updated_at         DateTime               @updatedAt
+  created_by         String
+  updated_by         String
+  is_deleted         Boolean                @default(false)
+  deleted_at         DateTime?
+  deleted_by         String?
+  role_permissions   RolePermission[]
+  disabled_to_client Boolean                @default(false)
 }
 
 model RolePermission {

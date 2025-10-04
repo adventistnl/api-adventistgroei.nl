@@ -48,6 +48,9 @@ export class PermissionOrderByWithAggregationInput {
     @Field(() => SortOrderInput, {nullable:true})
     deleted_by?: SortOrderInput;
 
+    @Field(() => SortOrder, {nullable:true})
+    disabled_to_client?: `${SortOrder}`;
+
     @Field(() => PermissionCountOrderByAggregateInput, {nullable:true})
     _count?: PermissionCountOrderByAggregateInput;
 

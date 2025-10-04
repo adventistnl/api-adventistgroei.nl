@@ -46,6 +46,9 @@ export class PermissionOrderByWithRelationInput {
     @Field(() => SortOrderInput, {nullable:true})
     deleted_by?: SortOrderInput;
 
+    @Field(() => SortOrder, {nullable:true})
+    disabled_to_client?: `${SortOrder}`;
+
     @Field(() => RolePermissionOrderByRelationAggregateInput, {nullable:true})
     role_permissions?: RolePermissionOrderByRelationAggregateInput;
 }

@@ -51,6 +51,9 @@ export class PermissionUncheckedUpdateInput {
     @Field(() => NullableStringFieldUpdateOperationsInput, {nullable:true})
     deleted_by?: NullableStringFieldUpdateOperationsInput;
 
+    @Field(() => BoolFieldUpdateOperationsInput, {nullable:true})
+    disabled_to_client?: BoolFieldUpdateOperationsInput;
+
     @Field(() => RolePermissionUncheckedUpdateManyWithoutPermissionNestedInput, {nullable:true})
     role_permissions?: RolePermissionUncheckedUpdateManyWithoutPermissionNestedInput;
 }

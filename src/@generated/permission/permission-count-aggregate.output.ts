@@ -45,5 +45,8 @@ export class PermissionCountAggregate {
     deleted_by!: number;
 
     @Field(() => Int, {nullable:false})
+    disabled_to_client!: number;
+
+    @Field(() => Int, {nullable:false})
     _all!: number;
 }

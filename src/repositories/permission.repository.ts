@@ -8,7 +8,7 @@ export class PermissionRepository {
   constructor(private readonly prisma: PrismaService) {}
 
   async findAll(): Promise<Permission[]> {
-    const permissions = await this.prisma.permission.findMany({ where: { is_deleted: false } });
+    const permissions = await this.prisma.permission.findMany({ where: { is_deleted: false, disabled_to_client: false } });
     return permissions;
   }
 

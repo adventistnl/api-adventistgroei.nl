@@ -46,6 +46,9 @@ export class PermissionCreateInput {
     @Field(() => String, {nullable:true})
     deleted_by?: string;
 
+    @Field(() => Boolean, {nullable:true})
+    disabled_to_client?: boolean;
+
     @Field(() => RolePermissionCreateNestedManyWithoutPermissionInput, {nullable:true})
     role_permissions?: RolePermissionCreateNestedManyWithoutPermissionInput;
 }

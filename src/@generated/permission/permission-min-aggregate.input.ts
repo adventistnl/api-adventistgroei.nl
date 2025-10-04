@@ -42,4 +42,7 @@ export class PermissionMinAggregateInput {
 
     @Field(() => Boolean, {nullable:true})
     deleted_by?: true;
+
+    @Field(() => Boolean, {nullable:true})
+    disabled_to_client?: true;
 }
