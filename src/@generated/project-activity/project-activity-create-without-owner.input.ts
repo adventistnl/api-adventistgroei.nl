@@ -10,7 +10,7 @@ import { SubsidyRequestCreateNestedManyWithoutProject_activitiesInput } from '..
 import { ProjectCreateNestedOneWithoutActivitiesInput } from '../project/project-create-nested-one-without-activities.input';
 import { SubsidyReceiptCreateNestedManyWithoutProject_activityInput } from '../subsidy-receipt/subsidy-receipt-create-nested-many-without-project-activity.input';
 import { ActivityDocumentsCreateNestedManyWithoutProject_activityInput } from '../activity-documents/activity-documents-create-nested-many-without-project-activity.input';
-import { ActivityFundingCreateNestedOneWithoutProject_activityInput } from '../activity-funding/activity-funding-create-nested-one-without-project-activity.input';
+import { ActivityFundingCreateNestedOneWithoutActivityInput } from '../activity-funding/activity-funding-create-nested-one-without-activity.input';
 
 @InputType()
 export class ProjectActivityCreateWithoutOwnerInput {
@@ -73,7 +73,7 @@ export class ProjectActivityCreateWithoutOwnerInput {
     @Type(() => ActivityDocumentsCreateNestedManyWithoutProject_activityInput)
     activity_documents?: ActivityDocumentsCreateNestedManyWithoutProject_activityInput;
 
-    @Field(() => ActivityFundingCreateNestedOneWithoutProject_activityInput, {nullable:true})
-    @Type(() => ActivityFundingCreateNestedOneWithoutProject_activityInput)
-    activity_funding?: ActivityFundingCreateNestedOneWithoutProject_activityInput;
+    @Field(() => ActivityFundingCreateNestedOneWithoutActivityInput, {nullable:true})
+    @Type(() => ActivityFundingCreateNestedOneWithoutActivityInput)
+    activity_funding?: ActivityFundingCreateNestedOneWithoutActivityInput;
 }

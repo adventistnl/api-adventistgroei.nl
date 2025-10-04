@@ -21,7 +21,7 @@ export class FindFirstActivityFundingArgs {
 
     @Field(() => ActivityFundingWhereUniqueInput, {nullable:true})
     @Type(() => ActivityFundingWhereUniqueInput)
-    cursor?: Prisma.AtLeast<ActivityFundingWhereUniqueInput, 'id' | 'project_activity_id'>;
+    cursor?: Prisma.AtLeast<ActivityFundingWhereUniqueInput, 'id' | 'activity_id'>;
 
     @Field(() => Int, {nullable:true})
     take?: number;

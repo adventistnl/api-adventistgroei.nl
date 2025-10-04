@@ -1,9 +1,10 @@
 import { Field } from '@nestjs/graphql';
 import { ObjectType } from '@nestjs/graphql';
 import { ID } from '@nestjs/graphql';
-import { EntityType } from '../prisma/entity-type.enum';
 import { GraphQLDecimal } from 'prisma-graphql-type-decimal';
 import { Decimal } from '@prisma/client/runtime/library';
+import { Float } from '@nestjs/graphql';
+import { EntityType } from '../prisma/entity-type.enum';
 import { ProjectActivity } from '../project-activity/project-activity.model';
 
 @ObjectType()
@@ -15,17 +16,17 @@ export class ActivityFunding {
     @Field(() => String, {nullable:false})
     activity_id!: string;
 
+    @Field(() => GraphQLDecimal, {nullable:false})
+    entity_contribution_amount!: Decimal;
+
+    @Field(() => Float, {nullable:false})
+    entity_contribution_percent!: number;
+
     @Field(() => EntityType, {nullable:false})
     entity_type!: `${EntityType}`;
 
     @Field(() => String, {nullable:false})
     entity_id!: string;
-
-    @Field(() => GraphQLDecimal, {nullable:false})
-    entity_contribution_amount!: Decimal;
-
-    @Field(() => GraphQLDecimal, {nullable:false})
-    entity_contribution_percent!: Decimal;
 
     @Field(() => Boolean, {defaultValue:false,nullable:false})
     validated!: boolean;
@@ -36,9 +37,6 @@ export class ActivityFunding {
     @Field(() => Date, {nullable:false})
     updated_at!: Date;
 
-    @Field(() => String, {nullable:true})
-    project_activity_id!: string | null;
-
-    @Field(() => ProjectActivity, {nullable:true})
-    project_activity?: ProjectActivity | null;
+    @Field(() => ProjectActivity, {nullable:false})
+    activity?: ProjectActivity;
 }

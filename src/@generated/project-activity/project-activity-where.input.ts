@@ -12,8 +12,8 @@ import { SubsidyRequestListRelationFilter } from '../subsidy-request/subsidy-req
 import { ProjectScalarRelationFilter } from '../project/project-scalar-relation-filter.input';
 import { SubsidyReceiptListRelationFilter } from '../subsidy-receipt/subsidy-receipt-list-relation-filter.input';
 import { ActivityDocumentsListRelationFilter } from '../activity-documents/activity-documents-list-relation-filter.input';
-import { ActivityFundingNullableScalarRelationFilter } from '../activity-funding/activity-funding-nullable-scalar-relation-filter.input';
 import { UserScalarRelationFilter } from '../user/user-scalar-relation-filter.input';
+import { ActivityFundingNullableScalarRelationFilter } from '../activity-funding/activity-funding-nullable-scalar-relation-filter.input';
 
 @InputType()
 export class ProjectActivityWhereInput {
@@ -92,11 +92,11 @@ export class ProjectActivityWhereInput {
     @Type(() => ActivityDocumentsListRelationFilter)
     activity_documents?: ActivityDocumentsListRelationFilter;
 
-    @Field(() => ActivityFundingNullableScalarRelationFilter, {nullable:true})
-    @Type(() => ActivityFundingNullableScalarRelationFilter)
-    activity_funding?: ActivityFundingNullableScalarRelationFilter;
-
     @Field(() => UserScalarRelationFilter, {nullable:true})
     @Type(() => UserScalarRelationFilter)
     owner?: UserScalarRelationFilter;
+
+    @Field(() => ActivityFundingNullableScalarRelationFilter, {nullable:true})
+    @Type(() => ActivityFundingNullableScalarRelationFilter)
+    activity_funding?: ActivityFundingNullableScalarRelationFilter;
 }

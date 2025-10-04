@@ -12,16 +12,16 @@ export class ActivityFundingCountAggregate {
     activity_id!: number;
 
     @Field(() => Int, {nullable:false})
-    entity_type!: number;
-
-    @Field(() => Int, {nullable:false})
-    entity_id!: number;
-
-    @Field(() => Int, {nullable:false})
     entity_contribution_amount!: number;
 
     @Field(() => Int, {nullable:false})
     entity_contribution_percent!: number;
+
+    @Field(() => Int, {nullable:false})
+    entity_type!: number;
+
+    @Field(() => Int, {nullable:false})
+    entity_id!: number;
 
     @Field(() => Int, {nullable:false})
     validated!: number;
@@ -31,9 +31,6 @@ export class ActivityFundingCountAggregate {
 
     @Field(() => Int, {nullable:false})
     updated_at!: number;
-
-    @Field(() => Int, {nullable:false})
-    project_activity_id!: number;
 
     @Field(() => Int, {nullable:false})
     _all!: number;

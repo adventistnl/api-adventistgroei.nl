@@ -33,9 +33,6 @@ export class ProjectUpdateWithoutOwnerInput {
     @Type(() => DecimalFieldUpdateOperationsInput)
     budget?: DecimalFieldUpdateOperationsInput;
 
-    @Field(() => StringFieldUpdateOperationsInput, {nullable:true})
-    media_link?: StringFieldUpdateOperationsInput;
-
     @Field(() => EnumLanguagePreferenceFieldUpdateOperationsInput, {nullable:true})
     language_preference?: EnumLanguagePreferenceFieldUpdateOperationsInput;
 

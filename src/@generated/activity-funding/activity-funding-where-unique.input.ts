@@ -2,12 +2,13 @@ import { Field } from '@nestjs/graphql';
 import { InputType } from '@nestjs/graphql';
 import { ActivityFundingWhereInput } from './activity-funding-where.input';
 import { Type } from 'class-transformer';
-import { StringFilter } from '../prisma/string-filter.input';
-import { EnumEntityTypeFilter } from '../prisma/enum-entity-type-filter.input';
 import { DecimalFilter } from '../prisma/decimal-filter.input';
+import { FloatFilter } from '../prisma/float-filter.input';
+import { EnumEntityTypeFilter } from '../prisma/enum-entity-type-filter.input';
+import { StringFilter } from '../prisma/string-filter.input';
 import { BoolFilter } from '../prisma/bool-filter.input';
 import { DateTimeFilter } from '../prisma/date-time-filter.input';
-import { ProjectActivityNullableScalarRelationFilter } from '../project-activity/project-activity-nullable-scalar-relation-filter.input';
+import { ProjectActivityScalarRelationFilter } from '../project-activity/project-activity-scalar-relation-filter.input';
 
 @InputType()
 export class ActivityFundingWhereUniqueInput {
@@ -16,7 +17,7 @@ export class ActivityFundingWhereUniqueInput {
     id?: string;
 
     @Field(() => String, {nullable:true})
-    project_activity_id?: string;
+    activity_id?: string;
 
     @Field(() => [ActivityFundingWhereInput], {nullable:true})
     @Type(() => ActivityFundingWhereInput)
@@ -30,22 +31,18 @@ export class ActivityFundingWhereUniqueInput {
     @Type(() => ActivityFundingWhereInput)
     NOT?: Array<ActivityFundingWhereInput>;
 
-    @Field(() => StringFilter, {nullable:true})
-    activity_id?: StringFilter;
+    @Field(() => DecimalFilter, {nullable:true})
+    @Type(() => DecimalFilter)
+    entity_contribution_amount?: DecimalFilter;
+
+    @Field(() => FloatFilter, {nullable:true})
+    entity_contribution_percent?: FloatFilter;
 
     @Field(() => EnumEntityTypeFilter, {nullable:true})
     entity_type?: EnumEntityTypeFilter;
 
     @Field(() => StringFilter, {nullable:true})
     entity_id?: StringFilter;
-
-    @Field(() => DecimalFilter, {nullable:true})
-    @Type(() => DecimalFilter)
-    entity_contribution_amount?: DecimalFilter;
-
-    @Field(() => DecimalFilter, {nullable:true})
-    @Type(() => DecimalFilter)
-    entity_contribution_percent?: DecimalFilter;
 
     @Field(() => BoolFilter, {nullable:true})
     validated?: BoolFilter;
@@ -56,7 +53,7 @@ export class ActivityFundingWhereUniqueInput {
     @Field(() => DateTimeFilter, {nullable:true})
     updated_at?: DateTimeFilter;
 
-    @Field(() => ProjectActivityNullableScalarRelationFilter, {nullable:true})
-    @Type(() => ProjectActivityNullableScalarRelationFilter)
-    project_activity?: ProjectActivityNullableScalarRelationFilter;
+    @Field(() => ProjectActivityScalarRelationFilter, {nullable:true})
+    @Type(() => ProjectActivityScalarRelationFilter)
+    activity?: ProjectActivityScalarRelationFilter;
 }

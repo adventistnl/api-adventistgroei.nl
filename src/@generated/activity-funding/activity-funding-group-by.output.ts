@@ -1,8 +1,9 @@
 import { Field } from '@nestjs/graphql';
 import { ObjectType } from '@nestjs/graphql';
-import { EntityType } from '../prisma/entity-type.enum';
 import { Decimal } from '@prisma/client/runtime/library';
 import { GraphQLDecimal } from 'prisma-graphql-type-decimal';
+import { Float } from '@nestjs/graphql';
+import { EntityType } from '../prisma/entity-type.enum';
 import { ActivityFundingCountAggregate } from './activity-funding-count-aggregate.output';
 import { ActivityFundingAvgAggregate } from './activity-funding-avg-aggregate.output';
 import { ActivityFundingSumAggregate } from './activity-funding-sum-aggregate.output';
@@ -18,17 +19,17 @@ export class ActivityFundingGroupBy {
     @Field(() => String, {nullable:false})
     activity_id!: string;
 
+    @Field(() => GraphQLDecimal, {nullable:false})
+    entity_contribution_amount!: Decimal;
+
+    @Field(() => Float, {nullable:false})
+    entity_contribution_percent!: number;
+
     @Field(() => EntityType, {nullable:false})
     entity_type!: `${EntityType}`;
 
     @Field(() => String, {nullable:false})
     entity_id!: string;
-
-    @Field(() => GraphQLDecimal, {nullable:false})
-    entity_contribution_amount!: Decimal;
-
-    @Field(() => GraphQLDecimal, {nullable:false})
-    entity_contribution_percent!: Decimal;
 
     @Field(() => Boolean, {nullable:false})
     validated!: boolean;
@@ -38,9 +39,6 @@ export class ActivityFundingGroupBy {
 
     @Field(() => Date, {nullable:false})
     updated_at!: Date | string;
-
-    @Field(() => String, {nullable:true})
-    project_activity_id?: string;
 
     @Field(() => ActivityFundingCountAggregate, {nullable:true})
     _count?: ActivityFundingCountAggregate;

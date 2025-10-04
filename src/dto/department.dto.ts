@@ -13,8 +13,9 @@ export class DepartmentCreateDto {
   @IsString()
   description: string;
 
-  @Field()
-  annual_budget: AnnualBudgetCreateDto;
+  @Field(() => AnnualBudgetCreateDto, { nullable: true })
+  @IsOptional()
+  annual_budget?: AnnualBudgetCreateDto;
 
   @Field()
   @IsString()

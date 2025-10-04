@@ -547,7 +547,7 @@ model ProjectActivity {
   owner_id            String
   owner               User                @relation(fields: [owner_id], references: [id])
   tags                ActivityTags[]
-  activity_funding    ActivityFunding?    @relation("ActivityFundingToProjectActivity")
+  activity_funding    ActivityFunding?    
 }
 
 model SubsidyReceipt {
@@ -792,13 +792,16 @@ model FundingPolicies {
 }
 
 model ActivityFunding {
-  id                          String              @id @default(uuid())
-  activity_id               String
-  activity                  ProjectActivity     @relation(fields: [activity_id], references: [id])
-  entity_contribution_amount Decimal
+  id                          String                @id @default(uuid())
+  activity_id                 String                @unique 
+  activity                    ProjectActivity       @relation(fields: [activity_id], references: [id])
+  entity_contribution_amount  Decimal
   entity_contribution_percent Float
-  entity_type               EntityType
-  entity_id                 String
+  entity_type                 EntityType
+  entity_id                   String
+  validated            Boolean  @default(false)
+  created_at           DateTime @default(now())
+  updated_at           DateTime @updatedAt
 }
 
 model ActivityDocuments {

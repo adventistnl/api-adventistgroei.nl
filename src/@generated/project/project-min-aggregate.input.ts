@@ -20,9 +20,6 @@ export class ProjectMinAggregateInput {
     budget?: true;
 
     @Field(() => Boolean, {nullable:true})
-    media_link?: true;
-
-    @Field(() => Boolean, {nullable:true})
     owner_id?: true;
 
     @Field(() => Boolean, {nullable:true})

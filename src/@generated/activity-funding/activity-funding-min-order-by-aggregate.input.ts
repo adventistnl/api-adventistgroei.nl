@@ -12,16 +12,16 @@ export class ActivityFundingMinOrderByAggregateInput {
     activity_id?: `${SortOrder}`;
 
     @Field(() => SortOrder, {nullable:true})
-    entity_type?: `${SortOrder}`;
-
-    @Field(() => SortOrder, {nullable:true})
-    entity_id?: `${SortOrder}`;
-
-    @Field(() => SortOrder, {nullable:true})
     entity_contribution_amount?: `${SortOrder}`;
 
     @Field(() => SortOrder, {nullable:true})
     entity_contribution_percent?: `${SortOrder}`;
+
+    @Field(() => SortOrder, {nullable:true})
+    entity_type?: `${SortOrder}`;
+
+    @Field(() => SortOrder, {nullable:true})
+    entity_id?: `${SortOrder}`;
 
     @Field(() => SortOrder, {nullable:true})
     validated?: `${SortOrder}`;
@@ -31,7 +31,4 @@ export class ActivityFundingMinOrderByAggregateInput {
 
     @Field(() => SortOrder, {nullable:true})
     updated_at?: `${SortOrder}`;
-
-    @Field(() => SortOrder, {nullable:true})
-    project_activity_id?: `${SortOrder}`;
 }

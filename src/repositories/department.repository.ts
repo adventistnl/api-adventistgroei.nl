@@ -5,7 +5,7 @@ import { DepartmentCreateDto, DepartmentUpdateDto } from 'src/dto';
 import { CustomGraphQLError, ErrorCode } from 'src/common/errors/custom-graphql-error';
 import { InstitutionRepository } from './institution.repository';
 import { ChurchRepository } from './church.repository';
-import { Prisma } from '@prisma/client';
+import { AnnualBudget, Prisma } from '@prisma/client';
 
 @Injectable()
 export class DepartmentRepository {
@@ -45,23 +45,26 @@ export class DepartmentRepository {
       });
       contactId = contact.id;
     }
-
-    const annual_budget = await this.prisma.annualBudget.create({
-      data: {
-        balance: new Prisma.Decimal(data.annual_budget.balance),
-        planned_budget: new Prisma.Decimal(data.annual_budget.planned_budget),
-        total_expenses: new Prisma.Decimal(data.annual_budget.total_expenses),
-        year: data.annual_budget.year,
-        created_by: userId,
-        updated_by: userId,
-      },
-    });
+    const { annual_budget: annualBudgetData } = data
+    let annual_budget: AnnualBudget | undefined;
+    if (annualBudgetData) {
+      annual_budget = await this.prisma.annualBudget.create({
+        data: {
+          balance: new Prisma.Decimal(annualBudgetData.balance),
+          planned_budget: new Prisma.Decimal(annualBudgetData.planned_budget),
+          total_expenses: new Prisma.Decimal(annualBudgetData.total_expenses),
+          year: annualBudgetData.year,
+          created_by: userId,
+          updated_by: userId,
+        },
+      });
+    }
 
     return this.prisma.department.create({
       data: {
         name: data.name,
         description: data.description,
-        annual_budget: { connect: { id: annual_budget.id } },
+        annual_budget: annual_budget ? { connect: { id: annual_budget.id } } : undefined,
         institution: { connect: { id: data.institution } },
         church: { connect: { id: data.church } },
         contact: contactId ? { connect: { id: contactId } } : undefined,

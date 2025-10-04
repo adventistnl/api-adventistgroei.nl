@@ -1,8 +1,9 @@
 import { Field } from '@nestjs/graphql';
 import { ObjectType } from '@nestjs/graphql';
-import { EntityType } from '../prisma/entity-type.enum';
 import { Decimal } from '@prisma/client/runtime/library';
 import { GraphQLDecimal } from 'prisma-graphql-type-decimal';
+import { Float } from '@nestjs/graphql';
+import { EntityType } from '../prisma/entity-type.enum';
 
 @ObjectType()
 export class ActivityFundingMaxAggregate {
@@ -13,17 +14,17 @@ export class ActivityFundingMaxAggregate {
     @Field(() => String, {nullable:true})
     activity_id?: string;
 
+    @Field(() => GraphQLDecimal, {nullable:true})
+    entity_contribution_amount?: Decimal;
+
+    @Field(() => Float, {nullable:true})
+    entity_contribution_percent?: number;
+
     @Field(() => EntityType, {nullable:true})
     entity_type?: `${EntityType}`;
 
     @Field(() => String, {nullable:true})
     entity_id?: string;
-
-    @Field(() => GraphQLDecimal, {nullable:true})
-    entity_contribution_amount?: Decimal;
-
-    @Field(() => GraphQLDecimal, {nullable:true})
-    entity_contribution_percent?: Decimal;
 
     @Field(() => Boolean, {nullable:true})
     validated?: boolean;
@@ -33,7 +34,4 @@ export class ActivityFundingMaxAggregate {
 
     @Field(() => Date, {nullable:true})
     updated_at?: Date | string;
-
-    @Field(() => String, {nullable:true})
-    project_activity_id?: string;
 }

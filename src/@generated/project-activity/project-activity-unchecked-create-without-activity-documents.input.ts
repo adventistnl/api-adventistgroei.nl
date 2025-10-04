@@ -8,7 +8,7 @@ import { Type } from 'class-transformer';
 import { ProjectActivityCreatetagsInput } from './project-activity-createtags.input';
 import { SubsidyRequestUncheckedCreateNestedManyWithoutProject_activitiesInput } from '../subsidy-request/subsidy-request-unchecked-create-nested-many-without-project-activities.input';
 import { SubsidyReceiptUncheckedCreateNestedManyWithoutProject_activityInput } from '../subsidy-receipt/subsidy-receipt-unchecked-create-nested-many-without-project-activity.input';
-import { ActivityFundingUncheckedCreateNestedOneWithoutProject_activityInput } from '../activity-funding/activity-funding-unchecked-create-nested-one-without-project-activity.input';
+import { ActivityFundingUncheckedCreateNestedOneWithoutActivityInput } from '../activity-funding/activity-funding-unchecked-create-nested-one-without-activity.input';
 
 @InputType()
 export class ProjectActivityUncheckedCreateWithoutActivity_documentsInput {
@@ -69,7 +69,7 @@ export class ProjectActivityUncheckedCreateWithoutActivity_documentsInput {
     @Type(() => SubsidyReceiptUncheckedCreateNestedManyWithoutProject_activityInput)
     subsidy_receipts?: SubsidyReceiptUncheckedCreateNestedManyWithoutProject_activityInput;
 
-    @Field(() => ActivityFundingUncheckedCreateNestedOneWithoutProject_activityInput, {nullable:true})
-    @Type(() => ActivityFundingUncheckedCreateNestedOneWithoutProject_activityInput)
-    activity_funding?: ActivityFundingUncheckedCreateNestedOneWithoutProject_activityInput;
+    @Field(() => ActivityFundingUncheckedCreateNestedOneWithoutActivityInput, {nullable:true})
+    @Type(() => ActivityFundingUncheckedCreateNestedOneWithoutActivityInput)
+    activity_funding?: ActivityFundingUncheckedCreateNestedOneWithoutActivityInput;
 }

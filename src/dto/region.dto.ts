@@ -20,10 +20,10 @@ export class RegionCreateDto {
   @Field(() => ContactCreateDto, { nullable: true })
   @IsOptional()
   contact?: ContactCreateDto;
+  
   @Field(() => AnnualBudgetCreateDto, { nullable: true })
-
   @IsOptional()
-  annual_budget: AnnualBudgetCreateDto;
+  annual_budget?: AnnualBudgetCreateDto;
 }
 
 @InputType()

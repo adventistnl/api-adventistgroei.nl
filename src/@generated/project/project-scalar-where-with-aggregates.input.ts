@@ -42,9 +42,6 @@ export class ProjectScalarWhereWithAggregatesInput {
     budget?: DecimalWithAggregatesFilter;
 
     @Field(() => StringWithAggregatesFilter, {nullable:true})
-    media_link?: StringWithAggregatesFilter;
-
-    @Field(() => StringWithAggregatesFilter, {nullable:true})
     owner_id?: StringWithAggregatesFilter;
 
     @Field(() => EnumLanguagePreferenceWithAggregatesFilter, {nullable:true})

@@ -11,8 +11,8 @@ import { ProjectActivityUpdatetagsInput } from './project-activity-updatetags.in
 import { ProjectUpdateOneRequiredWithoutActivitiesNestedInput } from '../project/project-update-one-required-without-activities-nested.input';
 import { SubsidyReceiptUpdateManyWithoutProject_activityNestedInput } from '../subsidy-receipt/subsidy-receipt-update-many-without-project-activity-nested.input';
 import { ActivityDocumentsUpdateManyWithoutProject_activityNestedInput } from '../activity-documents/activity-documents-update-many-without-project-activity-nested.input';
-import { ActivityFundingUpdateOneWithoutProject_activityNestedInput } from '../activity-funding/activity-funding-update-one-without-project-activity-nested.input';
 import { UserUpdateOneRequiredWithoutProject_activitiesNestedInput } from '../user/user-update-one-required-without-project-activities-nested.input';
+import { ActivityFundingUpdateOneWithoutActivityNestedInput } from '../activity-funding/activity-funding-update-one-without-activity-nested.input';
 
 @InputType()
 export class ProjectActivityUpdateWithoutSubsidy_requestInput {
@@ -70,11 +70,11 @@ export class ProjectActivityUpdateWithoutSubsidy_requestInput {
     @Type(() => ActivityDocumentsUpdateManyWithoutProject_activityNestedInput)
     activity_documents?: ActivityDocumentsUpdateManyWithoutProject_activityNestedInput;
 
-    @Field(() => ActivityFundingUpdateOneWithoutProject_activityNestedInput, {nullable:true})
-    @Type(() => ActivityFundingUpdateOneWithoutProject_activityNestedInput)
-    activity_funding?: ActivityFundingUpdateOneWithoutProject_activityNestedInput;
-
     @Field(() => UserUpdateOneRequiredWithoutProject_activitiesNestedInput, {nullable:true})
     @Type(() => UserUpdateOneRequiredWithoutProject_activitiesNestedInput)
     owner?: UserUpdateOneRequiredWithoutProject_activitiesNestedInput;
+
+    @Field(() => ActivityFundingUpdateOneWithoutActivityNestedInput, {nullable:true})
+    @Type(() => ActivityFundingUpdateOneWithoutActivityNestedInput)
+    activity_funding?: ActivityFundingUpdateOneWithoutActivityNestedInput;
 }

@@ -11,8 +11,8 @@ import { ProjectActivityUpdatetagsInput } from './project-activity-updatetags.in
 import { SubsidyRequestUpdateManyWithoutProject_activitiesNestedInput } from '../subsidy-request/subsidy-request-update-many-without-project-activities-nested.input';
 import { ProjectUpdateOneRequiredWithoutActivitiesNestedInput } from '../project/project-update-one-required-without-activities-nested.input';
 import { SubsidyReceiptUpdateManyWithoutProject_activityNestedInput } from '../subsidy-receipt/subsidy-receipt-update-many-without-project-activity-nested.input';
-import { ActivityFundingUpdateOneWithoutProject_activityNestedInput } from '../activity-funding/activity-funding-update-one-without-project-activity-nested.input';
 import { UserUpdateOneRequiredWithoutProject_activitiesNestedInput } from '../user/user-update-one-required-without-project-activities-nested.input';
+import { ActivityFundingUpdateOneWithoutActivityNestedInput } from '../activity-funding/activity-funding-update-one-without-activity-nested.input';
 
 @InputType()
 export class ProjectActivityUpdateWithoutActivity_documentsInput {
@@ -70,11 +70,11 @@ export class ProjectActivityUpdateWithoutActivity_documentsInput {
     @Type(() => SubsidyReceiptUpdateManyWithoutProject_activityNestedInput)
     subsidy_receipts?: SubsidyReceiptUpdateManyWithoutProject_activityNestedInput;
 
-    @Field(() => ActivityFundingUpdateOneWithoutProject_activityNestedInput, {nullable:true})
-    @Type(() => ActivityFundingUpdateOneWithoutProject_activityNestedInput)
-    activity_funding?: ActivityFundingUpdateOneWithoutProject_activityNestedInput;
-
     @Field(() => UserUpdateOneRequiredWithoutProject_activitiesNestedInput, {nullable:true})
     @Type(() => UserUpdateOneRequiredWithoutProject_activitiesNestedInput)
     owner?: UserUpdateOneRequiredWithoutProject_activitiesNestedInput;
+
+    @Field(() => ActivityFundingUpdateOneWithoutActivityNestedInput, {nullable:true})
+    @Type(() => ActivityFundingUpdateOneWithoutActivityNestedInput)
+    activity_funding?: ActivityFundingUpdateOneWithoutActivityNestedInput;
 }

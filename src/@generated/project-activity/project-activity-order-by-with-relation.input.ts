@@ -7,8 +7,8 @@ import { Type } from 'class-transformer';
 import { ProjectOrderByWithRelationInput } from '../project/project-order-by-with-relation.input';
 import { SubsidyReceiptOrderByRelationAggregateInput } from '../subsidy-receipt/subsidy-receipt-order-by-relation-aggregate.input';
 import { ActivityDocumentsOrderByRelationAggregateInput } from '../activity-documents/activity-documents-order-by-relation-aggregate.input';
-import { ActivityFundingOrderByWithRelationInput } from '../activity-funding/activity-funding-order-by-with-relation.input';
 import { UserOrderByWithRelationInput } from '../user/user-order-by-with-relation.input';
+import { ActivityFundingOrderByWithRelationInput } from '../activity-funding/activity-funding-order-by-with-relation.input';
 
 @InputType()
 export class ProjectActivityOrderByWithRelationInput {
@@ -74,11 +74,11 @@ export class ProjectActivityOrderByWithRelationInput {
     @Type(() => ActivityDocumentsOrderByRelationAggregateInput)
     activity_documents?: ActivityDocumentsOrderByRelationAggregateInput;
 
-    @Field(() => ActivityFundingOrderByWithRelationInput, {nullable:true})
-    @Type(() => ActivityFundingOrderByWithRelationInput)
-    activity_funding?: ActivityFundingOrderByWithRelationInput;
-
     @Field(() => UserOrderByWithRelationInput, {nullable:true})
     @Type(() => UserOrderByWithRelationInput)
     owner?: UserOrderByWithRelationInput;
+
+    @Field(() => ActivityFundingOrderByWithRelationInput, {nullable:true})
+    @Type(() => ActivityFundingOrderByWithRelationInput)
+    activity_funding?: ActivityFundingOrderByWithRelationInput;
 }

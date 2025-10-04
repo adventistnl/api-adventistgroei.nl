@@ -33,9 +33,6 @@ export class ProjectUncheckedCreateWithoutEventInput {
     budget!: Decimal;
 
     @Field(() => String, {nullable:false})
-    media_link!: string;
-
-    @Field(() => String, {nullable:false})
     owner_id!: string;
 
     @Field(() => LanguagePreference, {nullable:false})

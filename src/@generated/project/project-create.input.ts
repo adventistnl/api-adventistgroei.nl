@@ -33,9 +33,6 @@ export class ProjectCreateInput {
     @Transform(transformToDecimal)
     budget!: Decimal;
 
-    @Field(() => String, {nullable:false})
-    media_link!: string;
-
     @Field(() => LanguagePreference, {nullable:false})
     language_preference!: `${LanguagePreference}`;
 

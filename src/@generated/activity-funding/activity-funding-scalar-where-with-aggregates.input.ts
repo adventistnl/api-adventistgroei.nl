@@ -2,11 +2,11 @@ import { Field } from '@nestjs/graphql';
 import { InputType } from '@nestjs/graphql';
 import { Type } from 'class-transformer';
 import { StringWithAggregatesFilter } from '../prisma/string-with-aggregates-filter.input';
-import { EnumEntityTypeWithAggregatesFilter } from '../prisma/enum-entity-type-with-aggregates-filter.input';
 import { DecimalWithAggregatesFilter } from '../prisma/decimal-with-aggregates-filter.input';
+import { FloatWithAggregatesFilter } from '../prisma/float-with-aggregates-filter.input';
+import { EnumEntityTypeWithAggregatesFilter } from '../prisma/enum-entity-type-with-aggregates-filter.input';
 import { BoolWithAggregatesFilter } from '../prisma/bool-with-aggregates-filter.input';
 import { DateTimeWithAggregatesFilter } from '../prisma/date-time-with-aggregates-filter.input';
-import { StringNullableWithAggregatesFilter } from '../prisma/string-nullable-with-aggregates-filter.input';
 
 @InputType()
 export class ActivityFundingScalarWhereWithAggregatesInput {
@@ -29,19 +29,18 @@ export class ActivityFundingScalarWhereWithAggregatesInput {
     @Field(() => StringWithAggregatesFilter, {nullable:true})
     activity_id?: StringWithAggregatesFilter;
 
+    @Field(() => DecimalWithAggregatesFilter, {nullable:true})
+    @Type(() => DecimalWithAggregatesFilter)
+    entity_contribution_amount?: DecimalWithAggregatesFilter;
+
+    @Field(() => FloatWithAggregatesFilter, {nullable:true})
+    entity_contribution_percent?: FloatWithAggregatesFilter;
+
     @Field(() => EnumEntityTypeWithAggregatesFilter, {nullable:true})
     entity_type?: EnumEntityTypeWithAggregatesFilter;
 
     @Field(() => StringWithAggregatesFilter, {nullable:true})
     entity_id?: StringWithAggregatesFilter;
-
-    @Field(() => DecimalWithAggregatesFilter, {nullable:true})
-    @Type(() => DecimalWithAggregatesFilter)
-    entity_contribution_amount?: DecimalWithAggregatesFilter;
-
-    @Field(() => DecimalWithAggregatesFilter, {nullable:true})
-    @Type(() => DecimalWithAggregatesFilter)
-    entity_contribution_percent?: DecimalWithAggregatesFilter;
 
     @Field(() => BoolWithAggregatesFilter, {nullable:true})
     validated?: BoolWithAggregatesFilter;
@@ -51,7 +50,4 @@ export class ActivityFundingScalarWhereWithAggregatesInput {
 
     @Field(() => DateTimeWithAggregatesFilter, {nullable:true})
     updated_at?: DateTimeWithAggregatesFilter;
-
-    @Field(() => StringNullableWithAggregatesFilter, {nullable:true})
-    project_activity_id?: StringNullableWithAggregatesFilter;
 }

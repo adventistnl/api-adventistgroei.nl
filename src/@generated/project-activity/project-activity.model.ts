@@ -8,8 +8,8 @@ import { SubsidyRequest } from '../subsidy-request/subsidy-request.model';
 import { Project } from '../project/project.model';
 import { SubsidyReceipt } from '../subsidy-receipt/subsidy-receipt.model';
 import { ActivityDocuments } from '../activity-documents/activity-documents.model';
-import { ActivityFunding } from '../activity-funding/activity-funding.model';
 import { User } from '../user/user.model';
+import { ActivityFunding } from '../activity-funding/activity-funding.model';
 import { ProjectActivityCount } from './project-activity-count.output';
 
 @ObjectType()
@@ -72,11 +72,11 @@ export class ProjectActivity {
     @Field(() => [ActivityDocuments], {nullable:true})
     activity_documents?: Array<ActivityDocuments>;
 
-    @Field(() => ActivityFunding, {nullable:true})
-    activity_funding?: ActivityFunding | null;
-
     @Field(() => User, {nullable:false})
     owner?: User;
+
+    @Field(() => ActivityFunding, {nullable:true})
+    activity_funding?: ActivityFunding | null;
 
     @Field(() => ProjectActivityCount, {nullable:false})
     _count?: ProjectActivityCount;

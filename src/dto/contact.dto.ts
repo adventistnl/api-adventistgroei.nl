@@ -49,6 +49,9 @@ export class ContactCreateDto {
 export class ContactUpdateDto extends PartialType(ContactCreateDto) {
   @Field()
   id: string;
+
+  @Field(() => Boolean, { nullable: true })
+  is_primary?: boolean;
 }
 
 @InputType()

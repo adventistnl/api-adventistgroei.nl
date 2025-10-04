@@ -28,9 +28,6 @@ export class ProjectOrderByWithAggregationInput {
     budget?: `${SortOrder}`;
 
     @Field(() => SortOrder, {nullable:true})
-    media_link?: `${SortOrder}`;
-
-    @Field(() => SortOrder, {nullable:true})
     owner_id?: `${SortOrder}`;
 
     @Field(() => SortOrder, {nullable:true})

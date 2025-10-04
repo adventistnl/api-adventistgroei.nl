@@ -10,7 +10,7 @@ import { NullableStringFieldUpdateOperationsInput } from '../prisma/nullable-str
 import { ProjectActivityUpdatetagsInput } from './project-activity-updatetags.input';
 import { SubsidyReceiptUncheckedUpdateManyWithoutProject_activityNestedInput } from '../subsidy-receipt/subsidy-receipt-unchecked-update-many-without-project-activity-nested.input';
 import { ActivityDocumentsUncheckedUpdateManyWithoutProject_activityNestedInput } from '../activity-documents/activity-documents-unchecked-update-many-without-project-activity-nested.input';
-import { ActivityFundingUncheckedUpdateOneWithoutProject_activityNestedInput } from '../activity-funding/activity-funding-unchecked-update-one-without-project-activity-nested.input';
+import { ActivityFundingUncheckedUpdateOneWithoutActivityNestedInput } from '../activity-funding/activity-funding-unchecked-update-one-without-activity-nested.input';
 
 @InputType()
 export class ProjectActivityUncheckedUpdateWithoutSubsidy_requestInput {
@@ -70,7 +70,7 @@ export class ProjectActivityUncheckedUpdateWithoutSubsidy_requestInput {
     @Type(() => ActivityDocumentsUncheckedUpdateManyWithoutProject_activityNestedInput)
     activity_documents?: ActivityDocumentsUncheckedUpdateManyWithoutProject_activityNestedInput;
 
-    @Field(() => ActivityFundingUncheckedUpdateOneWithoutProject_activityNestedInput, {nullable:true})
-    @Type(() => ActivityFundingUncheckedUpdateOneWithoutProject_activityNestedInput)
-    activity_funding?: ActivityFundingUncheckedUpdateOneWithoutProject_activityNestedInput;
+    @Field(() => ActivityFundingUncheckedUpdateOneWithoutActivityNestedInput, {nullable:true})
+    @Type(() => ActivityFundingUncheckedUpdateOneWithoutActivityNestedInput)
+    activity_funding?: ActivityFundingUncheckedUpdateOneWithoutActivityNestedInput;
 }

@@ -37,7 +37,6 @@ export class ProjectRepository {
         department: { connect: { id: data.department_id } },
         owner: { connect: { id: data.owner_id } },
         Institution: { connect: { id: data.institution_id } },
-        media_link: '', // Adicionando valor padrão para o campo obrigatório
       },
     });
 
@@ -147,7 +146,6 @@ export class ProjectRepository {
               activity_funding: activity.activity_funding
                 ? {
                     create: {
-                      activity_id: activity.id || '', // Garantir que seja fornecido um ID válido
                       entity_contribution_amount: activity.activity_funding.entity_contribution_amount
                         ? new Decimal(activity.activity_funding.entity_contribution_amount)
                         : new Decimal(0), // Valor padrão
