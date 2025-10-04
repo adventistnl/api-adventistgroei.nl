@@ -257,7 +257,6 @@ export class UserRepository {
       where: {
         user_id: userId,
         role_id: roleId,
-        is_deleted: false,
       },
     });
 
@@ -265,16 +264,10 @@ export class UserRepository {
       throw new CustomGraphQLError('User does not have this role.', ErrorCode.BAD_REQUEST, 400);
     }
 
-    await this.prisma.userRole.update({
+    await this.prisma.userRole.delete({
       where: {
         id: userRole.id,
-      },
-      data: {
-        is_deleted: true,
-        deleted_at: new Date(),
-        deleted_by: requesterId,
-        updated_by: requesterId,
-      },
+      }
     });
 
     const user = await this.prisma.user.findUnique({ where: { id: userId } });
