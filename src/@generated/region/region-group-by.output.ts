@@ -10,6 +10,9 @@ export class RegionGroupBy {
     @Field(() => String, {nullable:false})
     id!: string;
 
+    @Field(() => String, {nullable:true})
+    description?: string;
+
     @Field(() => String, {nullable:false})
     institution_id!: string;
 

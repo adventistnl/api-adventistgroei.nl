@@ -8,6 +8,9 @@ export class RegionMaxAggregateInput {
     id?: true;
 
     @Field(() => Boolean, {nullable:true})
+    description?: true;
+
+    @Field(() => Boolean, {nullable:true})
     institution_id?: true;
 
     @Field(() => Boolean, {nullable:true})

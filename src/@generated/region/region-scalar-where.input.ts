@@ -21,6 +21,9 @@ export class RegionScalarWhereInput {
     @Field(() => StringFilter, {nullable:true})
     id?: StringFilter;
 
+    @Field(() => StringNullableFilter, {nullable:true})
+    description?: StringNullableFilter;
+
     @Field(() => StringFilter, {nullable:true})
     institution_id?: StringFilter;
 

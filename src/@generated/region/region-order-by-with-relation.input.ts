@@ -15,6 +15,9 @@ export class RegionOrderByWithRelationInput {
     @Field(() => SortOrder, {nullable:true})
     id?: `${SortOrder}`;
 
+    @Field(() => SortOrderInput, {nullable:true})
+    description?: SortOrderInput;
+
     @Field(() => SortOrder, {nullable:true})
     institution_id?: `${SortOrder}`;
 

@@ -1,8 +1,8 @@
 import { Field } from '@nestjs/graphql';
 import { InputType } from '@nestjs/graphql';
 import { RegionWhereInput } from './region-where.input';
-import { StringFilter } from '../prisma/string-filter.input';
 import { StringNullableFilter } from '../prisma/string-nullable-filter.input';
+import { StringFilter } from '../prisma/string-filter.input';
 import { DateTimeFilter } from '../prisma/date-time-filter.input';
 import { BoolFilter } from '../prisma/bool-filter.input';
 import { DateTimeNullableFilter } from '../prisma/date-time-nullable-filter.input';
@@ -28,6 +28,9 @@ export class RegionWhereUniqueInput {
 
     @Field(() => [RegionWhereInput], {nullable:true})
     NOT?: Array<RegionWhereInput>;
+
+    @Field(() => StringNullableFilter, {nullable:true})
+    description?: StringNullableFilter;
 
     @Field(() => StringFilter, {nullable:true})
     institution_id?: StringFilter;

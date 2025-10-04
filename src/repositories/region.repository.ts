@@ -46,6 +46,7 @@ export class RegionRepository {
     }
     return await this.prisma.region.create({
       data: {
+        description: data.description,
         institution: { connect: { id: data.institution_id } },
         annual_budget: annual_budget ? { connect: { id: annual_budget.id } } : undefined,
         parent_region: data.parent_region_id ? { connect: { id: data.parent_region_id } } : undefined,
@@ -75,6 +76,7 @@ export class RegionRepository {
     return await this.prisma.region.update({
       where: { id: regionId },
       data: {
+        description: data.description,
         institution: data.institution_id ? { connect: { id: data.institution_id } } : undefined,
         parent_region: data.parent_region_id ? { connect: { id: data.parent_region_id } } : undefined,
         name: data.name,

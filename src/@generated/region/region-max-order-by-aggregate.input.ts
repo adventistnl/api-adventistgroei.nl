@@ -9,6 +9,9 @@ export class RegionMaxOrderByAggregateInput {
     id?: `${SortOrder}`;
 
     @Field(() => SortOrder, {nullable:true})
+    description?: `${SortOrder}`;
+
+    @Field(() => SortOrder, {nullable:true})
     institution_id?: `${SortOrder}`;
 
     @Field(() => SortOrder, {nullable:true})

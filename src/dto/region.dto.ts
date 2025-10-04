@@ -1,5 +1,5 @@
 import { InputType, Field } from '@nestjs/graphql';
-import { ContactCreateDto } from './contact.dto';
+import { ContactCreateDto, ContactUpdateDto } from './contact.dto';
 import { AnnualBudgetCreateDto, AnnualBudgetUpdateDto } from './annual_budget.dto';
 import { IsOptional, IsString } from 'class-validator';
 
@@ -24,6 +24,10 @@ export class RegionCreateDto {
   @Field(() => AnnualBudgetCreateDto, { nullable: true })
   @IsOptional()
   annual_budget?: AnnualBudgetCreateDto;
+
+  @Field(() => String, { nullable: true })
+  @IsOptional()
+  description?: string;
 }
 
 @InputType()
@@ -43,10 +47,15 @@ export class RegionUpdateDto {
   @IsOptional()
   parent_region_id?: string;
 
-  @Field(() => ContactCreateDto, { nullable: true })
+  @Field(() => ContactUpdateDto, { nullable: true })
   @IsOptional()
-  contact?: ContactCreateDto;
+  contact?: ContactUpdateDto;
+
   @Field(() => AnnualBudgetUpdateDto, { nullable: true })
   @IsOptional()
   annual_budget?: AnnualBudgetUpdateDto;
+
+  @Field(() => String, { nullable: true })
+  @IsOptional()
+  description?: string;
 }

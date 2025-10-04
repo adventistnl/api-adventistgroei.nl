@@ -238,6 +238,7 @@ model Institution {
 
 model Region {
   id               String        @id @default(uuid())
+  description      String?
   institution_id   String
   institution      Institution   @relation(fields: [institution_id], references: [id])
   name             String

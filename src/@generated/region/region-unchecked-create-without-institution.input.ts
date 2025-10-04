@@ -10,6 +10,9 @@ export class RegionUncheckedCreateWithoutInstitutionInput {
     @Field(() => String, {nullable:true})
     id?: string;
 
+    @Field(() => String, {nullable:true})
+    description?: string;
+
     @Field(() => String, {nullable:false})
     name!: string;
 

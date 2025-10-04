@@ -8,6 +8,9 @@ export class RegionMinAggregate {
     id?: string;
 
     @Field(() => String, {nullable:true})
+    description?: string;
+
+    @Field(() => String, {nullable:true})
     institution_id?: string;
 
     @Field(() => String, {nullable:true})

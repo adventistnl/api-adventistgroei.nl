@@ -13,6 +13,9 @@ export class Region {
     @Field(() => ID, {nullable:false})
     id!: string;
 
+    @Field(() => String, {nullable:true})
+    description!: string | null;
+
     @Field(() => String, {nullable:false})
     institution_id!: string;
 
