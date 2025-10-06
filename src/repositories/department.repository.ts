@@ -157,7 +157,7 @@ export class DepartmentRepository {
         is_deleted: false,
         ...filters,
       },
-      include: { church: true },
+      include: { church: true, annual_budget: true, contact: true, users: true },
     });
   }
 }

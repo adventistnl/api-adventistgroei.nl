@@ -135,6 +135,7 @@ export class ChurchRepository {
         is_deleted: false,
         ...filters,
       },
+      include: { annual_budget: true, contact: true, departments: true, region: true, users: true },
     });
   }
 
