@@ -129,7 +129,7 @@ export class RegionRepository {
     });
   }
 
-  async findManyByFilters(filters: Partial<Record<keyof Region, any>>): Promise<Region[]> {
+  async findManyByFilters(filters: Partial<Record<keyof Region, any>>) {
     const allowedKeys: (keyof Region)[] = ['institution_id', 'parent_region_id', 'name', 'is_deleted'];
 
     for (const key of Object.keys(filters)) {
@@ -143,6 +143,7 @@ export class RegionRepository {
         is_deleted: false,
         ...filters,
       },
+      include: { churches: true, institution: true, annual_budget: true},
     });
   }
 
