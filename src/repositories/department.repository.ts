@@ -29,7 +29,8 @@ export class DepartmentRepository {
 
   async create(data: DepartmentCreateDto, userId: string): Promise<Department> {
     await this.institutionRepository.findById(data.institution);
-    await this.churchRepository.findById(data.church);
+    const churchId = data.church && data.church.trim() !== '' ? data.church : undefined;
+    if (churchId) await this.churchRepository.findById(churchId);
 
     let contactId: string | undefined;
     if (data.contact) {
@@ -66,7 +67,7 @@ export class DepartmentRepository {
         description: data.description,
         annual_budget: annual_budget ? { connect: { id: annual_budget.id } } : undefined,
         institution: { connect: { id: data.institution } },
-        church: { connect: { id: data.church } },
+        church: churchId ? { connect: { id: churchId } } : undefined,
         contact: contactId ? { connect: { id: contactId } } : undefined,
         created_by: userId,
         updated_by: userId,

@@ -21,8 +21,8 @@ export class Department {
     @Field(() => String, {nullable:false})
     institution_id!: string;
 
-    @Field(() => String, {nullable:false})
-    church_id!: string;
+    @Field(() => String, {nullable:true})
+    church_id!: string | null;
 
     @Field(() => String, {nullable:false})
     name!: string;
@@ -60,8 +60,8 @@ export class Department {
     @Field(() => Institution, {nullable:false})
     institution?: Institution;
 
-    @Field(() => Church, {nullable:false})
-    church?: Church;
+    @Field(() => Church, {nullable:true})
+    church?: Church | null;
 
     @Field(() => AnnualBudget, {nullable:true})
     annual_budget?: AnnualBudget | null;

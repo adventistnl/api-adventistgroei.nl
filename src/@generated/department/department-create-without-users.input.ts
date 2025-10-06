@@ -47,9 +47,9 @@ export class DepartmentCreateWithoutUsersInput {
     @Type(() => InstitutionCreateNestedOneWithoutDepartmentsInput)
     institution!: InstitutionCreateNestedOneWithoutDepartmentsInput;
 
-    @Field(() => ChurchCreateNestedOneWithoutDepartmentsInput, {nullable:false})
+    @Field(() => ChurchCreateNestedOneWithoutDepartmentsInput, {nullable:true})
     @Type(() => ChurchCreateNestedOneWithoutDepartmentsInput)
-    church!: ChurchCreateNestedOneWithoutDepartmentsInput;
+    church?: ChurchCreateNestedOneWithoutDepartmentsInput;
 
     @Field(() => AnnualBudgetCreateNestedOneWithoutDepartmentsInput, {nullable:true})
     @Type(() => AnnualBudgetCreateNestedOneWithoutDepartmentsInput)

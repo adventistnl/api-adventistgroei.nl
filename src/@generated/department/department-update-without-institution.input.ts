@@ -5,7 +5,7 @@ import { DateTimeFieldUpdateOperationsInput } from '../prisma/date-time-field-up
 import { BoolFieldUpdateOperationsInput } from '../prisma/bool-field-update-operations.input';
 import { NullableDateTimeFieldUpdateOperationsInput } from '../prisma/nullable-date-time-field-update-operations.input';
 import { NullableStringFieldUpdateOperationsInput } from '../prisma/nullable-string-field-update-operations.input';
-import { ChurchUpdateOneRequiredWithoutDepartmentsNestedInput } from '../church/church-update-one-required-without-departments-nested.input';
+import { ChurchUpdateOneWithoutDepartmentsNestedInput } from '../church/church-update-one-without-departments-nested.input';
 import { Type } from 'class-transformer';
 import { AnnualBudgetUpdateOneWithoutDepartmentsNestedInput } from '../annual-budget/annual-budget-update-one-without-departments-nested.input';
 import { ContactUpdateOneWithoutDepartmentNestedInput } from '../contact/contact-update-one-without-department-nested.input';
@@ -48,9 +48,9 @@ export class DepartmentUpdateWithoutInstitutionInput {
     @Field(() => NullableStringFieldUpdateOperationsInput, {nullable:true})
     deleted_by?: NullableStringFieldUpdateOperationsInput;
 
-    @Field(() => ChurchUpdateOneRequiredWithoutDepartmentsNestedInput, {nullable:true})
-    @Type(() => ChurchUpdateOneRequiredWithoutDepartmentsNestedInput)
-    church?: ChurchUpdateOneRequiredWithoutDepartmentsNestedInput;
+    @Field(() => ChurchUpdateOneWithoutDepartmentsNestedInput, {nullable:true})
+    @Type(() => ChurchUpdateOneWithoutDepartmentsNestedInput)
+    church?: ChurchUpdateOneWithoutDepartmentsNestedInput;
 
     @Field(() => AnnualBudgetUpdateOneWithoutDepartmentsNestedInput, {nullable:true})
     @Type(() => AnnualBudgetUpdateOneWithoutDepartmentsNestedInput)

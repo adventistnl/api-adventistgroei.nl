@@ -21,9 +21,10 @@ export class DepartmentCreateDto {
   @IsString()
   institution: string;
 
-  @Field()
+  @Field({ nullable: true })
+  @IsOptional()
   @IsString()
-  church: string;
+  church?: string;
 
   @Field(() => ContactCreateDto, { nullable: true })
   @IsOptional()

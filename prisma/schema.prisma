@@ -286,8 +286,8 @@ model Department {
   id               String           @id @default(uuid())
   institution_id   String
   institution      Institution      @relation(fields: [institution_id], references: [id])
-  church_id        String
-  church           Church           @relation(fields: [church_id], references: [id])
+  church_id        String?
+  church           Church?           @relation(fields: [church_id], references: [id])
   name             String
   description      String
   annual_budget_id String?

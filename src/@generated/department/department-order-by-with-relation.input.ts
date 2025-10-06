@@ -22,8 +22,8 @@ export class DepartmentOrderByWithRelationInput {
     @Field(() => SortOrder, {nullable:true})
     institution_id?: `${SortOrder}`;
 
-    @Field(() => SortOrder, {nullable:true})
-    church_id?: `${SortOrder}`;
+    @Field(() => SortOrderInput, {nullable:true})
+    church_id?: SortOrderInput;
 
     @Field(() => SortOrder, {nullable:true})
     name?: `${SortOrder}`;

@@ -13,8 +13,8 @@ export class DepartmentUncheckedCreateWithoutInstitutionInput {
     @Field(() => String, {nullable:true})
     id?: string;
 
-    @Field(() => String, {nullable:false})
-    church_id!: string;
+    @Field(() => String, {nullable:true})
+    church_id?: string;
 
     @Field(() => String, {nullable:false})
     name!: string;

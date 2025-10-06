@@ -43,9 +43,9 @@ export class DepartmentCreateWithoutInstitutionInput {
     @Field(() => String, {nullable:true})
     deleted_by?: string;
 
-    @Field(() => ChurchCreateNestedOneWithoutDepartmentsInput, {nullable:false})
+    @Field(() => ChurchCreateNestedOneWithoutDepartmentsInput, {nullable:true})
     @Type(() => ChurchCreateNestedOneWithoutDepartmentsInput)
-    church!: ChurchCreateNestedOneWithoutDepartmentsInput;
+    church?: ChurchCreateNestedOneWithoutDepartmentsInput;
 
     @Field(() => AnnualBudgetCreateNestedOneWithoutDepartmentsInput, {nullable:true})
     @Type(() => AnnualBudgetCreateNestedOneWithoutDepartmentsInput)

@@ -8,7 +8,7 @@ import { BoolFilter } from '../prisma/bool-filter.input';
 import { DateTimeNullableFilter } from '../prisma/date-time-nullable-filter.input';
 import { InstitutionScalarRelationFilter } from '../institution/institution-scalar-relation-filter.input';
 import { Type } from 'class-transformer';
-import { ChurchScalarRelationFilter } from '../church/church-scalar-relation-filter.input';
+import { ChurchNullableScalarRelationFilter } from '../church/church-nullable-scalar-relation-filter.input';
 import { AnnualBudgetNullableScalarRelationFilter } from '../annual-budget/annual-budget-nullable-scalar-relation-filter.input';
 import { ContactNullableScalarRelationFilter } from '../contact/contact-nullable-scalar-relation-filter.input';
 import { SubsidyStatusListRelationFilter } from '../subsidy-status/subsidy-status-list-relation-filter.input';
@@ -35,8 +35,8 @@ export class DepartmentWhereUniqueInput {
     @Field(() => StringFilter, {nullable:true})
     institution_id?: StringFilter;
 
-    @Field(() => StringFilter, {nullable:true})
-    church_id?: StringFilter;
+    @Field(() => StringNullableFilter, {nullable:true})
+    church_id?: StringNullableFilter;
 
     @Field(() => StringFilter, {nullable:true})
     name?: StringFilter;
@@ -75,9 +75,9 @@ export class DepartmentWhereUniqueInput {
     @Type(() => InstitutionScalarRelationFilter)
     institution?: InstitutionScalarRelationFilter;
 
-    @Field(() => ChurchScalarRelationFilter, {nullable:true})
-    @Type(() => ChurchScalarRelationFilter)
-    church?: ChurchScalarRelationFilter;
+    @Field(() => ChurchNullableScalarRelationFilter, {nullable:true})
+    @Type(() => ChurchNullableScalarRelationFilter)
+    church?: ChurchNullableScalarRelationFilter;
 
     @Field(() => AnnualBudgetNullableScalarRelationFilter, {nullable:true})
     @Type(() => AnnualBudgetNullableScalarRelationFilter)
