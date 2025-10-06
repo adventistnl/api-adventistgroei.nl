@@ -139,6 +139,7 @@ export class DepartmentRepository {
         is_deleted: false,
         ...filters,
       },
+      include: { church: true },
     });
   }
 
@@ -156,6 +157,7 @@ export class DepartmentRepository {
         is_deleted: false,
         ...filters,
       },
+      include: { church: true },
     });
   }
 }

@@ -23,7 +23,7 @@ export class UserRepository {
   ) {}
 
   async create(data: UserCreateDto): Promise<Omit<User, 'password'>> {
-    const { contact, church_id, department_id, institution_id, language_preference, ...rest } = data;
+    const { contact, church_id, department_id, institution_id, language_preference, roles, ...rest } = data;
 
     if (!Object.values(LanguagePreference).includes(language_preference as LanguagePreference)) {
       throw new Error('Invalid language preference');
@@ -35,7 +35,7 @@ export class UserRepository {
     await this.churchRepository.findById(church_id);
     // Verificar se o department existe
     await this.departmentRepository.findById(department_id);
-    
+
     const contactCreated = await this.prisma.contact.create({
       data: {
         ...contact,
@@ -59,7 +59,27 @@ export class UserRepository {
       created_by: 'self',
       updated_by: 'self',
     };
-    return await this.prisma.user.create({ data: userData });
+
+    const createdUser = await this.prisma.user.create({ data: userData });
+
+    // Adicionar roles ao usuário criado usando createMany
+    if (roles && roles.length > 0) {
+      const userRoles = roles.map(roleId => ({
+        id: `${createdUser.id}_${roleId}`,
+        user_id: createdUser.id,
+        role_id: roleId,
+        created_by: 'self',
+        updated_by: 'self',
+      }));
+
+      try {
+        await this.prisma.userRole.createMany({ data: userRoles, skipDuplicates: true });
+      } catch (error) {
+        console.error('Failed to add roles to user:', error);
+      }
+    }
+
+    return createdUser;
   }
 
   async update(user_to_update_id: string, data: UserUpdateDto, requester_id: string): Promise<Omit<User, 'password'>> {
@@ -252,7 +272,7 @@ export class UserRepository {
     return result;
   }
 
-  async removeRoleFromUser(userId: string, roleId: string, requesterId: string): Promise<Omit<User, 'password'>> {
+  async removeRoleFromUser(userId: string, roleId: string, _requesterId: string): Promise<Omit<User, 'password'>> {
     const userRole = await this.prisma.userRole.findFirst({
       where: {
         user_id: userId,

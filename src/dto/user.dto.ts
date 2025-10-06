@@ -33,6 +33,9 @@ export class UserCreateDto {
 
   @Field(() => ContactCreateDto, { nullable: true })
   contact?: ContactCreateDto;
+
+  @Field(() => [String])
+  roles: string[];
 }
 
 @InputType()

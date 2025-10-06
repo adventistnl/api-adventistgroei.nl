@@ -39,7 +39,7 @@ export class InstitutionResolver {
     return await this.institutionService.getInstitutions();
   }
 
-  @Permission()
+  // @Permission()
   @Query(() => Institution, { nullable: true })
   async institution(@Args('id') id: string): Promise<Institution | null> {
     return await this.institutionService.getInstitutionById(id);
