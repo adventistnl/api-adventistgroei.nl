@@ -5,13 +5,13 @@ import { SortOrderInput } from '../prisma/sort-order.input';
 import { InstitutionOrderByWithRelationInput } from '../institution/institution-order-by-with-relation.input';
 import { Type } from 'class-transformer';
 import { ChurchOrderByWithRelationInput } from '../church/church-order-by-with-relation.input';
-import { AnnualBudgetOrderByWithRelationInput } from '../annual-budget/annual-budget-order-by-with-relation.input';
 import { ContactOrderByWithRelationInput } from '../contact/contact-order-by-with-relation.input';
 import { SubsidyStatusOrderByRelationAggregateInput } from '../subsidy-status/subsidy-status-order-by-relation-aggregate.input';
 import { ProjectOrderByRelationAggregateInput } from '../project/project-order-by-relation-aggregate.input';
 import { AnnualReportOrderByRelationAggregateInput } from '../annual-report/annual-report-order-by-relation-aggregate.input';
 import { SubsidyRequestOrderByRelationAggregateInput } from '../subsidy-request/subsidy-request-order-by-relation-aggregate.input';
 import { UserOrderByRelationAggregateInput } from '../user/user-order-by-relation-aggregate.input';
+import { AnnualBudgetOrderByRelationAggregateInput } from '../annual-budget/annual-budget-order-by-relation-aggregate.input';
 
 @InputType()
 export class DepartmentOrderByWithRelationInput {
@@ -30,9 +30,6 @@ export class DepartmentOrderByWithRelationInput {
 
     @Field(() => SortOrder, {nullable:true})
     description?: `${SortOrder}`;
-
-    @Field(() => SortOrderInput, {nullable:true})
-    annual_budget_id?: SortOrderInput;
 
     @Field(() => SortOrderInput, {nullable:true})
     contact_id?: SortOrderInput;
@@ -66,10 +63,6 @@ export class DepartmentOrderByWithRelationInput {
     @Type(() => ChurchOrderByWithRelationInput)
     church?: ChurchOrderByWithRelationInput;
 
-    @Field(() => AnnualBudgetOrderByWithRelationInput, {nullable:true})
-    @Type(() => AnnualBudgetOrderByWithRelationInput)
-    annual_budget?: AnnualBudgetOrderByWithRelationInput;
-
     @Field(() => ContactOrderByWithRelationInput, {nullable:true})
     @Type(() => ContactOrderByWithRelationInput)
     contact?: ContactOrderByWithRelationInput;
@@ -92,4 +85,8 @@ export class DepartmentOrderByWithRelationInput {
     @Field(() => UserOrderByRelationAggregateInput, {nullable:true})
     @Type(() => UserOrderByRelationAggregateInput)
     users?: UserOrderByRelationAggregateInput;
+
+    @Field(() => AnnualBudgetOrderByRelationAggregateInput, {nullable:true})
+    @Type(() => AnnualBudgetOrderByRelationAggregateInput)
+    annual_budgets?: AnnualBudgetOrderByRelationAggregateInput;
 }

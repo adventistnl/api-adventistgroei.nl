@@ -4,10 +4,10 @@ import { SortOrder } from '../prisma/sort-order.enum';
 import { SortOrderInput } from '../prisma/sort-order.input';
 import { UserOrderByWithRelationInput } from '../user/user-order-by-with-relation.input';
 import { Type } from 'class-transformer';
-import { InstitutionOrderByRelationAggregateInput } from '../institution/institution-order-by-relation-aggregate.input';
-import { RegionOrderByRelationAggregateInput } from '../region/region-order-by-relation-aggregate.input';
-import { ChurchOrderByRelationAggregateInput } from '../church/church-order-by-relation-aggregate.input';
-import { DepartmentOrderByRelationAggregateInput } from '../department/department-order-by-relation-aggregate.input';
+import { InstitutionOrderByWithRelationInput } from '../institution/institution-order-by-with-relation.input';
+import { RegionOrderByWithRelationInput } from '../region/region-order-by-with-relation.input';
+import { ChurchOrderByWithRelationInput } from '../church/church-order-by-with-relation.input';
+import { DepartmentOrderByWithRelationInput } from '../department/department-order-by-with-relation.input';
 
 @InputType()
 export class AnnualBudgetOrderByWithRelationInput {
@@ -31,10 +31,13 @@ export class AnnualBudgetOrderByWithRelationInput {
     notes?: SortOrderInput;
 
     @Field(() => SortOrderInput, {nullable:true})
-    approved_by?: SortOrderInput;
+    description?: SortOrderInput;
 
-    @Field(() => SortOrder, {nullable:true})
-    status?: `${SortOrder}`;
+    @Field(() => SortOrderInput, {nullable:true})
+    justification?: SortOrderInput;
+
+    @Field(() => SortOrderInput, {nullable:true})
+    approved_by?: SortOrderInput;
 
     @Field(() => SortOrder, {nullable:true})
     created_at?: `${SortOrder}`;
@@ -57,23 +60,38 @@ export class AnnualBudgetOrderByWithRelationInput {
     @Field(() => SortOrderInput, {nullable:true})
     deleted_by?: SortOrderInput;
 
+    @Field(() => SortOrder, {nullable:true})
+    status?: `${SortOrder}`;
+
+    @Field(() => SortOrderInput, {nullable:true})
+    institution_id?: SortOrderInput;
+
+    @Field(() => SortOrderInput, {nullable:true})
+    region_id?: SortOrderInput;
+
+    @Field(() => SortOrderInput, {nullable:true})
+    church_id?: SortOrderInput;
+
+    @Field(() => SortOrderInput, {nullable:true})
+    department_id?: SortOrderInput;
+
     @Field(() => UserOrderByWithRelationInput, {nullable:true})
     @Type(() => UserOrderByWithRelationInput)
     approved_user?: UserOrderByWithRelationInput;
 
-    @Field(() => InstitutionOrderByRelationAggregateInput, {nullable:true})
-    @Type(() => InstitutionOrderByRelationAggregateInput)
-    institutions?: InstitutionOrderByRelationAggregateInput;
+    @Field(() => InstitutionOrderByWithRelationInput, {nullable:true})
+    @Type(() => InstitutionOrderByWithRelationInput)
+    institution?: InstitutionOrderByWithRelationInput;
 
-    @Field(() => RegionOrderByRelationAggregateInput, {nullable:true})
-    @Type(() => RegionOrderByRelationAggregateInput)
-    regions?: RegionOrderByRelationAggregateInput;
+    @Field(() => RegionOrderByWithRelationInput, {nullable:true})
+    @Type(() => RegionOrderByWithRelationInput)
+    region?: RegionOrderByWithRelationInput;
 
-    @Field(() => ChurchOrderByRelationAggregateInput, {nullable:true})
-    @Type(() => ChurchOrderByRelationAggregateInput)
-    churches?: ChurchOrderByRelationAggregateInput;
+    @Field(() => ChurchOrderByWithRelationInput, {nullable:true})
+    @Type(() => ChurchOrderByWithRelationInput)
+    church?: ChurchOrderByWithRelationInput;
 
-    @Field(() => DepartmentOrderByRelationAggregateInput, {nullable:true})
-    @Type(() => DepartmentOrderByRelationAggregateInput)
-    departments?: DepartmentOrderByRelationAggregateInput;
+    @Field(() => DepartmentOrderByWithRelationInput, {nullable:true})
+    @Type(() => DepartmentOrderByWithRelationInput)
+    department?: DepartmentOrderByWithRelationInput;
 }

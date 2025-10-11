@@ -25,9 +25,6 @@ export class DepartmentOrderByWithAggregationInput {
     description?: `${SortOrder}`;
 
     @Field(() => SortOrderInput, {nullable:true})
-    annual_budget_id?: SortOrderInput;
-
-    @Field(() => SortOrderInput, {nullable:true})
     contact_id?: SortOrderInput;
 
     @Field(() => SortOrder, {nullable:true})

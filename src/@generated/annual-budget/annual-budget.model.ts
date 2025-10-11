@@ -10,7 +10,6 @@ import { Institution } from '../institution/institution.model';
 import { Region } from '../region/region.model';
 import { Church } from '../church/church.model';
 import { Department } from '../department/department.model';
-import { AnnualBudgetCount } from './annual-budget-count.output';
 
 @ObjectType()
 export class AnnualBudget {
@@ -34,10 +33,13 @@ export class AnnualBudget {
     notes!: string | null;
 
     @Field(() => String, {nullable:true})
-    approved_by!: string | null;
+    description!: string | null;
 
-    @Field(() => AnnualBudgetStatus, {defaultValue:'PLANNED',nullable:false})
-    status!: `${AnnualBudgetStatus}`;
+    @Field(() => String, {nullable:true})
+    justification!: string | null;
+
+    @Field(() => String, {nullable:true})
+    approved_by!: string | null;
 
     @Field(() => Date, {nullable:false})
     created_at!: Date;
@@ -60,21 +62,33 @@ export class AnnualBudget {
     @Field(() => String, {nullable:true})
     deleted_by!: string | null;
 
+    @Field(() => AnnualBudgetStatus, {defaultValue:'PLANNED',nullable:false})
+    status!: `${AnnualBudgetStatus}`;
+
+    @Field(() => String, {nullable:true})
+    institution_id!: string | null;
+
+    @Field(() => String, {nullable:true})
+    region_id!: string | null;
+
+    @Field(() => String, {nullable:true})
+    church_id!: string | null;
+
+    @Field(() => String, {nullable:true})
+    department_id!: string | null;
+
     @Field(() => User, {nullable:true})
     approved_user?: User | null;
 
-    @Field(() => [Institution], {nullable:true})
-    institutions?: Array<Institution>;
+    @Field(() => Institution, {nullable:true})
+    institution?: Institution | null;
 
-    @Field(() => [Region], {nullable:true})
-    regions?: Array<Region>;
+    @Field(() => Region, {nullable:true})
+    region?: Region | null;
 
-    @Field(() => [Church], {nullable:true})
-    churches?: Array<Church>;
+    @Field(() => Church, {nullable:true})
+    church?: Church | null;
 
-    @Field(() => [Department], {nullable:true})
-    departments?: Array<Department>;
-
-    @Field(() => AnnualBudgetCount, {nullable:false})
-    _count?: AnnualBudgetCount;
+    @Field(() => Department, {nullable:true})
+    department?: Department | null;
 }

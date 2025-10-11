@@ -8,10 +8,10 @@ import { NullableStringFieldUpdateOperationsInput } from '../prisma/nullable-str
 import { InstitutionUpdateOneRequiredWithoutChurchesNestedInput } from '../institution/institution-update-one-required-without-churches-nested.input';
 import { Type } from 'class-transformer';
 import { RegionUpdateOneRequiredWithoutChurchesNestedInput } from '../region/region-update-one-required-without-churches-nested.input';
-import { AnnualBudgetUpdateOneWithoutChurchesNestedInput } from '../annual-budget/annual-budget-update-one-without-churches-nested.input';
 import { DepartmentUpdateManyWithoutChurchNestedInput } from '../department/department-update-many-without-church-nested.input';
 import { UserUpdateManyWithoutChurchNestedInput } from '../user/user-update-many-without-church-nested.input';
 import { SubsidyRequestUpdateManyWithoutChurchNestedInput } from '../subsidy-request/subsidy-request-update-many-without-church-nested.input';
+import { AnnualBudgetUpdateManyWithoutChurchNestedInput } from '../annual-budget/annual-budget-update-many-without-church-nested.input';
 
 @InputType()
 export class ChurchUpdateWithoutContactInput {
@@ -51,10 +51,6 @@ export class ChurchUpdateWithoutContactInput {
     @Type(() => RegionUpdateOneRequiredWithoutChurchesNestedInput)
     region?: RegionUpdateOneRequiredWithoutChurchesNestedInput;
 
-    @Field(() => AnnualBudgetUpdateOneWithoutChurchesNestedInput, {nullable:true})
-    @Type(() => AnnualBudgetUpdateOneWithoutChurchesNestedInput)
-    annual_budget?: AnnualBudgetUpdateOneWithoutChurchesNestedInput;
-
     @Field(() => DepartmentUpdateManyWithoutChurchNestedInput, {nullable:true})
     @Type(() => DepartmentUpdateManyWithoutChurchNestedInput)
     departments?: DepartmentUpdateManyWithoutChurchNestedInput;
@@ -66,4 +62,8 @@ export class ChurchUpdateWithoutContactInput {
     @Field(() => SubsidyRequestUpdateManyWithoutChurchNestedInput, {nullable:true})
     @Type(() => SubsidyRequestUpdateManyWithoutChurchNestedInput)
     subsidy_requests?: SubsidyRequestUpdateManyWithoutChurchNestedInput;
+
+    @Field(() => AnnualBudgetUpdateManyWithoutChurchNestedInput, {nullable:true})
+    @Type(() => AnnualBudgetUpdateManyWithoutChurchNestedInput)
+    annual_budgets?: AnnualBudgetUpdateManyWithoutChurchNestedInput;
 }

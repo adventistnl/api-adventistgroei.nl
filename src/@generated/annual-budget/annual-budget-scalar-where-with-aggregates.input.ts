@@ -5,10 +5,10 @@ import { StringWithAggregatesFilter } from '../prisma/string-with-aggregates-fil
 import { IntWithAggregatesFilter } from '../prisma/int-with-aggregates-filter.input';
 import { DecimalWithAggregatesFilter } from '../prisma/decimal-with-aggregates-filter.input';
 import { StringNullableWithAggregatesFilter } from '../prisma/string-nullable-with-aggregates-filter.input';
-import { EnumAnnualBudgetStatusWithAggregatesFilter } from '../prisma/enum-annual-budget-status-with-aggregates-filter.input';
 import { DateTimeWithAggregatesFilter } from '../prisma/date-time-with-aggregates-filter.input';
 import { BoolWithAggregatesFilter } from '../prisma/bool-with-aggregates-filter.input';
 import { DateTimeNullableWithAggregatesFilter } from '../prisma/date-time-nullable-with-aggregates-filter.input';
+import { EnumAnnualBudgetStatusWithAggregatesFilter } from '../prisma/enum-annual-budget-status-with-aggregates-filter.input';
 
 @InputType()
 export class AnnualBudgetScalarWhereWithAggregatesInput {
@@ -47,10 +47,13 @@ export class AnnualBudgetScalarWhereWithAggregatesInput {
     notes?: StringNullableWithAggregatesFilter;
 
     @Field(() => StringNullableWithAggregatesFilter, {nullable:true})
-    approved_by?: StringNullableWithAggregatesFilter;
+    description?: StringNullableWithAggregatesFilter;
 
-    @Field(() => EnumAnnualBudgetStatusWithAggregatesFilter, {nullable:true})
-    status?: EnumAnnualBudgetStatusWithAggregatesFilter;
+    @Field(() => StringNullableWithAggregatesFilter, {nullable:true})
+    justification?: StringNullableWithAggregatesFilter;
+
+    @Field(() => StringNullableWithAggregatesFilter, {nullable:true})
+    approved_by?: StringNullableWithAggregatesFilter;
 
     @Field(() => DateTimeWithAggregatesFilter, {nullable:true})
     created_at?: DateTimeWithAggregatesFilter;
@@ -72,4 +75,19 @@ export class AnnualBudgetScalarWhereWithAggregatesInput {
 
     @Field(() => StringNullableWithAggregatesFilter, {nullable:true})
     deleted_by?: StringNullableWithAggregatesFilter;
+
+    @Field(() => EnumAnnualBudgetStatusWithAggregatesFilter, {nullable:true})
+    status?: EnumAnnualBudgetStatusWithAggregatesFilter;
+
+    @Field(() => StringNullableWithAggregatesFilter, {nullable:true})
+    institution_id?: StringNullableWithAggregatesFilter;
+
+    @Field(() => StringNullableWithAggregatesFilter, {nullable:true})
+    region_id?: StringNullableWithAggregatesFilter;
+
+    @Field(() => StringNullableWithAggregatesFilter, {nullable:true})
+    church_id?: StringNullableWithAggregatesFilter;
+
+    @Field(() => StringNullableWithAggregatesFilter, {nullable:true})
+    department_id?: StringNullableWithAggregatesFilter;
 }

@@ -5,14 +5,10 @@ import { IntFieldUpdateOperationsInput } from '../prisma/int-field-update-operat
 import { DecimalFieldUpdateOperationsInput } from '../prisma/decimal-field-update-operations.input';
 import { Type } from 'class-transformer';
 import { NullableStringFieldUpdateOperationsInput } from '../prisma/nullable-string-field-update-operations.input';
-import { EnumAnnualBudgetStatusFieldUpdateOperationsInput } from '../prisma/enum-annual-budget-status-field-update-operations.input';
 import { DateTimeFieldUpdateOperationsInput } from '../prisma/date-time-field-update-operations.input';
 import { BoolFieldUpdateOperationsInput } from '../prisma/bool-field-update-operations.input';
 import { NullableDateTimeFieldUpdateOperationsInput } from '../prisma/nullable-date-time-field-update-operations.input';
-import { InstitutionUncheckedUpdateManyWithoutAnnual_budgetNestedInput } from '../institution/institution-unchecked-update-many-without-annual-budget-nested.input';
-import { RegionUncheckedUpdateManyWithoutAnnual_budgetNestedInput } from '../region/region-unchecked-update-many-without-annual-budget-nested.input';
-import { ChurchUncheckedUpdateManyWithoutAnnual_budgetNestedInput } from '../church/church-unchecked-update-many-without-annual-budget-nested.input';
-import { DepartmentUncheckedUpdateManyWithoutAnnual_budgetNestedInput } from '../department/department-unchecked-update-many-without-annual-budget-nested.input';
+import { EnumAnnualBudgetStatusFieldUpdateOperationsInput } from '../prisma/enum-annual-budget-status-field-update-operations.input';
 
 @InputType()
 export class AnnualBudgetUncheckedUpdateWithoutApproved_userInput {
@@ -38,8 +34,11 @@ export class AnnualBudgetUncheckedUpdateWithoutApproved_userInput {
     @Field(() => NullableStringFieldUpdateOperationsInput, {nullable:true})
     notes?: NullableStringFieldUpdateOperationsInput;
 
-    @Field(() => EnumAnnualBudgetStatusFieldUpdateOperationsInput, {nullable:true})
-    status?: EnumAnnualBudgetStatusFieldUpdateOperationsInput;
+    @Field(() => NullableStringFieldUpdateOperationsInput, {nullable:true})
+    description?: NullableStringFieldUpdateOperationsInput;
+
+    @Field(() => NullableStringFieldUpdateOperationsInput, {nullable:true})
+    justification?: NullableStringFieldUpdateOperationsInput;
 
     @Field(() => DateTimeFieldUpdateOperationsInput, {nullable:true})
     created_at?: DateTimeFieldUpdateOperationsInput;
@@ -62,19 +61,18 @@ export class AnnualBudgetUncheckedUpdateWithoutApproved_userInput {
     @Field(() => NullableStringFieldUpdateOperationsInput, {nullable:true})
     deleted_by?: NullableStringFieldUpdateOperationsInput;
 
-    @Field(() => InstitutionUncheckedUpdateManyWithoutAnnual_budgetNestedInput, {nullable:true})
-    @Type(() => InstitutionUncheckedUpdateManyWithoutAnnual_budgetNestedInput)
-    institutions?: InstitutionUncheckedUpdateManyWithoutAnnual_budgetNestedInput;
+    @Field(() => EnumAnnualBudgetStatusFieldUpdateOperationsInput, {nullable:true})
+    status?: EnumAnnualBudgetStatusFieldUpdateOperationsInput;
 
-    @Field(() => RegionUncheckedUpdateManyWithoutAnnual_budgetNestedInput, {nullable:true})
-    @Type(() => RegionUncheckedUpdateManyWithoutAnnual_budgetNestedInput)
-    regions?: RegionUncheckedUpdateManyWithoutAnnual_budgetNestedInput;
+    @Field(() => NullableStringFieldUpdateOperationsInput, {nullable:true})
+    institution_id?: NullableStringFieldUpdateOperationsInput;
 
-    @Field(() => ChurchUncheckedUpdateManyWithoutAnnual_budgetNestedInput, {nullable:true})
-    @Type(() => ChurchUncheckedUpdateManyWithoutAnnual_budgetNestedInput)
-    churches?: ChurchUncheckedUpdateManyWithoutAnnual_budgetNestedInput;
+    @Field(() => NullableStringFieldUpdateOperationsInput, {nullable:true})
+    region_id?: NullableStringFieldUpdateOperationsInput;
 
-    @Field(() => DepartmentUncheckedUpdateManyWithoutAnnual_budgetNestedInput, {nullable:true})
-    @Type(() => DepartmentUncheckedUpdateManyWithoutAnnual_budgetNestedInput)
-    departments?: DepartmentUncheckedUpdateManyWithoutAnnual_budgetNestedInput;
+    @Field(() => NullableStringFieldUpdateOperationsInput, {nullable:true})
+    church_id?: NullableStringFieldUpdateOperationsInput;
+
+    @Field(() => NullableStringFieldUpdateOperationsInput, {nullable:true})
+    department_id?: NullableStringFieldUpdateOperationsInput;
 }

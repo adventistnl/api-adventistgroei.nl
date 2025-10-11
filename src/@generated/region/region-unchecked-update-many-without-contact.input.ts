@@ -24,9 +24,6 @@ export class RegionUncheckedUpdateManyWithoutContactInput {
     @Field(() => NullableStringFieldUpdateOperationsInput, {nullable:true})
     parent_region_id?: NullableStringFieldUpdateOperationsInput;
 
-    @Field(() => NullableStringFieldUpdateOperationsInput, {nullable:true})
-    annual_budget_id?: NullableStringFieldUpdateOperationsInput;
-
     @Field(() => DateTimeFieldUpdateOperationsInput, {nullable:true})
     created_at?: DateTimeFieldUpdateOperationsInput;
 

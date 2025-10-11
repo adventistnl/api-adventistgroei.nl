@@ -10,6 +10,7 @@ import { Type } from 'class-transformer';
 import { ProjectUncheckedUpdateManyWithoutDepartmentNestedInput } from '../project/project-unchecked-update-many-without-department-nested.input';
 import { SubsidyRequestUncheckedUpdateManyWithoutDepartmentNestedInput } from '../subsidy-request/subsidy-request-unchecked-update-many-without-department-nested.input';
 import { UserUncheckedUpdateManyWithoutDepartmentNestedInput } from '../user/user-unchecked-update-many-without-department-nested.input';
+import { AnnualBudgetUncheckedUpdateManyWithoutDepartmentNestedInput } from '../annual-budget/annual-budget-unchecked-update-many-without-department-nested.input';
 
 @InputType()
 export class DepartmentUncheckedUpdateWithoutAnnual_reportsInput {
@@ -28,9 +29,6 @@ export class DepartmentUncheckedUpdateWithoutAnnual_reportsInput {
 
     @Field(() => StringFieldUpdateOperationsInput, {nullable:true})
     description?: StringFieldUpdateOperationsInput;
-
-    @Field(() => NullableStringFieldUpdateOperationsInput, {nullable:true})
-    annual_budget_id?: NullableStringFieldUpdateOperationsInput;
 
     @Field(() => NullableStringFieldUpdateOperationsInput, {nullable:true})
     contact_id?: NullableStringFieldUpdateOperationsInput;
@@ -71,4 +69,8 @@ export class DepartmentUncheckedUpdateWithoutAnnual_reportsInput {
     @Field(() => UserUncheckedUpdateManyWithoutDepartmentNestedInput, {nullable:true})
     @Type(() => UserUncheckedUpdateManyWithoutDepartmentNestedInput)
     users?: UserUncheckedUpdateManyWithoutDepartmentNestedInput;
+
+    @Field(() => AnnualBudgetUncheckedUpdateManyWithoutDepartmentNestedInput, {nullable:true})
+    @Type(() => AnnualBudgetUncheckedUpdateManyWithoutDepartmentNestedInput)
+    annual_budgets?: AnnualBudgetUncheckedUpdateManyWithoutDepartmentNestedInput;
 }

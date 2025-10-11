@@ -4,6 +4,7 @@ import { DepartmentUncheckedCreateNestedManyWithoutChurchInput } from '../depart
 import { Type } from 'class-transformer';
 import { UserUncheckedCreateNestedManyWithoutChurchInput } from '../user/user-unchecked-create-nested-many-without-church.input';
 import { SubsidyRequestUncheckedCreateNestedManyWithoutChurchInput } from '../subsidy-request/subsidy-request-unchecked-create-nested-many-without-church.input';
+import { AnnualBudgetUncheckedCreateNestedManyWithoutChurchInput } from '../annual-budget/annual-budget-unchecked-create-nested-many-without-church.input';
 
 @InputType()
 export class ChurchUncheckedCreateInput {
@@ -22,9 +23,6 @@ export class ChurchUncheckedCreateInput {
 
     @Field(() => String, {nullable:true})
     contact_id?: string;
-
-    @Field(() => String, {nullable:true})
-    annual_budget_id?: string;
 
     @Field(() => Date, {nullable:true})
     created_at?: Date | string;
@@ -58,4 +56,8 @@ export class ChurchUncheckedCreateInput {
     @Field(() => SubsidyRequestUncheckedCreateNestedManyWithoutChurchInput, {nullable:true})
     @Type(() => SubsidyRequestUncheckedCreateNestedManyWithoutChurchInput)
     subsidy_requests?: SubsidyRequestUncheckedCreateNestedManyWithoutChurchInput;
+
+    @Field(() => AnnualBudgetUncheckedCreateNestedManyWithoutChurchInput, {nullable:true})
+    @Type(() => AnnualBudgetUncheckedCreateNestedManyWithoutChurchInput)
+    annual_budgets?: AnnualBudgetUncheckedCreateNestedManyWithoutChurchInput;
 }

@@ -19,9 +19,6 @@ export class RegionCreateManyContactInput {
     @Field(() => String, {nullable:true})
     parent_region_id?: string;
 
-    @Field(() => String, {nullable:true})
-    annual_budget_id?: string;
-
     @Field(() => Date, {nullable:true})
     created_at?: Date | string;
 

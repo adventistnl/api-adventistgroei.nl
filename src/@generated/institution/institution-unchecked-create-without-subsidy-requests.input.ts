@@ -11,6 +11,7 @@ import { NotificationUncheckedCreateNestedManyWithoutInstitutionInput } from '..
 import { SettingUncheckedCreateNestedManyWithoutInstitutionInput } from '../setting/setting-unchecked-create-nested-many-without-institution.input';
 import { ProjectUncheckedCreateNestedManyWithoutInstitutionInput } from '../project/project-unchecked-create-nested-many-without-institution.input';
 import { DirectMessageUncheckedCreateNestedManyWithoutInstitutionInput } from '../direct-message/direct-message-unchecked-create-nested-many-without-institution.input';
+import { AnnualBudgetUncheckedCreateNestedManyWithoutInstitutionInput } from '../annual-budget/annual-budget-unchecked-create-nested-many-without-institution.input';
 
 @InputType()
 export class InstitutionUncheckedCreateWithoutSubsidy_requestsInput {
@@ -32,9 +33,6 @@ export class InstitutionUncheckedCreateWithoutSubsidy_requestsInput {
 
     @Field(() => String, {nullable:true})
     contact_id?: string;
-
-    @Field(() => String, {nullable:true})
-    annual_budget_id?: string;
 
     @Field(() => Date, {nullable:true})
     created_at?: Date | string;
@@ -88,4 +86,8 @@ export class InstitutionUncheckedCreateWithoutSubsidy_requestsInput {
 
     @Field(() => DirectMessageUncheckedCreateNestedManyWithoutInstitutionInput, {nullable:true})
     direct_messages?: DirectMessageUncheckedCreateNestedManyWithoutInstitutionInput;
+
+    @Field(() => AnnualBudgetUncheckedCreateNestedManyWithoutInstitutionInput, {nullable:true})
+    @Type(() => AnnualBudgetUncheckedCreateNestedManyWithoutInstitutionInput)
+    annual_budgets?: AnnualBudgetUncheckedCreateNestedManyWithoutInstitutionInput;
 }

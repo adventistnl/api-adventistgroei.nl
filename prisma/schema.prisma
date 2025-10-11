@@ -203,7 +203,8 @@ enum EntityType {
   INSTITUTION
   REGION
   CHURCH
-  DEPARTMENT
+  INSTITUTION_DEPARTMENT
+  CHURCH_DEPARTMENT
   USER
 }
 // Models
@@ -215,8 +216,6 @@ model Institution {
   language_preference LanguagePreference
   contact_id          String?            @unique
   contact             Contact?           @relation(fields: [contact_id], references: [id])
-  annual_budget_id    String?
-  annual_budget       AnnualBudget?      @relation(fields: [annual_budget_id], references: [id])
   created_at          DateTime           @default(now())
   updated_at          DateTime           @updatedAt
   created_by          String
@@ -234,6 +233,7 @@ model Institution {
   projects            Project[]
   direct_messages     DirectMessage[]
   subsidy_requests    SubsidyRequest[]
+  annual_budgets      AnnualBudget[]    
 }
 
 model Region {
@@ -247,8 +247,6 @@ model Region {
   children         Region[]      @relation("ParentRegion")
   contact_id       String?
   contact          Contact?      @relation(fields: [contact_id], references: [id])
-  annual_budget_id String?
-  annual_budget    AnnualBudget? @relation(fields: [annual_budget_id], references: [id])
   created_at       DateTime      @default(now())
   updated_at       DateTime      @updatedAt
   created_by       String
@@ -257,6 +255,7 @@ model Region {
   deleted_at       DateTime?
   deleted_by       String?
   churches         Church[]
+  annual_budgets   AnnualBudget[]
 }
 
 model Church {
@@ -268,8 +267,6 @@ model Church {
   region           Region           @relation(fields: [region_id], references: [id])
   contact_id       String?
   contact          Contact?         @relation(fields: [contact_id], references: [id])
-  annual_budget_id String?
-  annual_budget    AnnualBudget?    @relation(fields: [annual_budget_id], references: [id])
   created_at       DateTime         @default(now())
   updated_at       DateTime         @updatedAt
   created_by       String
@@ -280,6 +277,7 @@ model Church {
   departments      Department[]
   users            User[]
   subsidy_requests SubsidyRequest[]
+  annual_budgets   AnnualBudget[]  
 }
 
 model Department {
@@ -290,8 +288,6 @@ model Department {
   church           Church?           @relation(fields: [church_id], references: [id])
   name             String
   description      String
-  annual_budget_id String?
-  annual_budget    AnnualBudget?    @relation(fields: [annual_budget_id], references: [id])
   contact_id       String?
   contact          Contact?         @relation(fields: [contact_id], references: [id])
   created_at       DateTime         @default(now())
@@ -306,6 +302,7 @@ model Department {
   annual_reports   AnnualReport[]
   subsidy_requests SubsidyRequest[]
   users            User[]
+  annual_budgets   AnnualBudget[]  
 }
 
 // Modelo AnnualBudget
@@ -316,9 +313,9 @@ model AnnualBudget {
   total_expenses Decimal
   balance        Decimal
   notes          String?
+  description    String?
+  justification  String?
   approved_by    String?
-  approved_user  User?              @relation("ApprovedAnnualBudgets", fields: [approved_by], references: [id])
-  status         AnnualBudgetStatus @default(PLANNED)
   created_at     DateTime           @default(now())
   updated_at     DateTime           @updatedAt
   created_by     String
@@ -326,10 +323,16 @@ model AnnualBudget {
   is_deleted     Boolean            @default(false)
   deleted_at     DateTime?
   deleted_by     String?
-  institutions   Institution[]
-  regions        Region[]
-  churches       Church[]
-  departments    Department[]
+  approved_user  User?              @relation("ApprovedAnnualBudgets", fields: [approved_by], references: [id])
+  status         AnnualBudgetStatus @default(PLANNED)
+  institution_id String?
+  institution    Institution?       @relation(fields: [institution_id], references: [id])
+  region_id      String?
+  region         Region?            @relation(fields: [region_id], references: [id])
+  church_id      String?
+  church         Church?            @relation(fields: [church_id], references: [id])
+  department_id  String?
+  department     Department?        @relation(fields: [department_id], references: [id])
 }
 
 model Contact {

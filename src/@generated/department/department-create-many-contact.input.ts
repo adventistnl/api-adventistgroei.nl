@@ -19,9 +19,6 @@ export class DepartmentCreateManyContactInput {
     @Field(() => String, {nullable:false})
     description!: string;
 
-    @Field(() => String, {nullable:true})
-    annual_budget_id?: string;
-
     @Field(() => Date, {nullable:true})
     created_at?: Date | string;
 

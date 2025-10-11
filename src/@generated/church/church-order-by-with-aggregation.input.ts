@@ -24,9 +24,6 @@ export class ChurchOrderByWithAggregationInput {
     @Field(() => SortOrderInput, {nullable:true})
     contact_id?: SortOrderInput;
 
-    @Field(() => SortOrderInput, {nullable:true})
-    annual_budget_id?: SortOrderInput;
-
     @Field(() => SortOrder, {nullable:true})
     created_at?: `${SortOrder}`;
 

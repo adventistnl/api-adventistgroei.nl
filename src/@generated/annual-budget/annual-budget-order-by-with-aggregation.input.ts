@@ -31,10 +31,13 @@ export class AnnualBudgetOrderByWithAggregationInput {
     notes?: SortOrderInput;
 
     @Field(() => SortOrderInput, {nullable:true})
-    approved_by?: SortOrderInput;
+    description?: SortOrderInput;
 
-    @Field(() => SortOrder, {nullable:true})
-    status?: `${SortOrder}`;
+    @Field(() => SortOrderInput, {nullable:true})
+    justification?: SortOrderInput;
+
+    @Field(() => SortOrderInput, {nullable:true})
+    approved_by?: SortOrderInput;
 
     @Field(() => SortOrder, {nullable:true})
     created_at?: `${SortOrder}`;
@@ -56,6 +59,21 @@ export class AnnualBudgetOrderByWithAggregationInput {
 
     @Field(() => SortOrderInput, {nullable:true})
     deleted_by?: SortOrderInput;
+
+    @Field(() => SortOrder, {nullable:true})
+    status?: `${SortOrder}`;
+
+    @Field(() => SortOrderInput, {nullable:true})
+    institution_id?: SortOrderInput;
+
+    @Field(() => SortOrderInput, {nullable:true})
+    region_id?: SortOrderInput;
+
+    @Field(() => SortOrderInput, {nullable:true})
+    church_id?: SortOrderInput;
+
+    @Field(() => SortOrderInput, {nullable:true})
+    department_id?: SortOrderInput;
 
     @Field(() => AnnualBudgetCountOrderByAggregateInput, {nullable:true})
     @Type(() => AnnualBudgetCountOrderByAggregateInput)

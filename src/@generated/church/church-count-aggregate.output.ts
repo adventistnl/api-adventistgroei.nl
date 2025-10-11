@@ -21,9 +21,6 @@ export class ChurchCountAggregate {
     contact_id!: number;
 
     @Field(() => Int, {nullable:false})
-    annual_budget_id!: number;
-
-    @Field(() => Int, {nullable:false})
     created_at!: number;
 
     @Field(() => Int, {nullable:false})

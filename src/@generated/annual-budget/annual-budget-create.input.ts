@@ -8,10 +8,10 @@ import { Transform } from 'class-transformer';
 import { Type } from 'class-transformer';
 import { AnnualBudgetStatus } from '../prisma/annual-budget-status.enum';
 import { UserCreateNestedOneWithoutApproved_annual_budgetsInput } from '../user/user-create-nested-one-without-approved-annual-budgets.input';
-import { InstitutionCreateNestedManyWithoutAnnual_budgetInput } from '../institution/institution-create-nested-many-without-annual-budget.input';
-import { RegionCreateNestedManyWithoutAnnual_budgetInput } from '../region/region-create-nested-many-without-annual-budget.input';
-import { ChurchCreateNestedManyWithoutAnnual_budgetInput } from '../church/church-create-nested-many-without-annual-budget.input';
-import { DepartmentCreateNestedManyWithoutAnnual_budgetInput } from '../department/department-create-nested-many-without-annual-budget.input';
+import { InstitutionCreateNestedOneWithoutAnnual_budgetsInput } from '../institution/institution-create-nested-one-without-annual-budgets.input';
+import { RegionCreateNestedOneWithoutAnnual_budgetsInput } from '../region/region-create-nested-one-without-annual-budgets.input';
+import { ChurchCreateNestedOneWithoutAnnual_budgetsInput } from '../church/church-create-nested-one-without-annual-budgets.input';
+import { DepartmentCreateNestedOneWithoutAnnual_budgetsInput } from '../department/department-create-nested-one-without-annual-budgets.input';
 
 @InputType()
 export class AnnualBudgetCreateInput {
@@ -40,8 +40,11 @@ export class AnnualBudgetCreateInput {
     @Field(() => String, {nullable:true})
     notes?: string;
 
-    @Field(() => AnnualBudgetStatus, {nullable:true})
-    status?: `${AnnualBudgetStatus}`;
+    @Field(() => String, {nullable:true})
+    description?: string;
+
+    @Field(() => String, {nullable:true})
+    justification?: string;
 
     @Field(() => Date, {nullable:true})
     created_at?: Date | string;
@@ -64,23 +67,26 @@ export class AnnualBudgetCreateInput {
     @Field(() => String, {nullable:true})
     deleted_by?: string;
 
+    @Field(() => AnnualBudgetStatus, {nullable:true})
+    status?: `${AnnualBudgetStatus}`;
+
     @Field(() => UserCreateNestedOneWithoutApproved_annual_budgetsInput, {nullable:true})
     @Type(() => UserCreateNestedOneWithoutApproved_annual_budgetsInput)
     approved_user?: UserCreateNestedOneWithoutApproved_annual_budgetsInput;
 
-    @Field(() => InstitutionCreateNestedManyWithoutAnnual_budgetInput, {nullable:true})
-    @Type(() => InstitutionCreateNestedManyWithoutAnnual_budgetInput)
-    institutions?: InstitutionCreateNestedManyWithoutAnnual_budgetInput;
+    @Field(() => InstitutionCreateNestedOneWithoutAnnual_budgetsInput, {nullable:true})
+    @Type(() => InstitutionCreateNestedOneWithoutAnnual_budgetsInput)
+    institution?: InstitutionCreateNestedOneWithoutAnnual_budgetsInput;
 
-    @Field(() => RegionCreateNestedManyWithoutAnnual_budgetInput, {nullable:true})
-    @Type(() => RegionCreateNestedManyWithoutAnnual_budgetInput)
-    regions?: RegionCreateNestedManyWithoutAnnual_budgetInput;
+    @Field(() => RegionCreateNestedOneWithoutAnnual_budgetsInput, {nullable:true})
+    @Type(() => RegionCreateNestedOneWithoutAnnual_budgetsInput)
+    region?: RegionCreateNestedOneWithoutAnnual_budgetsInput;
 
-    @Field(() => ChurchCreateNestedManyWithoutAnnual_budgetInput, {nullable:true})
-    @Type(() => ChurchCreateNestedManyWithoutAnnual_budgetInput)
-    churches?: ChurchCreateNestedManyWithoutAnnual_budgetInput;
+    @Field(() => ChurchCreateNestedOneWithoutAnnual_budgetsInput, {nullable:true})
+    @Type(() => ChurchCreateNestedOneWithoutAnnual_budgetsInput)
+    church?: ChurchCreateNestedOneWithoutAnnual_budgetsInput;
 
-    @Field(() => DepartmentCreateNestedManyWithoutAnnual_budgetInput, {nullable:true})
-    @Type(() => DepartmentCreateNestedManyWithoutAnnual_budgetInput)
-    departments?: DepartmentCreateNestedManyWithoutAnnual_budgetInput;
+    @Field(() => DepartmentCreateNestedOneWithoutAnnual_budgetsInput, {nullable:true})
+    @Type(() => DepartmentCreateNestedOneWithoutAnnual_budgetsInput)
+    department?: DepartmentCreateNestedOneWithoutAnnual_budgetsInput;
 }

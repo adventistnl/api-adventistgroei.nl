@@ -24,10 +24,13 @@ export class AnnualBudgetCountAggregate {
     notes!: number;
 
     @Field(() => Int, {nullable:false})
-    approved_by!: number;
+    description!: number;
 
     @Field(() => Int, {nullable:false})
-    status!: number;
+    justification!: number;
+
+    @Field(() => Int, {nullable:false})
+    approved_by!: number;
 
     @Field(() => Int, {nullable:false})
     created_at!: number;
@@ -49,6 +52,21 @@ export class AnnualBudgetCountAggregate {
 
     @Field(() => Int, {nullable:false})
     deleted_by!: number;
+
+    @Field(() => Int, {nullable:false})
+    status!: number;
+
+    @Field(() => Int, {nullable:false})
+    institution_id!: number;
+
+    @Field(() => Int, {nullable:false})
+    region_id!: number;
+
+    @Field(() => Int, {nullable:false})
+    church_id!: number;
+
+    @Field(() => Int, {nullable:false})
+    department_id!: number;
 
     @Field(() => Int, {nullable:false})
     _all!: number;

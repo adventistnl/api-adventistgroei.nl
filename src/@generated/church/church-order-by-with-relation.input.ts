@@ -6,10 +6,10 @@ import { InstitutionOrderByWithRelationInput } from '../institution/institution-
 import { Type } from 'class-transformer';
 import { RegionOrderByWithRelationInput } from '../region/region-order-by-with-relation.input';
 import { ContactOrderByWithRelationInput } from '../contact/contact-order-by-with-relation.input';
-import { AnnualBudgetOrderByWithRelationInput } from '../annual-budget/annual-budget-order-by-with-relation.input';
 import { DepartmentOrderByRelationAggregateInput } from '../department/department-order-by-relation-aggregate.input';
 import { UserOrderByRelationAggregateInput } from '../user/user-order-by-relation-aggregate.input';
 import { SubsidyRequestOrderByRelationAggregateInput } from '../subsidy-request/subsidy-request-order-by-relation-aggregate.input';
+import { AnnualBudgetOrderByRelationAggregateInput } from '../annual-budget/annual-budget-order-by-relation-aggregate.input';
 
 @InputType()
 export class ChurchOrderByWithRelationInput {
@@ -28,9 +28,6 @@ export class ChurchOrderByWithRelationInput {
 
     @Field(() => SortOrderInput, {nullable:true})
     contact_id?: SortOrderInput;
-
-    @Field(() => SortOrderInput, {nullable:true})
-    annual_budget_id?: SortOrderInput;
 
     @Field(() => SortOrder, {nullable:true})
     created_at?: `${SortOrder}`;
@@ -65,10 +62,6 @@ export class ChurchOrderByWithRelationInput {
     @Type(() => ContactOrderByWithRelationInput)
     contact?: ContactOrderByWithRelationInput;
 
-    @Field(() => AnnualBudgetOrderByWithRelationInput, {nullable:true})
-    @Type(() => AnnualBudgetOrderByWithRelationInput)
-    annual_budget?: AnnualBudgetOrderByWithRelationInput;
-
     @Field(() => DepartmentOrderByRelationAggregateInput, {nullable:true})
     @Type(() => DepartmentOrderByRelationAggregateInput)
     departments?: DepartmentOrderByRelationAggregateInput;
@@ -80,4 +73,8 @@ export class ChurchOrderByWithRelationInput {
     @Field(() => SubsidyRequestOrderByRelationAggregateInput, {nullable:true})
     @Type(() => SubsidyRequestOrderByRelationAggregateInput)
     subsidy_requests?: SubsidyRequestOrderByRelationAggregateInput;
+
+    @Field(() => AnnualBudgetOrderByRelationAggregateInput, {nullable:true})
+    @Type(() => AnnualBudgetOrderByRelationAggregateInput)
+    annual_budgets?: AnnualBudgetOrderByRelationAggregateInput;
 }

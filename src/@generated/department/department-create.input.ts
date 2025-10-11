@@ -3,13 +3,13 @@ import { InputType } from '@nestjs/graphql';
 import { InstitutionCreateNestedOneWithoutDepartmentsInput } from '../institution/institution-create-nested-one-without-departments.input';
 import { Type } from 'class-transformer';
 import { ChurchCreateNestedOneWithoutDepartmentsInput } from '../church/church-create-nested-one-without-departments.input';
-import { AnnualBudgetCreateNestedOneWithoutDepartmentsInput } from '../annual-budget/annual-budget-create-nested-one-without-departments.input';
 import { ContactCreateNestedOneWithoutDepartmentInput } from '../contact/contact-create-nested-one-without-department.input';
 import { SubsidyStatusCreateNestedManyWithoutDepartmentInput } from '../subsidy-status/subsidy-status-create-nested-many-without-department.input';
 import { ProjectCreateNestedManyWithoutDepartmentInput } from '../project/project-create-nested-many-without-department.input';
 import { AnnualReportCreateNestedManyWithoutDepartmentInput } from '../annual-report/annual-report-create-nested-many-without-department.input';
 import { SubsidyRequestCreateNestedManyWithoutDepartmentInput } from '../subsidy-request/subsidy-request-create-nested-many-without-department.input';
 import { UserCreateNestedManyWithoutDepartmentInput } from '../user/user-create-nested-many-without-department.input';
+import { AnnualBudgetCreateNestedManyWithoutDepartmentInput } from '../annual-budget/annual-budget-create-nested-many-without-department.input';
 
 @InputType()
 export class DepartmentCreateInput {
@@ -52,10 +52,6 @@ export class DepartmentCreateInput {
     @Type(() => ChurchCreateNestedOneWithoutDepartmentsInput)
     church?: ChurchCreateNestedOneWithoutDepartmentsInput;
 
-    @Field(() => AnnualBudgetCreateNestedOneWithoutDepartmentsInput, {nullable:true})
-    @Type(() => AnnualBudgetCreateNestedOneWithoutDepartmentsInput)
-    annual_budget?: AnnualBudgetCreateNestedOneWithoutDepartmentsInput;
-
     @Field(() => ContactCreateNestedOneWithoutDepartmentInput, {nullable:true})
     @Type(() => ContactCreateNestedOneWithoutDepartmentInput)
     contact?: ContactCreateNestedOneWithoutDepartmentInput;
@@ -78,4 +74,8 @@ export class DepartmentCreateInput {
     @Field(() => UserCreateNestedManyWithoutDepartmentInput, {nullable:true})
     @Type(() => UserCreateNestedManyWithoutDepartmentInput)
     users?: UserCreateNestedManyWithoutDepartmentInput;
+
+    @Field(() => AnnualBudgetCreateNestedManyWithoutDepartmentInput, {nullable:true})
+    @Type(() => AnnualBudgetCreateNestedManyWithoutDepartmentInput)
+    annual_budgets?: AnnualBudgetCreateNestedManyWithoutDepartmentInput;
 }

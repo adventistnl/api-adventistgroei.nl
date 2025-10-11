@@ -24,10 +24,13 @@ export class AnnualBudgetMaxOrderByAggregateInput {
     notes?: `${SortOrder}`;
 
     @Field(() => SortOrder, {nullable:true})
-    approved_by?: `${SortOrder}`;
+    description?: `${SortOrder}`;
 
     @Field(() => SortOrder, {nullable:true})
-    status?: `${SortOrder}`;
+    justification?: `${SortOrder}`;
+
+    @Field(() => SortOrder, {nullable:true})
+    approved_by?: `${SortOrder}`;
 
     @Field(() => SortOrder, {nullable:true})
     created_at?: `${SortOrder}`;
@@ -49,4 +52,19 @@ export class AnnualBudgetMaxOrderByAggregateInput {
 
     @Field(() => SortOrder, {nullable:true})
     deleted_by?: `${SortOrder}`;
+
+    @Field(() => SortOrder, {nullable:true})
+    status?: `${SortOrder}`;
+
+    @Field(() => SortOrder, {nullable:true})
+    institution_id?: `${SortOrder}`;
+
+    @Field(() => SortOrder, {nullable:true})
+    region_id?: `${SortOrder}`;
+
+    @Field(() => SortOrder, {nullable:true})
+    church_id?: `${SortOrder}`;
+
+    @Field(() => SortOrder, {nullable:true})
+    department_id?: `${SortOrder}`;
 }

@@ -34,9 +34,6 @@ export class DepartmentScalarWhereInput {
     description?: StringFilter;
 
     @Field(() => StringNullableFilter, {nullable:true})
-    annual_budget_id?: StringNullableFilter;
-
-    @Field(() => StringNullableFilter, {nullable:true})
     contact_id?: StringNullableFilter;
 
     @Field(() => DateTimeFilter, {nullable:true})

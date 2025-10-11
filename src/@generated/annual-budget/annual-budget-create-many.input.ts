@@ -36,10 +36,13 @@ export class AnnualBudgetCreateManyInput {
     notes?: string;
 
     @Field(() => String, {nullable:true})
-    approved_by?: string;
+    description?: string;
 
-    @Field(() => AnnualBudgetStatus, {nullable:true})
-    status?: `${AnnualBudgetStatus}`;
+    @Field(() => String, {nullable:true})
+    justification?: string;
+
+    @Field(() => String, {nullable:true})
+    approved_by?: string;
 
     @Field(() => Date, {nullable:true})
     created_at?: Date | string;
@@ -61,4 +64,19 @@ export class AnnualBudgetCreateManyInput {
 
     @Field(() => String, {nullable:true})
     deleted_by?: string;
+
+    @Field(() => AnnualBudgetStatus, {nullable:true})
+    status?: `${AnnualBudgetStatus}`;
+
+    @Field(() => String, {nullable:true})
+    institution_id?: string;
+
+    @Field(() => String, {nullable:true})
+    region_id?: string;
+
+    @Field(() => String, {nullable:true})
+    church_id?: string;
+
+    @Field(() => String, {nullable:true})
+    department_id?: string;
 }

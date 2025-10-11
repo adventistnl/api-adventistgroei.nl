@@ -8,7 +8,6 @@ import { BoolFieldUpdateOperationsInput } from '../prisma/bool-field-update-oper
 import { NullableDateTimeFieldUpdateOperationsInput } from '../prisma/nullable-date-time-field-update-operations.input';
 import { ContactUpdateOneWithoutInstitutionNestedInput } from '../contact/contact-update-one-without-institution-nested.input';
 import { Type } from 'class-transformer';
-import { AnnualBudgetUpdateOneWithoutInstitutionsNestedInput } from '../annual-budget/annual-budget-update-one-without-institutions-nested.input';
 import { RegionUpdateManyWithoutInstitutionNestedInput } from '../region/region-update-many-without-institution-nested.input';
 import { ChurchUpdateManyWithoutInstitutionNestedInput } from '../church/church-update-many-without-institution-nested.input';
 import { DepartmentUpdateManyWithoutInstitutionNestedInput } from '../department/department-update-many-without-institution-nested.input';
@@ -18,6 +17,7 @@ import { NotificationUpdateManyWithoutInstitutionNestedInput } from '../notifica
 import { ProjectUpdateManyWithoutInstitutionNestedInput } from '../project/project-update-many-without-institution-nested.input';
 import { DirectMessageUpdateManyWithoutInstitutionNestedInput } from '../direct-message/direct-message-update-many-without-institution-nested.input';
 import { SubsidyRequestUpdateManyWithoutInstitutionNestedInput } from '../subsidy-request/subsidy-request-update-many-without-institution-nested.input';
+import { AnnualBudgetUpdateManyWithoutInstitutionNestedInput } from '../annual-budget/annual-budget-update-many-without-institution-nested.input';
 
 @InputType()
 export class InstitutionUpdateWithoutSettingsInput {
@@ -62,10 +62,6 @@ export class InstitutionUpdateWithoutSettingsInput {
     @Type(() => ContactUpdateOneWithoutInstitutionNestedInput)
     contact?: ContactUpdateOneWithoutInstitutionNestedInput;
 
-    @Field(() => AnnualBudgetUpdateOneWithoutInstitutionsNestedInput, {nullable:true})
-    @Type(() => AnnualBudgetUpdateOneWithoutInstitutionsNestedInput)
-    annual_budget?: AnnualBudgetUpdateOneWithoutInstitutionsNestedInput;
-
     @Field(() => RegionUpdateManyWithoutInstitutionNestedInput, {nullable:true})
     @Type(() => RegionUpdateManyWithoutInstitutionNestedInput)
     regions?: RegionUpdateManyWithoutInstitutionNestedInput;
@@ -98,4 +94,8 @@ export class InstitutionUpdateWithoutSettingsInput {
     @Field(() => SubsidyRequestUpdateManyWithoutInstitutionNestedInput, {nullable:true})
     @Type(() => SubsidyRequestUpdateManyWithoutInstitutionNestedInput)
     subsidy_requests?: SubsidyRequestUpdateManyWithoutInstitutionNestedInput;
+
+    @Field(() => AnnualBudgetUpdateManyWithoutInstitutionNestedInput, {nullable:true})
+    @Type(() => AnnualBudgetUpdateManyWithoutInstitutionNestedInput)
+    annual_budgets?: AnnualBudgetUpdateManyWithoutInstitutionNestedInput;
 }

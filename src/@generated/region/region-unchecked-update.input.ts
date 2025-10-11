@@ -8,6 +8,7 @@ import { NullableDateTimeFieldUpdateOperationsInput } from '../prisma/nullable-d
 import { RegionUncheckedUpdateManyWithoutParent_regionNestedInput } from './region-unchecked-update-many-without-parent-region-nested.input';
 import { Type } from 'class-transformer';
 import { ChurchUncheckedUpdateManyWithoutRegionNestedInput } from '../church/church-unchecked-update-many-without-region-nested.input';
+import { AnnualBudgetUncheckedUpdateManyWithoutRegionNestedInput } from '../annual-budget/annual-budget-unchecked-update-many-without-region-nested.input';
 
 @InputType()
 export class RegionUncheckedUpdateInput {
@@ -29,9 +30,6 @@ export class RegionUncheckedUpdateInput {
 
     @Field(() => NullableStringFieldUpdateOperationsInput, {nullable:true})
     contact_id?: NullableStringFieldUpdateOperationsInput;
-
-    @Field(() => NullableStringFieldUpdateOperationsInput, {nullable:true})
-    annual_budget_id?: NullableStringFieldUpdateOperationsInput;
 
     @Field(() => DateTimeFieldUpdateOperationsInput, {nullable:true})
     created_at?: DateTimeFieldUpdateOperationsInput;
@@ -61,4 +59,8 @@ export class RegionUncheckedUpdateInput {
     @Field(() => ChurchUncheckedUpdateManyWithoutRegionNestedInput, {nullable:true})
     @Type(() => ChurchUncheckedUpdateManyWithoutRegionNestedInput)
     churches?: ChurchUncheckedUpdateManyWithoutRegionNestedInput;
+
+    @Field(() => AnnualBudgetUncheckedUpdateManyWithoutRegionNestedInput, {nullable:true})
+    @Type(() => AnnualBudgetUncheckedUpdateManyWithoutRegionNestedInput)
+    annual_budgets?: AnnualBudgetUncheckedUpdateManyWithoutRegionNestedInput;
 }

@@ -9,8 +9,8 @@ import { InstitutionUpdateOneRequiredWithoutRegionsNestedInput } from '../instit
 import { Type } from 'class-transformer';
 import { RegionUpdateManyWithoutParent_regionNestedInput } from './region-update-many-without-parent-region-nested.input';
 import { ContactUpdateOneWithoutRegionNestedInput } from '../contact/contact-update-one-without-region-nested.input';
-import { AnnualBudgetUpdateOneWithoutRegionsNestedInput } from '../annual-budget/annual-budget-update-one-without-regions-nested.input';
 import { ChurchUpdateManyWithoutRegionNestedInput } from '../church/church-update-many-without-region-nested.input';
+import { AnnualBudgetUpdateManyWithoutRegionNestedInput } from '../annual-budget/annual-budget-update-many-without-region-nested.input';
 
 @InputType()
 export class RegionUpdateWithoutParent_regionInput {
@@ -57,11 +57,11 @@ export class RegionUpdateWithoutParent_regionInput {
     @Type(() => ContactUpdateOneWithoutRegionNestedInput)
     contact?: ContactUpdateOneWithoutRegionNestedInput;
 
-    @Field(() => AnnualBudgetUpdateOneWithoutRegionsNestedInput, {nullable:true})
-    @Type(() => AnnualBudgetUpdateOneWithoutRegionsNestedInput)
-    annual_budget?: AnnualBudgetUpdateOneWithoutRegionsNestedInput;
-
     @Field(() => ChurchUpdateManyWithoutRegionNestedInput, {nullable:true})
     @Type(() => ChurchUpdateManyWithoutRegionNestedInput)
     churches?: ChurchUpdateManyWithoutRegionNestedInput;
+
+    @Field(() => AnnualBudgetUpdateManyWithoutRegionNestedInput, {nullable:true})
+    @Type(() => AnnualBudgetUpdateManyWithoutRegionNestedInput)
+    annual_budgets?: AnnualBudgetUpdateManyWithoutRegionNestedInput;
 }

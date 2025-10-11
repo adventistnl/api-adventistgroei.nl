@@ -6,8 +6,8 @@ import { InstitutionOrderByWithRelationInput } from '../institution/institution-
 import { Type } from 'class-transformer';
 import { RegionOrderByRelationAggregateInput } from './region-order-by-relation-aggregate.input';
 import { ContactOrderByWithRelationInput } from '../contact/contact-order-by-with-relation.input';
-import { AnnualBudgetOrderByWithRelationInput } from '../annual-budget/annual-budget-order-by-with-relation.input';
 import { ChurchOrderByRelationAggregateInput } from '../church/church-order-by-relation-aggregate.input';
+import { AnnualBudgetOrderByRelationAggregateInput } from '../annual-budget/annual-budget-order-by-relation-aggregate.input';
 
 @InputType()
 export class RegionOrderByWithRelationInput {
@@ -29,9 +29,6 @@ export class RegionOrderByWithRelationInput {
 
     @Field(() => SortOrderInput, {nullable:true})
     contact_id?: SortOrderInput;
-
-    @Field(() => SortOrderInput, {nullable:true})
-    annual_budget_id?: SortOrderInput;
 
     @Field(() => SortOrder, {nullable:true})
     created_at?: `${SortOrder}`;
@@ -70,11 +67,11 @@ export class RegionOrderByWithRelationInput {
     @Type(() => ContactOrderByWithRelationInput)
     contact?: ContactOrderByWithRelationInput;
 
-    @Field(() => AnnualBudgetOrderByWithRelationInput, {nullable:true})
-    @Type(() => AnnualBudgetOrderByWithRelationInput)
-    annual_budget?: AnnualBudgetOrderByWithRelationInput;
-
     @Field(() => ChurchOrderByRelationAggregateInput, {nullable:true})
     @Type(() => ChurchOrderByRelationAggregateInput)
     churches?: ChurchOrderByRelationAggregateInput;
+
+    @Field(() => AnnualBudgetOrderByRelationAggregateInput, {nullable:true})
+    @Type(() => AnnualBudgetOrderByRelationAggregateInput)
+    annual_budgets?: AnnualBudgetOrderByRelationAggregateInput;
 }

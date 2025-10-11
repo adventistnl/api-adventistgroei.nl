@@ -8,7 +8,6 @@ import { BoolFilter } from '../prisma/bool-filter.input';
 import { DateTimeNullableFilter } from '../prisma/date-time-nullable-filter.input';
 import { ContactNullableScalarRelationFilter } from '../contact/contact-nullable-scalar-relation-filter.input';
 import { Type } from 'class-transformer';
-import { AnnualBudgetNullableScalarRelationFilter } from '../annual-budget/annual-budget-nullable-scalar-relation-filter.input';
 import { RegionListRelationFilter } from '../region/region-list-relation-filter.input';
 import { ChurchListRelationFilter } from '../church/church-list-relation-filter.input';
 import { DepartmentListRelationFilter } from '../department/department-list-relation-filter.input';
@@ -19,6 +18,7 @@ import { SettingListRelationFilter } from '../setting/setting-list-relation-filt
 import { ProjectListRelationFilter } from '../project/project-list-relation-filter.input';
 import { DirectMessageListRelationFilter } from '../direct-message/direct-message-list-relation-filter.input';
 import { SubsidyRequestListRelationFilter } from '../subsidy-request/subsidy-request-list-relation-filter.input';
+import { AnnualBudgetListRelationFilter } from '../annual-budget/annual-budget-list-relation-filter.input';
 
 @InputType()
 export class InstitutionWhereInput {
@@ -50,9 +50,6 @@ export class InstitutionWhereInput {
     @Field(() => StringNullableFilter, {nullable:true})
     contact_id?: StringNullableFilter;
 
-    @Field(() => StringNullableFilter, {nullable:true})
-    annual_budget_id?: StringNullableFilter;
-
     @Field(() => DateTimeFilter, {nullable:true})
     created_at?: DateTimeFilter;
 
@@ -77,10 +74,6 @@ export class InstitutionWhereInput {
     @Field(() => ContactNullableScalarRelationFilter, {nullable:true})
     @Type(() => ContactNullableScalarRelationFilter)
     contact?: ContactNullableScalarRelationFilter;
-
-    @Field(() => AnnualBudgetNullableScalarRelationFilter, {nullable:true})
-    @Type(() => AnnualBudgetNullableScalarRelationFilter)
-    annual_budget?: AnnualBudgetNullableScalarRelationFilter;
 
     @Field(() => RegionListRelationFilter, {nullable:true})
     @Type(() => RegionListRelationFilter)
@@ -117,4 +110,8 @@ export class InstitutionWhereInput {
     @Field(() => SubsidyRequestListRelationFilter, {nullable:true})
     @Type(() => SubsidyRequestListRelationFilter)
     subsidy_requests?: SubsidyRequestListRelationFilter;
+
+    @Field(() => AnnualBudgetListRelationFilter, {nullable:true})
+    @Type(() => AnnualBudgetListRelationFilter)
+    annual_budgets?: AnnualBudgetListRelationFilter;
 }

@@ -5,15 +5,15 @@ import { StringFilter } from '../prisma/string-filter.input';
 import { IntFilter } from '../prisma/int-filter.input';
 import { DecimalFilter } from '../prisma/decimal-filter.input';
 import { StringNullableFilter } from '../prisma/string-nullable-filter.input';
-import { EnumAnnualBudgetStatusFilter } from '../prisma/enum-annual-budget-status-filter.input';
 import { DateTimeFilter } from '../prisma/date-time-filter.input';
 import { BoolFilter } from '../prisma/bool-filter.input';
 import { DateTimeNullableFilter } from '../prisma/date-time-nullable-filter.input';
+import { EnumAnnualBudgetStatusFilter } from '../prisma/enum-annual-budget-status-filter.input';
 import { UserNullableScalarRelationFilter } from '../user/user-nullable-scalar-relation-filter.input';
-import { InstitutionListRelationFilter } from '../institution/institution-list-relation-filter.input';
-import { RegionListRelationFilter } from '../region/region-list-relation-filter.input';
-import { ChurchListRelationFilter } from '../church/church-list-relation-filter.input';
-import { DepartmentListRelationFilter } from '../department/department-list-relation-filter.input';
+import { InstitutionNullableScalarRelationFilter } from '../institution/institution-nullable-scalar-relation-filter.input';
+import { RegionNullableScalarRelationFilter } from '../region/region-nullable-scalar-relation-filter.input';
+import { ChurchNullableScalarRelationFilter } from '../church/church-nullable-scalar-relation-filter.input';
+import { DepartmentNullableScalarRelationFilter } from '../department/department-nullable-scalar-relation-filter.input';
 
 @InputType()
 export class AnnualBudgetWhereInput {
@@ -52,10 +52,13 @@ export class AnnualBudgetWhereInput {
     notes?: StringNullableFilter;
 
     @Field(() => StringNullableFilter, {nullable:true})
-    approved_by?: StringNullableFilter;
+    description?: StringNullableFilter;
 
-    @Field(() => EnumAnnualBudgetStatusFilter, {nullable:true})
-    status?: EnumAnnualBudgetStatusFilter;
+    @Field(() => StringNullableFilter, {nullable:true})
+    justification?: StringNullableFilter;
+
+    @Field(() => StringNullableFilter, {nullable:true})
+    approved_by?: StringNullableFilter;
 
     @Field(() => DateTimeFilter, {nullable:true})
     created_at?: DateTimeFilter;
@@ -78,23 +81,38 @@ export class AnnualBudgetWhereInput {
     @Field(() => StringNullableFilter, {nullable:true})
     deleted_by?: StringNullableFilter;
 
+    @Field(() => EnumAnnualBudgetStatusFilter, {nullable:true})
+    status?: EnumAnnualBudgetStatusFilter;
+
+    @Field(() => StringNullableFilter, {nullable:true})
+    institution_id?: StringNullableFilter;
+
+    @Field(() => StringNullableFilter, {nullable:true})
+    region_id?: StringNullableFilter;
+
+    @Field(() => StringNullableFilter, {nullable:true})
+    church_id?: StringNullableFilter;
+
+    @Field(() => StringNullableFilter, {nullable:true})
+    department_id?: StringNullableFilter;
+
     @Field(() => UserNullableScalarRelationFilter, {nullable:true})
     @Type(() => UserNullableScalarRelationFilter)
     approved_user?: UserNullableScalarRelationFilter;
 
-    @Field(() => InstitutionListRelationFilter, {nullable:true})
-    @Type(() => InstitutionListRelationFilter)
-    institutions?: InstitutionListRelationFilter;
+    @Field(() => InstitutionNullableScalarRelationFilter, {nullable:true})
+    @Type(() => InstitutionNullableScalarRelationFilter)
+    institution?: InstitutionNullableScalarRelationFilter;
 
-    @Field(() => RegionListRelationFilter, {nullable:true})
-    @Type(() => RegionListRelationFilter)
-    regions?: RegionListRelationFilter;
+    @Field(() => RegionNullableScalarRelationFilter, {nullable:true})
+    @Type(() => RegionNullableScalarRelationFilter)
+    region?: RegionNullableScalarRelationFilter;
 
-    @Field(() => ChurchListRelationFilter, {nullable:true})
-    @Type(() => ChurchListRelationFilter)
-    churches?: ChurchListRelationFilter;
+    @Field(() => ChurchNullableScalarRelationFilter, {nullable:true})
+    @Type(() => ChurchNullableScalarRelationFilter)
+    church?: ChurchNullableScalarRelationFilter;
 
-    @Field(() => DepartmentListRelationFilter, {nullable:true})
-    @Type(() => DepartmentListRelationFilter)
-    departments?: DepartmentListRelationFilter;
+    @Field(() => DepartmentNullableScalarRelationFilter, {nullable:true})
+    @Type(() => DepartmentNullableScalarRelationFilter)
+    department?: DepartmentNullableScalarRelationFilter;
 }

@@ -7,7 +7,6 @@ export enum InstitutionScalarFieldEnum {
     description = "description",
     language_preference = "language_preference",
     contact_id = "contact_id",
-    annual_budget_id = "annual_budget_id",
     created_at = "created_at",
     updated_at = "updated_at",
     created_by = "created_by",

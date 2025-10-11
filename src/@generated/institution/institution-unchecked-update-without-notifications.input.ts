@@ -16,6 +16,7 @@ import { SettingUncheckedUpdateManyWithoutInstitutionNestedInput } from '../sett
 import { ProjectUncheckedUpdateManyWithoutInstitutionNestedInput } from '../project/project-unchecked-update-many-without-institution-nested.input';
 import { DirectMessageUncheckedUpdateManyWithoutInstitutionNestedInput } from '../direct-message/direct-message-unchecked-update-many-without-institution-nested.input';
 import { SubsidyRequestUncheckedUpdateManyWithoutInstitutionNestedInput } from '../subsidy-request/subsidy-request-unchecked-update-many-without-institution-nested.input';
+import { AnnualBudgetUncheckedUpdateManyWithoutInstitutionNestedInput } from '../annual-budget/annual-budget-unchecked-update-many-without-institution-nested.input';
 
 @InputType()
 export class InstitutionUncheckedUpdateWithoutNotificationsInput {
@@ -37,9 +38,6 @@ export class InstitutionUncheckedUpdateWithoutNotificationsInput {
 
     @Field(() => NullableStringFieldUpdateOperationsInput, {nullable:true})
     contact_id?: NullableStringFieldUpdateOperationsInput;
-
-    @Field(() => NullableStringFieldUpdateOperationsInput, {nullable:true})
-    annual_budget_id?: NullableStringFieldUpdateOperationsInput;
 
     @Field(() => DateTimeFieldUpdateOperationsInput, {nullable:true})
     created_at?: DateTimeFieldUpdateOperationsInput;
@@ -94,4 +92,8 @@ export class InstitutionUncheckedUpdateWithoutNotificationsInput {
     @Field(() => SubsidyRequestUncheckedUpdateManyWithoutInstitutionNestedInput, {nullable:true})
     @Type(() => SubsidyRequestUncheckedUpdateManyWithoutInstitutionNestedInput)
     subsidy_requests?: SubsidyRequestUncheckedUpdateManyWithoutInstitutionNestedInput;
+
+    @Field(() => AnnualBudgetUncheckedUpdateManyWithoutInstitutionNestedInput, {nullable:true})
+    @Type(() => AnnualBudgetUncheckedUpdateManyWithoutInstitutionNestedInput)
+    annual_budgets?: AnnualBudgetUncheckedUpdateManyWithoutInstitutionNestedInput;
 }

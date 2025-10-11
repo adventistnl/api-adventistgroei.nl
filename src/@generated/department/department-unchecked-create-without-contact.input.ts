@@ -6,6 +6,7 @@ import { ProjectUncheckedCreateNestedManyWithoutDepartmentInput } from '../proje
 import { AnnualReportUncheckedCreateNestedManyWithoutDepartmentInput } from '../annual-report/annual-report-unchecked-create-nested-many-without-department.input';
 import { SubsidyRequestUncheckedCreateNestedManyWithoutDepartmentInput } from '../subsidy-request/subsidy-request-unchecked-create-nested-many-without-department.input';
 import { UserUncheckedCreateNestedManyWithoutDepartmentInput } from '../user/user-unchecked-create-nested-many-without-department.input';
+import { AnnualBudgetUncheckedCreateNestedManyWithoutDepartmentInput } from '../annual-budget/annual-budget-unchecked-create-nested-many-without-department.input';
 
 @InputType()
 export class DepartmentUncheckedCreateWithoutContactInput {
@@ -24,9 +25,6 @@ export class DepartmentUncheckedCreateWithoutContactInput {
 
     @Field(() => String, {nullable:false})
     description!: string;
-
-    @Field(() => String, {nullable:true})
-    annual_budget_id?: string;
 
     @Field(() => Date, {nullable:true})
     created_at?: Date | string;
@@ -67,4 +65,8 @@ export class DepartmentUncheckedCreateWithoutContactInput {
     @Field(() => UserUncheckedCreateNestedManyWithoutDepartmentInput, {nullable:true})
     @Type(() => UserUncheckedCreateNestedManyWithoutDepartmentInput)
     users?: UserUncheckedCreateNestedManyWithoutDepartmentInput;
+
+    @Field(() => AnnualBudgetUncheckedCreateNestedManyWithoutDepartmentInput, {nullable:true})
+    @Type(() => AnnualBudgetUncheckedCreateNestedManyWithoutDepartmentInput)
+    annual_budgets?: AnnualBudgetUncheckedCreateNestedManyWithoutDepartmentInput;
 }

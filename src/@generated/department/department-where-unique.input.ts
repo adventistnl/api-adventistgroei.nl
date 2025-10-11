@@ -9,13 +9,13 @@ import { DateTimeNullableFilter } from '../prisma/date-time-nullable-filter.inpu
 import { InstitutionScalarRelationFilter } from '../institution/institution-scalar-relation-filter.input';
 import { Type } from 'class-transformer';
 import { ChurchNullableScalarRelationFilter } from '../church/church-nullable-scalar-relation-filter.input';
-import { AnnualBudgetNullableScalarRelationFilter } from '../annual-budget/annual-budget-nullable-scalar-relation-filter.input';
 import { ContactNullableScalarRelationFilter } from '../contact/contact-nullable-scalar-relation-filter.input';
 import { SubsidyStatusListRelationFilter } from '../subsidy-status/subsidy-status-list-relation-filter.input';
 import { ProjectListRelationFilter } from '../project/project-list-relation-filter.input';
 import { AnnualReportListRelationFilter } from '../annual-report/annual-report-list-relation-filter.input';
 import { SubsidyRequestListRelationFilter } from '../subsidy-request/subsidy-request-list-relation-filter.input';
 import { UserListRelationFilter } from '../user/user-list-relation-filter.input';
+import { AnnualBudgetListRelationFilter } from '../annual-budget/annual-budget-list-relation-filter.input';
 
 @InputType()
 export class DepartmentWhereUniqueInput {
@@ -43,9 +43,6 @@ export class DepartmentWhereUniqueInput {
 
     @Field(() => StringFilter, {nullable:true})
     description?: StringFilter;
-
-    @Field(() => StringNullableFilter, {nullable:true})
-    annual_budget_id?: StringNullableFilter;
 
     @Field(() => StringNullableFilter, {nullable:true})
     contact_id?: StringNullableFilter;
@@ -79,10 +76,6 @@ export class DepartmentWhereUniqueInput {
     @Type(() => ChurchNullableScalarRelationFilter)
     church?: ChurchNullableScalarRelationFilter;
 
-    @Field(() => AnnualBudgetNullableScalarRelationFilter, {nullable:true})
-    @Type(() => AnnualBudgetNullableScalarRelationFilter)
-    annual_budget?: AnnualBudgetNullableScalarRelationFilter;
-
     @Field(() => ContactNullableScalarRelationFilter, {nullable:true})
     @Type(() => ContactNullableScalarRelationFilter)
     contact?: ContactNullableScalarRelationFilter;
@@ -105,4 +98,8 @@ export class DepartmentWhereUniqueInput {
     @Field(() => UserListRelationFilter, {nullable:true})
     @Type(() => UserListRelationFilter)
     users?: UserListRelationFilter;
+
+    @Field(() => AnnualBudgetListRelationFilter, {nullable:true})
+    @Type(() => AnnualBudgetListRelationFilter)
+    annual_budgets?: AnnualBudgetListRelationFilter;
 }

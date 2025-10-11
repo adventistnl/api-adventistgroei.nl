@@ -19,4 +19,7 @@ export class DepartmentCount {
 
     @Field(() => Int, {nullable:false})
     users?: number;
+
+    @Field(() => Int, {nullable:false})
+    annual_budgets?: number;
 }

@@ -10,4 +10,7 @@ export class RegionCount {
 
     @Field(() => Int, {nullable:false})
     churches?: number;
+
+    @Field(() => Int, {nullable:false})
+    annual_budgets?: number;
 }

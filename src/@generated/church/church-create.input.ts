@@ -4,10 +4,10 @@ import { InstitutionCreateNestedOneWithoutChurchesInput } from '../institution/i
 import { Type } from 'class-transformer';
 import { RegionCreateNestedOneWithoutChurchesInput } from '../region/region-create-nested-one-without-churches.input';
 import { ContactCreateNestedOneWithoutChurchInput } from '../contact/contact-create-nested-one-without-church.input';
-import { AnnualBudgetCreateNestedOneWithoutChurchesInput } from '../annual-budget/annual-budget-create-nested-one-without-churches.input';
 import { DepartmentCreateNestedManyWithoutChurchInput } from '../department/department-create-nested-many-without-church.input';
 import { UserCreateNestedManyWithoutChurchInput } from '../user/user-create-nested-many-without-church.input';
 import { SubsidyRequestCreateNestedManyWithoutChurchInput } from '../subsidy-request/subsidy-request-create-nested-many-without-church.input';
+import { AnnualBudgetCreateNestedManyWithoutChurchInput } from '../annual-budget/annual-budget-create-nested-many-without-church.input';
 
 @InputType()
 export class ChurchCreateInput {
@@ -51,10 +51,6 @@ export class ChurchCreateInput {
     @Type(() => ContactCreateNestedOneWithoutChurchInput)
     contact?: ContactCreateNestedOneWithoutChurchInput;
 
-    @Field(() => AnnualBudgetCreateNestedOneWithoutChurchesInput, {nullable:true})
-    @Type(() => AnnualBudgetCreateNestedOneWithoutChurchesInput)
-    annual_budget?: AnnualBudgetCreateNestedOneWithoutChurchesInput;
-
     @Field(() => DepartmentCreateNestedManyWithoutChurchInput, {nullable:true})
     @Type(() => DepartmentCreateNestedManyWithoutChurchInput)
     departments?: DepartmentCreateNestedManyWithoutChurchInput;
@@ -66,4 +62,8 @@ export class ChurchCreateInput {
     @Field(() => SubsidyRequestCreateNestedManyWithoutChurchInput, {nullable:true})
     @Type(() => SubsidyRequestCreateNestedManyWithoutChurchInput)
     subsidy_requests?: SubsidyRequestCreateNestedManyWithoutChurchInput;
+
+    @Field(() => AnnualBudgetCreateNestedManyWithoutChurchInput, {nullable:true})
+    @Type(() => AnnualBudgetCreateNestedManyWithoutChurchInput)
+    annual_budgets?: AnnualBudgetCreateNestedManyWithoutChurchInput;
 }

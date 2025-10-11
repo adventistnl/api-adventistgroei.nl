@@ -3,8 +3,8 @@ import { ObjectType } from '@nestjs/graphql';
 import { ID } from '@nestjs/graphql';
 import { Institution } from '../institution/institution.model';
 import { Contact } from '../contact/contact.model';
-import { AnnualBudget } from '../annual-budget/annual-budget.model';
 import { Church } from '../church/church.model';
+import { AnnualBudget } from '../annual-budget/annual-budget.model';
 import { RegionCount } from './region-count.output';
 
 @ObjectType()
@@ -27,9 +27,6 @@ export class Region {
 
     @Field(() => String, {nullable:true})
     contact_id!: string | null;
-
-    @Field(() => String, {nullable:true})
-    annual_budget_id!: string | null;
 
     @Field(() => Date, {nullable:false})
     created_at!: Date;
@@ -64,11 +61,11 @@ export class Region {
     @Field(() => Contact, {nullable:true})
     contact?: Contact | null;
 
-    @Field(() => AnnualBudget, {nullable:true})
-    annual_budget?: AnnualBudget | null;
-
     @Field(() => [Church], {nullable:true})
     churches?: Array<Church>;
+
+    @Field(() => [AnnualBudget], {nullable:true})
+    annual_budgets?: Array<AnnualBudget>;
 
     @Field(() => RegionCount, {nullable:false})
     _count?: RegionCount;

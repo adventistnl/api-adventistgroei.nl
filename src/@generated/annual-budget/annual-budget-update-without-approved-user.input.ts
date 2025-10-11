@@ -5,14 +5,14 @@ import { IntFieldUpdateOperationsInput } from '../prisma/int-field-update-operat
 import { DecimalFieldUpdateOperationsInput } from '../prisma/decimal-field-update-operations.input';
 import { Type } from 'class-transformer';
 import { NullableStringFieldUpdateOperationsInput } from '../prisma/nullable-string-field-update-operations.input';
-import { EnumAnnualBudgetStatusFieldUpdateOperationsInput } from '../prisma/enum-annual-budget-status-field-update-operations.input';
 import { DateTimeFieldUpdateOperationsInput } from '../prisma/date-time-field-update-operations.input';
 import { BoolFieldUpdateOperationsInput } from '../prisma/bool-field-update-operations.input';
 import { NullableDateTimeFieldUpdateOperationsInput } from '../prisma/nullable-date-time-field-update-operations.input';
-import { InstitutionUpdateManyWithoutAnnual_budgetNestedInput } from '../institution/institution-update-many-without-annual-budget-nested.input';
-import { RegionUpdateManyWithoutAnnual_budgetNestedInput } from '../region/region-update-many-without-annual-budget-nested.input';
-import { ChurchUpdateManyWithoutAnnual_budgetNestedInput } from '../church/church-update-many-without-annual-budget-nested.input';
-import { DepartmentUpdateManyWithoutAnnual_budgetNestedInput } from '../department/department-update-many-without-annual-budget-nested.input';
+import { EnumAnnualBudgetStatusFieldUpdateOperationsInput } from '../prisma/enum-annual-budget-status-field-update-operations.input';
+import { InstitutionUpdateOneWithoutAnnual_budgetsNestedInput } from '../institution/institution-update-one-without-annual-budgets-nested.input';
+import { RegionUpdateOneWithoutAnnual_budgetsNestedInput } from '../region/region-update-one-without-annual-budgets-nested.input';
+import { ChurchUpdateOneWithoutAnnual_budgetsNestedInput } from '../church/church-update-one-without-annual-budgets-nested.input';
+import { DepartmentUpdateOneWithoutAnnual_budgetsNestedInput } from '../department/department-update-one-without-annual-budgets-nested.input';
 
 @InputType()
 export class AnnualBudgetUpdateWithoutApproved_userInput {
@@ -38,8 +38,11 @@ export class AnnualBudgetUpdateWithoutApproved_userInput {
     @Field(() => NullableStringFieldUpdateOperationsInput, {nullable:true})
     notes?: NullableStringFieldUpdateOperationsInput;
 
-    @Field(() => EnumAnnualBudgetStatusFieldUpdateOperationsInput, {nullable:true})
-    status?: EnumAnnualBudgetStatusFieldUpdateOperationsInput;
+    @Field(() => NullableStringFieldUpdateOperationsInput, {nullable:true})
+    description?: NullableStringFieldUpdateOperationsInput;
+
+    @Field(() => NullableStringFieldUpdateOperationsInput, {nullable:true})
+    justification?: NullableStringFieldUpdateOperationsInput;
 
     @Field(() => DateTimeFieldUpdateOperationsInput, {nullable:true})
     created_at?: DateTimeFieldUpdateOperationsInput;
@@ -62,19 +65,22 @@ export class AnnualBudgetUpdateWithoutApproved_userInput {
     @Field(() => NullableStringFieldUpdateOperationsInput, {nullable:true})
     deleted_by?: NullableStringFieldUpdateOperationsInput;
 
-    @Field(() => InstitutionUpdateManyWithoutAnnual_budgetNestedInput, {nullable:true})
-    @Type(() => InstitutionUpdateManyWithoutAnnual_budgetNestedInput)
-    institutions?: InstitutionUpdateManyWithoutAnnual_budgetNestedInput;
+    @Field(() => EnumAnnualBudgetStatusFieldUpdateOperationsInput, {nullable:true})
+    status?: EnumAnnualBudgetStatusFieldUpdateOperationsInput;
 
-    @Field(() => RegionUpdateManyWithoutAnnual_budgetNestedInput, {nullable:true})
-    @Type(() => RegionUpdateManyWithoutAnnual_budgetNestedInput)
-    regions?: RegionUpdateManyWithoutAnnual_budgetNestedInput;
+    @Field(() => InstitutionUpdateOneWithoutAnnual_budgetsNestedInput, {nullable:true})
+    @Type(() => InstitutionUpdateOneWithoutAnnual_budgetsNestedInput)
+    institution?: InstitutionUpdateOneWithoutAnnual_budgetsNestedInput;
 
-    @Field(() => ChurchUpdateManyWithoutAnnual_budgetNestedInput, {nullable:true})
-    @Type(() => ChurchUpdateManyWithoutAnnual_budgetNestedInput)
-    churches?: ChurchUpdateManyWithoutAnnual_budgetNestedInput;
+    @Field(() => RegionUpdateOneWithoutAnnual_budgetsNestedInput, {nullable:true})
+    @Type(() => RegionUpdateOneWithoutAnnual_budgetsNestedInput)
+    region?: RegionUpdateOneWithoutAnnual_budgetsNestedInput;
 
-    @Field(() => DepartmentUpdateManyWithoutAnnual_budgetNestedInput, {nullable:true})
-    @Type(() => DepartmentUpdateManyWithoutAnnual_budgetNestedInput)
-    departments?: DepartmentUpdateManyWithoutAnnual_budgetNestedInput;
+    @Field(() => ChurchUpdateOneWithoutAnnual_budgetsNestedInput, {nullable:true})
+    @Type(() => ChurchUpdateOneWithoutAnnual_budgetsNestedInput)
+    church?: ChurchUpdateOneWithoutAnnual_budgetsNestedInput;
+
+    @Field(() => DepartmentUpdateOneWithoutAnnual_budgetsNestedInput, {nullable:true})
+    @Type(() => DepartmentUpdateOneWithoutAnnual_budgetsNestedInput)
+    department?: DepartmentUpdateOneWithoutAnnual_budgetsNestedInput;
 }

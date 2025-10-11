@@ -7,10 +7,6 @@ import { transformToDecimal } from 'prisma-graphql-type-decimal';
 import { Transform } from 'class-transformer';
 import { Type } from 'class-transformer';
 import { AnnualBudgetStatus } from '../prisma/annual-budget-status.enum';
-import { InstitutionUncheckedCreateNestedManyWithoutAnnual_budgetInput } from '../institution/institution-unchecked-create-nested-many-without-annual-budget.input';
-import { RegionUncheckedCreateNestedManyWithoutAnnual_budgetInput } from '../region/region-unchecked-create-nested-many-without-annual-budget.input';
-import { ChurchUncheckedCreateNestedManyWithoutAnnual_budgetInput } from '../church/church-unchecked-create-nested-many-without-annual-budget.input';
-import { DepartmentUncheckedCreateNestedManyWithoutAnnual_budgetInput } from '../department/department-unchecked-create-nested-many-without-annual-budget.input';
 
 @InputType()
 export class AnnualBudgetUncheckedCreateInput {
@@ -40,10 +36,13 @@ export class AnnualBudgetUncheckedCreateInput {
     notes?: string;
 
     @Field(() => String, {nullable:true})
-    approved_by?: string;
+    description?: string;
 
-    @Field(() => AnnualBudgetStatus, {nullable:true})
-    status?: `${AnnualBudgetStatus}`;
+    @Field(() => String, {nullable:true})
+    justification?: string;
+
+    @Field(() => String, {nullable:true})
+    approved_by?: string;
 
     @Field(() => Date, {nullable:true})
     created_at?: Date | string;
@@ -66,19 +65,18 @@ export class AnnualBudgetUncheckedCreateInput {
     @Field(() => String, {nullable:true})
     deleted_by?: string;
 
-    @Field(() => InstitutionUncheckedCreateNestedManyWithoutAnnual_budgetInput, {nullable:true})
-    @Type(() => InstitutionUncheckedCreateNestedManyWithoutAnnual_budgetInput)
-    institutions?: InstitutionUncheckedCreateNestedManyWithoutAnnual_budgetInput;
+    @Field(() => AnnualBudgetStatus, {nullable:true})
+    status?: `${AnnualBudgetStatus}`;
 
-    @Field(() => RegionUncheckedCreateNestedManyWithoutAnnual_budgetInput, {nullable:true})
-    @Type(() => RegionUncheckedCreateNestedManyWithoutAnnual_budgetInput)
-    regions?: RegionUncheckedCreateNestedManyWithoutAnnual_budgetInput;
+    @Field(() => String, {nullable:true})
+    institution_id?: string;
 
-    @Field(() => ChurchUncheckedCreateNestedManyWithoutAnnual_budgetInput, {nullable:true})
-    @Type(() => ChurchUncheckedCreateNestedManyWithoutAnnual_budgetInput)
-    churches?: ChurchUncheckedCreateNestedManyWithoutAnnual_budgetInput;
+    @Field(() => String, {nullable:true})
+    region_id?: string;
 
-    @Field(() => DepartmentUncheckedCreateNestedManyWithoutAnnual_budgetInput, {nullable:true})
-    @Type(() => DepartmentUncheckedCreateNestedManyWithoutAnnual_budgetInput)
-    departments?: DepartmentUncheckedCreateNestedManyWithoutAnnual_budgetInput;
+    @Field(() => String, {nullable:true})
+    church_id?: string;
+
+    @Field(() => String, {nullable:true})
+    department_id?: string;
 }

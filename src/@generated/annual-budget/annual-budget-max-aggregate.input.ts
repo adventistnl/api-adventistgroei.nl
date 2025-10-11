@@ -23,10 +23,13 @@ export class AnnualBudgetMaxAggregateInput {
     notes?: true;
 
     @Field(() => Boolean, {nullable:true})
-    approved_by?: true;
+    description?: true;
 
     @Field(() => Boolean, {nullable:true})
-    status?: true;
+    justification?: true;
+
+    @Field(() => Boolean, {nullable:true})
+    approved_by?: true;
 
     @Field(() => Boolean, {nullable:true})
     created_at?: true;
@@ -48,4 +51,19 @@ export class AnnualBudgetMaxAggregateInput {
 
     @Field(() => Boolean, {nullable:true})
     deleted_by?: true;
+
+    @Field(() => Boolean, {nullable:true})
+    status?: true;
+
+    @Field(() => Boolean, {nullable:true})
+    institution_id?: true;
+
+    @Field(() => Boolean, {nullable:true})
+    region_id?: true;
+
+    @Field(() => Boolean, {nullable:true})
+    church_id?: true;
+
+    @Field(() => Boolean, {nullable:true})
+    department_id?: true;
 }

@@ -8,6 +8,7 @@ import { NullableDateTimeFieldUpdateOperationsInput } from '../prisma/nullable-d
 import { DepartmentUncheckedUpdateManyWithoutChurchNestedInput } from '../department/department-unchecked-update-many-without-church-nested.input';
 import { Type } from 'class-transformer';
 import { UserUncheckedUpdateManyWithoutChurchNestedInput } from '../user/user-unchecked-update-many-without-church-nested.input';
+import { AnnualBudgetUncheckedUpdateManyWithoutChurchNestedInput } from '../annual-budget/annual-budget-unchecked-update-many-without-church-nested.input';
 
 @InputType()
 export class ChurchUncheckedUpdateWithoutSubsidy_requestsInput {
@@ -26,9 +27,6 @@ export class ChurchUncheckedUpdateWithoutSubsidy_requestsInput {
 
     @Field(() => NullableStringFieldUpdateOperationsInput, {nullable:true})
     contact_id?: NullableStringFieldUpdateOperationsInput;
-
-    @Field(() => NullableStringFieldUpdateOperationsInput, {nullable:true})
-    annual_budget_id?: NullableStringFieldUpdateOperationsInput;
 
     @Field(() => DateTimeFieldUpdateOperationsInput, {nullable:true})
     created_at?: DateTimeFieldUpdateOperationsInput;
@@ -58,4 +56,8 @@ export class ChurchUncheckedUpdateWithoutSubsidy_requestsInput {
     @Field(() => UserUncheckedUpdateManyWithoutChurchNestedInput, {nullable:true})
     @Type(() => UserUncheckedUpdateManyWithoutChurchNestedInput)
     users?: UserUncheckedUpdateManyWithoutChurchNestedInput;
+
+    @Field(() => AnnualBudgetUncheckedUpdateManyWithoutChurchNestedInput, {nullable:true})
+    @Type(() => AnnualBudgetUncheckedUpdateManyWithoutChurchNestedInput)
+    annual_budgets?: AnnualBudgetUncheckedUpdateManyWithoutChurchNestedInput;
 }

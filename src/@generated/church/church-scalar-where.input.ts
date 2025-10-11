@@ -33,9 +33,6 @@ export class ChurchScalarWhereInput {
     @Field(() => StringNullableFilter, {nullable:true})
     contact_id?: StringNullableFilter;
 
-    @Field(() => StringNullableFilter, {nullable:true})
-    annual_budget_id?: StringNullableFilter;
-
     @Field(() => DateTimeFilter, {nullable:true})
     created_at?: DateTimeFilter;
 
