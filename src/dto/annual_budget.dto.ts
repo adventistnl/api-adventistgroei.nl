@@ -1,20 +1,27 @@
 import { Field, Int, InputType } from "@nestjs/graphql";
+import { EntityType } from "@prisma/client";
 import { Length } from "class-validator";
 
 @InputType()
 export class AnnualBudgetCreateDto {
   @Field(() => Int)
   @Length(4, 4)
-  year!: number;
+  year: number;
 
   @Field(() => Number)
-  planned_budget!: number;
+  planned_budget: number;
 
-  @Field(() => Number)
-  total_expenses!: number;
+  @Field(() => String)
+  entity_type: EntityType;
+  
+  @Field(() => String)
+  entity_id: string;
 
-  @Field(() => Number)
-  balance!: number;
+  @Field(() => String)
+  description: string;
+
+  @Field(() => String, { nullable: true })
+  justification?: string;
 }
 
 @InputType()
@@ -31,4 +38,14 @@ export class AnnualBudgetUpdateDto {
   @Field(() => Int, { nullable: true })
   @Length(4, 4)
   year?: number;
+
+  @Field(() => String, { nullable: true })
+  notes?: string;
+
+  @Field(() => String, { nullable: true })
+  description?: string;
+  
+  @Field(() => String, { nullable: true })
+  justification?: string;
+  
 }

@@ -19,3 +19,4 @@ export * from './project-voluntary.service';
 export * from './project-activity.service';
 export * from './invite.service';
 export * from './email.service';
+export * from './annual-budget.service';

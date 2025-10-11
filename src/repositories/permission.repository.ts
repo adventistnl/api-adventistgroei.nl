@@ -27,6 +27,7 @@ export class PermissionRepository {
         name: perm.name,
         description: perm.description,
         key_code: perm.key_code,
+        resolver_name: perm.resolver_name,
         group: group,
         created_at: perm.created_at,
         updated_at: perm.updated_at,

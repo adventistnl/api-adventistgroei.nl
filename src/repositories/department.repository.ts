@@ -5,7 +5,6 @@ import { DepartmentCreateDto, DepartmentUpdateDto } from 'src/dto';
 import { CustomGraphQLError, ErrorCode } from 'src/common/errors/custom-graphql-error';
 import { InstitutionRepository } from './institution.repository';
 import { ChurchRepository } from './church.repository';
-import { AnnualBudget, Prisma } from '@prisma/client';
 
 @Injectable()
 export class DepartmentRepository {
@@ -46,26 +45,11 @@ export class DepartmentRepository {
       });
       contactId = contact.id;
     }
-    const { annual_budget: annualBudgetData } = data
-    let annual_budget: AnnualBudget | undefined;
-    if (annualBudgetData) {
-      annual_budget = await this.prisma.annualBudget.create({
-        data: {
-          balance: new Prisma.Decimal(annualBudgetData.balance),
-          planned_budget: new Prisma.Decimal(annualBudgetData.planned_budget),
-          total_expenses: new Prisma.Decimal(annualBudgetData.total_expenses),
-          year: annualBudgetData.year,
-          created_by: userId,
-          updated_by: userId,
-        },
-      });
-    }
 
     return this.prisma.department.create({
       data: {
         name: data.name,
         description: data.description,
-        annual_budget: annual_budget ? { connect: { id: annual_budget.id } } : undefined,
         institution: { connect: { id: data.institution } },
         church: churchId ? { connect: { id: churchId } } : undefined,
         contact: contactId ? { connect: { id: contactId } } : undefined,
@@ -113,7 +97,6 @@ export class DepartmentRepository {
       data: {
         name: data.name ?? undefined,
         description: data.description ?? undefined,
-        annual_budget: data.annual_budget ? { update: data.annual_budget } : undefined,
         institution: data.institution_id ? { connect: { id: data.institution_id } } : undefined,
         church: data.church_id ? { connect: { id: data.church_id } } : undefined,
         contact: contactData,
@@ -158,7 +141,7 @@ export class DepartmentRepository {
         is_deleted: false,
         ...filters,
       },
-      include: { church: true, annual_budget: true, contact: true, users: true },
+      include: { church: true, contact: true, users: true, annual_budgets: true},
     });
   }
 }

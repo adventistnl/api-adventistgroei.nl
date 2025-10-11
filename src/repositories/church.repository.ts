@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../services/prisma.service';
 import { ChurchCreateDto, ChurchUpdateDto } from '../dto/church.dto';
-import { AnnualBudget, Church, Prisma } from '@prisma/client';
+import { Church } from '@prisma/client';
 import { CustomGraphQLError, ErrorCode } from 'src/common/errors/custom-graphql-error';
 import { InstitutionRepository } from './institution.repository';
 import { RegionRepository } from './region.repository';
@@ -31,20 +31,6 @@ export class ChurchRepository {
       contactId = contact.id;
     }
 
-    const { annual_budget: annualBudgetData } = data
-    let annual_budget: AnnualBudget | undefined;
-    if (annualBudgetData) {
-      annual_budget = await this.prisma.annualBudget.create({
-        data: {
-          balance: new Prisma.Decimal(annualBudgetData.balance),
-          planned_budget: new Prisma.Decimal(annualBudgetData.planned_budget),
-          total_expenses: new Prisma.Decimal(annualBudgetData.total_expenses),
-          year: annualBudgetData.year,
-          created_by: userId,
-          updated_by: userId,
-        },
-      });
-    }
     return await this.prisma.church.create({
       data: {
         institution: { connect: { id: data.institution_id } },
@@ -54,7 +40,6 @@ export class ChurchRepository {
         created_by: userId,
         updated_by: userId,
         is_deleted: false,
-        annual_budget: annual_budget ? { connect: { id: annual_budget.id } } : undefined,
       },
     });
   }
@@ -70,7 +55,6 @@ export class ChurchRepository {
         name: data.name,
         region: { connect: { id: data.region_id } },
         contact: data.contact ? { update: { ...data.contact, updated_by: userId }} : undefined,
-        annual_budget: data.annual_budget ? { update: data.annual_budget } : undefined,
         updated_by: userId,
       },
     });
@@ -135,7 +119,7 @@ export class ChurchRepository {
         is_deleted: false,
         ...filters,
       },
-      include: { annual_budget: true, contact: true, departments: true, region: true, users: true },
+      include: {annual_budgets: true, contact: true, departments: true, region: true, users: true },
     });
   }
 

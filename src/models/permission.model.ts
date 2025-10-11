@@ -14,6 +14,9 @@ export class PermissionModel {
   @Field()
   key_code: string;
 
+  @Field()
+  resolver_name: string;
+
   @Field({ nullable: true })
   group?: string;
 }

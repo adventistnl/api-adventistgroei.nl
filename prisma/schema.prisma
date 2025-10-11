@@ -125,6 +125,7 @@ enum PermissionResolverName {
   sendInviteEmail
   inviteUser
   validateInviteToken
+  createAnnualBudget
 }
 
 enum PermissionGroup {
@@ -146,6 +147,7 @@ enum PermissionGroup {
   SUBSIDY_STATUS
   EMAIL_SEND
   INVITE
+  ANNUAL_BUDGET
 }
 
 enum CommunicationType {

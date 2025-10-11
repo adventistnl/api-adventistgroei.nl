@@ -79,7 +79,8 @@ export enum PermissionResolverName {
     deleteProjectActivity = "deleteProjectActivity",
     sendInviteEmail = "sendInviteEmail",
     inviteUser = "inviteUser",
-    validateInviteToken = "validateInviteToken"
+    validateInviteToken = "validateInviteToken",
+    createAnnualBudget = "createAnnualBudget"
 }
 
 

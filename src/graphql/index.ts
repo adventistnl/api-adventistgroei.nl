@@ -18,3 +18,4 @@ export * from './project-voluntary.resolver';
 export * from './project-activity.resolver';
 export * from './invite.resolver';
 export * from './email.resolver';
+export * from './annual-budget.resolver';

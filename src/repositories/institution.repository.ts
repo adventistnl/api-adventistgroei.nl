@@ -4,7 +4,7 @@ import {
   InstitutionCreateDto,
   InstitutionUpdateDto,
 } from '../dto/institution.dto';
-import { AnnualBudget, Institution, LanguagePreference, Prisma } from '@prisma/client';
+import { Institution, LanguagePreference } from '@prisma/client';
 import { CustomGraphQLError, ErrorCode } from 'src/common/errors/custom-graphql-error';
 import { validateAndConvertLanguagePreference } from 'src/common/utils/language-preference.util';
 
@@ -28,20 +28,6 @@ export class InstitutionRepository {
       });
       contactId = contact.id;
     }
-    const { annual_budget: annualBudgetData } = data
-    let annual_budget: AnnualBudget | undefined;
-    if (annualBudgetData) {
-      annual_budget = await this.prisma.annualBudget.create({
-        data: {
-          balance: new Prisma.Decimal(annualBudgetData.balance),
-          planned_budget: new Prisma.Decimal(annualBudgetData.planned_budget),
-          total_expenses: new Prisma.Decimal(annualBudgetData.total_expenses),
-          year: annualBudgetData.year,
-          created_by: userId,
-          updated_by: userId,
-        },
-      });
-    }
 
     return this.prisma.institution.create({
       data: {
@@ -50,7 +36,6 @@ export class InstitutionRepository {
         denomination: data.denomination,
         language_preference: validateAndConvertLanguagePreference(data.language_preference),
         contact_id: contactId,
-        annual_budget_id: annual_budget ? annual_budget.id : undefined,
         created_by: userId,
         updated_by: userId,
         is_deleted: false,
@@ -90,7 +75,6 @@ export class InstitutionRepository {
                 updated_by: userId,
               },
             } : undefined,
-        annual_budget: data.annual_budget ?  { update: data.annual_budget } : undefined,
         updated_by: userId,
       },
     });
