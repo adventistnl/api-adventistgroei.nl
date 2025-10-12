@@ -128,7 +128,7 @@ export class DepartmentRepository {
   }
 
   async findManyByFilters(filters: Partial<Record<keyof Department, any>>): Promise<Department[]> {
-    const allowedKeys: (keyof Department)[] = ['institution_id', 'name', 'is_deleted'];
+    const allowedKeys: (keyof Department)[] = ['institution_id', 'name', 'is_deleted', 'church_id'];
 
     for (const key of Object.keys(filters)) {
       if (!allowedKeys.includes(key as keyof Department)) {

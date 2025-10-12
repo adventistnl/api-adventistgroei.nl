@@ -69,8 +69,8 @@ const permissionsEnabledToClient = [
   { name: 'read subsidy status', description: 'Access to a single subsidy status', resolver_name: 'subsidyStatus' as PermissionResolverName, group: 'SUBSIDY_STATUS' as PermissionGroup, key_code: 'SUBSIDY_STATUS_ACCESS', disabled_to_client: false },
   { name: 'read project activities', description: 'Access to project activities list', resolver_name: 'projectActivities' as PermissionResolverName, group: 'ACTIVITY' as PermissionGroup, key_code: 'PROJECT_ACTIVITIES_ACCESS', disabled_to_client: false },
   { name: 'read project activity', description: 'Access to a single project activity', resolver_name: 'projectActivity' as PermissionResolverName, group: 'ACTIVITY' as PermissionGroup, key_code: 'ACTIVITY_ACCESS', disabled_to_client: false },
-  { name: 'send invite email', description: 'Send an invitation email', resolver_name: 'sendInviteEmail' as PermissionResolverName, group: 'INVITE' as PermissionGroup, key_code: 'INVITE', disabled_to_client: false },
-  { name: 'invite user', description: 'Invite a user', resolver_name: 'inviteUser' as PermissionResolverName, group: 'INVITE' as PermissionGroup, key_code: 'INVITE', disabled_to_client: false },
+  { name: 'send invite email', description: 'Send an invitation email', resolver_name: 'sendInviteEmail' as PermissionResolverName, group: 'INVITE' as PermissionGroup, key_code: 'INVITE_EMAIL', disabled_to_client: false },
+  { name: 'invite user', description: 'Invite a user by link', resolver_name: 'inviteUser' as PermissionResolverName, group: 'INVITE' as PermissionGroup, key_code: 'INVITE_USER_LINK', disabled_to_client: false },
   { name: 'add role to user', description: 'Add role to user', resolver_name: 'addRoleToUser' as PermissionResolverName, group: 'ROLE' as PermissionGroup, key_code: 'USER_ROLE_ADD', disabled_to_client: false },
   { name: 'remove role from user', description: 'Remove role from user', resolver_name: 'removeRoleFromUser' as PermissionResolverName, group: 'ROLE' as PermissionGroup, key_code: 'USER_ROLE_REMOVE', disabled_to_client: false },
   { name: 'create role', description: 'Create a role', resolver_name: 'createRole' as PermissionResolverName, group: 'ROLE' as PermissionGroup, key_code: 'ROLE_CREATE', disabled_to_client: false },
@@ -118,7 +118,7 @@ async function main() {
       ) {
         console.warn(`Permission with key_code '${permission.key_code}' already exists. Skipping creation.`);
       } else {
-        throw error;
+        console.error(`Unexpected error for key_code '${permission.key_code}':`, error);
       }
     }
   }
