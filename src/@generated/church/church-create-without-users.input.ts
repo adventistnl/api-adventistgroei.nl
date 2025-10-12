@@ -1,5 +1,6 @@
 import { Field } from '@nestjs/graphql';
 import { InputType } from '@nestjs/graphql';
+import { ChurchType } from '../prisma/church-type.enum';
 import { InstitutionCreateNestedOneWithoutChurchesInput } from '../institution/institution-create-nested-one-without-churches.input';
 import { Type } from 'class-transformer';
 import { RegionCreateNestedOneWithoutChurchesInput } from '../region/region-create-nested-one-without-churches.input';
@@ -13,6 +14,9 @@ export class ChurchCreateWithoutUsersInput {
 
     @Field(() => String, {nullable:true})
     id?: string;
+
+    @Field(() => ChurchType, {nullable:true})
+    type?: `${ChurchType}`;
 
     @Field(() => String, {nullable:false})
     name!: string;

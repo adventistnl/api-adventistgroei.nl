@@ -2,6 +2,7 @@ import { InputType, Field } from '@nestjs/graphql';
 import { IsArray, IsOptional, IsString } from 'class-validator';
 import { ContactCreateDto } from './contact.dto';
 import { AnnualBudgetCreateDto, AnnualBudgetUpdateDto } from './annual_budget.dto';
+import { ChurchType } from 'src/@generated/prisma/church-type.enum';
 
 @InputType()
 export class ChurchCreateDto {
@@ -24,6 +25,9 @@ export class ChurchCreateDto {
   @Field(() => AnnualBudgetCreateDto, { nullable: true })
   @IsOptional()
   annual_budget?: AnnualBudgetCreateDto;
+
+  @Field(() => ChurchType, { nullable: true })
+  type?: ChurchType
 }
 
 @InputType()
@@ -64,4 +68,7 @@ export class ChurchUpdateDto {
   @IsArray()
   @IsOptional()
   subsidy_requests?: string[]; 
+  
+  @Field(() => ChurchType, { nullable: true })
+  type?: ChurchType
 }

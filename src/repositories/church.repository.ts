@@ -36,6 +36,7 @@ export class ChurchRepository {
         institution: { connect: { id: data.institution_id } },
         region: { connect: { id: data.region_id } },
         name: data.name,
+        type: data.type,
         contact:  contactId ? { connect: { id: contactId } } : undefined,
         created_by: userId,
         updated_by: userId,
@@ -52,6 +53,7 @@ export class ChurchRepository {
       where: { id: churchId },
       data: {
         institution: { connect: { id: data.institution_id } },
+        type: data.type,
         name: data.name,
         region: { connect: { id: data.region_id } },
         contact: data.contact ? { update: { ...data.contact, updated_by: userId }} : undefined,

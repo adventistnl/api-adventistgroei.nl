@@ -209,6 +209,13 @@ enum EntityType {
   CHURCH_DEPARTMENT
   USER
 }
+
+enum ChurchType  {
+  PLANT
+  COMPANY
+  STANDARD
+}
+
 // Models
 model Institution {
   id                  String             @id @default(uuid())
@@ -261,25 +268,26 @@ model Region {
 }
 
 model Church {
-  id               String           @id @default(uuid())
+  id               String                 @id @default(uuid())
+  type             ChurchType             @default(STANDARD)
   institution_id   String
-  institution      Institution      @relation(fields: [institution_id], references: [id])
+  institution      Institution            @relation(fields: [institution_id], references: [id])
   name             String
   region_id        String
-  region           Region           @relation(fields: [region_id], references: [id])
+  region           Region                 @relation(fields: [region_id], references: [id])
   contact_id       String?
-  contact          Contact?         @relation(fields: [contact_id], references: [id])
-  created_at       DateTime         @default(now())
-  updated_at       DateTime         @updatedAt
+  contact          Contact?               @relation(fields: [contact_id], references: [id])
+  created_at       DateTime               @default(now())
+  updated_at       DateTime               @updatedAt
   created_by       String
   updated_by       String
-  is_deleted       Boolean          @default(false)
+  is_deleted       Boolean                @default(false)
   deleted_at       DateTime?
   deleted_by       String?
   departments      Department[]
   users            User[]
   subsidy_requests SubsidyRequest[]
-  annual_budgets   AnnualBudget[]  
+  annual_budgets   AnnualBudget[]
 }
 
 model Department {

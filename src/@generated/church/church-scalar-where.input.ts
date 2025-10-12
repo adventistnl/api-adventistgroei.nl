@@ -1,6 +1,7 @@
 import { Field } from '@nestjs/graphql';
 import { InputType } from '@nestjs/graphql';
 import { StringFilter } from '../prisma/string-filter.input';
+import { EnumChurchTypeFilter } from '../prisma/enum-church-type-filter.input';
 import { StringNullableFilter } from '../prisma/string-nullable-filter.input';
 import { DateTimeFilter } from '../prisma/date-time-filter.input';
 import { BoolFilter } from '../prisma/bool-filter.input';
@@ -20,6 +21,9 @@ export class ChurchScalarWhereInput {
 
     @Field(() => StringFilter, {nullable:true})
     id?: StringFilter;
+
+    @Field(() => EnumChurchTypeFilter, {nullable:true})
+    type?: EnumChurchTypeFilter;
 
     @Field(() => StringFilter, {nullable:true})
     institution_id?: StringFilter;

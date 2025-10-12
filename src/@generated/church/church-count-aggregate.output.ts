@@ -9,6 +9,9 @@ export class ChurchCountAggregate {
     id!: number;
 
     @Field(() => Int, {nullable:false})
+    type!: number;
+
+    @Field(() => Int, {nullable:false})
     institution_id!: number;
 
     @Field(() => Int, {nullable:false})

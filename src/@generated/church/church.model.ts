@@ -1,6 +1,7 @@
 import { Field } from '@nestjs/graphql';
 import { ObjectType } from '@nestjs/graphql';
 import { ID } from '@nestjs/graphql';
+import { ChurchType } from '../prisma/church-type.enum';
 import { Institution } from '../institution/institution.model';
 import { Region } from '../region/region.model';
 import { Contact } from '../contact/contact.model';
@@ -15,6 +16,9 @@ export class Church {
 
     @Field(() => ID, {nullable:false})
     id!: string;
+
+    @Field(() => ChurchType, {defaultValue:'STANDARD',nullable:false})
+    type!: `${ChurchType}`;
 
     @Field(() => String, {nullable:false})
     institution_id!: string;

@@ -1,11 +1,15 @@
 import { Field } from '@nestjs/graphql';
 import { ObjectType } from '@nestjs/graphql';
+import { ChurchType } from '../prisma/church-type.enum';
 
 @ObjectType()
 export class ChurchMinAggregate {
 
     @Field(() => String, {nullable:true})
     id?: string;
+
+    @Field(() => ChurchType, {nullable:true})
+    type?: `${ChurchType}`;
 
     @Field(() => String, {nullable:true})
     institution_id?: string;

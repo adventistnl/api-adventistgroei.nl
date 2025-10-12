@@ -8,6 +8,9 @@ export class ChurchCountAggregateInput {
     id?: true;
 
     @Field(() => Boolean, {nullable:true})
+    type?: true;
+
+    @Field(() => Boolean, {nullable:true})
     institution_id?: true;
 
     @Field(() => Boolean, {nullable:true})
