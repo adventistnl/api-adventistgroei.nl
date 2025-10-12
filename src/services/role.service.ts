@@ -40,8 +40,8 @@ export class RoleService {
     return this.toModel(role);
   }
 
-  async findAll(): Promise<RoleModel[]> {
-    const roles = await this.roleRepository.findAll();
+  async findAll(userId: string): Promise<RoleModel[]> {
+    const roles = await this.roleRepository.findAll(userId);
     return roles.map((role) => this.toModel(role));
   }
   async getUserIdsByRole(roleId: string): Promise<RoleAssignmentModel[]> {

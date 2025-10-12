@@ -93,8 +93,18 @@ export class RoleRepository {
     });
   }
 
-  async findAll(): Promise<Role[]> {
-    return this.prisma.role.findMany({
+  async findAll(userId: string): Promise<Role[]> {
+    // Obtenha todas as roles do usuário
+    const userRoles = await this.prisma.userRole.findMany({
+      where: { user_id: userId },
+      select: { role: true },
+    });
+
+    // Extraia os key_codes das roles do usuário
+    const userRoleKeyCodes = userRoles.map((userRole) => userRole.role.key_code);
+
+    // Obtenha todas as roles disponíveis
+    const allRoles = await this.prisma.role.findMany({
       where: { is_deleted: false },
       include: {
         role_permissions: {
@@ -102,7 +112,14 @@ export class RoleRepository {
         },
         user_roles: { select: { user_id: true, is_deleted: false }},
       },
-      
+    });
+
+    // Filtre a role 'dev' com base na presença do key_code no usuário
+    return allRoles.filter((role) => {
+      if (role.key_code === 'dev') {
+        return userRoleKeyCodes.includes('dev');
+      }
+      return true;
     });
   }
 

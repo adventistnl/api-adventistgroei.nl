@@ -40,8 +40,10 @@ export class RoleResolver {
 
   @Query(() => [RoleModel])
   @Permission()
-  async roles(): Promise<RoleModel[]> {
-    return this.roleService.findAll();
+  async roles(
+    @Context() ctx: { userId?: string },
+  ): Promise<RoleModel[]> {
+    return this.roleService.findAll(ctx.userId!);
   }
 
   @Query(() => RoleModel, { nullable: true })
