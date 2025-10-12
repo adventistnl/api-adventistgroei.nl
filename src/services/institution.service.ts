@@ -5,7 +5,7 @@ import {
 } from '../dto/institution.dto';
 import { Institution } from '../@generated/institution/institution.model';
 import { CustomGraphQLError, ErrorCode } from '../common/errors/custom-graphql-error';
-import { ContactRepository, ChurchRepository, CommunicationRepository, DepartmentRepository, InstitutionRepository, ProjectRepository, NotificationRepository, RegionRepository, SettingRepository, SubsidyRequestRepository, UserRepository } from 'src/repositories';
+import { ContactRepository, ChurchRepository, CommunicationRepository, DepartmentRepository, InstitutionRepository, ProjectRepository, NotificationRepository, RegionRepository, SettingRepository, SubsidyRequestRepository, UserRepository, AnnualBudgetRepository } from 'src/repositories';
 import { DirectMessageRepository } from 'src/repositories/direct-message.repository';
 
 @Injectable()
@@ -23,6 +23,7 @@ export class InstitutionService {
     private readonly directMessageRepository: DirectMessageRepository,
     private readonly subsidyRequestRepository: SubsidyRequestRepository,
     private readonly contactRepository: ContactRepository,
+    private readonly annualBudgetRepository: AnnualBudgetRepository,
   ) {}
 
   async createInstitution(
@@ -102,5 +103,9 @@ export class InstitutionService {
 
   async getContactByInstitutionId(institutionId: string) {
     return await this.contactRepository.findOneByFilters({ Institution: { id: institutionId} });
+  }
+
+  async getAnnualBudgetByInstitutionId(institutionId: string) {
+    return await this.annualBudgetRepository.findManyByFilters({ institution_id: institutionId });
   }
 }

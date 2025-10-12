@@ -102,6 +102,7 @@ export class InstitutionRepository {
             churches: true,
             departments: true,
             users: true,
+            annual_budgets: true,
             // Adicione outros relacionamentos se necessário
           },
         },
@@ -119,6 +120,7 @@ export class InstitutionRepository {
             churches: true,
             departments: true,
             users: true,
+            annual_budgets: true,
             // Adicione outros relacionamentos se necessário
           },
         },

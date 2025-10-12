@@ -16,6 +16,7 @@ import { Project } from 'src/@generated/project/project.model';
 import { DirectMessage } from 'src/@generated/direct-message/direct-message.model';
 import { SubsidyRequest } from 'src/@generated/subsidy-request/subsidy-request.model';
 import { Contact } from 'src/@generated/contact/contact.model';
+import { AnnualBudget } from 'src/@generated/annual-budget/annual-budget.model';
 
 
 @Resolver(() => Institution)
@@ -120,6 +121,11 @@ export class InstitutionResolver {
   async contact(@Parent() institution: Institution) {
     return await this.institutionService.getContactByInstitutionId(institution.id);
   }
+
+  @ResolveField(() => [AnnualBudget], { name: 'annual_budgets' })
+  async annualBudgets(@Parent() institution: Institution) {
+    return await this.institutionService.getAnnualBudgetByInstitutionId(institution.id);
+  }
   
   @ResolveField(() => Int, { name: 'regions_count' })
   regionsCount(@Parent() institution: Institution) {
@@ -140,6 +146,8 @@ export class InstitutionResolver {
   usersCount(@Parent() institution: Institution) {
     return institution._count?.users ?? 0;
   }
+
+
 
   // @ResolveField(() => Int, { name: 'members_count' })
   // membersCount(@Parent() institution: Institution) {
