@@ -53,14 +53,12 @@ export class NodemailerEmailRepository {
     await loadNamespaces(['emails']);
 
     const subject = this.getTranslation('subject', language);
-    const body = data.message || this.getTranslation('body', language);
-    const greeting = this.getTranslation('greeting', language, { inviterName: inviter.name });
 
     const templateData = {
       url: data.url,
-      body,
       subject,
-      greeting,
+      body: data.message || this.getTranslation('body', language),
+      greeting: this.getTranslation('greeting', language, { inviterName: inviter.name }),
       cta: this.getTranslation('cta', language),
       expiry: this.getTranslation('expiry', language),
       ignore: this.getTranslation('ignore', language),
