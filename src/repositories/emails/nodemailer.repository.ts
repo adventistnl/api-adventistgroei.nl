@@ -46,7 +46,6 @@ export class NodemailerEmailRepository {
   }
 
   async sendInviteEmail(data: InviteEmailDto): Promise<void> {
-    console.log('Using Nodemailer Email:', this.nodemailerEmail);
     const inviter = await this.userService.getUserById(data.inviter_id);
     if (!inviter) throw new CustomGraphQLError('Inviter not found', ErrorCode.NOT_FOUND, 404);
 
