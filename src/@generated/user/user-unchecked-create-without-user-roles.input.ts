@@ -1,5 +1,6 @@
 import { Field } from '@nestjs/graphql';
 import { InputType } from '@nestjs/graphql';
+import { GenderType } from '../prisma/gender-type.enum';
 import { LanguagePreference } from '../prisma/language-preference.enum';
 import { DirectMessageUncheckedCreateNestedManyWithoutSenderInput } from '../direct-message/direct-message-unchecked-create-nested-many-without-sender.input';
 import { DirectMessageRecipientUncheckedCreateNestedManyWithoutRecipient_userInput } from '../direct-message-recipient/direct-message-recipient-unchecked-create-nested-many-without-recipient-user.input';
@@ -29,6 +30,9 @@ export class UserUncheckedCreateWithoutUser_rolesInput {
 
     @Field(() => String, {nullable:false})
     password!: string;
+
+    @Field(() => GenderType, {nullable:true})
+    gender?: `${GenderType}`;
 
     @Field(() => LanguagePreference, {nullable:false})
     language_preference!: `${LanguagePreference}`;

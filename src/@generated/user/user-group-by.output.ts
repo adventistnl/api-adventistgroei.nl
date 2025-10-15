@@ -1,5 +1,6 @@
 import { Field } from '@nestjs/graphql';
 import { ObjectType } from '@nestjs/graphql';
+import { GenderType } from '../prisma/gender-type.enum';
 import { LanguagePreference } from '../prisma/language-preference.enum';
 import { UserCountAggregate } from './user-count-aggregate.output';
 import { UserMinAggregate } from './user-min-aggregate.output';
@@ -19,6 +20,9 @@ export class UserGroupBy {
 
     @Field(() => String, {nullable:false})
     password!: string;
+
+    @Field(() => GenderType, {nullable:true})
+    gender?: `${GenderType}`;
 
     @Field(() => LanguagePreference, {nullable:false})
     language_preference!: `${LanguagePreference}`;

@@ -18,6 +18,9 @@ export class UserCountAggregate {
     password!: number;
 
     @Field(() => Int, {nullable:false})
+    gender!: number;
+
+    @Field(() => Int, {nullable:false})
     language_preference!: number;
 
     @Field(() => Int, {nullable:false})

@@ -21,6 +21,9 @@ export class UserOrderByWithAggregationInput {
     @Field(() => SortOrder, {nullable:true})
     password?: `${SortOrder}`;
 
+    @Field(() => SortOrderInput, {nullable:true})
+    gender?: SortOrderInput;
+
     @Field(() => SortOrder, {nullable:true})
     language_preference?: `${SortOrder}`;
 

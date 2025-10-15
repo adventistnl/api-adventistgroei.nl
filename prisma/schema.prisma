@@ -216,6 +216,11 @@ enum ChurchType  {
   STANDARD
 }
 
+enum GenderType {
+  MALE
+  FEMALE
+}
+
 // Models
 model Institution {
   id                  String             @id @default(uuid())
@@ -379,6 +384,7 @@ model User {
   name                      String
   email                     String                   @unique
   password                  String
+  gender                    GenderType?              @default(MALE)
   language_preference       LanguagePreference
   created_at                DateTime                 @default(now())
   updated_at                DateTime                 @updatedAt

@@ -1,6 +1,7 @@
 import { Field } from '@nestjs/graphql';
 import { ObjectType } from '@nestjs/graphql';
 import { ID } from '@nestjs/graphql';
+import { GenderType } from '../prisma/gender-type.enum';
 import { LanguagePreference } from '../prisma/language-preference.enum';
 import { Contact } from '../contact/contact.model';
 import { Institution } from '../institution/institution.model';
@@ -35,6 +36,9 @@ export class User {
 
     @Field(() => String, {nullable:false})
     password!: string;
+
+    @Field(() => GenderType, {defaultValue:'MALE',nullable:true})
+    gender!: `${GenderType}` | null;
 
     @Field(() => LanguagePreference, {nullable:false})
     language_preference!: `${LanguagePreference}`;

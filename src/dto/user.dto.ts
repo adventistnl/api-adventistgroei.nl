@@ -1,6 +1,7 @@
 import { InputType, Field } from '@nestjs/graphql';
 import { ContactCreateDto } from './contact.dto';
 import { IsString  } from 'class-validator';
+import { GenderType } from 'src/@generated/prisma/gender-type.enum';
 
 @InputType()
 export class UserCreateDto {
@@ -36,6 +37,9 @@ export class UserCreateDto {
 
   @Field(() => [String])
   roles: string[];
+
+  @Field(() => GenderType)
+  gender: GenderType;
 }
 
 @InputType()
@@ -71,4 +75,7 @@ export class UserUpdateDto {
 
   @Field(() => ContactCreateDto, { nullable: true })
   contact?: ContactCreateDto;
+
+  @Field(() => GenderType, { nullable: true })
+  gender?: GenderType;
 }

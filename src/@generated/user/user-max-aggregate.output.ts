@@ -1,5 +1,6 @@
 import { Field } from '@nestjs/graphql';
 import { ObjectType } from '@nestjs/graphql';
+import { GenderType } from '../prisma/gender-type.enum';
 import { LanguagePreference } from '../prisma/language-preference.enum';
 
 @ObjectType()
@@ -16,6 +17,9 @@ export class UserMaxAggregate {
 
     @Field(() => String, {nullable:true})
     password?: string;
+
+    @Field(() => GenderType, {nullable:true})
+    gender?: `${GenderType}`;
 
     @Field(() => LanguagePreference, {nullable:true})
     language_preference?: `${LanguagePreference}`;
