@@ -17,3 +17,5 @@ export * from './project-activity.repository';
 export * from './invite.repository';
 export * from './subsidy-status.repository';
 export * from './annual-budget.repository';
+export * from './emails/sendgrid.repository';
+export * from './emails/nodemailer.repository';

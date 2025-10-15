@@ -1,0 +1,9 @@
+{
+  "invite.subject": "Invitation to Adventist Groei",
+  "invite.greeting": "Hello {{inviterName}}!",
+  "invite.body": "You have been invited to register on our platform.",
+  "invite.cta": "Complete your registration",
+  "invite.expiry": "This link expires in 2 days.",
+  "invite.ignore": "If you did not expect this invitation, please ignore this email.",
+  "invite.footer": "Best regards,\nThe Adventist Groei Team"
+}

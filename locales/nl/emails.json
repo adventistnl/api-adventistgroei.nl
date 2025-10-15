@@ -1,0 +1,9 @@
+{
+  "invite.subject": "Uitnodiging voor Adventist Groei",
+  "invite.greeting": "Hallo {{inviterName}}!",
+  "invite.body": "Je bent uitgenodigd om je te registreren op ons platform.",
+  "invite.cta": "Voltooi je registratie",
+  "invite.expiry": "Deze link verloopt over 2 dagen.",
+  "invite.ignore": "Als je deze uitnodiging niet verwachtte, negeer deze e-mail dan.",
+  "invite.footer": "Met vriendelijke groet,\nHet Adventist Groei Team"
+}
