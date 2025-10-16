@@ -57,8 +57,8 @@ export class NodemailerEmailRepository {
     const templateData = {
       url: data.url,
       subject,
-      body: data.message || this.getTranslation('body', language),
-      greeting: this.getTranslation('greeting', language, { inviterName: inviter.name }),
+      body: data.message || this.getTranslation('body', language, { inviterName: inviter.name }),
+      greeting: this.getTranslation('greeting', language),
       cta: this.getTranslation('cta', language),
       expiry: this.getTranslation('expiry', language),
       ignore: this.getTranslation('ignore', language),
