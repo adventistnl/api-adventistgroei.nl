@@ -37,6 +37,7 @@ export class InviteRepository {
       if (usedToken) {
         throw new CustomGraphQLError('Token was already used.', ErrorCode.UNAUTHORIZED, 401);
       }
+
       const decodedToken = this.jwtService.verify<ValidateOutputModel>(token);
 
       const payload: ValidateOutputModel = {
