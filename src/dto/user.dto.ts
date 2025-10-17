@@ -40,6 +40,9 @@ export class UserCreateDto {
 
   @Field(() => GenderType)
   gender: GenderType;
+
+  @Field(() => String)
+  invite_token: string;
 }
 
 @InputType()

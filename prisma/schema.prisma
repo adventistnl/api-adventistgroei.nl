@@ -860,3 +860,11 @@ model SpecialProjects {
   project        Project?       @relation(fields: [project_id], references: [id])
   subsidy_status SubsidyStatus? @relation(fields: [subsidy_status_id], references: [id])
 }
+
+
+model UsedInviteTokens {
+  id              String      @id @default(cuid())
+  token           String      @unique
+  usedAt          DateTime    @default(now())
+  tokenExpiresAt  DateTime
+}

@@ -15,7 +15,7 @@ export class InviteResolver {
   }
   
   @Mutation(() => ValidateOutputModel)
-  validateInviteToken(@Args('token') token: string): ValidateOutputModel {
+  async validateInviteToken(@Args('token') token: string): Promise<ValidateOutputModel> {
     return this.inviteService.validateInviteToken(token);
   }
 }

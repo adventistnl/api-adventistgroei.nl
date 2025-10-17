@@ -3,13 +3,14 @@ import * as bcrypt from 'bcryptjs';
 import { User } from '@prisma/client';
 import { PrismaService } from '../services/prisma.service';
 import { UserCreateDto, UserUpdateDto } from '../dto/user.dto';
-import { UserWithRoles } from 'src/models';
+import { UserWithRoles, ValidateOutputModel } from 'src/models';
 import { LanguagePreference } from '../@generated/prisma/language-preference.enum';
 import { DepartmentRepository } from './department.repository';
 import { InstitutionRepository } from './institution.repository';
 import { ChurchRepository } from './church.repository';
 import { ContactRepository } from './contact.repository';
 import { CustomGraphQLError, ErrorCode } from 'src/common/errors/custom-graphql-error';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class UserRepository {
@@ -18,12 +19,12 @@ export class UserRepository {
     private readonly departmentRepository: DepartmentRepository,
     private readonly institutioRepository: InstitutionRepository,
     private readonly churchRepository: ChurchRepository,
-    private readonly contactRepository: ContactRepository
-    
+    private readonly contactRepository: ContactRepository,
+    private readonly jwtService: JwtService
   ) {}
 
   async create(data: UserCreateDto): Promise<Omit<User, 'password'>> {
-    const { contact, church_id, department_id, institution_id, language_preference, roles, ...rest } = data;
+    const { contact, church_id, department_id, institution_id, language_preference, roles, invite_token, ...rest } = data;
 
     if (!Object.values(LanguagePreference).includes(language_preference as LanguagePreference)) {
       throw new Error('Invalid language preference');
@@ -35,6 +36,9 @@ export class UserRepository {
     await this.churchRepository.findById(church_id);
     // Verificar se o department existe
     await this.departmentRepository.findById(department_id);
+
+    const decodedToken = this.jwtService.verify<ValidateOutputModel>(invite_token);
+    const tokenExpiresAt = new Date(decodedToken.exp * 1000); // Converte Unix Timestamp para Date
 
     const contactCreated = await this.prisma.contact.create({
       data: {
@@ -78,6 +82,13 @@ export class UserRepository {
         console.error('Failed to add roles to user:', error);
       }
     }
+
+    await this.prisma.usedInviteTokens.create({
+      data: {
+        token: invite_token,
+        tokenExpiresAt
+      }
+    })
 
     return createdUser;
   }

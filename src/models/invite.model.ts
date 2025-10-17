@@ -27,4 +27,8 @@ export class ValidateOutputModel {
 
   @Field(() => LanguagePreference, { nullable: true })
   language_preference?: LanguagePreference;
+
+  @Field(() => Number)
+  exp: number
+
 }
