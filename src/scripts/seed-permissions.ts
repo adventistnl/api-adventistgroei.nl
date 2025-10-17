@@ -37,7 +37,6 @@ const permissionsDisabledToClient = [
   { name: 'delete subsidy status', description: 'Delete a subsidy status', resolver_name: 'deleteSubsidyStatus' as PermissionResolverName, group: 'SUBSIDY_STATUS' as PermissionGroup, key_code: 'SUBSIDY_STATUS_DELETE', disabled_to_client: true },
   { name: 'add project voluntary', description: 'Adicionar voluntário ao projeto', resolver_name: 'addProjectVoluntary' as PermissionResolverName, group: 'PROJECT' as PermissionGroup, key_code: 'PROJECT_VOLUNTARY_ADD', disabled_to_client: true },
   { name: 'remove project voluntary', description: 'Remover voluntário do projeto', resolver_name: 'removeProjectVoluntary' as PermissionResolverName, group: 'PROJECT' as PermissionGroup, key_code: 'PROJECT_VOLUNTARY_REMOVE', disabled_to_client: true },
-  { name: 'send invite email', description: 'Send an invitation email', resolver_name: 'sendInviteEmail' as PermissionResolverName, group: 'INVITE' as PermissionGroup, key_code: 'INVITE_EMAIL', disabled_to_client: true },
 ];
 
 const permissionsEnabledToClient = [
@@ -81,6 +80,7 @@ const permissionsEnabledToClient = [
   { name: 'create region', description: 'Create a region', resolver_name: 'createRegion' as PermissionResolverName, group: 'REGION' as PermissionGroup, key_code: 'REGION_CREATE', disabled_to_client: false },
   { name: 'create church', description: 'Create a church', resolver_name: 'createChurch' as PermissionResolverName, group: 'CHURCH' as PermissionGroup, key_code: 'CHURCH_CREATE', disabled_to_client: false },
   { name: 'create department', description: 'Create a department', resolver_name: 'createDepartment' as PermissionResolverName, group: 'DEPARTMENT' as PermissionGroup, key_code: 'DEPARTMENT_CREATE', disabled_to_client: false },
+  { name: 'send invite email', description: 'Send an invitation email', resolver_name: 'sendInviteEmail' as PermissionResolverName, group: 'INVITE' as PermissionGroup, key_code: 'INVITE_EMAIL', disabled_to_client: false },
 ];
 
 async function main() {
