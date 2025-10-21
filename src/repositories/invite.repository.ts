@@ -22,7 +22,7 @@ export class InviteRepository {
 
     if (invitedUser) throw new CustomGraphQLError(`Email already in use`, ErrorCode.CONFLICT, 409);
       
-    const token = this.jwtService.sign({ ...data }, { expiresIn: '2d', algorithm: 'HS256' });
+    const token = this.jwtService.sign({ ...data }, { expiresIn: '30d', algorithm: 'HS256' });
     const url = `${this.BASE_URL}/register?invite=${token}`;
 
     return { token, url };

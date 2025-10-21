@@ -30,7 +30,7 @@ const JWT_SECRET = process.env.JWT_SECRET;
     }),
     JwtModule.register({
       secret: JWT_SECRET,
-      signOptions: { expiresIn: '1h' },
+      signOptions: { expiresIn: '30d' },
     }),
   ],
   providers: [
