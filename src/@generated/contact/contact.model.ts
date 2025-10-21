@@ -2,7 +2,6 @@ import { Field } from '@nestjs/graphql';
 import { ObjectType } from '@nestjs/graphql';
 import { ID } from '@nestjs/graphql';
 import { Institution } from '../institution/institution.model';
-import { Region } from '../region/region.model';
 import { Church } from '../church/church.model';
 import { Department } from '../department/department.model';
 import { User } from '../user/user.model';
@@ -74,9 +73,6 @@ export class Contact {
 
     @Field(() => Institution, {nullable:true})
     Institution?: Institution | null;
-
-    @Field(() => [Region], {nullable:true})
-    Region?: Array<Region>;
 
     @Field(() => [Church], {nullable:true})
     Church?: Array<Church>;

@@ -5,7 +5,6 @@ import { Permission } from '../middlewares/permissions.decorator';
 import { UseGuards } from '@nestjs/common';
 import { PermissionsGuard } from '../middlewares/permissions.guard';
 import { InstitutionCreateDto, InstitutionUpdateDto } from '../dto/institution.dto';
-import { Region } from 'src/@generated/region/region.model';
 import { Church } from 'src/@generated/church/church.model';
 import { Department } from 'src/@generated/department/department.model';
 import { User } from 'src/@generated/user/user.model';
@@ -67,11 +66,6 @@ export class InstitutionResolver {
     return await this.institutionService.deleteInstitution(id, userId);
   }
 
-  @ResolveField(() => [Region])
-  async regions(@Parent() institution: Institution) {
-    return this.institutionService.getRegions(institution.id);
-  }
-
   @ResolveField(() => [Church])
   async churches(@Parent() institution: Institution) {
     return this.institutionService.getChurches(institution.id);
@@ -126,11 +120,6 @@ export class InstitutionResolver {
   async annualBudgets(@Parent() institution: Institution) {
     return await this.institutionService.getAnnualBudgetByInstitutionId(institution.id);
   }
-  
-  @ResolveField(() => Int, { name: 'regions_count' })
-  regionsCount(@Parent() institution: Institution) {
-    return institution._count?.regions ?? 0;
-  }
 
   @ResolveField(() => Int, { name: 'churches_count' })
   churchesCount(@Parent() institution: Institution) {
@@ -146,12 +135,4 @@ export class InstitutionResolver {
   usersCount(@Parent() institution: Institution) {
     return institution._count?.users ?? 0;
   }
-
-
-
-  // @ResolveField(() => Int, { name: 'members_count' })
-  // membersCount(@Parent() institution: Institution) {
-  //   // Ajuste conforme sua modelagem se não existir em _count
-  //   return institution._count?.members ?? 0;
-  // }
 }

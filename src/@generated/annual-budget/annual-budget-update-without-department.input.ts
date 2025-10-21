@@ -11,7 +11,6 @@ import { NullableDateTimeFieldUpdateOperationsInput } from '../prisma/nullable-d
 import { EnumAnnualBudgetStatusFieldUpdateOperationsInput } from '../prisma/enum-annual-budget-status-field-update-operations.input';
 import { UserUpdateOneWithoutApproved_annual_budgetsNestedInput } from '../user/user-update-one-without-approved-annual-budgets-nested.input';
 import { InstitutionUpdateOneWithoutAnnual_budgetsNestedInput } from '../institution/institution-update-one-without-annual-budgets-nested.input';
-import { RegionUpdateOneWithoutAnnual_budgetsNestedInput } from '../region/region-update-one-without-annual-budgets-nested.input';
 import { ChurchUpdateOneWithoutAnnual_budgetsNestedInput } from '../church/church-update-one-without-annual-budgets-nested.input';
 
 @InputType()
@@ -75,10 +74,6 @@ export class AnnualBudgetUpdateWithoutDepartmentInput {
     @Field(() => InstitutionUpdateOneWithoutAnnual_budgetsNestedInput, {nullable:true})
     @Type(() => InstitutionUpdateOneWithoutAnnual_budgetsNestedInput)
     institution?: InstitutionUpdateOneWithoutAnnual_budgetsNestedInput;
-
-    @Field(() => RegionUpdateOneWithoutAnnual_budgetsNestedInput, {nullable:true})
-    @Type(() => RegionUpdateOneWithoutAnnual_budgetsNestedInput)
-    region?: RegionUpdateOneWithoutAnnual_budgetsNestedInput;
 
     @Field(() => ChurchUpdateOneWithoutAnnual_budgetsNestedInput, {nullable:true})
     @Type(() => ChurchUpdateOneWithoutAnnual_budgetsNestedInput)

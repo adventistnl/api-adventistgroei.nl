@@ -26,12 +26,5 @@ export class RegionService {
   async getRegionById(id: string): Promise<Region | null> {
     return await this.regionRepository.findById(id);
   }
-  
-  async getChildren(parentRegionId: string): Promise<Region[]> {
-    return this.regionRepository.findChildren(parentRegionId);
-  }
 
-  async getParentRegion(parentRegionId: string): Promise<Region | null> {
-    return this.regionRepository.findById(parentRegionId);
-  } 
 }

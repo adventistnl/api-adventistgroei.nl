@@ -52,7 +52,6 @@ export class ChurchUpdateWithoutDepartmentsInput {
     institution?: InstitutionUpdateOneRequiredWithoutChurchesNestedInput;
 
     @Field(() => RegionUpdateOneRequiredWithoutChurchesNestedInput, {nullable:true})
-    @Type(() => RegionUpdateOneRequiredWithoutChurchesNestedInput)
     region?: RegionUpdateOneRequiredWithoutChurchesNestedInput;
 
     @Field(() => ContactUpdateOneWithoutChurchNestedInput, {nullable:true})

@@ -47,7 +47,6 @@ export class ChurchCreateWithoutAnnual_budgetsInput {
     institution!: InstitutionCreateNestedOneWithoutChurchesInput;
 
     @Field(() => RegionCreateNestedOneWithoutChurchesInput, {nullable:false})
-    @Type(() => RegionCreateNestedOneWithoutChurchesInput)
     region!: RegionCreateNestedOneWithoutChurchesInput;
 
     @Field(() => ContactCreateNestedOneWithoutChurchInput, {nullable:true})

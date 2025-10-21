@@ -72,7 +72,6 @@ export class ChurchWhereUniqueInput {
     institution?: InstitutionScalarRelationFilter;
 
     @Field(() => RegionScalarRelationFilter, {nullable:true})
-    @Type(() => RegionScalarRelationFilter)
     region?: RegionScalarRelationFilter;
 
     @Field(() => ContactNullableScalarRelationFilter, {nullable:true})

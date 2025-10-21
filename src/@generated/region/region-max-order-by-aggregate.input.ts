@@ -12,16 +12,7 @@ export class RegionMaxOrderByAggregateInput {
     description?: `${SortOrder}`;
 
     @Field(() => SortOrder, {nullable:true})
-    institution_id?: `${SortOrder}`;
-
-    @Field(() => SortOrder, {nullable:true})
     name?: `${SortOrder}`;
-
-    @Field(() => SortOrder, {nullable:true})
-    parent_region_id?: `${SortOrder}`;
-
-    @Field(() => SortOrder, {nullable:true})
-    contact_id?: `${SortOrder}`;
 
     @Field(() => SortOrder, {nullable:true})
     created_at?: `${SortOrder}`;

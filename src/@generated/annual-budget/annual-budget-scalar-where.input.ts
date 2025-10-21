@@ -83,9 +83,6 @@ export class AnnualBudgetScalarWhereInput {
     institution_id?: StringNullableFilter;
 
     @Field(() => StringNullableFilter, {nullable:true})
-    region_id?: StringNullableFilter;
-
-    @Field(() => StringNullableFilter, {nullable:true})
     church_id?: StringNullableFilter;
 
     @Field(() => StringNullableFilter, {nullable:true})

@@ -67,9 +67,6 @@ export class AnnualBudgetOrderByWithAggregationInput {
     institution_id?: SortOrderInput;
 
     @Field(() => SortOrderInput, {nullable:true})
-    region_id?: SortOrderInput;
-
-    @Field(() => SortOrderInput, {nullable:true})
     church_id?: SortOrderInput;
 
     @Field(() => SortOrderInput, {nullable:true})

@@ -7,7 +7,6 @@ import { DateTimeFieldUpdateOperationsInput } from '../prisma/date-time-field-up
 import { NullableDateTimeFieldUpdateOperationsInput } from '../prisma/nullable-date-time-field-update-operations.input';
 import { InstitutionUncheckedUpdateOneWithoutContactNestedInput } from '../institution/institution-unchecked-update-one-without-contact-nested.input';
 import { Type } from 'class-transformer';
-import { RegionUncheckedUpdateManyWithoutContactNestedInput } from '../region/region-unchecked-update-many-without-contact-nested.input';
 import { ChurchUncheckedUpdateManyWithoutContactNestedInput } from '../church/church-unchecked-update-many-without-contact-nested.input';
 import { DepartmentUncheckedUpdateManyWithoutContactNestedInput } from '../department/department-unchecked-update-many-without-contact-nested.input';
 import { UserUncheckedUpdateManyWithoutContactNestedInput } from '../user/user-unchecked-update-many-without-contact-nested.input';
@@ -79,10 +78,6 @@ export class ContactUncheckedUpdateInput {
     @Field(() => InstitutionUncheckedUpdateOneWithoutContactNestedInput, {nullable:true})
     @Type(() => InstitutionUncheckedUpdateOneWithoutContactNestedInput)
     Institution?: InstitutionUncheckedUpdateOneWithoutContactNestedInput;
-
-    @Field(() => RegionUncheckedUpdateManyWithoutContactNestedInput, {nullable:true})
-    @Type(() => RegionUncheckedUpdateManyWithoutContactNestedInput)
-    Region?: RegionUncheckedUpdateManyWithoutContactNestedInput;
 
     @Field(() => ChurchUncheckedUpdateManyWithoutContactNestedInput, {nullable:true})
     @Type(() => ChurchUncheckedUpdateManyWithoutContactNestedInput)

@@ -72,8 +72,5 @@ export class AnnualBudgetUncheckedCreateWithoutDepartmentInput {
     institution_id?: string;
 
     @Field(() => String, {nullable:true})
-    region_id?: string;
-
-    @Field(() => String, {nullable:true})
     church_id?: string;
 }

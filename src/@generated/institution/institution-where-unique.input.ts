@@ -9,7 +9,6 @@ import { BoolFilter } from '../prisma/bool-filter.input';
 import { DateTimeNullableFilter } from '../prisma/date-time-nullable-filter.input';
 import { ContactNullableScalarRelationFilter } from '../contact/contact-nullable-scalar-relation-filter.input';
 import { Type } from 'class-transformer';
-import { RegionListRelationFilter } from '../region/region-list-relation-filter.input';
 import { ChurchListRelationFilter } from '../church/church-list-relation-filter.input';
 import { DepartmentListRelationFilter } from '../department/department-list-relation-filter.input';
 import { UserListRelationFilter } from '../user/user-list-relation-filter.input';
@@ -75,10 +74,6 @@ export class InstitutionWhereUniqueInput {
     @Field(() => ContactNullableScalarRelationFilter, {nullable:true})
     @Type(() => ContactNullableScalarRelationFilter)
     contact?: ContactNullableScalarRelationFilter;
-
-    @Field(() => RegionListRelationFilter, {nullable:true})
-    @Type(() => RegionListRelationFilter)
-    regions?: RegionListRelationFilter;
 
     @Field(() => ChurchListRelationFilter, {nullable:true})
     @Type(() => ChurchListRelationFilter)

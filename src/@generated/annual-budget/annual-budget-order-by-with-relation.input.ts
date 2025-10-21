@@ -5,7 +5,6 @@ import { SortOrderInput } from '../prisma/sort-order.input';
 import { UserOrderByWithRelationInput } from '../user/user-order-by-with-relation.input';
 import { Type } from 'class-transformer';
 import { InstitutionOrderByWithRelationInput } from '../institution/institution-order-by-with-relation.input';
-import { RegionOrderByWithRelationInput } from '../region/region-order-by-with-relation.input';
 import { ChurchOrderByWithRelationInput } from '../church/church-order-by-with-relation.input';
 import { DepartmentOrderByWithRelationInput } from '../department/department-order-by-with-relation.input';
 
@@ -67,9 +66,6 @@ export class AnnualBudgetOrderByWithRelationInput {
     institution_id?: SortOrderInput;
 
     @Field(() => SortOrderInput, {nullable:true})
-    region_id?: SortOrderInput;
-
-    @Field(() => SortOrderInput, {nullable:true})
     church_id?: SortOrderInput;
 
     @Field(() => SortOrderInput, {nullable:true})
@@ -82,10 +78,6 @@ export class AnnualBudgetOrderByWithRelationInput {
     @Field(() => InstitutionOrderByWithRelationInput, {nullable:true})
     @Type(() => InstitutionOrderByWithRelationInput)
     institution?: InstitutionOrderByWithRelationInput;
-
-    @Field(() => RegionOrderByWithRelationInput, {nullable:true})
-    @Type(() => RegionOrderByWithRelationInput)
-    region?: RegionOrderByWithRelationInput;
 
     @Field(() => ChurchOrderByWithRelationInput, {nullable:true})
     @Type(() => ChurchOrderByWithRelationInput)

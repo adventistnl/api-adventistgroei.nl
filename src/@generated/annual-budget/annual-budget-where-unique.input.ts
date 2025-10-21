@@ -12,7 +12,6 @@ import { DateTimeNullableFilter } from '../prisma/date-time-nullable-filter.inpu
 import { EnumAnnualBudgetStatusFilter } from '../prisma/enum-annual-budget-status-filter.input';
 import { UserNullableScalarRelationFilter } from '../user/user-nullable-scalar-relation-filter.input';
 import { InstitutionNullableScalarRelationFilter } from '../institution/institution-nullable-scalar-relation-filter.input';
-import { RegionNullableScalarRelationFilter } from '../region/region-nullable-scalar-relation-filter.input';
 import { ChurchNullableScalarRelationFilter } from '../church/church-nullable-scalar-relation-filter.input';
 import { DepartmentNullableScalarRelationFilter } from '../department/department-nullable-scalar-relation-filter.input';
 
@@ -89,9 +88,6 @@ export class AnnualBudgetWhereUniqueInput {
     institution_id?: StringNullableFilter;
 
     @Field(() => StringNullableFilter, {nullable:true})
-    region_id?: StringNullableFilter;
-
-    @Field(() => StringNullableFilter, {nullable:true})
     church_id?: StringNullableFilter;
 
     @Field(() => StringNullableFilter, {nullable:true})
@@ -104,10 +100,6 @@ export class AnnualBudgetWhereUniqueInput {
     @Field(() => InstitutionNullableScalarRelationFilter, {nullable:true})
     @Type(() => InstitutionNullableScalarRelationFilter)
     institution?: InstitutionNullableScalarRelationFilter;
-
-    @Field(() => RegionNullableScalarRelationFilter, {nullable:true})
-    @Type(() => RegionNullableScalarRelationFilter)
-    region?: RegionNullableScalarRelationFilter;
 
     @Field(() => ChurchNullableScalarRelationFilter, {nullable:true})
     @Type(() => ChurchNullableScalarRelationFilter)

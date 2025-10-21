@@ -19,7 +19,6 @@ export enum AnnualBudgetScalarFieldEnum {
     deleted_by = "deleted_by",
     status = "status",
     institution_id = "institution_id",
-    region_id = "region_id",
     church_id = "church_id",
     department_id = "department_id"
 }

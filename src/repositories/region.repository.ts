@@ -25,26 +25,10 @@ export class RegionRepository {
   }
 
   async create(data: RegionCreateDto, userId: string): Promise<Region> {
-    await this.institutionRepository.findById(data.institution_id);
-    if (data.parent_region_id) {
-      const parent_region = await this.prisma.region.findUnique({ where: { id: data.parent_region_id } });
-      if (!parent_region) throw new CustomGraphQLError('Parent region not found', ErrorCode.NOT_FOUND, 404);
-    }
-
     return await this.prisma.region.create({
       data: {
         description: data.description,
-        institution: { connect: { id: data.institution_id } },
-        parent_region: data.parent_region_id ? { connect: { id: data.parent_region_id } } : undefined,
         name: data.name,
-        contact: data.contact ? {
-          create: {
-            ...data.contact,
-            is_primary: true,
-            created_by: userId,
-            updated_by: userId,
-          }
-        } : undefined,
         created_by: userId,
         updated_by: userId,
       },
@@ -52,34 +36,12 @@ export class RegionRepository {
   }
 
   async update(regionId: string, data: RegionUpdateDto, userId: string): Promise<Region> {
-    const region = await this.findById(regionId);
-    if (data.institution_id) await this.institutionRepository.findById(data.institution_id);
-    if (data.parent_region_id) {
-      const parent_region = await this.prisma.region.findUnique({ where: { id: data.parent_region_id } });
-      if (!parent_region) throw new CustomGraphQLError('Parent region not found', ErrorCode.NOT_FOUND, 404);
-    }
-
+    await this.findById(regionId);
     return await this.prisma.region.update({
       where: { id: regionId },
       data: {
         description: data.description,
-        institution: data.institution_id ? { connect: { id: data.institution_id } } : undefined,
-        parent_region: data.parent_region_id ? { connect: { id: data.parent_region_id } } : undefined,
         name: data.name,
-        contact: data.contact
-          ? region?.contact_id ? {
-              update: {
-                ...data.contact,
-                updated_by: userId,
-              },
-            } : {
-              create: {
-                ...data.contact,
-                is_primary: true,
-                created_by: userId,
-                updated_by: userId,
-              },
-            } : undefined,
         updated_by: userId,
       },
     });
@@ -98,7 +60,7 @@ export class RegionRepository {
   }
 
   async findOneByFilters(filters: Partial<Record<keyof Region, any>>): Promise<Region | null> {
-    const allowedKeys: (keyof Region)[] = ['institution_id', 'parent_region_id', 'name', 'is_deleted'];
+    const allowedKeys: (keyof Region)[] = ['name', 'is_deleted'];
 
     for (const key of Object.keys(filters)) {
       if (!allowedKeys.includes(key as keyof Region)) {
@@ -115,7 +77,7 @@ export class RegionRepository {
   }
 
   async findManyByFilters(filters: Partial<Record<keyof Region, any>>) {
-    const allowedKeys: (keyof Region)[] = ['institution_id', 'parent_region_id', 'name', 'is_deleted'];
+    const allowedKeys: (keyof Region)[] = ['name', 'is_deleted'];
 
     for (const key of Object.keys(filters)) {
       if (!allowedKeys.includes(key as keyof Region)) {
@@ -128,13 +90,7 @@ export class RegionRepository {
         is_deleted: false,
         ...filters,
       },
-      include: { churches: true, institution: true, annual_budgets: true },
-    });
-  }
-
-  async findChildren(parentRegionId: string): Promise<Region[]> {
-    return this.prisma.region.findMany({
-      where: { parent_region_id: parentRegionId, is_deleted: false },
+      include: { churches: true},
     });
   }
 

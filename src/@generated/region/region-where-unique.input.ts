@@ -6,13 +6,8 @@ import { StringFilter } from '../prisma/string-filter.input';
 import { DateTimeFilter } from '../prisma/date-time-filter.input';
 import { BoolFilter } from '../prisma/bool-filter.input';
 import { DateTimeNullableFilter } from '../prisma/date-time-nullable-filter.input';
-import { InstitutionScalarRelationFilter } from '../institution/institution-scalar-relation-filter.input';
-import { Type } from 'class-transformer';
-import { RegionNullableScalarRelationFilter } from './region-nullable-scalar-relation-filter.input';
-import { RegionListRelationFilter } from './region-list-relation-filter.input';
-import { ContactNullableScalarRelationFilter } from '../contact/contact-nullable-scalar-relation-filter.input';
 import { ChurchListRelationFilter } from '../church/church-list-relation-filter.input';
-import { AnnualBudgetListRelationFilter } from '../annual-budget/annual-budget-list-relation-filter.input';
+import { Type } from 'class-transformer';
 
 @InputType()
 export class RegionWhereUniqueInput {
@@ -33,16 +28,7 @@ export class RegionWhereUniqueInput {
     description?: StringNullableFilter;
 
     @Field(() => StringFilter, {nullable:true})
-    institution_id?: StringFilter;
-
-    @Field(() => StringFilter, {nullable:true})
     name?: StringFilter;
-
-    @Field(() => StringNullableFilter, {nullable:true})
-    parent_region_id?: StringNullableFilter;
-
-    @Field(() => StringNullableFilter, {nullable:true})
-    contact_id?: StringNullableFilter;
 
     @Field(() => DateTimeFilter, {nullable:true})
     created_at?: DateTimeFilter;
@@ -65,27 +51,7 @@ export class RegionWhereUniqueInput {
     @Field(() => StringNullableFilter, {nullable:true})
     deleted_by?: StringNullableFilter;
 
-    @Field(() => InstitutionScalarRelationFilter, {nullable:true})
-    @Type(() => InstitutionScalarRelationFilter)
-    institution?: InstitutionScalarRelationFilter;
-
-    @Field(() => RegionNullableScalarRelationFilter, {nullable:true})
-    @Type(() => RegionNullableScalarRelationFilter)
-    parent_region?: RegionNullableScalarRelationFilter;
-
-    @Field(() => RegionListRelationFilter, {nullable:true})
-    @Type(() => RegionListRelationFilter)
-    children?: RegionListRelationFilter;
-
-    @Field(() => ContactNullableScalarRelationFilter, {nullable:true})
-    @Type(() => ContactNullableScalarRelationFilter)
-    contact?: ContactNullableScalarRelationFilter;
-
     @Field(() => ChurchListRelationFilter, {nullable:true})
     @Type(() => ChurchListRelationFilter)
     churches?: ChurchListRelationFilter;
-
-    @Field(() => AnnualBudgetListRelationFilter, {nullable:true})
-    @Type(() => AnnualBudgetListRelationFilter)
-    annual_budgets?: AnnualBudgetListRelationFilter;
 }

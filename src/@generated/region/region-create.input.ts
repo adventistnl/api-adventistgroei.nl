@@ -1,12 +1,7 @@
 import { Field } from '@nestjs/graphql';
 import { InputType } from '@nestjs/graphql';
-import { InstitutionCreateNestedOneWithoutRegionsInput } from '../institution/institution-create-nested-one-without-regions.input';
-import { Type } from 'class-transformer';
-import { RegionCreateNestedOneWithoutChildrenInput } from './region-create-nested-one-without-children.input';
-import { RegionCreateNestedManyWithoutParent_regionInput } from './region-create-nested-many-without-parent-region.input';
-import { ContactCreateNestedOneWithoutRegionInput } from '../contact/contact-create-nested-one-without-region.input';
 import { ChurchCreateNestedManyWithoutRegionInput } from '../church/church-create-nested-many-without-region.input';
-import { AnnualBudgetCreateNestedManyWithoutRegionInput } from '../annual-budget/annual-budget-create-nested-many-without-region.input';
+import { Type } from 'class-transformer';
 
 @InputType()
 export class RegionCreateInput {
@@ -41,27 +36,7 @@ export class RegionCreateInput {
     @Field(() => String, {nullable:true})
     deleted_by?: string;
 
-    @Field(() => InstitutionCreateNestedOneWithoutRegionsInput, {nullable:false})
-    @Type(() => InstitutionCreateNestedOneWithoutRegionsInput)
-    institution!: InstitutionCreateNestedOneWithoutRegionsInput;
-
-    @Field(() => RegionCreateNestedOneWithoutChildrenInput, {nullable:true})
-    @Type(() => RegionCreateNestedOneWithoutChildrenInput)
-    parent_region?: RegionCreateNestedOneWithoutChildrenInput;
-
-    @Field(() => RegionCreateNestedManyWithoutParent_regionInput, {nullable:true})
-    @Type(() => RegionCreateNestedManyWithoutParent_regionInput)
-    children?: RegionCreateNestedManyWithoutParent_regionInput;
-
-    @Field(() => ContactCreateNestedOneWithoutRegionInput, {nullable:true})
-    @Type(() => ContactCreateNestedOneWithoutRegionInput)
-    contact?: ContactCreateNestedOneWithoutRegionInput;
-
     @Field(() => ChurchCreateNestedManyWithoutRegionInput, {nullable:true})
     @Type(() => ChurchCreateNestedManyWithoutRegionInput)
     churches?: ChurchCreateNestedManyWithoutRegionInput;
-
-    @Field(() => AnnualBudgetCreateNestedManyWithoutRegionInput, {nullable:true})
-    @Type(() => AnnualBudgetCreateNestedManyWithoutRegionInput)
-    annual_budgets?: AnnualBudgetCreateNestedManyWithoutRegionInput;
 }

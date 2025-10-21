@@ -72,8 +72,5 @@ export class AnnualBudgetCreateManyChurchInput {
     institution_id?: string;
 
     @Field(() => String, {nullable:true})
-    region_id?: string;
-
-    @Field(() => String, {nullable:true})
     department_id?: string;
 }

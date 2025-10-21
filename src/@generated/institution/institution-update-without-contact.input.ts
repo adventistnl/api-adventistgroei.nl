@@ -6,9 +6,8 @@ import { EnumLanguagePreferenceFieldUpdateOperationsInput } from '../prisma/enum
 import { DateTimeFieldUpdateOperationsInput } from '../prisma/date-time-field-update-operations.input';
 import { BoolFieldUpdateOperationsInput } from '../prisma/bool-field-update-operations.input';
 import { NullableDateTimeFieldUpdateOperationsInput } from '../prisma/nullable-date-time-field-update-operations.input';
-import { RegionUpdateManyWithoutInstitutionNestedInput } from '../region/region-update-many-without-institution-nested.input';
-import { Type } from 'class-transformer';
 import { ChurchUpdateManyWithoutInstitutionNestedInput } from '../church/church-update-many-without-institution-nested.input';
+import { Type } from 'class-transformer';
 import { DepartmentUpdateManyWithoutInstitutionNestedInput } from '../department/department-update-many-without-institution-nested.input';
 import { UserUpdateManyWithoutInstitutionNestedInput } from '../user/user-update-many-without-institution-nested.input';
 import { CommunicationUpdateManyWithoutInstitutionNestedInput } from '../communication/communication-update-many-without-institution-nested.input';
@@ -57,10 +56,6 @@ export class InstitutionUpdateWithoutContactInput {
 
     @Field(() => NullableStringFieldUpdateOperationsInput, {nullable:true})
     deleted_by?: NullableStringFieldUpdateOperationsInput;
-
-    @Field(() => RegionUpdateManyWithoutInstitutionNestedInput, {nullable:true})
-    @Type(() => RegionUpdateManyWithoutInstitutionNestedInput)
-    regions?: RegionUpdateManyWithoutInstitutionNestedInput;
 
     @Field(() => ChurchUpdateManyWithoutInstitutionNestedInput, {nullable:true})
     @Type(() => ChurchUpdateManyWithoutInstitutionNestedInput)

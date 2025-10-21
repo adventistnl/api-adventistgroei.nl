@@ -7,7 +7,6 @@ import { Decimal } from '@prisma/client/runtime/library';
 import { AnnualBudgetStatus } from '../prisma/annual-budget-status.enum';
 import { User } from '../user/user.model';
 import { Institution } from '../institution/institution.model';
-import { Region } from '../region/region.model';
 import { Church } from '../church/church.model';
 import { Department } from '../department/department.model';
 
@@ -69,9 +68,6 @@ export class AnnualBudget {
     institution_id!: string | null;
 
     @Field(() => String, {nullable:true})
-    region_id!: string | null;
-
-    @Field(() => String, {nullable:true})
     church_id!: string | null;
 
     @Field(() => String, {nullable:true})
@@ -82,9 +78,6 @@ export class AnnualBudget {
 
     @Field(() => Institution, {nullable:true})
     institution?: Institution | null;
-
-    @Field(() => Region, {nullable:true})
-    region?: Region | null;
 
     @Field(() => Church, {nullable:true})
     church?: Church | null;

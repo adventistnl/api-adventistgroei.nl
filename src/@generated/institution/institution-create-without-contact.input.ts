@@ -1,9 +1,8 @@
 import { Field } from '@nestjs/graphql';
 import { InputType } from '@nestjs/graphql';
 import { LanguagePreference } from '../prisma/language-preference.enum';
-import { RegionCreateNestedManyWithoutInstitutionInput } from '../region/region-create-nested-many-without-institution.input';
-import { Type } from 'class-transformer';
 import { ChurchCreateNestedManyWithoutInstitutionInput } from '../church/church-create-nested-many-without-institution.input';
+import { Type } from 'class-transformer';
 import { DepartmentCreateNestedManyWithoutInstitutionInput } from '../department/department-create-nested-many-without-institution.input';
 import { UserCreateNestedManyWithoutInstitutionInput } from '../user/user-create-nested-many-without-institution.input';
 import { CommunicationCreateNestedManyWithoutInstitutionInput } from '../communication/communication-create-nested-many-without-institution.input';
@@ -52,10 +51,6 @@ export class InstitutionCreateWithoutContactInput {
 
     @Field(() => String, {nullable:true})
     deleted_by?: string;
-
-    @Field(() => RegionCreateNestedManyWithoutInstitutionInput, {nullable:true})
-    @Type(() => RegionCreateNestedManyWithoutInstitutionInput)
-    regions?: RegionCreateNestedManyWithoutInstitutionInput;
 
     @Field(() => ChurchCreateNestedManyWithoutInstitutionInput, {nullable:true})
     @Type(() => ChurchCreateNestedManyWithoutInstitutionInput)

@@ -59,9 +59,6 @@ export class AnnualBudgetCountAggregateInput {
     institution_id?: true;
 
     @Field(() => Boolean, {nullable:true})
-    region_id?: true;
-
-    @Field(() => Boolean, {nullable:true})
     church_id?: true;
 
     @Field(() => Boolean, {nullable:true})

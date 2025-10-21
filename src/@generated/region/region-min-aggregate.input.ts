@@ -11,16 +11,7 @@ export class RegionMinAggregateInput {
     description?: true;
 
     @Field(() => Boolean, {nullable:true})
-    institution_id?: true;
-
-    @Field(() => Boolean, {nullable:true})
     name?: true;
-
-    @Field(() => Boolean, {nullable:true})
-    parent_region_id?: true;
-
-    @Field(() => Boolean, {nullable:true})
-    contact_id?: true;
 
     @Field(() => Boolean, {nullable:true})
     created_at?: true;

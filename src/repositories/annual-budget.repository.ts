@@ -133,7 +133,6 @@ export class AnnualBudgetRepository {
       'year',
       'church_id',
       'institution_id',
-      'region_id',
       'department_id',
     ]
     for (const key of Object.keys(filters)) {

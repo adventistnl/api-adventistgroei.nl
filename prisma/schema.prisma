@@ -237,7 +237,6 @@ model Institution {
   is_deleted          Boolean            @default(false)
   deleted_at          DateTime?
   deleted_by          String?
-  regions             Region[]
   churches            Church[]
   departments         Department[]
   users               User[]
@@ -253,14 +252,7 @@ model Institution {
 model Region {
   id               String        @id @default(uuid())
   description      String?
-  institution_id   String
-  institution      Institution   @relation(fields: [institution_id], references: [id])
   name             String
-  parent_region_id String?
-  parent_region    Region?       @relation("ParentRegion", fields: [parent_region_id], references: [id])
-  children         Region[]      @relation("ParentRegion")
-  contact_id       String?
-  contact          Contact?      @relation(fields: [contact_id], references: [id])
   created_at       DateTime      @default(now())
   updated_at       DateTime      @updatedAt
   created_by       String
@@ -269,7 +261,6 @@ model Region {
   deleted_at       DateTime?
   deleted_by       String?
   churches         Church[]
-  annual_budgets   AnnualBudget[]
 }
 
 model Church {
@@ -342,8 +333,6 @@ model AnnualBudget {
   status         AnnualBudgetStatus @default(PLANNED)
   institution_id String?
   institution    Institution?       @relation(fields: [institution_id], references: [id])
-  region_id      String?
-  region         Region?            @relation(fields: [region_id], references: [id])
   church_id      String?
   church         Church?            @relation(fields: [church_id], references: [id])
   department_id  String?
@@ -372,7 +361,6 @@ model Contact {
   deleted_at   DateTime?
   deleted_by   String?
   Institution  Institution?
-  Region       Region[]
   Church       Church[]
   Department   Department[]
   User         User[]

@@ -2,7 +2,6 @@ import { Field } from '@nestjs/graphql';
 import { InputType } from '@nestjs/graphql';
 import { InstitutionCreateNestedOneWithoutContactInput } from '../institution/institution-create-nested-one-without-contact.input';
 import { Type } from 'class-transformer';
-import { RegionCreateNestedManyWithoutContactInput } from '../region/region-create-nested-many-without-contact.input';
 import { DepartmentCreateNestedManyWithoutContactInput } from '../department/department-create-nested-many-without-contact.input';
 import { UserCreateNestedManyWithoutContactInput } from '../user/user-create-nested-many-without-contact.input';
 import { EventCreateNestedManyWithoutContactInput } from '../event/event-create-nested-many-without-contact.input';
@@ -73,10 +72,6 @@ export class ContactCreateWithoutChurchInput {
     @Field(() => InstitutionCreateNestedOneWithoutContactInput, {nullable:true})
     @Type(() => InstitutionCreateNestedOneWithoutContactInput)
     Institution?: InstitutionCreateNestedOneWithoutContactInput;
-
-    @Field(() => RegionCreateNestedManyWithoutContactInput, {nullable:true})
-    @Type(() => RegionCreateNestedManyWithoutContactInput)
-    Region?: RegionCreateNestedManyWithoutContactInput;
 
     @Field(() => DepartmentCreateNestedManyWithoutContactInput, {nullable:true})
     @Type(() => DepartmentCreateNestedManyWithoutContactInput)

@@ -98,7 +98,6 @@ export class InstitutionRepository {
       include: {
         _count: {
           select: {
-            regions: true,
             churches: true,
             departments: true,
             users: true,
@@ -116,7 +115,6 @@ export class InstitutionRepository {
       include: {
         _count: {
           select: {
-            regions: true,
             churches: true,
             departments: true,
             users: true,

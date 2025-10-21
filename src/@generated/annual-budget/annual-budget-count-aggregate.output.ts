@@ -60,9 +60,6 @@ export class AnnualBudgetCountAggregate {
     institution_id!: number;
 
     @Field(() => Int, {nullable:false})
-    region_id!: number;
-
-    @Field(() => Int, {nullable:false})
     church_id!: number;
 
     @Field(() => Int, {nullable:false})

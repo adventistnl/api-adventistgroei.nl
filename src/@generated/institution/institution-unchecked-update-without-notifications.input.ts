@@ -6,9 +6,8 @@ import { EnumLanguagePreferenceFieldUpdateOperationsInput } from '../prisma/enum
 import { DateTimeFieldUpdateOperationsInput } from '../prisma/date-time-field-update-operations.input';
 import { BoolFieldUpdateOperationsInput } from '../prisma/bool-field-update-operations.input';
 import { NullableDateTimeFieldUpdateOperationsInput } from '../prisma/nullable-date-time-field-update-operations.input';
-import { RegionUncheckedUpdateManyWithoutInstitutionNestedInput } from '../region/region-unchecked-update-many-without-institution-nested.input';
-import { Type } from 'class-transformer';
 import { ChurchUncheckedUpdateManyWithoutInstitutionNestedInput } from '../church/church-unchecked-update-many-without-institution-nested.input';
+import { Type } from 'class-transformer';
 import { DepartmentUncheckedUpdateManyWithoutInstitutionNestedInput } from '../department/department-unchecked-update-many-without-institution-nested.input';
 import { UserUncheckedUpdateManyWithoutInstitutionNestedInput } from '../user/user-unchecked-update-many-without-institution-nested.input';
 import { CommunicationUncheckedUpdateManyWithoutInstitutionNestedInput } from '../communication/communication-unchecked-update-many-without-institution-nested.input';
@@ -59,10 +58,6 @@ export class InstitutionUncheckedUpdateWithoutNotificationsInput {
 
     @Field(() => NullableStringFieldUpdateOperationsInput, {nullable:true})
     deleted_by?: NullableStringFieldUpdateOperationsInput;
-
-    @Field(() => RegionUncheckedUpdateManyWithoutInstitutionNestedInput, {nullable:true})
-    @Type(() => RegionUncheckedUpdateManyWithoutInstitutionNestedInput)
-    regions?: RegionUncheckedUpdateManyWithoutInstitutionNestedInput;
 
     @Field(() => ChurchUncheckedUpdateManyWithoutInstitutionNestedInput, {nullable:true})
     @Type(() => ChurchUncheckedUpdateManyWithoutInstitutionNestedInput)

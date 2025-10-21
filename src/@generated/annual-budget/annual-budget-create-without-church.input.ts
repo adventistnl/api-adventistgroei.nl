@@ -9,7 +9,6 @@ import { Type } from 'class-transformer';
 import { AnnualBudgetStatus } from '../prisma/annual-budget-status.enum';
 import { UserCreateNestedOneWithoutApproved_annual_budgetsInput } from '../user/user-create-nested-one-without-approved-annual-budgets.input';
 import { InstitutionCreateNestedOneWithoutAnnual_budgetsInput } from '../institution/institution-create-nested-one-without-annual-budgets.input';
-import { RegionCreateNestedOneWithoutAnnual_budgetsInput } from '../region/region-create-nested-one-without-annual-budgets.input';
 import { DepartmentCreateNestedOneWithoutAnnual_budgetsInput } from '../department/department-create-nested-one-without-annual-budgets.input';
 
 @InputType()
@@ -76,10 +75,6 @@ export class AnnualBudgetCreateWithoutChurchInput {
     @Field(() => InstitutionCreateNestedOneWithoutAnnual_budgetsInput, {nullable:true})
     @Type(() => InstitutionCreateNestedOneWithoutAnnual_budgetsInput)
     institution?: InstitutionCreateNestedOneWithoutAnnual_budgetsInput;
-
-    @Field(() => RegionCreateNestedOneWithoutAnnual_budgetsInput, {nullable:true})
-    @Type(() => RegionCreateNestedOneWithoutAnnual_budgetsInput)
-    region?: RegionCreateNestedOneWithoutAnnual_budgetsInput;
 
     @Field(() => DepartmentCreateNestedOneWithoutAnnual_budgetsInput, {nullable:true})
     @Type(() => DepartmentCreateNestedOneWithoutAnnual_budgetsInput)

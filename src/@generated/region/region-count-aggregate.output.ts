@@ -12,16 +12,7 @@ export class RegionCountAggregate {
     description!: number;
 
     @Field(() => Int, {nullable:false})
-    institution_id!: number;
-
-    @Field(() => Int, {nullable:false})
     name!: number;
-
-    @Field(() => Int, {nullable:false})
-    parent_region_id!: number;
-
-    @Field(() => Int, {nullable:false})
-    contact_id!: number;
 
     @Field(() => Int, {nullable:false})
     created_at!: number;

@@ -57,11 +57,6 @@ export class InstitutionService {
     return institution;
   }
 
-  async getRegions(institutionId: string) {
-    const regions = await this.regionRepository.findManyByFilters({ institution_id: institutionId });
-    return regions;
-  }
-
   async getChurches(institutionId: string) {
     const churches = await this.churchRepository.findManyByFilters({ institution_id: institutionId });
     return churches;

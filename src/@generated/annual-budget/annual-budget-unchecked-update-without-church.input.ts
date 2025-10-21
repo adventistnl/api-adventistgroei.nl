@@ -71,8 +71,5 @@ export class AnnualBudgetUncheckedUpdateWithoutChurchInput {
     institution_id?: NullableStringFieldUpdateOperationsInput;
 
     @Field(() => NullableStringFieldUpdateOperationsInput, {nullable:true})
-    region_id?: NullableStringFieldUpdateOperationsInput;
-
-    @Field(() => NullableStringFieldUpdateOperationsInput, {nullable:true})
     department_id?: NullableStringFieldUpdateOperationsInput;
 }
