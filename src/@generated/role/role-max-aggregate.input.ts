@@ -20,6 +20,9 @@ export class RoleMaxAggregateInput {
     key_code?: true;
 
     @Field(() => Boolean, {nullable:true})
+    is_fixed?: true;
+
+    @Field(() => Boolean, {nullable:true})
     created_at?: true;
 
     @Field(() => Boolean, {nullable:true})

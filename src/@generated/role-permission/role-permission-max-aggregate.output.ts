@@ -13,6 +13,9 @@ export class RolePermissionMaxAggregate {
     @Field(() => String, {nullable:true})
     permission_id?: string;
 
+    @Field(() => Boolean, {nullable:true})
+    is_essential?: boolean;
+
     @Field(() => Date, {nullable:true})
     created_at?: Date | string;
 

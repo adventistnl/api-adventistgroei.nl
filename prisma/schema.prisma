@@ -448,6 +448,7 @@ model Role {
   description               String
   color                     String?                  @default("#3b82f6")
   key_code                  String                   @unique
+  is_fixed                  Boolean                  @default(false)
   created_at                DateTime                 @default(now())
   updated_at                DateTime                 @updatedAt
   created_by                String
@@ -484,6 +485,7 @@ model RolePermission {
   role          Role       @relation(fields: [role_id], references: [id], onDelete: Cascade)
   permission_id String
   permission    Permission @relation(fields: [permission_id], references: [id])
+  is_essential  Boolean    @default(false)
   created_at    DateTime   @default(now())
   updated_at    DateTime   @updatedAt
   created_by    String

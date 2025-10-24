@@ -15,6 +15,9 @@ export class RolePermissionCountOrderByAggregateInput {
     permission_id?: `${SortOrder}`;
 
     @Field(() => SortOrder, {nullable:true})
+    is_essential?: `${SortOrder}`;
+
+    @Field(() => SortOrder, {nullable:true})
     created_at?: `${SortOrder}`;
 
     @Field(() => SortOrder, {nullable:true})

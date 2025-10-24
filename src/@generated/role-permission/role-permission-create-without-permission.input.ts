@@ -8,6 +8,9 @@ export class RolePermissionCreateWithoutPermissionInput {
     @Field(() => String, {nullable:true})
     id?: string;
 
+    @Field(() => Boolean, {nullable:true})
+    is_essential?: boolean;
+
     @Field(() => Date, {nullable:true})
     created_at?: Date | string;
 

@@ -22,6 +22,9 @@ export class RoleGroupBy {
     @Field(() => String, {nullable:false})
     key_code!: string;
 
+    @Field(() => Boolean, {nullable:false})
+    is_fixed!: boolean;
+
     @Field(() => Date, {nullable:false})
     created_at!: Date | string;
 

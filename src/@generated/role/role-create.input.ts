@@ -22,6 +22,9 @@ export class RoleCreateInput {
     @Field(() => String, {nullable:false})
     key_code!: string;
 
+    @Field(() => Boolean, {nullable:true})
+    is_fixed?: boolean;
+
     @Field(() => Date, {nullable:true})
     created_at?: Date | string;
 

@@ -15,6 +15,9 @@ export class RolePermissionCountAggregate {
     permission_id!: number;
 
     @Field(() => Int, {nullable:false})
+    is_essential!: number;
+
+    @Field(() => Int, {nullable:false})
     created_at!: number;
 
     @Field(() => Int, {nullable:false})
