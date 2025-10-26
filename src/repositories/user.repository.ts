@@ -199,6 +199,7 @@ export class UserRepository {
           name: role.name,
           description: role.description,
           key_code: role.key_code,
+          is_fixed: role.is_fixed,
           permissions: Object.entries(permissionsByGroup).map(([group, data]) => ({ group, data })),
         };
       }),

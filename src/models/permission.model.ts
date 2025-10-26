@@ -19,4 +19,11 @@ export class PermissionModel {
 
   @Field({ nullable: true })
   group?: string;
+
+  @Field(() => Boolean, { nullable: true })
+  is_essential?: boolean;
+
+  // Indica se a permissão está selecionada para a role consultada
+  @Field(() => Boolean, { nullable: true })
+  is_selected?: boolean;
 }

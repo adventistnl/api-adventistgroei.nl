@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../services/prisma.service';
-import { Role } from '@prisma/client';
+import { Role } from '../@generated/role/role.model';
 
 @Injectable()
 export class RoleRepository {
@@ -40,7 +40,8 @@ export class RoleRepository {
     name?: string;
     description?: string;
     key_code?: string;
-    permissionIds?: string[];
+    addPermissionIds?: string[];
+    removePermissionIds?: string[];
     updated_by: string;
   }): Promise<Role> {
     // Atualiza dados básicos
@@ -53,16 +54,26 @@ export class RoleRepository {
         updated_by: data.updated_by,
       },
     });
-    // Atualiza permissões (remove todas e recria)
-    if (data.permissionIds) {
-      await this.prisma.rolePermission.deleteMany({ where: { role_id: id } });
+    // Atualiza permissões incrementalmente
+    if (data.addPermissionIds && data.addPermissionIds.length > 0) {
       await this.prisma.rolePermission.createMany({
-        data: data.permissionIds.map((permissionId) => ({
+        data: data.addPermissionIds.map((permissionId) => ({
           role_id: id,
           permission_id: permissionId,
           created_by: data.updated_by,
           updated_by: data.updated_by,
+          is_essential: false, // Novas permissões não são essenciais
         })),
+        skipDuplicates: true, // evita erro caso já exista a relação
+      });
+    }
+
+    if (data.removePermissionIds && data.removePermissionIds.length > 0) {
+      await this.prisma.rolePermission.deleteMany({
+        where: {
+          role_id: id,
+          permission_id: { in: data.removePermissionIds },
+        },
       });
     }
     return (await this.prisma.role.findUnique({
@@ -93,34 +104,73 @@ export class RoleRepository {
     });
   }
 
-  async findAll(userId: string): Promise<Role[]> {
-    // Obtenha todas as roles do usuário
-    const userRoles = await this.prisma.userRole.findMany({
-      where: { user_id: userId },
-      select: { role: true },
-    });
-
-    // Extraia os key_codes das roles do usuário
-    const userRoleKeyCodes = userRoles.map((userRole) => userRole.role.key_code);
-
-    // Obtenha todas as roles disponíveis
-    const allRoles = await this.prisma.role.findMany({
-      where: { is_deleted: false },
+  async findByIdWithPermissions(id: string): Promise<Role | null> {
+    return this.prisma.role.findUnique({
+      where: { id },
       include: {
         role_permissions: {
           include: { permission: true },
         },
-        user_roles: { select: { user_id: true, is_deleted: false }},
+      },
+    });
+  }
+
+  /**
+   * Retorna a role junto com todas as permissões disponíveis no sistema.
+   * Cada permissão inclui a relação role_permissions apenas para a role passada
+   * para que possamos saber se ela está selecionada e se é essencial.
+   */
+  async findByIdWithAllPermissions(id: string): Promise<{
+    role: Role | null;
+    permissions: Array<
+      (import('@prisma/client').Permission & {
+        role_permissions: Array<import('@prisma/client').RolePermission>;
+      })
+    >;
+  }> {
+  const role = await this.prisma.role.findUnique({ where: { id } });
+
+    const permissions = await this.prisma.permission.findMany({
+      where: { is_deleted: false, disabled_to_client: false },
+      include: {
+  // trazemos apenas os role_permissions relacionados com a role para marcar is_selected/is_essential
+        role_permissions: {
+          where: { role_id: id },
+        },
       },
     });
 
-    // Filtre a role 'dev' com base na presença do key_code no usuário
-    return allRoles.filter((role) => {
-      if (role.key_code === 'dev') {
-        return userRoleKeyCodes.includes('dev');
-      }
-      return true;
+    return { role, permissions };
+  }
+
+  async findAll(userId: string): Promise<Role[]> {
+    const res = await this.prisma.role.findMany({
+      where: {
+        AND: [
+          { is_deleted: false },
+          {
+            OR: [
+              { key_code: { not: 'dev' } }, // Inclui todas as roles exceto 'dev'
+              {
+                user_roles: {
+                  some: {
+                    user_id: userId,
+                    role: { key_code: 'dev' }, // Inclui 'dev' apenas se o usuário tiver essa role
+                  },
+                },
+              },
+            ],
+          },
+        ],
+      },
+      include: {
+        role_permissions: {
+          include: { permission: true },
+        },
+        user_roles: true,
+      },
     });
+    return res;
   }
 
   async getUserRolesByRoleId(roleId: string): Promise<Array<{ user_id: string; is_deleted: boolean }>> {
