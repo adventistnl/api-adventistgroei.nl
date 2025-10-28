@@ -8,7 +8,7 @@ import { Role } from '../@generated/role/role.model';
 export class RoleService {
   constructor(private readonly roleRepository: RoleRepository) {}
 
-  async create(input: CreateRoleInput, userId: string): Promise<RoleModel> {
+  async create(input: CreateRoleInput, userId: string, userRoles: string[]): Promise<RoleModel> {
     const role = await this.roleRepository.create({
       name: input.name,
       description: input.description,
@@ -18,12 +18,12 @@ export class RoleService {
     });
     // Após criar, retornamos a role completa com todas as permissões
     // anotadas com `is_selected` para manter consistência com findById
-    const full = await this.findById(role.id);
+    const full = await this.findById(role.id, userRoles);
     if (!full) throw new Error('Role not found after create');
     return full;
   }
 
-  async update(input: UpdateRoleInput, userId: string): Promise<RoleModel> {
+  async update(input: UpdateRoleInput, userId: string, userRoles: string[]): Promise<RoleModel> {
     const existingRole = await this.roleRepository.findByIdWithPermissions(input.id);
     if (!existingRole) {
       throw new Error('Role not found');
@@ -49,7 +49,7 @@ export class RoleService {
     });
 
     // Após atualizar, retornar a view completa (merge com todas as permissions)
-    const full = await this.findById(input.id);
+    const full = await this.findById(input.id, userRoles);
     if (!full) throw new Error('Role not found after update');
     return full;
   }
@@ -66,10 +66,10 @@ export class RoleService {
     return this.toModel(deletedRole);
   }
 
-  async findById(id: string): Promise<RoleModel | null> {
+  async findById(id: string, userRoles: string[]): Promise<RoleModel | null> {
     // Queremos retornar todas as permissões existentes no sistema
     // e indicar se cada uma está selecionada para a role solicitada.
-    const { role, permissions } = await this.roleRepository.findByIdWithAllPermissions(id);
+    const { role, permissions } = await this.roleRepository.findByIdWithAllPermissions(id, userRoles);
     if (!role) return null;
 
   // Monta a lista de permissões com o campo `is_selected` e `is_essential` (quando aplicável)
@@ -115,8 +115,8 @@ export class RoleService {
     } as RoleModel;
   }
 
-  async findAll(userId: string): Promise<RoleModel[]> {
-    const roles = await this.roleRepository.findAll(userId);
+  async findAll(userId: string, userRoles: string[]): Promise<RoleModel[]> {
+    const roles = await this.roleRepository.findAll(userId, userRoles);
     return roles.map((role) => this.toModel(role));
   }
   async getUserIdsByRole(roleId: string): Promise<RoleAssignmentModel[]> {
@@ -136,7 +136,6 @@ export class RoleService {
       if (!grouped[group]) grouped[group] = [];
       grouped[group].push(perm);
     }
-    console.log(grouped)
     return {
       id: role.id,
       name: role.name,
@@ -144,7 +143,6 @@ export class RoleService {
       key_code: role.key_code,
       is_fixed: role.is_fixed,
       permissions: Object.entries(grouped).map(([group, perms]) => {
-        console.log(perms)
         return { group, data: perms };
       }),
     };

@@ -54,18 +54,34 @@ export class RoleRepository {
         updated_by: data.updated_by,
       },
     });
+
     // Atualiza permissões incrementalmente
     if (data.addPermissionIds && data.addPermissionIds.length > 0) {
-      await this.prisma.rolePermission.createMany({
-        data: data.addPermissionIds.map((permissionId) => ({
-          role_id: id,
-          permission_id: permissionId,
-          created_by: data.updated_by,
-          updated_by: data.updated_by,
-          is_essential: false, // Novas permissões não são essenciais
-        })),
-        skipDuplicates: true, // evita erro caso já exista a relação
+      // Busca permissões já conectadas à role
+      const existingPermissions = await this.prisma.rolePermission.findMany({
+        where: { role_id: id },
+        select: { permission_id: true, is_essential: true },
       });
+
+      const existingPermissionIds = existingPermissions.map((p) => p.permission_id);
+
+      // Filtra permissões que ainda não estão conectadas
+      const newPermissions = data.addPermissionIds.filter(
+        (permissionId) => !existingPermissionIds.includes(permissionId),
+      );
+
+      // Adiciona apenas permissões novas
+      if (newPermissions.length > 0) {
+        await this.prisma.rolePermission.createMany({
+          data: newPermissions.map((permissionId) => ({
+            role_id: id,
+            permission_id: permissionId,
+            created_by: data.updated_by,
+            updated_by: data.updated_by,
+          })),
+          skipDuplicates: true, // evita erro caso já exista a relação
+        });
+      }
     }
 
     if (data.removePermissionIds && data.removePermissionIds.length > 0) {
@@ -73,9 +89,11 @@ export class RoleRepository {
         where: {
           role_id: id,
           permission_id: { in: data.removePermissionIds },
+          is_essential: false, // só remove se não for essencial
         },
       });
     }
+
     return (await this.prisma.role.findUnique({
       where: { id },
       include: { role_permissions: { include: { permission: true } } },
@@ -120,7 +138,7 @@ export class RoleRepository {
    * Cada permissão inclui a relação role_permissions apenas para a role passada
    * para que possamos saber se ela está selecionada e se é essencial.
    */
-  async findByIdWithAllPermissions(id: string): Promise<{
+  async findByIdWithAllPermissions(id: string, userRoles: string[]): Promise<{
     role: Role | null;
     permissions: Array<
       (import('@prisma/client').Permission & {
@@ -131,7 +149,7 @@ export class RoleRepository {
   const role = await this.prisma.role.findUnique({ where: { id } });
 
     const permissions = await this.prisma.permission.findMany({
-      where: { is_deleted: false, disabled_to_client: false },
+      where: { is_deleted: false, disabled_to_client: userRoles.includes('dev') ? undefined : false },
       include: {
   // trazemos apenas os role_permissions relacionados com a role para marcar is_selected/is_essential
         role_permissions: {
@@ -143,7 +161,7 @@ export class RoleRepository {
     return { role, permissions };
   }
 
-  async findAll(userId: string): Promise<Role[]> {
+  async findAll(_userId: string, userRoles: string[]): Promise<Role[]> {
     const res = await this.prisma.role.findMany({
       where: {
         AND: [
@@ -152,12 +170,8 @@ export class RoleRepository {
             OR: [
               { key_code: { not: 'dev' } }, // Inclui todas as roles exceto 'dev'
               {
-                user_roles: {
-                  some: {
-                    user_id: userId,
-                    role: { key_code: 'dev' }, // Inclui 'dev' apenas se o usuário tiver essa role
-                  },
-                },
+                key_code: 'dev',
+                ...(userRoles.includes('dev') ? {} : { key_code: undefined }), // Inclui 'dev' apenas se o usuário tiver a role 'dev'
               },
             ],
           },

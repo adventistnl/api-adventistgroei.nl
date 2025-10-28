@@ -16,13 +16,11 @@ void i18n
   });
 
 export const translate = (key: string, lang: LanguagePreference, options?: Record<string, any>) => {
-  // console.log('Loaded translations for emails:', i18n.services.resourceStore.data['en']['emails']);
   return i18n.t(key, { lng: lang, ...options });
 };
 
 export const loadNamespaces = async (namespaces: string[]) => {
   await i18n.loadNamespaces(namespaces);
-  console.log('Namespaces loaded:', i18n.services.resourceStore.data);
 }
 
 export default i18n;

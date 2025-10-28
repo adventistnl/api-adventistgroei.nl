@@ -9,13 +9,19 @@ export class PermissionRepository {
     private readonly prisma: PrismaService
   ) {}
 
-  async findAll(): Promise<Permission[]> {
-    const permissions = await this.prisma.permission.findMany({ where: { is_deleted: false, disabled_to_client: false } });
+  async findAll(userRoles: string[]): Promise<Permission[]> {
+    const permissions = await this.prisma.permission.findMany({
+      where: {
+        is_deleted: false,
+        disabled_to_client: userRoles.includes('dev') ? undefined : false,
+      },
+    });
+
     return permissions;
   }
 
-  async findAllGrouped(): Promise<PermissionGroupPermissionsModel[]> {
-    const permissions = await this.findAll();
+  async findAllGrouped(userRoles: string[]): Promise<PermissionGroupPermissionsModel[]> {
+    const permissions = await this.findAll(userRoles);
     const grouped: Record<string, Permission[]> = {};
     for (const perm of permissions) {
       const group = perm.group || 'OUTROS';

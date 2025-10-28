@@ -11,6 +11,7 @@ import * as Services from './services';
 import * as Resolvers from './graphql';
 import * as Repositories from './repositories';
 import * as CronServices from './cron/services';
+import { ContextDto } from './dto/context.dto';
 
 const JWT_SECRET = process.env.JWT_SECRET;
 
@@ -23,9 +24,13 @@ const JWT_SECRET = process.env.JWT_SECRET;
       playground: true,
       introspection: true,
       autoSchemaFile: true,
-      context: ({ req }: { req: { headers: Record<string, string> } }) => {
-        const userId = getUserIdFromRequest(req);
-        return { req, userId };
+      context: async ({ req }: { req: { headers: Record<string, string> } }): Promise<ContextDto> => {
+        const ctx = await getUserIdFromRequest(req);
+        return {
+          req,
+          userId: ctx?.userId ?? '',
+          userRoles: ctx?.userRoles ?? [],
+        };
       },
     }),
     JwtModule.register({

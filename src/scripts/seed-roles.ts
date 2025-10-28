@@ -224,7 +224,6 @@ async function main() {
           },
         },
       });
-      console.log(`Role ${role.name} created or updated.`);
     } catch (error) {
       console.error(`Error creating role ${role.name}:`, error);
     }
