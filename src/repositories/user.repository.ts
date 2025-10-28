@@ -3,13 +3,13 @@ import * as bcrypt from 'bcryptjs';
 import { User } from '@prisma/client';
 import { PrismaService } from '../services/prisma.service';
 import { UserCreateDto, UserUpdateDto } from '../dto/user.dto';
-import { UserWithRoles, ValidateOutputModel } from 'src/models';
+import { PermissionModel, UserWithRoles, ValidateOutputModel } from '../models';
 import { LanguagePreference } from '../@generated/prisma/language-preference.enum';
 import { DepartmentRepository } from './department.repository';
 import { InstitutionRepository } from './institution.repository';
 import { ChurchRepository } from './church.repository';
 import { ContactRepository } from './contact.repository';
-import { CustomGraphQLError, ErrorCode } from 'src/common/errors/custom-graphql-error';
+import { CustomGraphQLError, ErrorCode } from '../common/errors/custom-graphql-error';
 import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
@@ -165,10 +165,12 @@ export class UserRepository {
       where: { email, is_deleted: false },
       include: {
         user_roles: {
+          where: { is_deleted: false, role: { is_deleted: false } },
           include: {
             role: {
               include: {
                 role_permissions: {
+                  where: { is_deleted: false },
                   include: {
                     permission: true,
                   },
@@ -179,21 +181,24 @@ export class UserRepository {
         },
       },
     });
+
     if (!user) return null;
-    // Tipar corretamente os objetos
+    if (!user.user_roles || user.user_roles.length === 0) {
+      throw new CustomGraphQLError('User has no active roles', ErrorCode.UNAUTHORIZED, 401);
+    }
     const userWithRoles: UserWithRoles = {
       ...user,
-      user_roles: user.user_roles.map((ur): import('src/models/role.model').RoleModel => {
+      user_roles: user.user_roles.map((ur) => {
         const role = ur.role;
-        // Agrupar permissões por grupo
-        const permissionsByGroup: { [group: string]: import('src/models/permission.model').PermissionModel[] } = {};
-        for (const rp of role.role_permissions) {
+        const permissionsByGroup: Record<string, PermissionModel[]> = {};
+
+        role.role_permissions.forEach((rp) => {
           const perm = rp.permission;
-          // Converter group para string, nunca null
           const group = perm.group ? String(perm.group) : 'OUTRO';
           if (!permissionsByGroup[group]) permissionsByGroup[group] = [];
           permissionsByGroup[group].push({ ...perm, group });
-        }
+        });
+
         return {
           id: role.id,
           name: role.name,
@@ -205,6 +210,7 @@ export class UserRepository {
       }),
       language_preference: LanguagePreference.en, // Ajustar para o enum correto
     };
+
     return userWithRoles;
   }
 
