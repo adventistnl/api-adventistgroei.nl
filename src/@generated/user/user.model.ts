@@ -70,11 +70,11 @@ export class User {
     @Field(() => String, {nullable:false})
     institution_id!: string;
 
-    @Field(() => String, {nullable:false})
-    church_id!: string;
+    @Field(() => String, {nullable:true})
+    church_id!: string | null;
 
-    @Field(() => String, {nullable:false})
-    department_id!: string;
+    @Field(() => String, {nullable:true})
+    department_id!: string | null;
 
     @Field(() => Contact, {nullable:true})
     contact?: Contact | null;
@@ -82,11 +82,11 @@ export class User {
     @Field(() => Institution, {nullable:false})
     institution?: Institution;
 
-    @Field(() => Church, {nullable:false})
-    church?: Church;
+    @Field(() => Church, {nullable:true})
+    church?: Church | null;
 
-    @Field(() => Department, {nullable:false})
-    department?: Department;
+    @Field(() => Department, {nullable:true})
+    department?: Department | null;
 
     @Field(() => [UserRole], {nullable:true})
     user_roles?: Array<UserRole>;

@@ -70,9 +70,9 @@ export class UserCreateWithoutChurchInput {
     @Type(() => InstitutionCreateNestedOneWithoutUsersInput)
     institution!: InstitutionCreateNestedOneWithoutUsersInput;
 
-    @Field(() => DepartmentCreateNestedOneWithoutUsersInput, {nullable:false})
+    @Field(() => DepartmentCreateNestedOneWithoutUsersInput, {nullable:true})
     @Type(() => DepartmentCreateNestedOneWithoutUsersInput)
-    department!: DepartmentCreateNestedOneWithoutUsersInput;
+    department?: DepartmentCreateNestedOneWithoutUsersInput;
 
     @Field(() => UserRoleCreateNestedManyWithoutUserInput, {nullable:true})
     user_roles?: UserRoleCreateNestedManyWithoutUserInput;

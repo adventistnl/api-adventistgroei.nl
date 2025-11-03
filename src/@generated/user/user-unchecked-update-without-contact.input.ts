@@ -67,11 +67,11 @@ export class UserUncheckedUpdateWithoutContactInput {
     @Field(() => StringFieldUpdateOperationsInput, {nullable:true})
     institution_id?: StringFieldUpdateOperationsInput;
 
-    @Field(() => StringFieldUpdateOperationsInput, {nullable:true})
-    church_id?: StringFieldUpdateOperationsInput;
+    @Field(() => NullableStringFieldUpdateOperationsInput, {nullable:true})
+    church_id?: NullableStringFieldUpdateOperationsInput;
 
-    @Field(() => StringFieldUpdateOperationsInput, {nullable:true})
-    department_id?: StringFieldUpdateOperationsInput;
+    @Field(() => NullableStringFieldUpdateOperationsInput, {nullable:true})
+    department_id?: NullableStringFieldUpdateOperationsInput;
 
     @Field(() => UserRoleUncheckedUpdateManyWithoutUserNestedInput, {nullable:true})
     user_roles?: UserRoleUncheckedUpdateManyWithoutUserNestedInput;

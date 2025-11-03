@@ -56,6 +56,6 @@ export class UserUncheckedUpdateManyWithoutChurchInput {
     @Field(() => StringFieldUpdateOperationsInput, {nullable:true})
     institution_id?: StringFieldUpdateOperationsInput;
 
-    @Field(() => StringFieldUpdateOperationsInput, {nullable:true})
-    department_id?: StringFieldUpdateOperationsInput;
+    @Field(() => NullableStringFieldUpdateOperationsInput, {nullable:true})
+    department_id?: NullableStringFieldUpdateOperationsInput;
 }

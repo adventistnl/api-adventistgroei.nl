@@ -1,6 +1,6 @@
 import { InputType, Field } from '@nestjs/graphql';
 import { ContactCreateDto } from './contact.dto';
-import { IsString  } from 'class-validator';
+import { IsOptional, IsString  } from 'class-validator';
 import { GenderType } from 'src/@generated/prisma/gender-type.enum';
 
 @InputType()
@@ -24,13 +24,20 @@ export class UserCreateDto {
   @IsString()
   institution_id: string;
 
-  @Field()
+  @Field(() => String, { nullable: true })
   @IsString()
-  church_id: string;
+  @IsOptional()
+  church_id?: string;
 
-  @Field()
+  @Field(() => String, { nullable: true })
+  @IsOptional()
   @IsString()
-  department_id: string;
+  church_department_id?: string;
+
+  @Field(() => String, { nullable: true })
+  @IsOptional()
+  @IsString()
+  institution_department_id?: string;
 
   @Field(() => ContactCreateDto, { nullable: true })
   contact?: ContactCreateDto;

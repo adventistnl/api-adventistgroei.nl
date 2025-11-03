@@ -9,8 +9,8 @@ import { NullableDateTimeFieldUpdateOperationsInput } from '../prisma/nullable-d
 import { NullableStringFieldUpdateOperationsInput } from '../prisma/nullable-string-field-update-operations.input';
 import { ContactUpdateOneWithoutUserNestedInput } from '../contact/contact-update-one-without-user-nested.input';
 import { Type } from 'class-transformer';
-import { ChurchUpdateOneRequiredWithoutUsersNestedInput } from '../church/church-update-one-required-without-users-nested.input';
-import { DepartmentUpdateOneRequiredWithoutUsersNestedInput } from '../department/department-update-one-required-without-users-nested.input';
+import { ChurchUpdateOneWithoutUsersNestedInput } from '../church/church-update-one-without-users-nested.input';
+import { DepartmentUpdateOneWithoutUsersNestedInput } from '../department/department-update-one-without-users-nested.input';
 import { UserRoleUpdateManyWithoutUserNestedInput } from '../user-role/user-role-update-many-without-user-nested.input';
 import { DirectMessageUpdateManyWithoutSenderNestedInput } from '../direct-message/direct-message-update-many-without-sender-nested.input';
 import { DirectMessageRecipientUpdateManyWithoutRecipient_userNestedInput } from '../direct-message-recipient/direct-message-recipient-update-many-without-recipient-user-nested.input';
@@ -71,13 +71,13 @@ export class UserUpdateWithoutInstitutionInput {
     @Type(() => ContactUpdateOneWithoutUserNestedInput)
     contact?: ContactUpdateOneWithoutUserNestedInput;
 
-    @Field(() => ChurchUpdateOneRequiredWithoutUsersNestedInput, {nullable:true})
-    @Type(() => ChurchUpdateOneRequiredWithoutUsersNestedInput)
-    church?: ChurchUpdateOneRequiredWithoutUsersNestedInput;
+    @Field(() => ChurchUpdateOneWithoutUsersNestedInput, {nullable:true})
+    @Type(() => ChurchUpdateOneWithoutUsersNestedInput)
+    church?: ChurchUpdateOneWithoutUsersNestedInput;
 
-    @Field(() => DepartmentUpdateOneRequiredWithoutUsersNestedInput, {nullable:true})
-    @Type(() => DepartmentUpdateOneRequiredWithoutUsersNestedInput)
-    department?: DepartmentUpdateOneRequiredWithoutUsersNestedInput;
+    @Field(() => DepartmentUpdateOneWithoutUsersNestedInput, {nullable:true})
+    @Type(() => DepartmentUpdateOneWithoutUsersNestedInput)
+    department?: DepartmentUpdateOneWithoutUsersNestedInput;
 
     @Field(() => UserRoleUpdateManyWithoutUserNestedInput, {nullable:true})
     user_roles?: UserRoleUpdateManyWithoutUserNestedInput;

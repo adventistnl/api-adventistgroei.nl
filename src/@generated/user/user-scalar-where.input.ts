@@ -65,9 +65,9 @@ export class UserScalarWhereInput {
     @Field(() => StringFilter, {nullable:true})
     institution_id?: StringFilter;
 
-    @Field(() => StringFilter, {nullable:true})
-    church_id?: StringFilter;
+    @Field(() => StringNullableFilter, {nullable:true})
+    church_id?: StringNullableFilter;
 
-    @Field(() => StringFilter, {nullable:true})
-    department_id?: StringFilter;
+    @Field(() => StringNullableFilter, {nullable:true})
+    department_id?: StringNullableFilter;
 }

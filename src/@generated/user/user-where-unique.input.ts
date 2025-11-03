@@ -11,8 +11,8 @@ import { StringNullableFilter } from '../prisma/string-nullable-filter.input';
 import { ContactNullableScalarRelationFilter } from '../contact/contact-nullable-scalar-relation-filter.input';
 import { Type } from 'class-transformer';
 import { InstitutionScalarRelationFilter } from '../institution/institution-scalar-relation-filter.input';
-import { ChurchScalarRelationFilter } from '../church/church-scalar-relation-filter.input';
-import { DepartmentScalarRelationFilter } from '../department/department-scalar-relation-filter.input';
+import { ChurchNullableScalarRelationFilter } from '../church/church-nullable-scalar-relation-filter.input';
+import { DepartmentNullableScalarRelationFilter } from '../department/department-nullable-scalar-relation-filter.input';
 import { UserRoleListRelationFilter } from '../user-role/user-role-list-relation-filter.input';
 import { DirectMessageListRelationFilter } from '../direct-message/direct-message-list-relation-filter.input';
 import { DirectMessageRecipientListRelationFilter } from '../direct-message-recipient/direct-message-recipient-list-relation-filter.input';
@@ -84,11 +84,11 @@ export class UserWhereUniqueInput {
     @Field(() => StringFilter, {nullable:true})
     institution_id?: StringFilter;
 
-    @Field(() => StringFilter, {nullable:true})
-    church_id?: StringFilter;
+    @Field(() => StringNullableFilter, {nullable:true})
+    church_id?: StringNullableFilter;
 
-    @Field(() => StringFilter, {nullable:true})
-    department_id?: StringFilter;
+    @Field(() => StringNullableFilter, {nullable:true})
+    department_id?: StringNullableFilter;
 
     @Field(() => ContactNullableScalarRelationFilter, {nullable:true})
     @Type(() => ContactNullableScalarRelationFilter)
@@ -98,13 +98,13 @@ export class UserWhereUniqueInput {
     @Type(() => InstitutionScalarRelationFilter)
     institution?: InstitutionScalarRelationFilter;
 
-    @Field(() => ChurchScalarRelationFilter, {nullable:true})
-    @Type(() => ChurchScalarRelationFilter)
-    church?: ChurchScalarRelationFilter;
+    @Field(() => ChurchNullableScalarRelationFilter, {nullable:true})
+    @Type(() => ChurchNullableScalarRelationFilter)
+    church?: ChurchNullableScalarRelationFilter;
 
-    @Field(() => DepartmentScalarRelationFilter, {nullable:true})
-    @Type(() => DepartmentScalarRelationFilter)
-    department?: DepartmentScalarRelationFilter;
+    @Field(() => DepartmentNullableScalarRelationFilter, {nullable:true})
+    @Type(() => DepartmentNullableScalarRelationFilter)
+    department?: DepartmentNullableScalarRelationFilter;
 
     @Field(() => UserRoleListRelationFilter, {nullable:true})
     user_roles?: UserRoleListRelationFilter;

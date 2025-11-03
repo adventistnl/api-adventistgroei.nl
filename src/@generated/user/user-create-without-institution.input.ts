@@ -66,13 +66,13 @@ export class UserCreateWithoutInstitutionInput {
     @Type(() => ContactCreateNestedOneWithoutUserInput)
     contact?: ContactCreateNestedOneWithoutUserInput;
 
-    @Field(() => ChurchCreateNestedOneWithoutUsersInput, {nullable:false})
+    @Field(() => ChurchCreateNestedOneWithoutUsersInput, {nullable:true})
     @Type(() => ChurchCreateNestedOneWithoutUsersInput)
-    church!: ChurchCreateNestedOneWithoutUsersInput;
+    church?: ChurchCreateNestedOneWithoutUsersInput;
 
-    @Field(() => DepartmentCreateNestedOneWithoutUsersInput, {nullable:false})
+    @Field(() => DepartmentCreateNestedOneWithoutUsersInput, {nullable:true})
     @Type(() => DepartmentCreateNestedOneWithoutUsersInput)
-    department!: DepartmentCreateNestedOneWithoutUsersInput;
+    department?: DepartmentCreateNestedOneWithoutUsersInput;
 
     @Field(() => UserRoleCreateNestedManyWithoutUserInput, {nullable:true})
     user_roles?: UserRoleCreateNestedManyWithoutUserInput;

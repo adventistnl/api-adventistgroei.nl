@@ -48,9 +48,9 @@ export class UserCreateManyInstitutionInput {
     @Field(() => String, {nullable:true})
     contact_id?: string;
 
-    @Field(() => String, {nullable:false})
-    church_id!: string;
+    @Field(() => String, {nullable:true})
+    church_id?: string;
 
-    @Field(() => String, {nullable:false})
-    department_id!: string;
+    @Field(() => String, {nullable:true})
+    department_id?: string;
 }

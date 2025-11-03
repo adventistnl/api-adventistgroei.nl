@@ -385,10 +385,10 @@ model User {
   contact                   Contact?                 @relation(fields: [contact_id], references: [id])
   institution_id            String
   institution               Institution              @relation(fields: [institution_id], references: [id])
-  church_id                 String
-  church                    Church                   @relation(fields: [church_id], references: [id])
-  department_id             String
-  department                Department               @relation(fields: [department_id], references: [id])
+  church_id                 String?
+  church                    Church?                  @relation(fields: [church_id], references: [id])
+  department_id             String?
+  department                Department?               @relation(fields: [department_id], references: [id])
   user_roles                UserRole[]
   direct_messages           DirectMessage[]          @relation("SenderMessages")
   direct_message_recipients DirectMessageRecipient[] @relation("RecipientMessages")

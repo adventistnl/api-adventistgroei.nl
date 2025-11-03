@@ -24,7 +24,7 @@ export class UserRepository {
   ) {}
 
   async create(data: UserCreateDto): Promise<Omit<User, 'password'>> {
-    const { contact, church_id, department_id, institution_id, language_preference, roles, invite_token, ...rest } = data;
+    const { contact, church_id, church_department_id, institution_id, institution_department_id, language_preference, roles, invite_token, ...rest } = data;
 
     if (!Object.values(LanguagePreference).includes(language_preference as LanguagePreference)) {
       throw new Error('Invalid language preference');
@@ -32,10 +32,18 @@ export class UserRepository {
     // os métodos já estouram erros caso não encontrem
     // Verificar se a institution existe
     await this.institutioRepository.findById(institution_id);
-    // Verificar se a church existe
-    await this.churchRepository.findById(church_id);
-    // Verificar se o department existe
-    await this.departmentRepository.findById(department_id);
+    if (church_id) {
+      // Verificar se a church existe
+      await this.churchRepository.findById(church_id);
+    }
+    if (institution_department_id) {
+      // Verificar se o department existe
+      await this.departmentRepository.findById(institution_department_id);
+    }
+    if (church_department_id) {
+      // Verificar se o department existe
+      await this.departmentRepository.findById(church_department_id);
+    }
 
     const decodedToken = this.jwtService.verify<ValidateOutputModel>(invite_token);
     const tokenExpiresAt = new Date(decodedToken.exp * 1000); // Converte Unix Timestamp para Date
@@ -55,8 +63,10 @@ export class UserRepository {
     const userData = {
       ...rest,
       language_preference: LanguagePreference[language_preference],
-      church: { connect: { id: church_id } },
-      department: { connect: { id: department_id } },
+      church: church_id ? { connect: { id: church_id } } : undefined,
+      department: institution_department_id ? { connect: { id: institution_department_id } } 
+        : church_department_id ? { connect: { id: church_department_id } } 
+        : undefined,
       institution: { connect: { id: institution_id } },
       contact: { connect: { id: contactCreated.id } },
       password: hashedPassword,
