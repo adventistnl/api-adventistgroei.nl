@@ -46,6 +46,9 @@ export class ContactWhereInput {
     city?: StringNullableFilter;
 
     @Field(() => StringNullableFilter, {nullable:true})
+    state?: StringNullableFilter;
+
+    @Field(() => StringNullableFilter, {nullable:true})
     address?: StringNullableFilter;
 
     @Field(() => StringNullableFilter, {nullable:true})

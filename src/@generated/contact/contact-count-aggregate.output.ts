@@ -27,6 +27,9 @@ export class ContactCountAggregate {
     city!: number;
 
     @Field(() => Int, {nullable:false})
+    state!: number;
+
+    @Field(() => Int, {nullable:false})
     address!: number;
 
     @Field(() => Int, {nullable:false})

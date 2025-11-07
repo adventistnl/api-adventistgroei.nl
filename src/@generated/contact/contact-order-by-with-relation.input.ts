@@ -34,6 +34,9 @@ export class ContactOrderByWithRelationInput {
     city?: SortOrderInput;
 
     @Field(() => SortOrderInput, {nullable:true})
+    state?: SortOrderInput;
+
+    @Field(() => SortOrderInput, {nullable:true})
     address?: SortOrderInput;
 
     @Field(() => SortOrderInput, {nullable:true})

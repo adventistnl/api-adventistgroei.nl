@@ -27,6 +27,9 @@ export class ContactMinOrderByAggregateInput {
     city?: `${SortOrder}`;
 
     @Field(() => SortOrder, {nullable:true})
+    state?: `${SortOrder}`;
+
+    @Field(() => SortOrder, {nullable:true})
     address?: `${SortOrder}`;
 
     @Field(() => SortOrder, {nullable:true})

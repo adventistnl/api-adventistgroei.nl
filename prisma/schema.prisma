@@ -347,6 +347,7 @@ model Contact {
   email        String?
   country      String?
   city         String?
+  state        String? 
   address      String?
   full_address String?
   postal_code  String?

@@ -30,6 +30,9 @@ export class ContactCreateDto {
   city?: string;
 
   @Field({ nullable: true })
+  state?: string;
+  
+  @Field({ nullable: true })
   address?: string;
 
   @Field({ nullable: true })

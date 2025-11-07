@@ -8,6 +8,7 @@ export enum ContactScalarFieldEnum {
     email = "email",
     country = "country",
     city = "city",
+    state = "state",
     address = "address",
     full_address = "full_address",
     postal_code = "postal_code",

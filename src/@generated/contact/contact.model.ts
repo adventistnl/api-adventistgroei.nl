@@ -33,6 +33,9 @@ export class Contact {
     city!: string | null;
 
     @Field(() => String, {nullable:true})
+    state!: string | null;
+
+    @Field(() => String, {nullable:true})
     address!: string | null;
 
     @Field(() => String, {nullable:true})

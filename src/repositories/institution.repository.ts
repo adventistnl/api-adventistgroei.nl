@@ -50,33 +50,43 @@ export class InstitutionRepository {
   ): Promise<Institution> {
     // Atualiza dados básicos e o contato, se enviado
     const institution = await this.findById(institution_id);
+    if (!institution) {
+      throw new Error(`Institution with ID ${institution_id} not found`);
+    }
     let language_preference: LanguagePreference | undefined = undefined;
-    if (data.language_preference) language_preference = validateAndConvertLanguagePreference(data.language_preference);
+    if (data.language_preference) {
+      language_preference = validateAndConvertLanguagePreference(data.language_preference);
+    }
 
+
+    const updateData = {
+      description: data.description,
+      name: data.name,
+      denomination: data.denomination,
+      language_preference,
+      contact: data.contact
+        ? (institution?.contact_id && institution.contact_id.trim() !== '') ? {
+            update: {
+              ...data.contact,
+              updated_by: userId,
+            },
+          } : {
+            create: {
+              // Remover o campo id quando estamos criando um novo contato
+              ...Object.fromEntries(
+                Object.entries(data.contact).filter(([key]) => key !== 'id')
+              ),
+              is_primary: true,
+              created_by: userId,
+              updated_by: userId,
+            },
+          } : undefined,
+      updated_by: userId,
+    };
 
     return await this.prisma.institution.update({
       where: { id: institution_id },
-      data: {
-        description: data.description,
-        name: data.name,
-        denomination: data.denomination,
-        language_preference,
-        contact: data.contact
-          ? institution?.contact_id ? {
-              update: {
-                ...data.contact,
-                updated_by: userId,
-              },
-            } : {
-              create: {
-                ...data.contact,
-                is_primary: true,
-                created_by: userId,
-                updated_by: userId,
-              },
-            } : undefined,
-        updated_by: userId,
-      },
+      data: updateData,
     });
   }
 

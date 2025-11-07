@@ -26,6 +26,9 @@ export class ContactMaxAggregateInput {
     city?: true;
 
     @Field(() => Boolean, {nullable:true})
+    state?: true;
+
+    @Field(() => Boolean, {nullable:true})
     address?: true;
 
     @Field(() => Boolean, {nullable:true})
