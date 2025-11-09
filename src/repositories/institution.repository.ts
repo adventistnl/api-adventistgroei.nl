@@ -102,6 +102,340 @@ export class InstitutionRepository {
     });
   }
 
+  async cascadeSoftDelete(id: string, userId: string): Promise<Institution> {
+    const currentDate = new Date();
+    
+    // Primeiro, buscar a instituição para verificar se existe
+    const institution = await this.findById(id);
+    if (!institution) {
+      throw new Error(`Institution with ID ${id} not found`);
+    }
+
+    // Usar uma transação para garantir consistência
+    return await this.prisma.$transaction(async (prisma) => {
+      // 1. Soft delete das churches da institution
+      const churches = await prisma.church.findMany({
+        where: { institution_id: id, is_deleted: false },
+        select: { id: true }
+      });
+
+      if (churches.length > 0) {
+        const churchIds = churches.map(c => c.id);
+        
+        // Soft delete das churches
+        await prisma.church.updateMany({
+          where: { id: { in: churchIds } },
+          data: {
+            is_deleted: true,
+            deleted_at: currentDate,
+            deleted_by: userId,
+            updated_by: userId,
+          },
+        });
+
+        // Soft delete dos departments das churches
+        await prisma.department.updateMany({
+          where: { church_id: { in: churchIds }, is_deleted: false },
+          data: {
+            is_deleted: true,
+            deleted_at: currentDate,
+            deleted_by: userId,
+            updated_by: userId,
+          },
+        });
+
+        // Soft delete dos users das churches
+        const churchUsers = await prisma.user.findMany({
+          where: { church_id: { in: churchIds }, is_deleted: false },
+          select: { id: true }
+        });
+
+        if (churchUsers.length > 0) {
+          const churchUserIds = churchUsers.map(u => u.id);
+          
+          // Soft delete dos user_roles dos users das churches
+          await prisma.userRole.updateMany({
+            where: { user_id: { in: churchUserIds }, is_deleted: false },
+            data: {
+              is_deleted: true,
+              deleted_at: currentDate,
+              deleted_by: userId,
+              updated_by: userId,
+            },
+          });
+        }
+
+        await prisma.user.updateMany({
+          where: { church_id: { in: churchIds }, is_deleted: false },
+          data: {
+            is_deleted: true,
+            deleted_at: currentDate,
+            deleted_by: userId,
+            updated_by: userId,
+          },
+        });
+
+        // Soft delete dos subsidy_requests das churches
+        await prisma.subsidyRequest.updateMany({
+          where: { church_id: { in: churchIds }, is_deleted: false },
+          data: {
+            is_deleted: true,
+            deleted_at: currentDate,
+            deleted_by: userId,
+            updated_by: userId,
+          },
+        });
+
+        // Soft delete dos annual_budgets das churches
+        await prisma.annualBudget.updateMany({
+          where: { church_id: { in: churchIds }, is_deleted: false },
+          data: {
+            is_deleted: true,
+            deleted_at: currentDate,
+            deleted_by: userId,
+            updated_by: userId,
+          },
+        });
+      }
+
+      // 2. Soft delete dos departments da institution (não ligados a churches)
+      const institutionDepartments = await prisma.department.findMany({
+        where: { institution_id: id, church_id: null, is_deleted: false },
+        select: { id: true }
+      });
+
+      if (institutionDepartments.length > 0) {
+        const deptIds = institutionDepartments.map(d => d.id);
+        
+        await prisma.department.updateMany({
+          where: { id: { in: deptIds } },
+          data: {
+            is_deleted: true,
+            deleted_at: currentDate,
+            deleted_by: userId,
+            updated_by: userId,
+          },
+        });
+
+        // Soft delete dos subsidy_statuses dos departments
+        await prisma.subsidyStatus.updateMany({
+          where: { department_id: { in: deptIds }, is_deleted: false },
+          data: {
+            is_deleted: true,
+            deleted_at: currentDate,
+            deleted_by: userId,
+            updated_by: userId,
+          },
+        });
+
+        // Soft delete dos projects dos departments
+        const projects = await prisma.project.findMany({
+          where: { department_id: { in: deptIds }, is_deleted: false },
+          select: { id: true }
+        });
+
+        if (projects.length > 0) {
+          const projectIds = projects.map(p => p.id);
+          
+          await prisma.project.updateMany({
+            where: { id: { in: projectIds } },
+            data: {
+              is_deleted: true,
+              deleted_at: currentDate,
+              deleted_by: userId,
+              updated_by: userId,
+            },
+          });
+
+          // Soft delete das project activities
+          const projectActivities = await prisma.projectActivity.findMany({
+            where: { project_id: { in: projectIds }, is_deleted: false },
+            select: { id: true }
+          });
+
+          if (projectActivities.length > 0) {
+            const activityIds = projectActivities.map(pa => pa.id);
+            
+            await prisma.projectActivity.updateMany({
+              where: { id: { in: activityIds } },
+              data: {
+                is_deleted: true,
+                deleted_at: currentDate,
+                deleted_by: userId,
+                updated_by: userId,
+              },
+            });
+
+            // Soft delete dos subsidy_receipts
+            await prisma.subsidyReceipt.updateMany({
+              where: { project_activities_id: { in: activityIds }, is_deleted: false },
+              data: {
+                is_deleted: true,
+                deleted_at: currentDate,
+                deleted_by: userId,
+                updated_by: userId,
+              },
+            });
+
+            // Nota: ActivityDocuments não possui campos de soft delete no schema
+          }
+        }
+
+        // Soft delete dos annual_reports dos departments
+        await prisma.annualReport.updateMany({
+          where: { department_id: { in: deptIds }, is_deleted: false },
+          data: {
+            is_deleted: true,
+            deleted_at: currentDate,
+            deleted_by: userId,
+            updated_by: userId,
+          },
+        });
+
+        // Soft delete dos subsidy_requests dos departments
+        await prisma.subsidyRequest.updateMany({
+          where: { department_id: { in: deptIds }, is_deleted: false },
+          data: {
+            is_deleted: true,
+            deleted_at: currentDate,
+            deleted_by: userId,
+            updated_by: userId,
+          },
+        });
+
+        // Soft delete dos annual_budgets dos departments
+        await prisma.annualBudget.updateMany({
+          where: { department_id: { in: deptIds }, is_deleted: false },
+          data: {
+            is_deleted: true,
+            deleted_at: currentDate,
+            deleted_by: userId,
+            updated_by: userId,
+          },
+        });
+      }
+
+      // 3. Soft delete dos users da institution (não ligados a churches)
+      const institutionUsers = await prisma.user.findMany({
+        where: { institution_id: id, church_id: null, is_deleted: false },
+        select: { id: true }
+      });
+
+      if (institutionUsers.length > 0) {
+        const userIds = institutionUsers.map(u => u.id);
+        
+        // Soft delete dos user_roles dos users
+        await prisma.userRole.updateMany({
+          where: { user_id: { in: userIds }, is_deleted: false },
+          data: {
+            is_deleted: true,
+            deleted_at: currentDate,
+            deleted_by: userId,
+            updated_by: userId,
+          },
+        });
+      }
+
+      await prisma.user.updateMany({
+        where: { institution_id: id, church_id: null, is_deleted: false },
+        data: {
+          is_deleted: true,
+          deleted_at: currentDate,
+          deleted_by: userId,
+          updated_by: userId,
+        },
+      });
+
+      // 4. Soft delete das communications da institution
+      await prisma.communication.updateMany({
+        where: { institution_id: id, is_deleted: false },
+        data: {
+          is_deleted: true,
+          deleted_at: currentDate,
+          deleted_by: userId,
+          updated_by: userId,
+        },
+      });
+
+      // 5. Soft delete das notifications da institution
+      await prisma.notification.updateMany({
+        where: { institution_id: id, is_deleted: false },
+        data: {
+          is_deleted: true,
+          deleted_at: currentDate,
+          deleted_by: userId,
+          updated_by: userId,
+        },
+      });
+
+      // 6. Soft delete das settings da institution
+      await prisma.setting.updateMany({
+        where: { institution_id: id, is_deleted: false },
+        data: {
+          is_deleted: true,
+          deleted_at: currentDate,
+          deleted_by: userId,
+          updated_by: userId,
+        },
+      });
+
+      // 7. Soft delete dos projects da institution
+      await prisma.project.updateMany({
+        where: { institution_id: id, is_deleted: false },
+        data: {
+          is_deleted: true,
+          deleted_at: currentDate,
+          deleted_by: userId,
+          updated_by: userId,
+        },
+      });
+
+      // 8. Soft delete das direct_messages da institution
+      await prisma.directMessage.updateMany({
+        where: { institution_id: id, is_deleted: false },
+        data: {
+          is_deleted: true,
+          deleted_at: currentDate,
+          deleted_by: userId,
+          updated_by: userId,
+        },
+      });
+
+      // 9. Soft delete dos subsidy_requests da institution
+      await prisma.subsidyRequest.updateMany({
+        where: { institution_id: id, is_deleted: false },
+        data: {
+          is_deleted: true,
+          deleted_at: currentDate,
+          deleted_by: userId,
+          updated_by: userId,
+        },
+      });
+
+      // 10. Soft delete dos annual_budgets da institution
+      await prisma.annualBudget.updateMany({
+        where: { institution_id: id, is_deleted: false },
+        data: {
+          is_deleted: true,
+          deleted_at: currentDate,
+          deleted_by: userId,
+          updated_by: userId,
+        },
+      });
+
+      // Por fim, soft delete da própria institution
+      return await prisma.institution.update({
+        where: { id },
+        data: {
+          is_deleted: true,
+          deleted_at: currentDate,
+          deleted_by: userId,
+          updated_by: userId,
+        },
+      });
+    });
+  }
+
   async findAll(): Promise<Institution[]> {
     return await this.prisma.institution.findMany({
       where: { is_deleted: false },

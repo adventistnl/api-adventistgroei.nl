@@ -42,7 +42,7 @@ export class InstitutionService {
   }
 
   async deleteInstitution(id: string, userId: string): Promise<Institution> {
-    return await this.institutionRepository.softDelete(id, userId);
+    return await this.institutionRepository.cascadeSoftDelete(id, userId);
   }
 
   async getInstitutions(): Promise<Institution[]> {
