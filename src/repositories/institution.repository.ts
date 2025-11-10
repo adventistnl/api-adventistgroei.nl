@@ -145,35 +145,35 @@ export class InstitutionRepository {
         });
 
         // Soft delete dos users das churches
-        // const churchUsers = await prisma.user.findMany({
-        //   where: { church_id: { in: churchIds }, is_deleted: false },
-        //   select: { id: true }
-        // });
+        const churchUsers = await prisma.user.findMany({
+          where: { church_id: { in: churchIds }, is_deleted: false },
+          select: { id: true }
+        });
 
-        // if (churchUsers.length > 0) {
-        //   const churchUserIds = churchUsers.map(u => u.id);
+        if (churchUsers.length > 0) {
+          const churchUserIds = churchUsers.map(u => u.id);
           
-        //   // Soft delete dos user_roles dos users das churches
-        //   await prisma.userRole.updateMany({
-        //     where: { user_id: { in: churchUserIds }, is_deleted: false },
-        //     data: {
-        //       is_deleted: true,
-        //       deleted_at: currentDate,
-        //       deleted_by: userId,
-        //       updated_by: userId,
-        //     },
-        //   });
-        // }
+          // Soft delete dos user_roles dos users das churches
+          await prisma.userRole.updateMany({
+            where: { user_id: { in: churchUserIds }, is_deleted: false },
+            data: {
+              is_deleted: true,
+              deleted_at: currentDate,
+              deleted_by: userId,
+              updated_by: userId,
+            },
+          });
+        }
 
-        // await prisma.user.updateMany({
-        //   where: { church_id: { in: churchIds }, is_deleted: false },
-        //   data: {
-        //     is_deleted: true,
-        //     deleted_at: currentDate,
-        //     deleted_by: userId,
-        //     updated_by: userId,
-        //   },
-        // });
+        await prisma.user.updateMany({
+          where: { church_id: { in: churchIds }, is_deleted: false },
+          data: {
+            is_deleted: true,
+            deleted_at: currentDate,
+            deleted_by: userId,
+            updated_by: userId,
+          },
+        });
 
         // Soft delete dos subsidy_requests das churches
         await prisma.subsidyRequest.updateMany({
@@ -315,36 +315,36 @@ export class InstitutionRepository {
         });
       }
 
-      // // 3. Soft delete dos users da institution (não ligados a churches)
-      // const institutionUsers = await prisma.user.findMany({
-      //   where: { institution_id: id, church_id: null, is_deleted: false },
-      //   select: { id: true }
-      // });
+      // 3. Soft delete dos users da institution (não ligados a churches)
+      const institutionUsers = await prisma.user.findMany({
+        where: { institution_id: id, church_id: null, is_deleted: false },
+        select: { id: true }
+      });
 
-      // if (institutionUsers.length > 0) {
-      //   const userIds = institutionUsers.map(u => u.id);
+      if (institutionUsers.length > 0) {
+        const userIds = institutionUsers.map(u => u.id);
         
-      //   // Soft delete dos user_roles dos users
-      //   await prisma.userRole.updateMany({
-      //     where: { user_id: { in: userIds }, is_deleted: false },
-      //     data: {
-      //       is_deleted: true,
-      //       deleted_at: currentDate,
-      //       deleted_by: userId,
-      //       updated_by: userId,
-      //     },
-      //   });
-      // }
+        // Soft delete dos user_roles dos users
+        await prisma.userRole.updateMany({
+          where: { user_id: { in: userIds }, is_deleted: false },
+          data: {
+            is_deleted: true,
+            deleted_at: currentDate,
+            deleted_by: userId,
+            updated_by: userId,
+          },
+        });
+      }
 
-      // await prisma.user.updateMany({
-      //   where: { institution_id: id, church_id: null, is_deleted: false },
-      //   data: {
-      //     is_deleted: true,
-      //     deleted_at: currentDate,
-      //     deleted_by: userId,
-      //     updated_by: userId,
-      //   },
-      // });
+      await prisma.user.updateMany({
+        where: { institution_id: id, church_id: null, is_deleted: false },
+        data: {
+          is_deleted: true,
+          deleted_at: currentDate,
+          deleted_by: userId,
+          updated_by: userId,
+        },
+      });
 
       // 4. Soft delete das communications da institution
       await prisma.communication.updateMany({
