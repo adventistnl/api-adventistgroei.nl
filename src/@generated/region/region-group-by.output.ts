@@ -1,5 +1,6 @@
 import { Field } from '@nestjs/graphql';
 import { ObjectType } from '@nestjs/graphql';
+import { GraphQLJSON } from 'graphql-type-json';
 import { RegionCountAggregate } from './region-count-aggregate.output';
 import { RegionMinAggregate } from './region-min-aggregate.output';
 import { RegionMaxAggregate } from './region-max-aggregate.output';
@@ -15,6 +16,12 @@ export class RegionGroupBy {
 
     @Field(() => String, {nullable:false})
     name!: string;
+
+    @Field(() => GraphQLJSON, {nullable:true})
+    territory?: any;
+
+    @Field(() => String, {nullable:true})
+    color?: string;
 
     @Field(() => Date, {nullable:false})
     created_at!: Date | string;

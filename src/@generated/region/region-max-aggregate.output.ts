@@ -13,6 +13,9 @@ export class RegionMaxAggregate {
     @Field(() => String, {nullable:true})
     name?: string;
 
+    @Field(() => String, {nullable:true})
+    color?: string;
+
     @Field(() => Date, {nullable:true})
     created_at?: Date | string;
 

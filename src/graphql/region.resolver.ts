@@ -1,20 +1,18 @@
 import { Resolver, Mutation, Args, Query, Context, ResolveField, Parent } from '@nestjs/graphql';
 import { RegionService } from '../services/region.service';
-import { RegionModel } from '../models/region.model';
+import { RegionModel, RegionKPIData } from '../models/region.model';
 import { RegionCreateDto, RegionUpdateDto } from '../dto/region.dto';
 import { Permission } from '../middlewares/permissions.decorator';
 import { UseGuards } from '@nestjs/common';
 import { PermissionsGuard } from '../middlewares/permissions.guard';
-import { Region } from 'src/@generated/region/region.model';
-import { ChurchService, ContactService, InstitutionService } from 'src/services';
-import { Church } from 'src/@generated/church/church.model';
+import { Region } from '../@generated/region/region.model';
+import { ChurchService } from '../services';
+import { Church } from '../@generated/church/church.model';
 
 @Resolver(() => Region)
 @UseGuards(PermissionsGuard)
 export class RegionResolver {
   constructor(private readonly regionService: RegionService,
-    private readonly institutionService: InstitutionService,
-    private readonly contactService: ContactService,
     private readonly churchService: ChurchService,
   ) {}
 
@@ -64,6 +62,11 @@ export class RegionResolver {
   @ResolveField(() => [Church])
   async churches(@Parent() region: Region) {
     return this.churchService.findManyByFilters({ region_id: region.id });
+  }
+
+  @ResolveField(() => RegionKPIData)
+  async kpiData(@Parent() region: Region): Promise<RegionKPIData> {
+    return await this.regionService.getKPIData(region.id);
   }
 
 }

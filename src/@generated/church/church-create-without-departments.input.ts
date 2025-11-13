@@ -46,8 +46,8 @@ export class ChurchCreateWithoutDepartmentsInput {
     @Type(() => InstitutionCreateNestedOneWithoutChurchesInput)
     institution!: InstitutionCreateNestedOneWithoutChurchesInput;
 
-    @Field(() => RegionCreateNestedOneWithoutChurchesInput, {nullable:false})
-    region!: RegionCreateNestedOneWithoutChurchesInput;
+    @Field(() => RegionCreateNestedOneWithoutChurchesInput, {nullable:true})
+    region?: RegionCreateNestedOneWithoutChurchesInput;
 
     @Field(() => ContactCreateNestedOneWithoutChurchInput, {nullable:true})
     @Type(() => ContactCreateNestedOneWithoutChurchInput)

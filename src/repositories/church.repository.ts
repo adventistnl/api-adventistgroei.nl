@@ -16,7 +16,9 @@ export class ChurchRepository {
   async create(data: ChurchCreateDto, userId: string): Promise<Church> {
     // Validação de relacionamentos
     await this.validateInstitution(data.institution_id);
-    await this.validateRegion(data.region_id);
+    if (data.region_id) {
+      await this.validateRegion(data.region_id);
+    }
 
     let contactId: string | undefined = undefined;
     if (data.contact) {
@@ -34,7 +36,7 @@ export class ChurchRepository {
     return await this.prisma.church.create({
       data: {
         institution: { connect: { id: data.institution_id } },
-        region: { connect: { id: data.region_id } },
+        region: data.region_id ? { connect: { id: data.region_id } } : undefined,
         name: data.name,
         type: data.type,
         contact:  contactId ? { connect: { id: contactId } } : undefined,
@@ -46,17 +48,22 @@ export class ChurchRepository {
   }
 
   async update(churchId: string, data: ChurchUpdateDto, userId: string): Promise<Church> {
-    await this.findById(churchId)
-    if (data.region_id) await this.regionRepository.findById(data.region_id)
-    if (data.institution_id) await this.institutionRepository.findById(data.institution_id)
+    await this.findById(churchId);
+    if (data.region_id) {
+      await this.regionRepository.findById(data.region_id);
+    }
+    if (data.institution_id) {
+      await this.institutionRepository.findById(data.institution_id);
+    }
+    
     return await this.prisma.church.update({
       where: { id: churchId },
       data: {
-        institution: { connect: { id: data.institution_id } },
-        type: data.type,
-        name: data.name,
-        region: { connect: { id: data.region_id } },
-        contact: data.contact ? { update: { ...data.contact, updated_by: userId }} : undefined,
+        ...(data.institution_id && { institution: { connect: { id: data.institution_id } } }),
+        ...(data.type && { type: data.type }),
+        ...(data.name && { name: data.name }),
+        ...(data.region_id && { region: { connect: { id: data.region_id } } }),
+        ...(data.contact && { contact: { update: { ...data.contact, updated_by: userId } } }),
         updated_by: userId,
       },
     });
@@ -137,5 +144,53 @@ export class ChurchRepository {
     if (!region) {
       throw new CustomGraphQLError('Region not found', ErrorCode.NOT_FOUND, 404);
     }
+  }
+
+  async getKPIData(churchId: string): Promise<{ totalChurches: number; totalMembers: number; totalDepartments: number; totalSubsidyRequests: number; totalBudget: number; totalUsedBudget: number; budgetUtilization: number; avgMembersPerChurch: number }> {
+    await this.findById(churchId);
+
+    const totalChurches = await this.prisma.church.count({
+      where: { is_deleted: false },
+    });
+
+    const totalMembers = await this.prisma.user.count({
+      where: { church_id: churchId, is_deleted: false },
+    });
+
+    const totalDepartments = await this.prisma.department.count({
+      where: { church_id: churchId, is_deleted: false },
+    });
+
+    const totalSubsidyRequests = await this.prisma.subsidyRequest.count({
+      where: { church_id: churchId, is_deleted: false },
+    });
+
+    const budgets = await this.prisma.annualBudget.aggregate({
+      where: { church_id: churchId, is_deleted: false },
+      _sum: {
+        planned_budget: true,
+        total_expenses: true,
+      },
+    });
+
+    const totalBudget = budgets._sum.planned_budget?.toNumber() || 0;
+    const totalUsedBudget = budgets._sum.total_expenses?.toNumber() || 0;
+    const budgetUtilization = totalBudget > 0 ? (totalUsedBudget / totalBudget) * 100 : 0;
+
+    const allChurches = await this.prisma.church.count({
+      where: { is_deleted: false },
+    });
+    const avgMembersPerChurch = allChurches > 0 ? Math.round(await this.prisma.user.count({ where: { is_deleted: false } }) / allChurches) : 0;
+
+    return {
+      totalChurches,
+      totalMembers,
+      totalDepartments,
+      totalSubsidyRequests,
+      totalBudget,
+      totalUsedBudget,
+      budgetUtilization,
+      avgMembersPerChurch,
+    };
   }
 }

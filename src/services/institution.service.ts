@@ -58,7 +58,7 @@ export class InstitutionService {
   }
 
   async getChurches(institutionId: string) {
-    const churches = await this.churchRepository.findManyByFilters({ institution_id: institutionId });
+    const churches = await this.churchRepository.findManyByFilters({ institution_id: institutionId, is_deleted: false });
     return churches;
   }
 
@@ -102,5 +102,51 @@ export class InstitutionService {
 
   async getAnnualBudgetByInstitutionId(institutionId: string) {
     return await this.annualBudgetRepository.findManyByFilters({ institution_id: institutionId });
+  }
+
+  async getChurchesKpiDataForInstitution(institutionId: string) {
+    // Get all churches for this institution and calculate their KPI data
+    const churches = await this.churchRepository.findManyByFilters({ institution_id: institutionId });
+    
+    if (churches.length === 0) {
+      return {
+        totalChurches: 0,
+        totalMembers: 0,
+        totalDepartments: 0,
+        totalSubsidyRequests: 0,
+        totalBudget: 0,
+        totalUsedBudget: 0,
+        budgetUtilization: 0,
+        avgMembersPerChurch: 0,
+      };
+    }
+
+    const kpiDataByChurch = await Promise.all(
+      churches.map(church => this.churchRepository.getKPIData(church.id)),
+    );
+
+    // Aggregate all KPI data
+    const aggregated = {
+      totalChurches: churches.length,
+      totalMembers: kpiDataByChurch.reduce((sum, kpi) => sum + kpi.totalMembers, 0),
+      totalDepartments: kpiDataByChurch.reduce((sum, kpi) => sum + kpi.totalDepartments, 0),
+      totalSubsidyRequests: kpiDataByChurch.reduce((sum, kpi) => sum + kpi.totalSubsidyRequests, 0),
+      totalBudget: kpiDataByChurch.reduce((sum, kpi) => sum + kpi.totalBudget, 0),
+      totalUsedBudget: kpiDataByChurch.reduce((sum, kpi) => sum + kpi.totalUsedBudget, 0),
+      budgetUtilization: 0,
+      avgMembersPerChurch: 0,
+    };
+
+    // Calculate utilization percentage
+    aggregated.budgetUtilization = aggregated.totalBudget > 0
+      ? parseFloat(((aggregated.totalUsedBudget / aggregated.totalBudget) * 100).toFixed(2))
+      : 0;
+
+    // Calculate average members per church
+    aggregated.avgMembersPerChurch = churches.length > 0
+      ? parseFloat((aggregated.totalMembers / churches.length).toFixed(2))
+      : 0;
+
+    return aggregated;
   }
 }

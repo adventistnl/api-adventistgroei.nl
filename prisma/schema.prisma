@@ -253,6 +253,8 @@ model Region {
   id               String        @id @default(uuid())
   description      String?
   name             String
+  territory        Json?
+  color            String?       @default("#9810fa")
   created_at       DateTime      @default(now())
   updated_at       DateTime      @updatedAt
   created_by       String
@@ -269,8 +271,8 @@ model Church {
   institution_id   String
   institution      Institution            @relation(fields: [institution_id], references: [id])
   name             String
-  region_id        String
-  region           Region                 @relation(fields: [region_id], references: [id])
+  region_id        String?
+  region           Region?                @relation(fields: [region_id], references: [id])
   contact_id       String?
   contact          Contact?               @relation(fields: [contact_id], references: [id])
   created_at       DateTime               @default(now())

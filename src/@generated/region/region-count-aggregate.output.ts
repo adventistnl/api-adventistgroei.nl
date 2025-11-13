@@ -15,6 +15,12 @@ export class RegionCountAggregate {
     name!: number;
 
     @Field(() => Int, {nullable:false})
+    territory!: number;
+
+    @Field(() => Int, {nullable:false})
+    color!: number;
+
+    @Field(() => Int, {nullable:false})
     created_at!: number;
 
     @Field(() => Int, {nullable:false})

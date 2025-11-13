@@ -21,8 +21,8 @@ export class ChurchUncheckedCreateWithoutAnnual_budgetsInput {
     @Field(() => String, {nullable:false})
     name!: string;
 
-    @Field(() => String, {nullable:false})
-    region_id!: string;
+    @Field(() => String, {nullable:true})
+    region_id?: string;
 
     @Field(() => String, {nullable:true})
     contact_id?: string;

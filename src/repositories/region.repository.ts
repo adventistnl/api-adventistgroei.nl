@@ -3,13 +3,12 @@ import { RegionCreateDto, RegionUpdateDto } from '../dto/region.dto';
 import { Region } from '@prisma/client';
 import { CustomGraphQLError, ErrorCode } from '../common/errors/custom-graphql-error';
 import { PrismaService } from '../services';
-import { InstitutionRepository } from './institution.repository';
+import { RegionKPIData } from '../models';
 
 @Injectable()
 export class RegionRepository {
   constructor(
     private readonly prisma: PrismaService,
-    private readonly institutionRepository: InstitutionRepository
     
   ) {}
 
@@ -29,6 +28,8 @@ export class RegionRepository {
       data: {
         description: data.description,
         name: data.name,
+        territory: data.territory,
+        color: data.color,
         created_by: userId,
         updated_by: userId,
       },
@@ -42,12 +43,22 @@ export class RegionRepository {
       data: {
         description: data.description,
         name: data.name,
+        territory: data.territory,
+        color: data.color,
         updated_by: userId,
       },
     });
   }
 
   async softDelete(id: string, userId: string): Promise<Region> {
+    await this.findById(id);
+
+    // Desconectar todas as igrejas ligadas à região
+    await this.prisma.church.updateMany({
+      where: { region_id: id },
+      data: { region_id: null, updated_by: userId },
+    });
+
     return await this.prisma.region.update({
       where: { id },
       data: {
@@ -92,6 +103,37 @@ export class RegionRepository {
       },
       include: { churches: true},
     });
+  }
+
+  async getKPIData(regionId: string): Promise<RegionKPIData> {
+    const region = await this.findById(regionId);
+
+    const totalChurches = await this.prisma.church.count({
+      where: { region_id: regionId, is_deleted: false },
+    });
+
+    const totalRegions = await this.prisma.region.count({
+      where: { is_deleted: false },
+    });
+
+    const territories = (region?.territory as Record<string, Record<string, string[]>>) || {};
+    let totalProvinces = 0;
+    let totalCities = 0;
+
+    for (const country of Object.keys(territories)) {
+      const provinces = territories[country];
+      totalProvinces += Object.keys(provinces).length;
+      for (const province of Object.keys(provinces)) {
+        totalCities += provinces[province].length;
+      }
+    }
+
+    return {
+      totalRegions,
+      totalChurches,
+      totalProvinces,
+      totalCities,
+    };
   }
 
 }

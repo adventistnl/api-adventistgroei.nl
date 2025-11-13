@@ -27,8 +27,8 @@ export class ChurchUncheckedUpdateInput {
     @Field(() => StringFieldUpdateOperationsInput, {nullable:true})
     name?: StringFieldUpdateOperationsInput;
 
-    @Field(() => StringFieldUpdateOperationsInput, {nullable:true})
-    region_id?: StringFieldUpdateOperationsInput;
+    @Field(() => NullableStringFieldUpdateOperationsInput, {nullable:true})
+    region_id?: NullableStringFieldUpdateOperationsInput;
 
     @Field(() => NullableStringFieldUpdateOperationsInput, {nullable:true})
     contact_id?: NullableStringFieldUpdateOperationsInput;

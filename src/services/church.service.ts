@@ -33,4 +33,8 @@ export class ChurchService {
   async findManyByFilters(filters: Partial<Record<keyof Church, any>>): Promise<Church[]> {
     return await this.churchRepository.findManyByFilters(filters);
   }
+
+  async getKPIData(churchId: string): Promise<{ totalChurches: number; totalMembers: number; totalDepartments: number; totalSubsidyRequests: number; totalBudget: number; totalUsedBudget: number; budgetUtilization: number; avgMembersPerChurch: number }> {
+    return await this.churchRepository.getKPIData(churchId);
+  }
 }

@@ -1,5 +1,6 @@
 import { Field } from '@nestjs/graphql';
 import { InputType } from '@nestjs/graphql';
+import { GraphQLJSON } from 'graphql-type-json';
 
 @InputType()
 export class RegionCreateWithoutChurchesInput {
@@ -12,6 +13,12 @@ export class RegionCreateWithoutChurchesInput {
 
     @Field(() => String, {nullable:false})
     name!: string;
+
+    @Field(() => GraphQLJSON, {nullable:true})
+    territory?: any;
+
+    @Field(() => String, {nullable:true})
+    color?: string;
 
     @Field(() => Date, {nullable:true})
     created_at?: Date | string;

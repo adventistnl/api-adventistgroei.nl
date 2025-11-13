@@ -22,8 +22,8 @@ export class ChurchUncheckedCreateWithoutContactInput {
     @Field(() => String, {nullable:false})
     name!: string;
 
-    @Field(() => String, {nullable:false})
-    region_id!: string;
+    @Field(() => String, {nullable:true})
+    region_id?: string;
 
     @Field(() => Date, {nullable:true})
     created_at?: Date | string;

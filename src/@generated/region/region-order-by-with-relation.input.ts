@@ -17,6 +17,12 @@ export class RegionOrderByWithRelationInput {
     @Field(() => SortOrder, {nullable:true})
     name?: `${SortOrder}`;
 
+    @Field(() => SortOrderInput, {nullable:true})
+    territory?: SortOrderInput;
+
+    @Field(() => SortOrderInput, {nullable:true})
+    color?: SortOrderInput;
+
     @Field(() => SortOrder, {nullable:true})
     created_at?: `${SortOrder}`;
 

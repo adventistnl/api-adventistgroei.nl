@@ -1,5 +1,6 @@
 import { Field } from '@nestjs/graphql';
 import { InputType } from '@nestjs/graphql';
+import { GraphQLJSON } from 'graphql-type-json';
 import { ChurchCreateNestedManyWithoutRegionInput } from '../church/church-create-nested-many-without-region.input';
 import { Type } from 'class-transformer';
 
@@ -14,6 +15,12 @@ export class RegionCreateInput {
 
     @Field(() => String, {nullable:false})
     name!: string;
+
+    @Field(() => GraphQLJSON, {nullable:true})
+    territory?: any;
+
+    @Field(() => String, {nullable:true})
+    color?: string;
 
     @Field(() => Date, {nullable:true})
     created_at?: Date | string;

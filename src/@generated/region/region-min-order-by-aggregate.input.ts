@@ -15,6 +15,9 @@ export class RegionMinOrderByAggregateInput {
     name?: `${SortOrder}`;
 
     @Field(() => SortOrder, {nullable:true})
+    color?: `${SortOrder}`;
+
+    @Field(() => SortOrder, {nullable:true})
     created_at?: `${SortOrder}`;
 
     @Field(() => SortOrder, {nullable:true})

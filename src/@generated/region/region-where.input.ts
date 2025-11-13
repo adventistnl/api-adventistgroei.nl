@@ -2,6 +2,7 @@ import { Field } from '@nestjs/graphql';
 import { InputType } from '@nestjs/graphql';
 import { StringFilter } from '../prisma/string-filter.input';
 import { StringNullableFilter } from '../prisma/string-nullable-filter.input';
+import { JsonNullableFilter } from '../prisma/json-nullable-filter.input';
 import { DateTimeFilter } from '../prisma/date-time-filter.input';
 import { BoolFilter } from '../prisma/bool-filter.input';
 import { DateTimeNullableFilter } from '../prisma/date-time-nullable-filter.input';
@@ -28,6 +29,12 @@ export class RegionWhereInput {
 
     @Field(() => StringFilter, {nullable:true})
     name?: StringFilter;
+
+    @Field(() => JsonNullableFilter, {nullable:true})
+    territory?: JsonNullableFilter;
+
+    @Field(() => StringNullableFilter, {nullable:true})
+    color?: StringNullableFilter;
 
     @Field(() => DateTimeFilter, {nullable:true})
     created_at?: DateTimeFilter;

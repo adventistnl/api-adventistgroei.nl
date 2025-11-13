@@ -8,7 +8,7 @@ import { BoolFilter } from '../prisma/bool-filter.input';
 import { DateTimeNullableFilter } from '../prisma/date-time-nullable-filter.input';
 import { InstitutionScalarRelationFilter } from '../institution/institution-scalar-relation-filter.input';
 import { Type } from 'class-transformer';
-import { RegionScalarRelationFilter } from '../region/region-scalar-relation-filter.input';
+import { RegionNullableScalarRelationFilter } from '../region/region-nullable-scalar-relation-filter.input';
 import { ContactNullableScalarRelationFilter } from '../contact/contact-nullable-scalar-relation-filter.input';
 import { DepartmentListRelationFilter } from '../department/department-list-relation-filter.input';
 import { UserListRelationFilter } from '../user/user-list-relation-filter.input';
@@ -39,8 +39,8 @@ export class ChurchWhereInput {
     @Field(() => StringFilter, {nullable:true})
     name?: StringFilter;
 
-    @Field(() => StringFilter, {nullable:true})
-    region_id?: StringFilter;
+    @Field(() => StringNullableFilter, {nullable:true})
+    region_id?: StringNullableFilter;
 
     @Field(() => StringNullableFilter, {nullable:true})
     contact_id?: StringNullableFilter;
@@ -70,8 +70,8 @@ export class ChurchWhereInput {
     @Type(() => InstitutionScalarRelationFilter)
     institution?: InstitutionScalarRelationFilter;
 
-    @Field(() => RegionScalarRelationFilter, {nullable:true})
-    region?: RegionScalarRelationFilter;
+    @Field(() => RegionNullableScalarRelationFilter, {nullable:true})
+    region?: RegionNullableScalarRelationFilter;
 
     @Field(() => ContactNullableScalarRelationFilter, {nullable:true})
     @Type(() => ContactNullableScalarRelationFilter)

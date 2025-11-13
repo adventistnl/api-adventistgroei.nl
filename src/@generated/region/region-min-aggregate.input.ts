@@ -14,6 +14,9 @@ export class RegionMinAggregateInput {
     name?: true;
 
     @Field(() => Boolean, {nullable:true})
+    color?: true;
+
+    @Field(() => Boolean, {nullable:true})
     created_at?: true;
 
     @Field(() => Boolean, {nullable:true})

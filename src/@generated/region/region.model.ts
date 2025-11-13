@@ -1,6 +1,7 @@
 import { Field } from '@nestjs/graphql';
 import { ObjectType } from '@nestjs/graphql';
 import { ID } from '@nestjs/graphql';
+import { GraphQLJSON } from 'graphql-type-json';
 import { Church } from '../church/church.model';
 import { RegionCount } from './region-count.output';
 
@@ -15,6 +16,12 @@ export class Region {
 
     @Field(() => String, {nullable:false})
     name!: string;
+
+    @Field(() => GraphQLJSON, {nullable:true})
+    territory!: any | null;
+
+    @Field(() => String, {defaultValue:'#9810fa',nullable:true})
+    color!: string | null;
 
     @Field(() => Date, {nullable:false})
     created_at!: Date;

@@ -31,8 +31,8 @@ export class ChurchScalarWhereInput {
     @Field(() => StringFilter, {nullable:true})
     name?: StringFilter;
 
-    @Field(() => StringFilter, {nullable:true})
-    region_id?: StringFilter;
+    @Field(() => StringNullableFilter, {nullable:true})
+    region_id?: StringNullableFilter;
 
     @Field(() => StringNullableFilter, {nullable:true})
     contact_id?: StringNullableFilter;

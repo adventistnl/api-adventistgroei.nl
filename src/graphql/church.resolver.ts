@@ -53,4 +53,5 @@ export class ChurchResolver {
     const userId = context.userId;
     return await this.churchService.deleteChurch(churchId, userId);
   }
+
 }

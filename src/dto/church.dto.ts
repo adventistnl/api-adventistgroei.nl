@@ -14,9 +14,10 @@ export class ChurchCreateDto {
   @IsString()
   name: string;
 
-  @Field()
+  @Field(() => String, { nullable: true })
+  @IsOptional()
   @IsString()
-  region_id: string;
+  region_id?: string;
 
   @Field(() => ContactCreateDto, { nullable: true })
   @IsOptional()

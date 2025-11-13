@@ -26,8 +26,8 @@ export class Church {
     @Field(() => String, {nullable:false})
     name!: string;
 
-    @Field(() => String, {nullable:false})
-    region_id!: string;
+    @Field(() => String, {nullable:true})
+    region_id!: string | null;
 
     @Field(() => String, {nullable:true})
     contact_id!: string | null;
@@ -56,8 +56,8 @@ export class Church {
     @Field(() => Institution, {nullable:false})
     institution?: Institution;
 
-    @Field(() => Region, {nullable:false})
-    region?: Region;
+    @Field(() => Region, {nullable:true})
+    region?: Region | null;
 
     @Field(() => Contact, {nullable:true})
     contact?: Contact | null;

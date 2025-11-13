@@ -16,6 +16,7 @@ import { DirectMessage } from 'src/@generated/direct-message/direct-message.mode
 import { SubsidyRequest } from 'src/@generated/subsidy-request/subsidy-request.model';
 import { Contact } from 'src/@generated/contact/contact.model';
 import { AnnualBudget } from 'src/@generated/annual-budget/annual-budget.model';
+import { ChurchKPIData } from 'src/models/church.model';
 
 
 @Resolver(() => Institution)
@@ -134,5 +135,10 @@ export class InstitutionResolver {
   @ResolveField(() => Int, { name: 'users_count' })
   usersCount(@Parent() institution: Institution) {
     return institution._count?.users ?? 0;
+  }
+
+  @ResolveField(() => ChurchKPIData, { name: 'churchesKpiData' })
+  async churchesKpiData(@Parent() institution: Institution) {
+    return await this.institutionService.getChurchesKpiDataForInstitution(institution.id);
   }
 }

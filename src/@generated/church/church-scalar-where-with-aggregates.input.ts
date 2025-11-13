@@ -31,8 +31,8 @@ export class ChurchScalarWhereWithAggregatesInput {
     @Field(() => StringWithAggregatesFilter, {nullable:true})
     name?: StringWithAggregatesFilter;
 
-    @Field(() => StringWithAggregatesFilter, {nullable:true})
-    region_id?: StringWithAggregatesFilter;
+    @Field(() => StringNullableWithAggregatesFilter, {nullable:true})
+    region_id?: StringNullableWithAggregatesFilter;
 
     @Field(() => StringNullableWithAggregatesFilter, {nullable:true})
     contact_id?: StringNullableWithAggregatesFilter;

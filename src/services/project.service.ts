@@ -26,4 +26,8 @@ export class ProjectService {
   async findAll(): Promise<Project[]> {
     return this.projectRepository.findAll();
   }
+
+  async getProjectsByChurch(churchId: string): Promise<Project[]> {
+    return this.projectRepository.findByChurchId(churchId);
+  }
 }

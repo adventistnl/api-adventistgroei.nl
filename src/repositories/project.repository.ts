@@ -264,4 +264,25 @@ export class ProjectRepository {
       },
     });
   }
+
+  async findByChurchId(churchId: string): Promise<Project[]> {
+    return this.prisma.project.findMany({
+      where: {
+        department: {
+          church_id: churchId,
+        },
+        is_deleted: false,
+      },
+      include: {
+        owner: true,
+        department: true,
+        Institution: true,
+        activities: {
+          include: {
+            owner: true,
+          },
+        },
+      },
+    });
+  }
 }

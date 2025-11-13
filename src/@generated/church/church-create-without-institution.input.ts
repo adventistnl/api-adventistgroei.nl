@@ -42,8 +42,8 @@ export class ChurchCreateWithoutInstitutionInput {
     @Field(() => String, {nullable:true})
     deleted_by?: string;
 
-    @Field(() => RegionCreateNestedOneWithoutChurchesInput, {nullable:false})
-    region!: RegionCreateNestedOneWithoutChurchesInput;
+    @Field(() => RegionCreateNestedOneWithoutChurchesInput, {nullable:true})
+    region?: RegionCreateNestedOneWithoutChurchesInput;
 
     @Field(() => ContactCreateNestedOneWithoutChurchInput, {nullable:true})
     @Type(() => ContactCreateNestedOneWithoutChurchInput)

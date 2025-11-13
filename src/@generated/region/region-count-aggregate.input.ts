@@ -14,6 +14,12 @@ export class RegionCountAggregateInput {
     name?: true;
 
     @Field(() => Boolean, {nullable:true})
+    territory?: true;
+
+    @Field(() => Boolean, {nullable:true})
+    color?: true;
+
+    @Field(() => Boolean, {nullable:true})
     created_at?: true;
 
     @Field(() => Boolean, {nullable:true})
