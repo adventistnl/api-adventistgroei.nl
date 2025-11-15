@@ -33,17 +33,17 @@ export class ChurchCreateDto {
 
 @InputType()
 export class ChurchUpdateDto {
-  @Field()
+  @Field(() => String, { nullable: true })
   @IsString()
   @IsOptional()
   institution_id?: string;
 
-  @Field()
+  @Field(() => String, { nullable: true })
   @IsString()
   @IsOptional()
   name?: string;
 
-  @Field()
+  @Field(() => String, { nullable: true })
   @IsString()
   @IsOptional()
   region_id?: string;

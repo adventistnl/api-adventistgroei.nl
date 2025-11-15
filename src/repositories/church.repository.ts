@@ -38,7 +38,7 @@ export class ChurchRepository {
         institution: { connect: { id: data.institution_id } },
         region: data.region_id ? { connect: { id: data.region_id } } : undefined,
         name: data.name,
-        type: data.type,
+        type: data.type || 'STANDARD',
         contact:  contactId ? { connect: { id: contactId } } : undefined,
         created_by: userId,
         updated_by: userId,
@@ -56,6 +56,28 @@ export class ChurchRepository {
       await this.institutionRepository.findById(data.institution_id);
     }
     
+    // Check if contact exists before trying to update
+    let contactData = {};
+    if (data.contact) {
+      const church = await this.prisma.church.findUnique({
+        where: { id: churchId },
+        select: { contact_id: true },
+      });
+      
+      // Filter out undefined and null values from contact data
+      const cleanContactData = Object.fromEntries(
+        Object.entries(data.contact).filter(([_, v]) => v !== undefined && v !== null)
+      );
+      
+      if (church?.contact_id) {
+        // Contact exists, update it
+        contactData = { contact: { update: { ...cleanContactData, updated_by: userId } } };
+      } else {
+        // Contact doesn't exist, create it with is_primary default to true
+        contactData = { contact: { create: { ...cleanContactData, is_primary: true, created_by: userId, updated_by: userId } } };
+      }
+    }
+
     return await this.prisma.church.update({
       where: { id: churchId },
       data: {
@@ -63,21 +85,185 @@ export class ChurchRepository {
         ...(data.type && { type: data.type }),
         ...(data.name && { name: data.name }),
         ...(data.region_id && { region: { connect: { id: data.region_id } } }),
-        ...(data.contact && { contact: { update: { ...data.contact, updated_by: userId } } }),
+        ...contactData,
         updated_by: userId,
       },
     });
   }
 
   async softDelete(id: string, userId: string): Promise<Church> {
-    return await this.prisma.church.update({
-      where: { id },
-      data: {
-        is_deleted: true,
-        deleted_at: new Date(),
-        deleted_by: userId,
-        updated_by: userId,
-      },
+    // Perform a transaction to ensure data consistency
+    return await this.prisma.$transaction(async (prisma) => {
+      // Verify church exists
+      const church = await prisma.church.findUnique({ where: { id } });
+      if (!church || church.is_deleted) {
+        throw new CustomGraphQLError('Church not found', ErrorCode.NOT_FOUND, 404);
+      }
+
+      // Get all departments related to this church
+      const departments = await prisma.department.findMany({
+        where: { church_id: id, is_deleted: false },
+        select: { id: true, contact_id: true },
+      });
+      const departmentIds = departments.map(d => d.id);
+
+      // Get all users related to this church (to delete their contacts and roles)
+      const users = await prisma.user.findMany({
+        where: { church_id: id, is_deleted: false },
+        select: { id: true, contact_id: true },
+      });
+      const userIds = users.map(u => u.id);
+
+      // Soft delete all projects related to departments in this church
+      if (departmentIds.length > 0) {
+        await prisma.project.updateMany({
+          where: { department_id: { in: departmentIds } },
+          data: {
+            is_deleted: true,
+            deleted_at: new Date(),
+            deleted_by: userId,
+            updated_by: userId,
+          },
+        });
+
+        // Soft delete all subsidy statuses related to departments in this church
+        await prisma.subsidyStatus.updateMany({
+          where: { department_id: { in: departmentIds } },
+          data: {
+            is_deleted: true,
+            deleted_at: new Date(),
+            deleted_by: userId,
+            updated_by: userId,
+          },
+        });
+
+        // Soft delete all annual reports related to departments in this church
+        await prisma.annualReport.updateMany({
+          where: { department_id: { in: departmentIds } },
+          data: {
+            is_deleted: true,
+            deleted_at: new Date(),
+            deleted_by: userId,
+            updated_by: userId,
+          },
+        });
+
+        // Soft delete all special projects related to departments in this church
+        await prisma.specialProjects.updateMany({
+          where: { department_id: { in: departmentIds } },
+          data: {
+            is_deleted: true,
+            deleted_at: new Date(),
+            deleted_by: userId,
+            updated_by: userId,
+          },
+        });
+
+        // Soft delete all contacts related to departments in this church
+        const departmentContacts = departments.filter(d => d.contact_id && d.contact_id !== null).map(d => d.contact_id as string);
+        if (departmentContacts.length > 0) {
+          await prisma.contact.updateMany({
+            where: { id: { in: departmentContacts } },
+            data: {
+              is_deleted: true,
+              deleted_at: new Date(),
+              deleted_by: userId,
+              updated_by: userId,
+            },
+          });
+        }
+      }
+
+      // Soft delete all departments related to this church
+      await prisma.department.updateMany({
+        where: { church_id: id },
+        data: {
+          is_deleted: true,
+          deleted_at: new Date(),
+          deleted_by: userId,
+          updated_by: userId,
+        },
+      });
+
+      // Soft delete all UserRoles related to users in this church
+      if (userIds.length > 0) {
+        await prisma.userRole.deleteMany({
+          where: { user_id: { in: userIds } },
+        });
+
+        // Soft delete all contacts related to users in this church
+        const userContacts = users.filter(u => u.contact_id && u.contact_id !== null).map(u => u.contact_id as string);
+        if (userContacts.length > 0) {
+          await prisma.contact.updateMany({
+            where: { id: { in: userContacts } },
+            data: {
+              is_deleted: true,
+              deleted_at: new Date(),
+              deleted_by: userId,
+              updated_by: userId,
+            },
+          });
+        }
+      }
+
+      // Soft delete all users related to this church
+      await prisma.user.updateMany({
+        where: { church_id: id },
+        data: {
+          is_deleted: true,
+          deleted_at: new Date(),
+          deleted_by: userId,
+          updated_by: userId,
+        },
+      });
+
+      // Soft delete all annual budgets related to this church
+      await prisma.annualBudget.updateMany({
+        where: { church_id: id },
+        data: {
+          is_deleted: true,
+          deleted_at: new Date(),
+          deleted_by: userId,
+          updated_by: userId,
+        },
+      });
+
+      // Soft delete all subsidy requests related to this church
+      await prisma.subsidyRequest.updateMany({
+        where: { church_id: id },
+        data: {
+          is_deleted: true,
+          deleted_at: new Date(),
+          deleted_by: userId,
+          updated_by: userId,
+        },
+      });
+
+      // Soft delete the contact related to this church
+      if (church.contact_id) {
+        await prisma.contact.update({
+          where: { id: church.contact_id },
+          data: {
+            is_deleted: true,
+            deleted_at: new Date(),
+            deleted_by: userId,
+            updated_by: userId,
+          },
+        });
+      }
+
+      // Soft delete the church itself
+      const deletedChurch = await prisma.church.update({
+        where: { id },
+        data: {
+          is_deleted: true,
+          deleted_at: new Date(),
+          deleted_by: userId,
+          updated_by: userId,
+        },
+      });
+
+      return deletedChurch;
     });
   }
 

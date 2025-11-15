@@ -15,8 +15,8 @@ export async function getUserIdFromRequest(req: { headers: Record<string, string
       }
       const prisma = new PrismaService();
       const user = await prisma.user.findUnique({ where: { id: userId } });
-      if (!user) {
-        throw new CustomGraphQLError('User not found', ErrorCode.UNAUTHORIZED, 401);
+      if (!user || user.is_deleted) {
+        throw new CustomGraphQLError('User not found or is inactive', ErrorCode.UNAUTHORIZED, 401);
       }
       const userRoles = await prisma.userRole.findMany({
         where: { user_id: userId, role: { is_deleted: false } },
