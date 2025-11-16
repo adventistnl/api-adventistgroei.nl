@@ -6,9 +6,10 @@ import { translate } from 'i18n.config';
 
 import { CustomGraphQLError, ErrorCode } from 'src/common/errors/custom-graphql-error';
 import { InviteEmailDto } from 'src/dto/email.dto';
+import { ForgotPasswordEmailDto } from 'src/dto/forgot-password-email.dto';
 import { UserService } from '../../services/user.service';
 import { MustacheService } from '../../services/mustache.service';
-import { LanguagePreference } from 'src/@generated/prisma/language-preference.enum';
+import { LanguagePreference } from '../../@generated/prisma/language-preference.enum';
 
 @Injectable()
 export class NodemailerEmailRepository {
@@ -83,4 +84,22 @@ export class NodemailerEmailRepository {
       throw new CustomGraphQLError('Failed to send email', ErrorCode.INTERNAL_SERVER_ERROR, 500);
     }
   }
+
+    async sendForgotPasswordEmail(data: ForgotPasswordEmailDto): Promise<void> {
+      const language = (data.language as LanguagePreference) || LanguagePreference.en;
+      await loadNamespaces(['emails']);
+
+      const subject = translate('forgotPassword.subject', language, { ns: 'emails' }) || 'Your Password Reset Code';
+      const templateData = {
+        code: data.code,
+        expiresIn: data.expiresIn,
+        subject,
+        body: translate('forgotPassword.body', language, { ns: 'emails', code: data.code, expiresIn: data.expiresIn }) || `Your verification code is: ${data.code}\nThis code expires in ${data.expiresIn}.`,
+        greeting: translate('forgotPassword.greeting', language, { ns: 'emails' }) || '',
+        expiry: translate('forgotPassword.expiry', language, { ns: 'emails', expiresIn: data.expiresIn }) || '',
+        ignore: translate('forgotPassword.ignore', language, { ns: 'emails' }) || '',
+        footer: translate('forgotPassword.footer', language, { ns: 'emails' }) || '',
+      };
+      await this.sendEmail(data.to, subject, 'forgot-password', templateData);
+    }
 }

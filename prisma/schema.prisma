@@ -878,3 +878,13 @@ model UsedInviteTokens {
   usedAt          DateTime    @default(now())
   tokenExpiresAt  DateTime
 }
+
+model VerificationCode {
+  id           String   @id @default(cuid())
+  email        String
+  code         String
+  expiresAt    DateTime
+  attempts     Int      @default(0)
+  createdAt    DateTime @default(now())
+  used         Boolean  @default(false)
+}

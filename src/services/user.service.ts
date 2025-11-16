@@ -39,4 +39,8 @@ export class UserService {
   async removeRoleFromUser(userId: string, roleId: string, requesterId: string): Promise<Omit<User, 'password'>> {
     return await this.userRepository.removeRoleFromUser(userId, roleId, requesterId);
   }
+
+  async updatePassword(userId: string, newPassword: string, updaterId: string): Promise<Omit<User, 'password'>> {
+    return await this.userRepository.updatePassword(userId, newPassword, updaterId);
+  }
 }

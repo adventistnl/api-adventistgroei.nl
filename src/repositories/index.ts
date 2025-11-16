@@ -19,3 +19,4 @@ export * from './subsidy-status.repository';
 export * from './annual-budget.repository';
 export * from './emails/sendgrid.repository';
 export * from './emails/nodemailer.repository';
+export * from './verification-code.repository';

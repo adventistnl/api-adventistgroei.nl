@@ -325,4 +325,24 @@ export class UserRepository {
     const { password, ...result } = user;
     return result;
   }
+
+  async updatePassword(userId: string, newPassword: string, updaterId: string): Promise<Omit<User, 'password'>> {
+    const user = await this.prisma.user.findUnique({ where: { id: userId } });
+    if (!user) {
+      throw new CustomGraphQLError('User not found', ErrorCode.NOT_FOUND, 404);
+    }
+
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+    const updatedUser = await this.prisma.user.update({
+      where: { id: userId },
+      data: {
+        password: hashedPassword,
+        updated_by: updaterId,
+      },
+      omit: { password: true },
+    });
+
+    return updatedUser;
+  }
 }
