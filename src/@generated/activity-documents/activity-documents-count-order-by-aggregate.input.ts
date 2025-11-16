@@ -31,4 +31,19 @@ export class ActivityDocumentsCountOrderByAggregateInput {
 
     @Field(() => SortOrder, {nullable:true})
     project_activity_id?: `${SortOrder}`;
+
+    @Field(() => SortOrder, {nullable:true})
+    updated_at?: `${SortOrder}`;
+
+    @Field(() => SortOrder, {nullable:true})
+    updated_by?: `${SortOrder}`;
+
+    @Field(() => SortOrder, {nullable:true})
+    is_deleted?: `${SortOrder}`;
+
+    @Field(() => SortOrder, {nullable:true})
+    deleted_at?: `${SortOrder}`;
+
+    @Field(() => SortOrder, {nullable:true})
+    deleted_by?: `${SortOrder}`;
 }

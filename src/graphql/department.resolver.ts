@@ -44,7 +44,10 @@ export class DepartmentResolver {
 
   @Permission()
   @Mutation(() => Department)
-  async deleteDepartment(@Args('id') id: string): Promise<Department> {
-    return this.departmentService.deleteDepartment(id);
+  async deleteDepartment(
+    @Args('id') id: string,
+    @Context() context: { userId: string }
+  ): Promise<Department> {
+    return this.departmentService.deleteDepartment(id, context.userId);
   }
 }

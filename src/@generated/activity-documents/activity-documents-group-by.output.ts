@@ -34,6 +34,21 @@ export class ActivityDocumentsGroupBy {
     @Field(() => String, {nullable:true})
     project_activity_id?: string;
 
+    @Field(() => Date, {nullable:false})
+    updated_at!: Date | string;
+
+    @Field(() => String, {nullable:true})
+    updated_by?: string;
+
+    @Field(() => Boolean, {nullable:false})
+    is_deleted!: boolean;
+
+    @Field(() => Date, {nullable:true})
+    deleted_at?: Date | string;
+
+    @Field(() => String, {nullable:true})
+    deleted_by?: string;
+
     @Field(() => ActivityDocumentsCountAggregate, {nullable:true})
     _count?: ActivityDocumentsCountAggregate;
 

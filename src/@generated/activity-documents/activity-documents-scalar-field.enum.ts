@@ -9,7 +9,12 @@ export enum ActivityDocumentsScalarFieldEnum {
     uploaded_by = "uploaded_by",
     created_at = "created_at",
     validated_at = "validated_at",
-    project_activity_id = "project_activity_id"
+    project_activity_id = "project_activity_id",
+    updated_at = "updated_at",
+    updated_by = "updated_by",
+    is_deleted = "is_deleted",
+    deleted_at = "deleted_at",
+    deleted_by = "deleted_by"
 }
 
 

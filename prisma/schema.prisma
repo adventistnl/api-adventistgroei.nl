@@ -441,6 +441,13 @@ model VoluntariesOnProjects {
   user_id    String
   project    Project @relation(fields: [project_id], references: [id])
   project_id String
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  created_by String
+  updated_by String
+  is_deleted Boolean @default(false)
+  deleted_at DateTime?
+  deleted_by String?
 
   @@id([user_id, project_id])
 }
@@ -813,9 +820,14 @@ model ActivityFunding {
   entity_contribution_percent Float
   entity_type                 EntityType
   entity_id                   String
-  validated            Boolean  @default(false)
-  created_at           DateTime @default(now())
-  updated_at           DateTime @updatedAt
+  validated                   Boolean               @default(false)
+  created_at                  DateTime              @default(now())
+  updated_at                  DateTime              @updatedAt
+  created_by                  String?
+  updated_by                  String?
+  is_deleted                  Boolean               @default(false)
+  deleted_at                  DateTime?
+  deleted_by                  String?
 }
 
 model ActivityDocuments {
@@ -829,6 +841,11 @@ model ActivityDocuments {
   validated_at        DateTime?
   project_activity_id  String?
   project_activity     ProjectActivity? @relation(fields: [project_activity_id], references: [id])
+  updated_at          DateTime         @updatedAt
+  updated_by          String?
+  is_deleted          Boolean          @default(false)
+  deleted_at          DateTime?
+  deleted_by          String?
 }
 
 model SpecialProjects {

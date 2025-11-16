@@ -36,4 +36,19 @@ export class ActivityFundingUncheckedCreateWithoutActivityInput {
 
     @Field(() => Date, {nullable:true})
     updated_at?: Date | string;
+
+    @Field(() => String, {nullable:true})
+    created_by?: string;
+
+    @Field(() => String, {nullable:true})
+    updated_by?: string;
+
+    @Field(() => Boolean, {nullable:true})
+    is_deleted?: boolean;
+
+    @Field(() => Date, {nullable:true})
+    deleted_at?: Date | string;
+
+    @Field(() => String, {nullable:true})
+    deleted_by?: string;
 }

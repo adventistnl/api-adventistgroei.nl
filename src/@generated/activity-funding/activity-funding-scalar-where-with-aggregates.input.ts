@@ -7,6 +7,8 @@ import { FloatWithAggregatesFilter } from '../prisma/float-with-aggregates-filte
 import { EnumEntityTypeWithAggregatesFilter } from '../prisma/enum-entity-type-with-aggregates-filter.input';
 import { BoolWithAggregatesFilter } from '../prisma/bool-with-aggregates-filter.input';
 import { DateTimeWithAggregatesFilter } from '../prisma/date-time-with-aggregates-filter.input';
+import { StringNullableWithAggregatesFilter } from '../prisma/string-nullable-with-aggregates-filter.input';
+import { DateTimeNullableWithAggregatesFilter } from '../prisma/date-time-nullable-with-aggregates-filter.input';
 
 @InputType()
 export class ActivityFundingScalarWhereWithAggregatesInput {
@@ -50,4 +52,19 @@ export class ActivityFundingScalarWhereWithAggregatesInput {
 
     @Field(() => DateTimeWithAggregatesFilter, {nullable:true})
     updated_at?: DateTimeWithAggregatesFilter;
+
+    @Field(() => StringNullableWithAggregatesFilter, {nullable:true})
+    created_by?: StringNullableWithAggregatesFilter;
+
+    @Field(() => StringNullableWithAggregatesFilter, {nullable:true})
+    updated_by?: StringNullableWithAggregatesFilter;
+
+    @Field(() => BoolWithAggregatesFilter, {nullable:true})
+    is_deleted?: BoolWithAggregatesFilter;
+
+    @Field(() => DateTimeNullableWithAggregatesFilter, {nullable:true})
+    deleted_at?: DateTimeNullableWithAggregatesFilter;
+
+    @Field(() => StringNullableWithAggregatesFilter, {nullable:true})
+    deleted_by?: StringNullableWithAggregatesFilter;
 }

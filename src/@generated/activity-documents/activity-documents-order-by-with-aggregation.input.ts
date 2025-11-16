@@ -36,6 +36,21 @@ export class ActivityDocumentsOrderByWithAggregationInput {
     @Field(() => SortOrderInput, {nullable:true})
     project_activity_id?: SortOrderInput;
 
+    @Field(() => SortOrder, {nullable:true})
+    updated_at?: `${SortOrder}`;
+
+    @Field(() => SortOrderInput, {nullable:true})
+    updated_by?: SortOrderInput;
+
+    @Field(() => SortOrder, {nullable:true})
+    is_deleted?: `${SortOrder}`;
+
+    @Field(() => SortOrderInput, {nullable:true})
+    deleted_at?: SortOrderInput;
+
+    @Field(() => SortOrderInput, {nullable:true})
+    deleted_by?: SortOrderInput;
+
     @Field(() => ActivityDocumentsCountOrderByAggregateInput, {nullable:true})
     _count?: ActivityDocumentsCountOrderByAggregateInput;
 

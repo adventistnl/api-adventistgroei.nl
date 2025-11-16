@@ -5,11 +5,9 @@ import { StringFieldUpdateOperationsInput } from '../prisma/string-field-update-
 import { BoolFieldUpdateOperationsInput } from '../prisma/bool-field-update-operations.input';
 import { NullableDateTimeFieldUpdateOperationsInput } from '../prisma/nullable-date-time-field-update-operations.input';
 import { NullableStringFieldUpdateOperationsInput } from '../prisma/nullable-string-field-update-operations.input';
-import { ProjectUpdateOneRequiredWithoutVoluntary_usersNestedInput } from '../project/project-update-one-required-without-voluntary-users-nested.input';
-import { Type } from 'class-transformer';
 
 @InputType()
-export class VoluntariesOnProjectsUpdateWithoutUserInput {
+export class VoluntariesOnProjectsUpdateManyMutationInput {
 
     @Field(() => DateTimeFieldUpdateOperationsInput, {nullable:true})
     created_at?: DateTimeFieldUpdateOperationsInput;
@@ -31,8 +29,4 @@ export class VoluntariesOnProjectsUpdateWithoutUserInput {
 
     @Field(() => NullableStringFieldUpdateOperationsInput, {nullable:true})
     deleted_by?: NullableStringFieldUpdateOperationsInput;
-
-    @Field(() => ProjectUpdateOneRequiredWithoutVoluntary_usersNestedInput, {nullable:true})
-    @Type(() => ProjectUpdateOneRequiredWithoutVoluntary_usersNestedInput)
-    project?: ProjectUpdateOneRequiredWithoutVoluntary_usersNestedInput;
 }

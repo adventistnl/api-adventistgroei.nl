@@ -47,6 +47,21 @@ export class ActivityDocumentsWhereInput {
     @Field(() => StringNullableFilter, {nullable:true})
     project_activity_id?: StringNullableFilter;
 
+    @Field(() => DateTimeFilter, {nullable:true})
+    updated_at?: DateTimeFilter;
+
+    @Field(() => StringNullableFilter, {nullable:true})
+    updated_by?: StringNullableFilter;
+
+    @Field(() => BoolFilter, {nullable:true})
+    is_deleted?: BoolFilter;
+
+    @Field(() => DateTimeNullableFilter, {nullable:true})
+    deleted_at?: DateTimeNullableFilter;
+
+    @Field(() => StringNullableFilter, {nullable:true})
+    deleted_by?: StringNullableFilter;
+
     @Field(() => ProjectActivityNullableScalarRelationFilter, {nullable:true})
     @Type(() => ProjectActivityNullableScalarRelationFilter)
     project_activity?: ProjectActivityNullableScalarRelationFilter;

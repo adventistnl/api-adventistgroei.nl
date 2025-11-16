@@ -33,6 +33,21 @@ export class ActivityDocuments {
     @Field(() => String, {nullable:true})
     project_activity_id!: string | null;
 
+    @Field(() => Date, {nullable:false})
+    updated_at!: Date;
+
+    @Field(() => String, {nullable:true})
+    updated_by!: string | null;
+
+    @Field(() => Boolean, {defaultValue:false,nullable:false})
+    is_deleted!: boolean;
+
+    @Field(() => Date, {nullable:true})
+    deleted_at!: Date | null;
+
+    @Field(() => String, {nullable:true})
+    deleted_by!: string | null;
+
     @Field(() => ProjectActivity, {nullable:true})
     project_activity?: ProjectActivity | null;
 }

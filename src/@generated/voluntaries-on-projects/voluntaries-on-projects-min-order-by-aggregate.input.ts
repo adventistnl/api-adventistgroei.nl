@@ -10,4 +10,25 @@ export class VoluntariesOnProjectsMinOrderByAggregateInput {
 
     @Field(() => SortOrder, {nullable:true})
     project_id?: `${SortOrder}`;
+
+    @Field(() => SortOrder, {nullable:true})
+    created_at?: `${SortOrder}`;
+
+    @Field(() => SortOrder, {nullable:true})
+    updated_at?: `${SortOrder}`;
+
+    @Field(() => SortOrder, {nullable:true})
+    created_by?: `${SortOrder}`;
+
+    @Field(() => SortOrder, {nullable:true})
+    updated_by?: `${SortOrder}`;
+
+    @Field(() => SortOrder, {nullable:true})
+    is_deleted?: `${SortOrder}`;
+
+    @Field(() => SortOrder, {nullable:true})
+    deleted_at?: `${SortOrder}`;
+
+    @Field(() => SortOrder, {nullable:true})
+    deleted_by?: `${SortOrder}`;
 }

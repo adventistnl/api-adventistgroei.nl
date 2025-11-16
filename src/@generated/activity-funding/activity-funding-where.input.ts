@@ -7,6 +7,8 @@ import { FloatFilter } from '../prisma/float-filter.input';
 import { EnumEntityTypeFilter } from '../prisma/enum-entity-type-filter.input';
 import { BoolFilter } from '../prisma/bool-filter.input';
 import { DateTimeFilter } from '../prisma/date-time-filter.input';
+import { StringNullableFilter } from '../prisma/string-nullable-filter.input';
+import { DateTimeNullableFilter } from '../prisma/date-time-nullable-filter.input';
 import { ProjectActivityScalarRelationFilter } from '../project-activity/project-activity-scalar-relation-filter.input';
 
 @InputType()
@@ -51,6 +53,21 @@ export class ActivityFundingWhereInput {
 
     @Field(() => DateTimeFilter, {nullable:true})
     updated_at?: DateTimeFilter;
+
+    @Field(() => StringNullableFilter, {nullable:true})
+    created_by?: StringNullableFilter;
+
+    @Field(() => StringNullableFilter, {nullable:true})
+    updated_by?: StringNullableFilter;
+
+    @Field(() => BoolFilter, {nullable:true})
+    is_deleted?: BoolFilter;
+
+    @Field(() => DateTimeNullableFilter, {nullable:true})
+    deleted_at?: DateTimeNullableFilter;
+
+    @Field(() => StringNullableFilter, {nullable:true})
+    deleted_by?: StringNullableFilter;
 
     @Field(() => ProjectActivityScalarRelationFilter, {nullable:true})
     @Type(() => ProjectActivityScalarRelationFilter)

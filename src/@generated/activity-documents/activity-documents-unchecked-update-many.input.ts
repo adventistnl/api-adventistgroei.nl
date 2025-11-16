@@ -35,4 +35,19 @@ export class ActivityDocumentsUncheckedUpdateManyInput {
 
     @Field(() => NullableStringFieldUpdateOperationsInput, {nullable:true})
     project_activity_id?: NullableStringFieldUpdateOperationsInput;
+
+    @Field(() => DateTimeFieldUpdateOperationsInput, {nullable:true})
+    updated_at?: DateTimeFieldUpdateOperationsInput;
+
+    @Field(() => NullableStringFieldUpdateOperationsInput, {nullable:true})
+    updated_by?: NullableStringFieldUpdateOperationsInput;
+
+    @Field(() => BoolFieldUpdateOperationsInput, {nullable:true})
+    is_deleted?: BoolFieldUpdateOperationsInput;
+
+    @Field(() => NullableDateTimeFieldUpdateOperationsInput, {nullable:true})
+    deleted_at?: NullableDateTimeFieldUpdateOperationsInput;
+
+    @Field(() => NullableStringFieldUpdateOperationsInput, {nullable:true})
+    deleted_by?: NullableStringFieldUpdateOperationsInput;
 }

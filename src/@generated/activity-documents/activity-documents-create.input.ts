@@ -30,6 +30,21 @@ export class ActivityDocumentsCreateInput {
     @Field(() => Date, {nullable:true})
     validated_at?: Date | string;
 
+    @Field(() => Date, {nullable:true})
+    updated_at?: Date | string;
+
+    @Field(() => String, {nullable:true})
+    updated_by?: string;
+
+    @Field(() => Boolean, {nullable:true})
+    is_deleted?: boolean;
+
+    @Field(() => Date, {nullable:true})
+    deleted_at?: Date | string;
+
+    @Field(() => String, {nullable:true})
+    deleted_by?: string;
+
     @Field(() => ProjectActivityCreateNestedOneWithoutActivity_documentsInput, {nullable:true})
     @Type(() => ProjectActivityCreateNestedOneWithoutActivity_documentsInput)
     project_activity?: ProjectActivityCreateNestedOneWithoutActivity_documentsInput;

@@ -105,8 +105,193 @@ export class DepartmentRepository {
     });
   }
 
-  async delete(id: string): Promise<Department> {
-    return this.prisma.department.delete({ where: { id } });
+  async softDelete(id: string, userId: string): Promise<Department> {
+    return await this.prisma.$transaction(async (prisma) => {
+      // Verify department exists
+      const department = await prisma.department.findUnique({ where: { id } });
+      if (!department || department.is_deleted) {
+        throw new CustomGraphQLError('Department not found', ErrorCode.NOT_FOUND, 404);
+      }
+
+      // Get all projects related to this department
+      const projects = await prisma.project.findMany({
+        where: { department_id: id, is_deleted: false },
+        select: { id: true },
+      });
+      const projectIds = projects.map(p => p.id);
+
+      // Get all project activities through projects
+      let projectActivityIds: string[] = [];
+      if (projectIds.length > 0) {
+        const projectActivities = await prisma.projectActivity.findMany({
+          where: { project_id: { in: projectIds }, is_deleted: false },
+          select: { id: true },
+        });
+        projectActivityIds = projectActivities.map(pa => pa.id);
+      }
+
+      // Soft delete activity related data first (deepest level)
+      if (projectActivityIds.length > 0) {
+        // Delete subsidy receipts related to project activities
+        await prisma.subsidyReceipt.updateMany({
+          where: { project_activities_id: { in: projectActivityIds } },
+          data: {
+            is_deleted: true,
+            deleted_at: new Date(),
+            deleted_by: userId,
+            updated_by: userId,
+          },
+        });
+
+        // Soft delete activity documents related to project activities
+        await prisma.activityDocuments.updateMany({
+          where: { project_activity_id: { in: projectActivityIds } },
+          data: {
+            is_deleted: true,
+            deleted_at: new Date(),
+            deleted_by: userId,
+            updated_by: userId,
+          },
+        });
+
+        // Soft delete activity funding related to project activities
+        await prisma.activityFunding.updateMany({
+          where: { activity_id: { in: projectActivityIds } },
+          data: {
+            is_deleted: true,
+            deleted_at: new Date(),
+            deleted_by: userId,
+            updated_by: userId,
+          },
+        });
+
+        // Soft delete project activities
+        await prisma.projectActivity.updateMany({
+          where: { id: { in: projectActivityIds } },
+          data: {
+            is_deleted: true,
+            deleted_at: new Date(),
+            deleted_by: userId,
+            updated_by: userId,
+          },
+        });
+      }
+
+      // Soft delete project related data
+      if (projectIds.length > 0) {
+        // Soft delete volunteers on projects
+        await prisma.voluntariesOnProjects.updateMany({
+          where: { project_id: { in: projectIds } },
+          data: {
+            is_deleted: true,
+            deleted_at: new Date(),
+            deleted_by: userId,
+            updated_by: userId,
+          },
+        });
+
+        // Soft delete special projects
+        await prisma.specialProjects.updateMany({
+          where: { project_id: { in: projectIds } },
+          data: {
+            is_deleted: true,
+            deleted_at: new Date(),
+            deleted_by: userId,
+            updated_by: userId,
+          },
+        });
+
+        // Soft delete projects
+        await prisma.project.updateMany({
+          where: { id: { in: projectIds } },
+          data: {
+            is_deleted: true,
+            deleted_at: new Date(),
+            deleted_by: userId,
+            updated_by: userId,
+          },
+        });
+      }
+
+      // Soft delete subsidy statuses related to this department
+      await prisma.subsidyStatus.updateMany({
+        where: { department_id: id, is_deleted: false },
+        data: {
+          is_deleted: true,
+          deleted_at: new Date(),
+          deleted_by: userId,
+          updated_by: userId,
+        },
+      });
+
+      // Soft delete subsidy requests related to this department
+      await prisma.subsidyRequest.updateMany({
+        where: { department_id: id, is_deleted: false },
+        data: {
+          is_deleted: true,
+          deleted_at: new Date(),
+          deleted_by: userId,
+          updated_by: userId,
+        },
+      });
+
+      // Soft delete annual reports related to this department
+      await prisma.annualReport.updateMany({
+        where: { department_id: id, is_deleted: false },
+        data: {
+          is_deleted: true,
+          deleted_at: new Date(),
+          deleted_by: userId,
+          updated_by: userId,
+        },
+      });
+
+      // Soft delete annual budgets related to this department
+      await prisma.annualBudget.updateMany({
+        where: { department_id: id, is_deleted: false },
+        data: {
+          is_deleted: true,
+          deleted_at: new Date(),
+          deleted_by: userId,
+          updated_by: userId,
+        },
+      });
+
+      // Remove users from this department (set department_id to null)
+      await prisma.user.updateMany({
+        where: { department_id: id, is_deleted: false },
+        data: {
+          department_id: null,
+          updated_by: userId,
+        },
+      });
+
+      // Soft delete the contact related to this department if exists
+      if (department.contact_id) {
+        await prisma.contact.update({
+          where: { id: department.contact_id },
+          data: {
+            is_deleted: true,
+            deleted_at: new Date(),
+            deleted_by: userId,
+            updated_by: userId,
+          },
+        });
+      }
+
+      // Soft delete the department itself
+      const deletedDepartment = await prisma.department.update({
+        where: { id },
+        data: {
+          is_deleted: true,
+          deleted_at: new Date(),
+          deleted_by: userId,
+          updated_by: userId,
+        },
+      });
+
+      return deletedDepartment;
+    });
   }
 
   async findOneByFilters(filters: Partial<Record<keyof Department, any>>): Promise<Department | null> {

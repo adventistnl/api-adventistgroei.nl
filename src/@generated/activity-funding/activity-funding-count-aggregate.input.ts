@@ -32,5 +32,20 @@ export class ActivityFundingCountAggregateInput {
     updated_at?: true;
 
     @Field(() => Boolean, {nullable:true})
+    created_by?: true;
+
+    @Field(() => Boolean, {nullable:true})
+    updated_by?: true;
+
+    @Field(() => Boolean, {nullable:true})
+    is_deleted?: true;
+
+    @Field(() => Boolean, {nullable:true})
+    deleted_at?: true;
+
+    @Field(() => Boolean, {nullable:true})
+    deleted_by?: true;
+
+    @Field(() => Boolean, {nullable:true})
     _all?: true;
 }
