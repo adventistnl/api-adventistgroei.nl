@@ -314,7 +314,25 @@ export class ChurchRepository {
         is_deleted: false,
         ...filters,
       },
-      include: {annual_budgets: true, contact: true, departments: true, region: true, users: true },
+      include: {
+        annual_budgets: true,
+        contact: true,
+        departments: {
+          include: {
+            users: true
+          }
+        },
+        region: true,
+        users: { 
+          include: {
+            user_roles: {
+              include: {
+                role: true
+              }
+            }
+          }
+        }
+      },
     });
   }
 
