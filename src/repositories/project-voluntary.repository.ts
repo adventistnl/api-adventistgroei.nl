@@ -12,6 +12,9 @@ export class ProjectVoluntaryRepository {
       data: {
         project_id: data.project_id,
         user_id: data.user_id,
+        is_deleted: false,
+        created_by: "system",
+        updated_by: "system",
       },
     });
   }

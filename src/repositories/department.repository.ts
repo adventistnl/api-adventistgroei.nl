@@ -326,7 +326,7 @@ export class DepartmentRepository {
         is_deleted: false,
         ...filters,
       },
-      include: { church: true, contact: true, users: true, annual_budgets: true},
+      include: { church: true, contact: true, users: true, annual_budgets: true },
     });
   }
 }
