@@ -4,6 +4,7 @@ import { AnnualBudgetCreateDto, AnnualBudgetUpdateDto } from 'src/dto/annual_bud
 import { AnnualBudget } from '@prisma/client';
 import { CustomGraphQLError, ErrorCode } from 'src/common/errors/custom-graphql-error';
 import { AnnualBudgetEntityType } from 'src/@generated/prisma/annual-budget-entity-type.enum';
+import { AnnualBudgetStatus } from 'src/@generated/prisma/annual-budget-status.enum';
 import { FindManyAnnualBudgetArgs } from 'src/@generated/annual-budget/find-many-annual-budget.args';
 
 @Injectable()
@@ -135,9 +136,9 @@ export class AnnualBudgetRepository {
       );
     }
 
-    if (existingBudget.status !== 'PENDING') {
+    if (existingBudget.status !== AnnualBudgetStatus.DRAFT) {
       throw new CustomGraphQLError(
-        'Cannot update an annual budget that is not in PENDING status.',
+        'Cannot update an annual budget that is not in DRAFT status.',
         ErrorCode.BAD_REQUEST,
         400
       );
@@ -201,6 +202,284 @@ export class AnnualBudgetRepository {
         church: true
       }
     });
+  }
+
+  async delete(id: string, userId: string): Promise<{ success: boolean; message: string }> {
+    // Verificar se o orçamento existe
+    const existingBudget = await this.prisma.annualBudget.findUnique({
+      where: { id },
+    });
+
+    if (!existingBudget) {
+      throw new NotFoundException(`Annual budget with ID '${id}' not found.`);
+    }
+
+    // Verificar se o orçamento pode ser excluído (apenas DRAFT ou REJECTED)
+    if (existingBudget.status !== AnnualBudgetStatus.DRAFT && existingBudget.status !== AnnualBudgetStatus.REJECTED) {
+      throw new CustomGraphQLError(
+        'Cannot delete an annual budget that is not in DRAFT or REJECTED status.',
+        ErrorCode.BAD_REQUEST,
+        400
+      );
+    }
+
+    // Soft delete: marcar como deletado
+    await this.prisma.annualBudget.update({
+      where: { id },
+      data: {
+        is_deleted: true,
+        deleted_at: new Date(),
+        deleted_by: userId,
+        updated_by: userId,
+      },
+    });
+
+    return {
+      success: true,
+      message: 'Annual budget deleted successfully.',
+    };
+  }
+
+  async approve(id: string, dto: { approved_amount?: number; notes?: string }, userId: string): Promise<{
+    id: string;
+    status: string;
+    approved_amount: number | null;
+    approval_date: Date | null;
+    approved_by: string | null;
+    notes: string | null;
+    updated_at: Date;
+  }> {
+    // Verificar se o orçamento existe
+    const existingBudget = await this.prisma.annualBudget.findUnique({
+      where: { id },
+    });
+
+    if (!existingBudget) {
+      throw new NotFoundException(`Annual budget with ID '${id}' not found.`);
+    }
+
+    // Verificar se o orçamento pode ser aprovado (apenas SUBMITTED)
+    if (existingBudget.status !== AnnualBudgetStatus.SUBMITTED) {
+      throw new CustomGraphQLError(
+        'Cannot approve an annual budget that is not in SUBMITTED status.',
+        ErrorCode.BAD_REQUEST,
+        400
+      );
+    }
+
+    // Validar approved_amount se fornecido
+    if (dto.approved_amount !== undefined && dto.approved_amount > Number(existingBudget.requested_amount)) {
+      throw new CustomGraphQLError(
+        'Approved amount cannot be greater than requested amount.',
+        ErrorCode.BAD_REQUEST,
+        400
+      );
+    }
+
+    // Preparar dados para aprovação
+    const updateData: Partial<{
+      status: AnnualBudgetStatus;
+      approved_amount: number;
+      approval_date: Date;
+      approved_by: string;
+      updated_by: string;
+      notes?: string;
+    }> = {
+      status: AnnualBudgetStatus.APPROVED,
+      approved_amount: dto.approved_amount ?? Number(existingBudget.requested_amount),
+      approval_date: new Date(),
+      approved_by: userId,
+      updated_by: userId,
+    };
+
+    // Adicionar notas se fornecidas
+    if (dto.notes) {
+      updateData.notes = dto.notes;
+    }
+
+    const updatedBudget = await this.prisma.annualBudget.update({
+      where: { id },
+      data: updateData,
+    });
+
+    return {
+      id: updatedBudget.id,
+      status: updatedBudget.status,
+      approved_amount: updatedBudget.approved_amount ? Number(updatedBudget.approved_amount) : null,
+      approval_date: updatedBudget.approval_date,
+      approved_by: updatedBudget.approved_by,
+      notes: updatedBudget.notes,
+      updated_at: updatedBudget.updated_at,
+    };
+  }
+
+  async reject(id: string, reason: string, userId: string): Promise<{
+    id: string;
+    status: string;
+    review_date: Date;
+    reviewed_by: string;
+    notes: string | null;
+    updated_at: Date;
+  }> {
+    // Verificar se o orçamento existe
+    const existingBudget = await this.prisma.annualBudget.findUnique({
+      where: { id },
+    });
+
+    if (!existingBudget) {
+      throw new NotFoundException(`Annual budget with ID '${id}' not found.`);
+    }
+
+    // Verificar se o orçamento pode ser rejeitado (apenas SUBMITTED)
+    if (existingBudget.status !== AnnualBudgetStatus.SUBMITTED) {
+      throw new CustomGraphQLError(
+        'Cannot reject an annual budget that is not in SUBMITTED status.',
+        ErrorCode.BAD_REQUEST,
+        400
+      );
+    }
+
+    // Preparar dados para rejeição
+    const updateData: Partial<{
+      status: AnnualBudgetStatus;
+      review_date: Date;
+      reviewed_by: string;
+      updated_by: string;
+      notes?: string;
+    }> = {
+      status: AnnualBudgetStatus.REJECTED,
+      review_date: new Date(),
+      reviewed_by: userId,
+      updated_by: userId,
+      notes: reason,
+    };
+
+    const updatedBudget = await this.prisma.annualBudget.update({
+      where: { id },
+      data: updateData,
+    });
+
+    return {
+      id: updatedBudget.id,
+      status: updatedBudget.status,
+      review_date: updatedBudget.review_date!,
+      reviewed_by: updatedBudget.reviewed_by!,
+      notes: updatedBudget.notes,
+      updated_at: updatedBudget.updated_at,
+    };
+  }
+
+  async requestRevision(id: string, revisionNotes: string, userId: string): Promise<{
+    id: string;
+    status: string;
+    review_date: Date;
+    reviewed_by: string;
+    notes: string | null;
+    updated_at: Date;
+  }> {
+    // Verificar se o orçamento existe
+    const existingBudget = await this.prisma.annualBudget.findUnique({
+      where: { id },
+    });
+
+    if (!existingBudget) {
+      throw new NotFoundException(`Annual budget with ID '${id}' not found.`);
+    }
+
+    // Verificar se o orçamento pode solicitar revisão (apenas REJECTED)
+    if (existingBudget.status !== AnnualBudgetStatus.REJECTED) {
+      throw new CustomGraphQLError(
+        'Cannot request revision for an annual budget that is not in REJECTED status.',
+        ErrorCode.BAD_REQUEST,
+        400
+      );
+    }
+
+    // Verificar se o usuário é o criador original
+    if (existingBudget.created_by !== userId) {
+      throw new CustomGraphQLError(
+        'Only the original creator can request revision for a rejected budget.',
+        ErrorCode.UNAUTHORIZED,
+        403
+      );
+    }
+
+    // Preparar dados para solicitação de revisão
+    const updateData: Partial<{
+      status: AnnualBudgetStatus;
+      review_date: Date;
+      reviewed_by: string;
+      updated_by: string;
+      notes?: string;
+    }> = {
+      status: AnnualBudgetStatus.REVISION_REQUESTED,
+      review_date: new Date(),
+      reviewed_by: userId,
+      updated_by: userId,
+      notes: revisionNotes,
+    };
+
+    const updatedBudget = await this.prisma.annualBudget.update({
+      where: { id },
+      data: updateData,
+    });
+
+    return {
+      id: updatedBudget.id,
+      status: updatedBudget.status,
+      review_date: updatedBudget.review_date!,
+      reviewed_by: updatedBudget.reviewed_by!,
+      notes: updatedBudget.notes,
+      updated_at: updatedBudget.updated_at,
+    };
+  }
+
+  async toggleLock(id: string, userId: string): Promise<{
+    id: string;
+    is_locked: boolean;
+    updated_at: Date;
+  }> {
+    // Verificar se o orçamento existe
+    const existingBudget = await this.prisma.annualBudget.findUnique({
+      where: { id },
+    });
+
+    if (!existingBudget) {
+      throw new NotFoundException(`Annual budget with ID '${id}' not found.`);
+    }
+
+    // Regras de negócio para toggle lock
+    let newLockState = !existingBudget.is_locked;
+
+    if (existingBudget.status === AnnualBudgetStatus.APPROVED && existingBudget.is_locked) {
+      throw new CustomGraphQLError(
+        'Cannot unlock an approved budget.',
+        ErrorCode.BAD_REQUEST,
+        400
+      );
+    }
+
+    if (existingBudget.status === AnnualBudgetStatus.SUBMITTED && existingBudget.is_locked) {
+      throw new CustomGraphQLError(
+        'Cannot unlock a submitted budget.',
+        ErrorCode.BAD_REQUEST,
+        400
+      );
+    }
+
+    const updatedBudget = await this.prisma.annualBudget.update({
+      where: { id },
+      data: {
+        is_locked: newLockState,
+        updated_by: userId,
+      },
+    });
+
+    return {
+      id: updatedBudget.id,
+      is_locked: updatedBudget.is_locked,
+      updated_at: updatedBudget.updated_at,
+    };
   }
 
 }

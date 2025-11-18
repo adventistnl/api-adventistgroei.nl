@@ -80,7 +80,20 @@ export enum PermissionResolverName {
     sendInviteEmail = "sendInviteEmail",
     inviteUser = "inviteUser",
     validateInviteToken = "validateInviteToken",
-    createAnnualBudget = "createAnnualBudget"
+    createAnnualBudget = "createAnnualBudget",
+    annualBudgets = "annualBudgets",
+    annualBudget = "annualBudget",
+    updateAnnualBudget = "updateAnnualBudget",
+    deleteAnnualBudget = "deleteAnnualBudget",
+    approveAnnualBudget = "approveAnnualBudget",
+    rejectAnnualBudget = "rejectAnnualBudget",
+    requestRevisionAnnualBudget = "requestRevisionAnnualBudget",
+    toggleBudgetLock = "toggleBudgetLock",
+    budgetKPIs = "budgetKPIs",
+    departmentSpending = "departmentSpending",
+    spendingOverTime = "spendingOverTime",
+    entityDistribution = "entityDistribution",
+    budgetDistribution = "budgetDistribution"
 }
 
 

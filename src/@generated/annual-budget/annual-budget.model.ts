@@ -65,7 +65,7 @@ export class AnnualBudget {
     @Field(() => String, {nullable:true})
     deleted_by!: string | null;
 
-    @Field(() => AnnualBudgetStatus, {defaultValue:'PENDING',nullable:false})
+    @Field(() => AnnualBudgetStatus, {defaultValue:'DRAFT',nullable:false})
     status!: `${AnnualBudgetStatus}`;
 
     @Field(() => String, {nullable:true})

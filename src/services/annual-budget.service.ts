@@ -17,6 +17,52 @@ export class AnnualBudgetService {
     return this.annualBudgetRepository.update(id, data, userId);
   }
 
+  async delete(id: string, userId: string): Promise<{ success: boolean; message: string }> {
+    return this.annualBudgetRepository.delete(id, userId);
+  }
+
+  async approve(id: string, dto: { approved_amount?: number; notes?: string }, userId: string): Promise<{
+    id: string;
+    status: string;
+    approved_amount: number | null;
+    approval_date: Date | null;
+    approved_by: string | null;
+    notes: string | null;
+    updated_at: Date;
+  }> {
+    return this.annualBudgetRepository.approve(id, dto, userId);
+  }
+
+  async reject(id: string, reason: string, userId: string): Promise<{
+    id: string;
+    status: string;
+    review_date: Date;
+    reviewed_by: string;
+    notes: string | null;
+    updated_at: Date;
+  }> {
+    return this.annualBudgetRepository.reject(id, reason, userId);
+  }
+
+  async requestRevision(id: string, revisionNotes: string, userId: string): Promise<{
+    id: string;
+    status: string;
+    review_date: Date;
+    reviewed_by: string;
+    notes: string | null;
+    updated_at: Date;
+  }> {
+    return this.annualBudgetRepository.requestRevision(id, revisionNotes, userId);
+  }
+
+  async toggleLock(id: string, userId: string): Promise<{
+    id: string;
+    is_locked: boolean;
+    updated_at: Date;
+  }> {
+    return this.annualBudgetRepository.toggleLock(id, userId);
+  }
+
   async findMany(args: FindManyAnnualBudgetArgs): Promise<AnnualBudget[]> {
     return this.annualBudgetRepository.findMany(args);
   }
