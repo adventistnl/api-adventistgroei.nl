@@ -7,6 +7,10 @@ import { transformToDecimal } from 'prisma-graphql-type-decimal';
 import { Transform } from 'class-transformer';
 import { Type } from 'class-transformer';
 import { AnnualBudgetStatus } from '../prisma/annual-budget-status.enum';
+import { AnnualBudgetPriority } from '../prisma/annual-budget-priority.enum';
+import { AnnualBudgetCategory } from '../prisma/annual-budget-category.enum';
+import { GraphQLJSON } from 'graphql-type-json';
+import { AnnualBudgetEntityType } from '../prisma/annual-budget-entity-type.enum';
 import { UserCreateNestedOneWithoutApproved_annual_budgetsInput } from '../user/user-create-nested-one-without-approved-annual-budgets.input';
 import { InstitutionCreateNestedOneWithoutAnnual_budgetsInput } from '../institution/institution-create-nested-one-without-annual-budgets.input';
 import { ChurchCreateNestedOneWithoutAnnual_budgetsInput } from '../church/church-create-nested-one-without-annual-budgets.input';
@@ -68,6 +72,49 @@ export class AnnualBudgetCreateInput {
 
     @Field(() => AnnualBudgetStatus, {nullable:true})
     status?: `${AnnualBudgetStatus}`;
+
+    @Field(() => GraphQLDecimal, {nullable:false})
+    @Type(() => Object)
+    @Transform(transformToDecimal)
+    requested_amount!: Decimal;
+
+    @Field(() => GraphQLDecimal, {nullable:true})
+    @Type(() => Object)
+    @Transform(transformToDecimal)
+    approved_amount?: Decimal;
+
+    @Field(() => String, {nullable:false})
+    requested_by!: string;
+
+    @Field(() => String, {nullable:true})
+    reviewed_by?: string;
+
+    @Field(() => Date, {nullable:true})
+    submitted_date?: Date | string;
+
+    @Field(() => Date, {nullable:true})
+    review_date?: Date | string;
+
+    @Field(() => Date, {nullable:true})
+    approval_date?: Date | string;
+
+    @Field(() => AnnualBudgetPriority, {nullable:true})
+    priority?: `${AnnualBudgetPriority}`;
+
+    @Field(() => AnnualBudgetCategory, {nullable:true})
+    category?: `${AnnualBudgetCategory}`;
+
+    @Field(() => GraphQLJSON, {nullable:true})
+    documents?: any;
+
+    @Field(() => Boolean, {nullable:true})
+    is_locked?: boolean;
+
+    @Field(() => Boolean, {nullable:true})
+    has_budget_record?: boolean;
+
+    @Field(() => AnnualBudgetEntityType, {nullable:false})
+    entity_type!: `${AnnualBudgetEntityType}`;
 
     @Field(() => UserCreateNestedOneWithoutApproved_annual_budgetsInput, {nullable:true})
     @Type(() => UserCreateNestedOneWithoutApproved_annual_budgetsInput)

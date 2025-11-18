@@ -4,6 +4,9 @@ import { Int } from '@nestjs/graphql';
 import { Decimal } from '@prisma/client/runtime/library';
 import { GraphQLDecimal } from 'prisma-graphql-type-decimal';
 import { AnnualBudgetStatus } from '../prisma/annual-budget-status.enum';
+import { AnnualBudgetPriority } from '../prisma/annual-budget-priority.enum';
+import { AnnualBudgetCategory } from '../prisma/annual-budget-category.enum';
+import { AnnualBudgetEntityType } from '../prisma/annual-budget-entity-type.enum';
 
 @ObjectType()
 export class AnnualBudgetMaxAggregate {
@@ -67,4 +70,40 @@ export class AnnualBudgetMaxAggregate {
 
     @Field(() => String, {nullable:true})
     department_id?: string;
+
+    @Field(() => GraphQLDecimal, {nullable:true})
+    requested_amount?: Decimal;
+
+    @Field(() => GraphQLDecimal, {nullable:true})
+    approved_amount?: Decimal;
+
+    @Field(() => String, {nullable:true})
+    requested_by?: string;
+
+    @Field(() => String, {nullable:true})
+    reviewed_by?: string;
+
+    @Field(() => Date, {nullable:true})
+    submitted_date?: Date | string;
+
+    @Field(() => Date, {nullable:true})
+    review_date?: Date | string;
+
+    @Field(() => Date, {nullable:true})
+    approval_date?: Date | string;
+
+    @Field(() => AnnualBudgetPriority, {nullable:true})
+    priority?: `${AnnualBudgetPriority}`;
+
+    @Field(() => AnnualBudgetCategory, {nullable:true})
+    category?: `${AnnualBudgetCategory}`;
+
+    @Field(() => Boolean, {nullable:true})
+    is_locked?: boolean;
+
+    @Field(() => Boolean, {nullable:true})
+    has_budget_record?: boolean;
+
+    @Field(() => AnnualBudgetEntityType, {nullable:true})
+    entity_type?: `${AnnualBudgetEntityType}`;
 }

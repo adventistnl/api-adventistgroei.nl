@@ -18,4 +18,10 @@ export class AnnualBudgetSumAggregate {
 
     @Field(() => GraphQLDecimal, {nullable:true})
     balance?: Decimal;
+
+    @Field(() => GraphQLDecimal, {nullable:true})
+    requested_amount?: Decimal;
+
+    @Field(() => GraphQLDecimal, {nullable:true})
+    approved_amount?: Decimal;
 }

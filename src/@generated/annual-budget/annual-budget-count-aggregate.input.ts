@@ -65,5 +65,44 @@ export class AnnualBudgetCountAggregateInput {
     department_id?: true;
 
     @Field(() => Boolean, {nullable:true})
+    requested_amount?: true;
+
+    @Field(() => Boolean, {nullable:true})
+    approved_amount?: true;
+
+    @Field(() => Boolean, {nullable:true})
+    requested_by?: true;
+
+    @Field(() => Boolean, {nullable:true})
+    reviewed_by?: true;
+
+    @Field(() => Boolean, {nullable:true})
+    submitted_date?: true;
+
+    @Field(() => Boolean, {nullable:true})
+    review_date?: true;
+
+    @Field(() => Boolean, {nullable:true})
+    approval_date?: true;
+
+    @Field(() => Boolean, {nullable:true})
+    priority?: true;
+
+    @Field(() => Boolean, {nullable:true})
+    category?: true;
+
+    @Field(() => Boolean, {nullable:true})
+    documents?: true;
+
+    @Field(() => Boolean, {nullable:true})
+    is_locked?: true;
+
+    @Field(() => Boolean, {nullable:true})
+    has_budget_record?: true;
+
+    @Field(() => Boolean, {nullable:true})
+    entity_type?: true;
+
+    @Field(() => Boolean, {nullable:true})
     _all?: true;
 }

@@ -64,4 +64,40 @@ export class AnnualBudgetMaxOrderByAggregateInput {
 
     @Field(() => SortOrder, {nullable:true})
     department_id?: `${SortOrder}`;
+
+    @Field(() => SortOrder, {nullable:true})
+    requested_amount?: `${SortOrder}`;
+
+    @Field(() => SortOrder, {nullable:true})
+    approved_amount?: `${SortOrder}`;
+
+    @Field(() => SortOrder, {nullable:true})
+    requested_by?: `${SortOrder}`;
+
+    @Field(() => SortOrder, {nullable:true})
+    reviewed_by?: `${SortOrder}`;
+
+    @Field(() => SortOrder, {nullable:true})
+    submitted_date?: `${SortOrder}`;
+
+    @Field(() => SortOrder, {nullable:true})
+    review_date?: `${SortOrder}`;
+
+    @Field(() => SortOrder, {nullable:true})
+    approval_date?: `${SortOrder}`;
+
+    @Field(() => SortOrder, {nullable:true})
+    priority?: `${SortOrder}`;
+
+    @Field(() => SortOrder, {nullable:true})
+    category?: `${SortOrder}`;
+
+    @Field(() => SortOrder, {nullable:true})
+    is_locked?: `${SortOrder}`;
+
+    @Field(() => SortOrder, {nullable:true})
+    has_budget_record?: `${SortOrder}`;
+
+    @Field(() => SortOrder, {nullable:true})
+    entity_type?: `${SortOrder}`;
 }

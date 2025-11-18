@@ -9,6 +9,11 @@ import { DateTimeWithAggregatesFilter } from '../prisma/date-time-with-aggregate
 import { BoolWithAggregatesFilter } from '../prisma/bool-with-aggregates-filter.input';
 import { DateTimeNullableWithAggregatesFilter } from '../prisma/date-time-nullable-with-aggregates-filter.input';
 import { EnumAnnualBudgetStatusWithAggregatesFilter } from '../prisma/enum-annual-budget-status-with-aggregates-filter.input';
+import { DecimalNullableWithAggregatesFilter } from '../prisma/decimal-nullable-with-aggregates-filter.input';
+import { EnumAnnualBudgetPriorityWithAggregatesFilter } from '../prisma/enum-annual-budget-priority-with-aggregates-filter.input';
+import { EnumAnnualBudgetCategoryWithAggregatesFilter } from '../prisma/enum-annual-budget-category-with-aggregates-filter.input';
+import { JsonNullableWithAggregatesFilter } from '../prisma/json-nullable-with-aggregates-filter.input';
+import { EnumAnnualBudgetEntityTypeWithAggregatesFilter } from '../prisma/enum-annual-budget-entity-type-with-aggregates-filter.input';
 
 @InputType()
 export class AnnualBudgetScalarWhereWithAggregatesInput {
@@ -87,4 +92,45 @@ export class AnnualBudgetScalarWhereWithAggregatesInput {
 
     @Field(() => StringNullableWithAggregatesFilter, {nullable:true})
     department_id?: StringNullableWithAggregatesFilter;
+
+    @Field(() => DecimalWithAggregatesFilter, {nullable:true})
+    @Type(() => DecimalWithAggregatesFilter)
+    requested_amount?: DecimalWithAggregatesFilter;
+
+    @Field(() => DecimalNullableWithAggregatesFilter, {nullable:true})
+    @Type(() => DecimalNullableWithAggregatesFilter)
+    approved_amount?: DecimalNullableWithAggregatesFilter;
+
+    @Field(() => StringWithAggregatesFilter, {nullable:true})
+    requested_by?: StringWithAggregatesFilter;
+
+    @Field(() => StringNullableWithAggregatesFilter, {nullable:true})
+    reviewed_by?: StringNullableWithAggregatesFilter;
+
+    @Field(() => DateTimeWithAggregatesFilter, {nullable:true})
+    submitted_date?: DateTimeWithAggregatesFilter;
+
+    @Field(() => DateTimeNullableWithAggregatesFilter, {nullable:true})
+    review_date?: DateTimeNullableWithAggregatesFilter;
+
+    @Field(() => DateTimeNullableWithAggregatesFilter, {nullable:true})
+    approval_date?: DateTimeNullableWithAggregatesFilter;
+
+    @Field(() => EnumAnnualBudgetPriorityWithAggregatesFilter, {nullable:true})
+    priority?: EnumAnnualBudgetPriorityWithAggregatesFilter;
+
+    @Field(() => EnumAnnualBudgetCategoryWithAggregatesFilter, {nullable:true})
+    category?: EnumAnnualBudgetCategoryWithAggregatesFilter;
+
+    @Field(() => JsonNullableWithAggregatesFilter, {nullable:true})
+    documents?: JsonNullableWithAggregatesFilter;
+
+    @Field(() => BoolWithAggregatesFilter, {nullable:true})
+    is_locked?: BoolWithAggregatesFilter;
+
+    @Field(() => BoolWithAggregatesFilter, {nullable:true})
+    has_budget_record?: BoolWithAggregatesFilter;
+
+    @Field(() => EnumAnnualBudgetEntityTypeWithAggregatesFilter, {nullable:true})
+    entity_type?: EnumAnnualBudgetEntityTypeWithAggregatesFilter;
 }

@@ -5,6 +5,10 @@ import { Int } from '@nestjs/graphql';
 import { GraphQLDecimal } from 'prisma-graphql-type-decimal';
 import { Decimal } from '@prisma/client/runtime/library';
 import { AnnualBudgetStatus } from '../prisma/annual-budget-status.enum';
+import { AnnualBudgetPriority } from '../prisma/annual-budget-priority.enum';
+import { AnnualBudgetCategory } from '../prisma/annual-budget-category.enum';
+import { GraphQLJSON } from 'graphql-type-json';
+import { AnnualBudgetEntityType } from '../prisma/annual-budget-entity-type.enum';
 import { User } from '../user/user.model';
 import { Institution } from '../institution/institution.model';
 import { Church } from '../church/church.model';
@@ -61,7 +65,7 @@ export class AnnualBudget {
     @Field(() => String, {nullable:true})
     deleted_by!: string | null;
 
-    @Field(() => AnnualBudgetStatus, {defaultValue:'PLANNED',nullable:false})
+    @Field(() => AnnualBudgetStatus, {defaultValue:'PENDING',nullable:false})
     status!: `${AnnualBudgetStatus}`;
 
     @Field(() => String, {nullable:true})
@@ -72,6 +76,45 @@ export class AnnualBudget {
 
     @Field(() => String, {nullable:true})
     department_id!: string | null;
+
+    @Field(() => GraphQLDecimal, {nullable:false})
+    requested_amount!: Decimal;
+
+    @Field(() => GraphQLDecimal, {nullable:true})
+    approved_amount!: Decimal | null;
+
+    @Field(() => String, {nullable:false})
+    requested_by!: string;
+
+    @Field(() => String, {nullable:true})
+    reviewed_by!: string | null;
+
+    @Field(() => Date, {nullable:false})
+    submitted_date!: Date;
+
+    @Field(() => Date, {nullable:true})
+    review_date!: Date | null;
+
+    @Field(() => Date, {nullable:true})
+    approval_date!: Date | null;
+
+    @Field(() => AnnualBudgetPriority, {defaultValue:'MEDIUM',nullable:false})
+    priority!: `${AnnualBudgetPriority}`;
+
+    @Field(() => AnnualBudgetCategory, {defaultValue:'OPERATIONAL',nullable:false})
+    category!: `${AnnualBudgetCategory}`;
+
+    @Field(() => GraphQLJSON, {nullable:true})
+    documents!: any | null;
+
+    @Field(() => Boolean, {defaultValue:false,nullable:false})
+    is_locked!: boolean;
+
+    @Field(() => Boolean, {defaultValue:true,nullable:false})
+    has_budget_record!: boolean;
+
+    @Field(() => AnnualBudgetEntityType, {nullable:false})
+    entity_type!: `${AnnualBudgetEntityType}`;
 
     @Field(() => User, {nullable:true})
     approved_user?: User | null;

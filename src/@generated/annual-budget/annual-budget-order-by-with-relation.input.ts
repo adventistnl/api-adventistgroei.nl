@@ -2,8 +2,8 @@ import { Field } from '@nestjs/graphql';
 import { InputType } from '@nestjs/graphql';
 import { SortOrder } from '../prisma/sort-order.enum';
 import { SortOrderInput } from '../prisma/sort-order.input';
-import { UserOrderByWithRelationInput } from '../user/user-order-by-with-relation.input';
 import { Type } from 'class-transformer';
+import { UserOrderByWithRelationInput } from '../user/user-order-by-with-relation.input';
 import { InstitutionOrderByWithRelationInput } from '../institution/institution-order-by-with-relation.input';
 import { ChurchOrderByWithRelationInput } from '../church/church-order-by-with-relation.input';
 import { DepartmentOrderByWithRelationInput } from '../department/department-order-by-with-relation.input';
@@ -70,6 +70,46 @@ export class AnnualBudgetOrderByWithRelationInput {
 
     @Field(() => SortOrderInput, {nullable:true})
     department_id?: SortOrderInput;
+
+    @Field(() => SortOrder, {nullable:true})
+    requested_amount?: `${SortOrder}`;
+
+    @Field(() => SortOrderInput, {nullable:true})
+    @Type(() => SortOrderInput)
+    approved_amount?: SortOrderInput;
+
+    @Field(() => SortOrder, {nullable:true})
+    requested_by?: `${SortOrder}`;
+
+    @Field(() => SortOrderInput, {nullable:true})
+    reviewed_by?: SortOrderInput;
+
+    @Field(() => SortOrder, {nullable:true})
+    submitted_date?: `${SortOrder}`;
+
+    @Field(() => SortOrderInput, {nullable:true})
+    review_date?: SortOrderInput;
+
+    @Field(() => SortOrderInput, {nullable:true})
+    approval_date?: SortOrderInput;
+
+    @Field(() => SortOrder, {nullable:true})
+    priority?: `${SortOrder}`;
+
+    @Field(() => SortOrder, {nullable:true})
+    category?: `${SortOrder}`;
+
+    @Field(() => SortOrderInput, {nullable:true})
+    documents?: SortOrderInput;
+
+    @Field(() => SortOrder, {nullable:true})
+    is_locked?: `${SortOrder}`;
+
+    @Field(() => SortOrder, {nullable:true})
+    has_budget_record?: `${SortOrder}`;
+
+    @Field(() => SortOrder, {nullable:true})
+    entity_type?: `${SortOrder}`;
 
     @Field(() => UserOrderByWithRelationInput, {nullable:true})
     @Type(() => UserOrderByWithRelationInput)

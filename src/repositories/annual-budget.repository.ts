@@ -1,11 +1,11 @@
 import { Injectable, NotFoundException, Logger } from '@nestjs/common';
 import { PrismaService } from '../services/prisma.service';
-import { AnnualBudgetCreateDto } from 'src/dto/annual_budget.dto';
+import { AnnualBudgetCreateDto, AnnualBudgetUpdateDto } from 'src/dto/annual_budget.dto';
 import { AnnualBudget } from '@prisma/client';
-import { EntityType } from 'src/@generated/prisma/entity-type.enum';
 import { CustomGraphQLError, ErrorCode } from 'src/common/errors/custom-graphql-error';
+import { AnnualBudgetEntityType } from 'src/@generated/prisma/annual-budget-entity-type.enum';
+import { FindManyAnnualBudgetArgs } from 'src/@generated/annual-budget/find-many-annual-budget.args';
 
-type GeneratedEntityType = Exclude<EntityType, EntityType.REGION | EntityType.USER>
 @Injectable()
 export class AnnualBudgetRepository {
   private readonly logger = new Logger(AnnualBudgetRepository.name);
@@ -13,54 +13,42 @@ export class AnnualBudgetRepository {
   constructor(private readonly prisma: PrismaService) {}
 
   async create(dto: AnnualBudgetCreateDto, userId: string): Promise<AnnualBudget> {
-    const { entity_type, entity_id, year, ...budgetData } = dto;
+    const { entity_id, entity_type, ...budgetData } = dto;
 
     // Verificar se o registro relacionado existe e se já há um orçamento para o mesmo ano
-    this.logger.debug(`Checking existence of entity type '${entity_type}' with ID '${entity_id}' and year '${year}'`);
-    const entityExists = await this.checkEntityExists(entity_type as GeneratedEntityType, entity_id, year);
+    const entityExists = await this.checkEntityExists(dto);
     if (!entityExists) {
-      this.logger.error(`Entity type '${entity_type}' with ID '${entity_id}' not found or budget already exists for year '${year}'.`);
       throw new NotFoundException(
-        `No record found for entity type '${entity_type}' with ID '${entity_id}', or budget already exists for year '${year}'.`
+        `No record found for entity type '${entity_type}' with ID '${entity_id}', or budget already exists for year '${dto.year}'.`
       );
     }
 
-    const data = {
-      ...budgetData,
-      year,
-      total_expenses: 0,
-      balance: 0,
-      created_by: userId,
-      updated_by: userId,
-    };
-
-    if (entity_type === EntityType.INSTITUTION) {
-      data['institution_id'] = entity_id;
-    } else if (entity_type === EntityType.CHURCH) {
-      data['church_id'] = entity_id;
-    } else if (
-      entity_type === EntityType.INSTITUTION_DEPARTMENT ||
-      entity_type === EntityType.CHURCH_DEPARTMENT
-    ) {
-      data['department_id'] = entity_id;
-    }
-
-    this.logger.debug(`Creating annual budget with data: ${JSON.stringify(data)}`);
-
-    return this.prisma.annualBudget.create({ data });
+    return this.prisma.annualBudget.create({
+      data: {
+        ...budgetData,
+        entity_type,
+        created_by: userId,
+        updated_by: userId,
+        requested_by: userId,
+        total_expenses: budgetData.total_expenses || 0,
+        balance: budgetData.planned_budget - (budgetData.total_expenses || 0),
+        ...(entity_type === AnnualBudgetEntityType.INSTITUTION && { institution: { connect: { id: entity_id } } }),
+        ...(entity_type === AnnualBudgetEntityType.CHURCH && { church: { connect: { id: entity_id } } }),
+        ...((entity_type === AnnualBudgetEntityType.INSTITUTION_DEPARTMENT ||
+            entity_type === AnnualBudgetEntityType.CHURCH_DEPARTMENT) && { department: { connect: { id: entity_id } } }),
+      }
+    });
   }
 
   private async checkEntityExists(
-    entityType: GeneratedEntityType,
-    entityId: string,
-    year: number
+    data: AnnualBudgetCreateDto,
   ): Promise<boolean> {
-    const entityCheckActions: Record<GeneratedEntityType, () => Promise<boolean>> = {
-      [EntityType.INSTITUTION]: async () => {
-        const exists = await this.prisma.institution.findUnique({ where: { id: entityId } });
+    const entityCheckActions: Record<AnnualBudgetEntityType, () => Promise<boolean>> = {
+      [AnnualBudgetEntityType.INSTITUTION]: async () => {
+        const exists = await this.prisma.institution.findUnique({ where: { id: data.entity_id } });
         if (!exists) return false;
         const budgetExists = await this.prisma.annualBudget.findFirst({
-          where: { institution_id: entityId, year },
+          where: {  institution_id: data.entity_id, year: data.year },
         });
         if (budgetExists) {
           throw new CustomGraphQLError(
@@ -71,11 +59,11 @@ export class AnnualBudgetRepository {
         }
         return true;
       },
-      [EntityType.CHURCH]: async () => {
-        const exists = await this.prisma.church.findUnique({ where: { id: entityId } });
+      [AnnualBudgetEntityType.CHURCH]: async () => {
+        const exists = await this.prisma.church.findUnique({ where: { id: data.entity_id } });
         if (!exists) return false;
         const budgetExists = await this.prisma.annualBudget.findFirst({
-          where: { church_id: entityId, year },
+          where: { church_id: data.entity_id, year: data.year },
         });
         if (budgetExists) {
           throw new CustomGraphQLError(
@@ -86,11 +74,11 @@ export class AnnualBudgetRepository {
         }
         return true;
       },
-      [EntityType.INSTITUTION_DEPARTMENT]: async () => {
-        const exists = await this.prisma.department.findUnique({ where: { id: entityId } });
+      [AnnualBudgetEntityType.INSTITUTION_DEPARTMENT]: async () => {
+        const exists = await this.prisma.department.findUnique({ where: { id: data.entity_id } });
         if (!exists) return false;
         const budgetExists = await this.prisma.annualBudget.findFirst({
-          where: { department_id: entityId, year },
+          where: { department_id: data.entity_id, year: data.year },
         });
         if (budgetExists) {
           throw new CustomGraphQLError(
@@ -101,11 +89,11 @@ export class AnnualBudgetRepository {
         }
         return true;
       },
-      [EntityType.CHURCH_DEPARTMENT]: async () => {
-        const exists = await this.prisma.department.findUnique({ where: { id: entityId } });
+      [AnnualBudgetEntityType.CHURCH_DEPARTMENT]: async () => {
+        const exists = await this.prisma.department.findUnique({ where: { id: data.entity_id } });
         if (!exists) return false;
         const budgetExists = await this.prisma.annualBudget.findFirst({
-          where: { department_id: entityId, year },
+          where: { department_id: data.entity_id, year: data.year },
         });
         if (budgetExists) {
           throw new CustomGraphQLError(
@@ -118,14 +106,61 @@ export class AnnualBudgetRepository {
       },
     };
 
-    const checkAction = entityCheckActions[entityType];
+    const checkAction = entityCheckActions[data.entity_type];
 
     if (!checkAction) {
-      this.logger.warn(`No check action defined for entity type '${entityType}'.`);
+      this.logger.warn(`No check action defined for entity type '${data.entity_type}'.`);
       return false;
     }
 
     return checkAction();
+  }
+
+  async update(id: string, dto: AnnualBudgetUpdateDto, userId: string): Promise<AnnualBudget> {
+    // Verificar se o orçamento existe
+    const existingBudget = await this.prisma.annualBudget.findUnique({
+      where: { id },
+    });
+
+    if (!existingBudget) {
+      throw new NotFoundException(`Annual budget with ID '${id}' not found.`);
+    }
+
+    // Verificar se o orçamento pode ser editado (não está bloqueado ou aprovado)
+    if (existingBudget.is_locked) {
+      throw new CustomGraphQLError(
+        'Cannot update a locked annual budget.',
+        ErrorCode.BAD_REQUEST,
+        400
+      );
+    }
+
+    if (existingBudget.status !== 'PENDING') {
+      throw new CustomGraphQLError(
+        'Cannot update an annual budget that is not in PENDING status.',
+        ErrorCode.BAD_REQUEST,
+        400
+      );
+    }
+
+    // Preparar dados para atualização
+    const updateData: Partial<AnnualBudgetUpdateDto & { updated_by: string; balance?: number }> = {
+      ...dto,
+      updated_by: userId,
+    };
+
+    // Recalcular balance se planned_budget ou total_expenses foram alterados
+    if (dto.planned_budget !== undefined || dto.total_expenses !== undefined) {
+      const newPlannedBudget = dto.planned_budget !== undefined ? Number(dto.planned_budget) : Number(existingBudget.planned_budget);
+      const newTotalExpenses = dto.total_expenses !== undefined ? Number(dto.total_expenses) : Number(existingBudget.total_expenses);
+
+      updateData.balance = newPlannedBudget - newTotalExpenses;
+    }
+
+    return this.prisma.annualBudget.update({
+      where: { id },
+      data: updateData,
+    });
   }
 
   async findManyByFilters(filters: Partial<Record<keyof AnnualBudget, any>>): Promise<AnnualBudget[]> {
@@ -144,6 +179,27 @@ export class AnnualBudgetRepository {
       where: {
         ...filters,
       },
+    });
+  }
+
+  async findMany(args: FindManyAnnualBudgetArgs): Promise<AnnualBudget[]> {
+    return this.prisma.annualBudget.findMany(args);
+  }
+
+  async findById(id: string): Promise<AnnualBudget | null> {
+    return this.prisma.annualBudget.findUnique({
+      where: { id },
+    });
+  }
+
+  async findManyWithRelations(args: FindManyAnnualBudgetArgs): Promise<any[]> {
+    return this.prisma.annualBudget.findMany({
+      ...args,
+      include: {
+        department: true,
+        institution: true,
+        church: true
+      }
     });
   }
 

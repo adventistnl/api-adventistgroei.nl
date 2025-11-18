@@ -20,7 +20,20 @@ export enum AnnualBudgetScalarFieldEnum {
     status = "status",
     institution_id = "institution_id",
     church_id = "church_id",
-    department_id = "department_id"
+    department_id = "department_id",
+    requested_amount = "requested_amount",
+    approved_amount = "approved_amount",
+    requested_by = "requested_by",
+    reviewed_by = "reviewed_by",
+    submitted_date = "submitted_date",
+    review_date = "review_date",
+    approval_date = "approval_date",
+    priority = "priority",
+    category = "category",
+    documents = "documents",
+    is_locked = "is_locked",
+    has_budget_record = "has_budget_record",
+    entity_type = "entity_type"
 }
 
 

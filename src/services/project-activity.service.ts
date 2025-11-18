@@ -1,8 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { ProjectActivityRepository } from '../repositories/project-activity.repository';
-import { CustomGraphQLError, ErrorCode } from 'src/common/errors/custom-graphql-error';
 import { ProjectActivity } from 'src/@generated/project-activity/project-activity.model';
-import { ProjectActivityCreateDto, ProjectActivityUpdateDto } from 'src/dto/project-activity.dto';
 
 @Injectable()
 export class ProjectActivityService {

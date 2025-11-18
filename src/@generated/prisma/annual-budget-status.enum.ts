@@ -1,10 +1,11 @@
 import { registerEnumType } from '@nestjs/graphql';
 
 export enum AnnualBudgetStatus {
-    PLANNED = "PLANNED",
+    PENDING = "PENDING",
+    UNDER_REVIEW = "UNDER_REVIEW",
     APPROVED = "APPROVED",
-    IN_PROGRESS = "IN_PROGRESS",
-    CLOSED = "CLOSED"
+    REJECTED = "REJECTED",
+    REQUIRES_REVISION = "REQUIRES_REVISION"
 }
 
 

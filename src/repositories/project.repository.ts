@@ -100,8 +100,7 @@ export class ProjectRepository {
     if (activities) {
       for (const activity of activities) {
         if (activity.id) {
-          // Atualizar atividade existente
-          const updateActivityData: any = {
+          const updateActivityData: Record<string, any> = {
             name: activity.name,
             description: activity.description,
             budget_amount: activity.budget_amount ? new Decimal(activity.budget_amount) : undefined,
@@ -111,19 +110,17 @@ export class ProjectRepository {
             updated_by: userId,
           };
 
-          if (activity.activity_funding) {
-            updateActivityData.activity_funding = activity.activity_funding
-              ? {
-                  update: {
-                    entity_contribution_amount: activity.activity_funding.entity_contribution_amount
-                      ? new Decimal(activity.activity_funding.entity_contribution_amount)
-                      : undefined,
-                    entity_contribution_percent: activity.activity_funding.entity_contribution_percent,
-                    entity_type: activity.activity_funding.entity_type,
-                    entity_id: activity.activity_funding.entity_id,
-                  },
-                }
-              : undefined;
+          if (activity.activity_funding && typeof activity.activity_funding === 'object') {
+            updateActivityData.activity_funding = {
+              update: {
+                entity_contribution_amount: activity.activity_funding.entity_contribution_amount
+                  ? new Decimal(activity.activity_funding.entity_contribution_amount)
+                  : undefined,
+                entity_contribution_percent: activity.activity_funding.entity_contribution_percent,
+                entity_type: activity.activity_funding.entity_type,
+                entity_id: activity.activity_funding.entity_id,
+              },
+            };
           }
 
           await this.prisma.projectActivity.update({

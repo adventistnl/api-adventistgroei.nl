@@ -179,12 +179,34 @@ enum ProjectType {
   OTHER
 }
 
-// Enum para status do orçamento anual
 enum AnnualBudgetStatus {
-  PLANNED
+  PENDING
+  UNDER_REVIEW
   APPROVED
-  IN_PROGRESS
-  CLOSED
+  REJECTED
+  REQUIRES_REVISION
+}
+
+enum AnnualBudgetPriority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+}
+
+enum AnnualBudgetCategory {
+  OPERATIONAL
+  PROJECT
+  MAINTENANCE
+  EMERGENCY
+  EXPANSION
+}
+
+enum AnnualBudgetEntityType {
+  INSTITUTION
+  CHURCH
+  INSTITUTION_DEPARTMENT
+  CHURCH_DEPARTMENT
 }
 
 enum ActivityTags {
@@ -315,30 +337,43 @@ model Department {
 
 // Modelo AnnualBudget
 model AnnualBudget {
-  id             String             @id @default(uuid())
-  year           Int
-  planned_budget Decimal
-  total_expenses Decimal
-  balance        Decimal
-  notes          String?
-  description    String?
-  justification  String?
-  approved_by    String?
-  created_at     DateTime           @default(now())
-  updated_at     DateTime           @updatedAt
-  created_by     String
-  updated_by     String
-  is_deleted     Boolean            @default(false)
-  deleted_at     DateTime?
-  deleted_by     String?
-  approved_user  User?              @relation("ApprovedAnnualBudgets", fields: [approved_by], references: [id])
-  status         AnnualBudgetStatus @default(PLANNED)
-  institution_id String?
-  institution    Institution?       @relation(fields: [institution_id], references: [id])
-  church_id      String?
-  church         Church?            @relation(fields: [church_id], references: [id])
-  department_id  String?
-  department     Department?        @relation(fields: [department_id], references: [id])
+  id                    String             @id @default(uuid())
+  year                  Int
+  planned_budget        Decimal
+  total_expenses        Decimal
+  balance               Decimal
+  notes                 String?
+  description           String?
+  justification         String?
+  approved_by           String?
+  created_at            DateTime           @default(now())
+  updated_at            DateTime           @updatedAt
+  created_by            String
+  updated_by            String
+  is_deleted            Boolean            @default(false)
+  deleted_at            DateTime?
+  deleted_by            String?
+  approved_user         User?              @relation("ApprovedAnnualBudgets", fields: [approved_by], references: [id])
+  status                AnnualBudgetStatus @default(PENDING)
+  institution_id        String?
+  institution           Institution?       @relation(fields: [institution_id], references: [id])
+  church_id             String?
+  church                Church?            @relation(fields: [church_id], references: [id])
+  department_id         String?
+  department            Department?        @relation(fields: [department_id], references: [id])
+  requested_amount      Decimal
+  approved_amount       Decimal?
+  requested_by          String
+  reviewed_by           String?
+  submitted_date        DateTime  @default(now())
+  review_date           DateTime?
+  approval_date         DateTime?
+  priority              AnnualBudgetPriority @default(MEDIUM)
+  category              AnnualBudgetCategory @default(OPERATIONAL)
+  documents             Json?
+  is_locked             Boolean   @default(false)
+  has_budget_record     Boolean   @default(true)
+  entity_type           AnnualBudgetEntityType
 }
 
 model Contact {

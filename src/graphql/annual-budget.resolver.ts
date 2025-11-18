@@ -1,12 +1,115 @@
-import { Resolver, Mutation, Args, Context } from '@nestjs/graphql';
+import { Resolver, Query, Mutation, Args, Context, ResolveField, Parent, Float, Int } from '@nestjs/graphql';
 import { AnnualBudget } from 'src/@generated/annual-budget/annual-budget.model';
-import { AnnualBudgetCreateDto } from 'src/dto/annual_budget.dto';
+import { FindManyAnnualBudgetArgs } from 'src/@generated/annual-budget/find-many-annual-budget.args';
+import { AnnualBudgetCreateDto, AnnualBudgetUpdateDto } from 'src/dto/annual_budget.dto';
+import { BudgetKPIs, DepartmentSpending, SpendingOverTime, BudgetDistribution, EntityDistribution } from 'src/dto/budget-analytics.dto';
 import { Permission } from 'src/middlewares';
 import { AnnualBudgetService } from 'src/services/annual-budget.service';
+import { InstitutionRepository } from 'src/repositories/institution.repository';
+import { ChurchRepository } from 'src/repositories/church.repository';
+import { DepartmentRepository } from 'src/repositories/department.repository';
+import { Institution } from 'src/@generated/institution/institution.model';
+import { Church } from 'src/@generated/church/church.model';
+import { Department } from 'src/@generated/department/department.model';
 
 @Resolver(() => AnnualBudget)
 export class AnnualBudgetResolver {
-  constructor(private readonly annualBudgetService: AnnualBudgetService) {}
+  constructor(
+    private readonly annualBudgetService: AnnualBudgetService,
+    private readonly institutionRepository: InstitutionRepository,
+    private readonly churchRepository: ChurchRepository,
+    private readonly departmentRepository: DepartmentRepository,
+  ) {}
+
+  @Query(() => [AnnualBudget])
+  @Permission()
+  async annualBudgets(@Args() args: FindManyAnnualBudgetArgs): Promise<AnnualBudget[]> {
+    return await this.annualBudgetService.findMany(args);
+  }
+
+  @Query(() => AnnualBudget, { nullable: true })
+  @Permission()
+  async annualBudget(@Args('id') id: string): Promise<AnnualBudget | null> {
+    return await this.annualBudgetService.findById(id);
+  }
+
+  @Query(() => BudgetKPIs)
+  @Permission()
+  async budgetKPIs(@Args('year', { type: () => Int }) year: number): Promise<BudgetKPIs> {
+    return await this.annualBudgetService.getBudgetKPIs(year);
+  }
+
+  @Query(() => [DepartmentSpending])
+  @Permission()
+  async departmentSpending(@Args('year', { type: () => Int }) year: number): Promise<DepartmentSpending[]> {
+    return await this.annualBudgetService.getDepartmentSpending(year);
+  }
+
+  @Query(() => [SpendingOverTime])
+  @Permission()
+  spendingOverTime(@Args('year', { type: () => Int }) year: number): SpendingOverTime[] {
+    return this.annualBudgetService.getSpendingOverTime(year);
+  }
+
+  @Query(() => [EntityDistribution])
+  @Permission()
+  async entityDistribution(@Args('year', { type: () => Int }) year: number): Promise<EntityDistribution[]> {
+    return await this.annualBudgetService.getEntityDistribution(year);
+  }
+
+  @Query(() => BudgetDistribution)
+  @Permission()
+  async budgetDistribution(@Args('year', { type: () => Int }) year: number): Promise<BudgetDistribution> {
+    return await this.annualBudgetService.getBudgetDistribution(year);
+  }
+
+  @ResolveField(() => Institution, { nullable: true })
+  async institution(@Parent() annualBudget: AnnualBudget): Promise<Institution | null> {
+    if (!annualBudget.institution_id) {
+      return null;
+    }
+    return await this.institutionRepository.findById(annualBudget.institution_id);
+  }
+
+  @ResolveField(() => Church, { nullable: true })
+  async church(@Parent() annualBudget: AnnualBudget): Promise<Church | null> {
+    if (!annualBudget.church_id) {
+      return null;
+    }
+    return await this.churchRepository.findById(annualBudget.church_id);
+  }
+
+  @ResolveField(() => Department, { nullable: true })
+  async department(@Parent() annualBudget: AnnualBudget): Promise<Department | null> {
+    if (!annualBudget.department_id) {
+      return null;
+    }
+    return await this.departmentRepository.findById(annualBudget.department_id);
+  }
+
+  @ResolveField(() => Float)
+  approvedAmount(@Parent() annualBudget: AnnualBudget): number {
+    return Number(annualBudget.approved_amount || 0);
+  }
+
+  @ResolveField(() => Float)
+  spentAmount(@Parent() annualBudget: AnnualBudget): number {
+    return Number(annualBudget.total_expenses);
+  }
+
+  @ResolveField(() => Float)
+  usagePercentage(@Parent() annualBudget: AnnualBudget): number {
+    const approvedAmount = Number(annualBudget.planned_budget || 0);
+    const spentAmount = Number(annualBudget.total_expenses);
+    return approvedAmount > 0 ? Math.round((spentAmount / approvedAmount) * 100) : 0;
+  }
+
+  @ResolveField(() => Float)
+  remainingAmount(@Parent() annualBudget: AnnualBudget): number {
+    const approvedAmount = Number(annualBudget.planned_budget || 0);
+    const spentAmount = Number(annualBudget.total_expenses);
+    return Math.max(0, approvedAmount - spentAmount);
+  }
 
   @Mutation(() => AnnualBudget)
   @Permission()
@@ -15,6 +118,16 @@ export class AnnualBudgetResolver {
     @Context() context: { userId: string },
   ): Promise<AnnualBudget> {
     return this.annualBudgetService.create(data, context.userId);
+  }
+
+  @Mutation(() => AnnualBudget)
+  @Permission()
+  async updateAnnualBudget(
+    @Args('id') id: string,
+    @Args('data') data: AnnualBudgetUpdateDto,
+    @Context() context: { userId: string },
+  ): Promise<AnnualBudget> {
+    return this.annualBudgetService.update(id, data, context.userId);
   }
 
 }

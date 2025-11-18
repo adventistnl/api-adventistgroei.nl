@@ -4,6 +4,10 @@ import { Int } from '@nestjs/graphql';
 import { Decimal } from '@prisma/client/runtime/library';
 import { GraphQLDecimal } from 'prisma-graphql-type-decimal';
 import { AnnualBudgetStatus } from '../prisma/annual-budget-status.enum';
+import { AnnualBudgetPriority } from '../prisma/annual-budget-priority.enum';
+import { AnnualBudgetCategory } from '../prisma/annual-budget-category.enum';
+import { GraphQLJSON } from 'graphql-type-json';
+import { AnnualBudgetEntityType } from '../prisma/annual-budget-entity-type.enum';
 import { AnnualBudgetCountAggregate } from './annual-budget-count-aggregate.output';
 import { AnnualBudgetAvgAggregate } from './annual-budget-avg-aggregate.output';
 import { AnnualBudgetSumAggregate } from './annual-budget-sum-aggregate.output';
@@ -72,6 +76,45 @@ export class AnnualBudgetGroupBy {
 
     @Field(() => String, {nullable:true})
     department_id?: string;
+
+    @Field(() => GraphQLDecimal, {nullable:false})
+    requested_amount!: Decimal;
+
+    @Field(() => GraphQLDecimal, {nullable:true})
+    approved_amount?: Decimal;
+
+    @Field(() => String, {nullable:false})
+    requested_by!: string;
+
+    @Field(() => String, {nullable:true})
+    reviewed_by?: string;
+
+    @Field(() => Date, {nullable:false})
+    submitted_date!: Date | string;
+
+    @Field(() => Date, {nullable:true})
+    review_date?: Date | string;
+
+    @Field(() => Date, {nullable:true})
+    approval_date?: Date | string;
+
+    @Field(() => AnnualBudgetPriority, {nullable:false})
+    priority!: `${AnnualBudgetPriority}`;
+
+    @Field(() => AnnualBudgetCategory, {nullable:false})
+    category!: `${AnnualBudgetCategory}`;
+
+    @Field(() => GraphQLJSON, {nullable:true})
+    documents?: any;
+
+    @Field(() => Boolean, {nullable:false})
+    is_locked!: boolean;
+
+    @Field(() => Boolean, {nullable:false})
+    has_budget_record!: boolean;
+
+    @Field(() => AnnualBudgetEntityType, {nullable:false})
+    entity_type!: `${AnnualBudgetEntityType}`;
 
     @Field(() => AnnualBudgetCountAggregate, {nullable:true})
     _count?: AnnualBudgetCountAggregate;

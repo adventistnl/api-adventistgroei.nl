@@ -4,7 +4,6 @@ import { UseGuards } from '@nestjs/common';
 import { PermissionsGuard } from '../middlewares/permissions.guard';
 import { ProjectActivity } from 'src/@generated/project-activity/project-activity.model';
 import { Permission } from 'src/middlewares';
-import { ProjectActivityCreateDto, ProjectActivityUpdateDto } from 'src/dto/project-activity.dto';
 
 @Resolver(() => ProjectActivity)
 export class ProjectActivityResolver {
@@ -13,8 +12,9 @@ export class ProjectActivityResolver {
   @Query(() => [ProjectActivity], { name: 'projectActivities' })
   @UseGuards(PermissionsGuard)
   @Permission()
-  async findManyByFilters(@Args('filters', { type: () => String, nullable: true }) filters: any) {
-    return this.service.findManyByFilters(filters || {});
+  async findManyByFilters(@Args('filters', { type: () => String, nullable: true }) filters: string | undefined) {
+    const parsedFilters: Partial<Record<string, any>> = filters ? JSON.parse(filters) : {};
+    return this.service.findManyByFilters(parsedFilters);
   }
 
   @Query(() => ProjectActivity, { name: 'projectActivity' })

@@ -2,8 +2,8 @@ import { Field } from '@nestjs/graphql';
 import { InputType } from '@nestjs/graphql';
 import { SortOrder } from '../prisma/sort-order.enum';
 import { SortOrderInput } from '../prisma/sort-order.input';
-import { AnnualBudgetCountOrderByAggregateInput } from './annual-budget-count-order-by-aggregate.input';
 import { Type } from 'class-transformer';
+import { AnnualBudgetCountOrderByAggregateInput } from './annual-budget-count-order-by-aggregate.input';
 import { AnnualBudgetAvgOrderByAggregateInput } from './annual-budget-avg-order-by-aggregate.input';
 import { AnnualBudgetMaxOrderByAggregateInput } from './annual-budget-max-order-by-aggregate.input';
 import { AnnualBudgetMinOrderByAggregateInput } from './annual-budget-min-order-by-aggregate.input';
@@ -71,6 +71,46 @@ export class AnnualBudgetOrderByWithAggregationInput {
 
     @Field(() => SortOrderInput, {nullable:true})
     department_id?: SortOrderInput;
+
+    @Field(() => SortOrder, {nullable:true})
+    requested_amount?: `${SortOrder}`;
+
+    @Field(() => SortOrderInput, {nullable:true})
+    @Type(() => SortOrderInput)
+    approved_amount?: SortOrderInput;
+
+    @Field(() => SortOrder, {nullable:true})
+    requested_by?: `${SortOrder}`;
+
+    @Field(() => SortOrderInput, {nullable:true})
+    reviewed_by?: SortOrderInput;
+
+    @Field(() => SortOrder, {nullable:true})
+    submitted_date?: `${SortOrder}`;
+
+    @Field(() => SortOrderInput, {nullable:true})
+    review_date?: SortOrderInput;
+
+    @Field(() => SortOrderInput, {nullable:true})
+    approval_date?: SortOrderInput;
+
+    @Field(() => SortOrder, {nullable:true})
+    priority?: `${SortOrder}`;
+
+    @Field(() => SortOrder, {nullable:true})
+    category?: `${SortOrder}`;
+
+    @Field(() => SortOrderInput, {nullable:true})
+    documents?: SortOrderInput;
+
+    @Field(() => SortOrder, {nullable:true})
+    is_locked?: `${SortOrder}`;
+
+    @Field(() => SortOrder, {nullable:true})
+    has_budget_record?: `${SortOrder}`;
+
+    @Field(() => SortOrder, {nullable:true})
+    entity_type?: `${SortOrder}`;
 
     @Field(() => AnnualBudgetCountOrderByAggregateInput, {nullable:true})
     @Type(() => AnnualBudgetCountOrderByAggregateInput)

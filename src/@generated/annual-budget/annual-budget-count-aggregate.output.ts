@@ -66,5 +66,44 @@ export class AnnualBudgetCountAggregate {
     department_id!: number;
 
     @Field(() => Int, {nullable:false})
+    requested_amount!: number;
+
+    @Field(() => Int, {nullable:false})
+    approved_amount!: number;
+
+    @Field(() => Int, {nullable:false})
+    requested_by!: number;
+
+    @Field(() => Int, {nullable:false})
+    reviewed_by!: number;
+
+    @Field(() => Int, {nullable:false})
+    submitted_date!: number;
+
+    @Field(() => Int, {nullable:false})
+    review_date!: number;
+
+    @Field(() => Int, {nullable:false})
+    approval_date!: number;
+
+    @Field(() => Int, {nullable:false})
+    priority!: number;
+
+    @Field(() => Int, {nullable:false})
+    category!: number;
+
+    @Field(() => Int, {nullable:false})
+    documents!: number;
+
+    @Field(() => Int, {nullable:false})
+    is_locked!: number;
+
+    @Field(() => Int, {nullable:false})
+    has_budget_record!: number;
+
+    @Field(() => Int, {nullable:false})
+    entity_type!: number;
+
+    @Field(() => Int, {nullable:false})
     _all!: number;
 }

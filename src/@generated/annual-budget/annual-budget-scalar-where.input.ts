@@ -9,6 +9,11 @@ import { DateTimeFilter } from '../prisma/date-time-filter.input';
 import { BoolFilter } from '../prisma/bool-filter.input';
 import { DateTimeNullableFilter } from '../prisma/date-time-nullable-filter.input';
 import { EnumAnnualBudgetStatusFilter } from '../prisma/enum-annual-budget-status-filter.input';
+import { DecimalNullableFilter } from '../prisma/decimal-nullable-filter.input';
+import { EnumAnnualBudgetPriorityFilter } from '../prisma/enum-annual-budget-priority-filter.input';
+import { EnumAnnualBudgetCategoryFilter } from '../prisma/enum-annual-budget-category-filter.input';
+import { JsonNullableFilter } from '../prisma/json-nullable-filter.input';
+import { EnumAnnualBudgetEntityTypeFilter } from '../prisma/enum-annual-budget-entity-type-filter.input';
 
 @InputType()
 export class AnnualBudgetScalarWhereInput {
@@ -87,4 +92,45 @@ export class AnnualBudgetScalarWhereInput {
 
     @Field(() => StringNullableFilter, {nullable:true})
     department_id?: StringNullableFilter;
+
+    @Field(() => DecimalFilter, {nullable:true})
+    @Type(() => DecimalFilter)
+    requested_amount?: DecimalFilter;
+
+    @Field(() => DecimalNullableFilter, {nullable:true})
+    @Type(() => DecimalNullableFilter)
+    approved_amount?: DecimalNullableFilter;
+
+    @Field(() => StringFilter, {nullable:true})
+    requested_by?: StringFilter;
+
+    @Field(() => StringNullableFilter, {nullable:true})
+    reviewed_by?: StringNullableFilter;
+
+    @Field(() => DateTimeFilter, {nullable:true})
+    submitted_date?: DateTimeFilter;
+
+    @Field(() => DateTimeNullableFilter, {nullable:true})
+    review_date?: DateTimeNullableFilter;
+
+    @Field(() => DateTimeNullableFilter, {nullable:true})
+    approval_date?: DateTimeNullableFilter;
+
+    @Field(() => EnumAnnualBudgetPriorityFilter, {nullable:true})
+    priority?: EnumAnnualBudgetPriorityFilter;
+
+    @Field(() => EnumAnnualBudgetCategoryFilter, {nullable:true})
+    category?: EnumAnnualBudgetCategoryFilter;
+
+    @Field(() => JsonNullableFilter, {nullable:true})
+    documents?: JsonNullableFilter;
+
+    @Field(() => BoolFilter, {nullable:true})
+    is_locked?: BoolFilter;
+
+    @Field(() => BoolFilter, {nullable:true})
+    has_budget_record?: BoolFilter;
+
+    @Field(() => EnumAnnualBudgetEntityTypeFilter, {nullable:true})
+    entity_type?: EnumAnnualBudgetEntityTypeFilter;
 }
