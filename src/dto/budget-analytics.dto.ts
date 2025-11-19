@@ -17,7 +17,7 @@ export class BudgetKPIs {
   @Field(() => Float)
   budgetUtilization!: number;
 
-  @Field(() => Int)
+  @Field(() => Int, { description: 'Número de departments ativos (sempre 0 para budgets da instituição)' })
   activeDepartments!: number;
 }
 

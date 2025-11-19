@@ -71,81 +71,47 @@ export class AnnualBudgetService {
     return this.annualBudgetRepository.findById(id);
   }
 
-  async getBudgetKPIs(year: number): Promise<BudgetKPIs> {
-    // Buscar todos os budgets do ano
+  async getBudgetKPIs(year: number, institutionId: string): Promise<BudgetKPIs> {
+    // Buscar apenas os budgets da instituição do ano especificado
     const budgets = await this.annualBudgetRepository.findMany({
       where: {
         year: { equals: year },
+        institution_id: { equals: institutionId },
+        entity_type: { equals: 'INSTITUTION' },
         is_deleted: { equals: false }
       }
     });
 
-    // Calcular totais baseados nos dados reais
-    const totalInstitutionBudget = budgets.reduce((sum, budget) =>
-      sum + Number(budget.planned_budget), 0
-    );
+    // Calcular totais baseados nos dados reais do budget da instituição
+    const totalInstitutionBudget = (budgets[0].planned_budget as unknown as number) || 0
 
-    const totalAllocated = budgets.reduce((sum, budget) =>
-      sum + Number(budget.total_expenses), 0);
+    const totalAllocated = (budgets[0].total_expenses as unknown as number) || 0
 
-    const totalSpent = budgets.reduce((sum, budget) =>
-      sum + Number(budget.total_expenses), 0
-    );
+    const totalSpent = (budgets[0].total_expenses as unknown as number) || 0
 
     const budgetRemaining = totalInstitutionBudget - totalSpent;
     const budgetUtilization = totalInstitutionBudget > 0 ?
       (totalSpent / totalInstitutionBudget) * 100 : 0;
 
-    // Contar departments únicos
-    const departmentIds = new Set(
-      budgets
-        .filter(budget => budget.department_id)
-        .map(budget => budget.department_id)
-    );
-
+    // Para budgets da instituição, não há departments específicos
+    // O activeDepartments será 0 pois são budgets da instituição principal
     return {
       totalInstitutionBudget,
       totalAllocated,
       totalSpent,
       budgetRemaining,
       budgetUtilization: Math.round(budgetUtilization * 100) / 100, // Arredondar para 2 casas
-      activeDepartments: departmentIds.size
+      activeDepartments: 0 // Budgets da instituição não têm departments associados
     };
   }
 
-  async getDepartmentSpending(year: number): Promise<DepartmentSpending[]> {
-    // TODO: Implementar cálculo real baseado em dados de departments e transações
-    // Por enquanto retorna dados mockados baseados nos budgets existentes
-    // Em uma implementação completa, isso seria calculado a partir dos dados reais
-    const budgets = await this.annualBudgetRepository.findMany({
-      where: {
-        year: { equals: year },
-        is_deleted: { equals: false }
-      }
-    });
-
-    // TODO: Substituir por consulta real aos departments do banco de dados
-    // Simular dados baseados nos budgets encontrados
-    const departments = ['Finance', 'Operations', 'HR', 'IT', 'Marketing'];
-    const result: DepartmentSpending[] = [];
-
-    departments.forEach((deptName, index) => {
-      const baseBudget = budgets.length > 0 ?
-        Number(budgets[index % budgets.length].planned_budget) / departments.length : 10000;
-
-      result.push({
-        name: deptName,
-        planned: Math.round(baseBudget),
-        approved: Math.round(baseBudget * 0.9),
-        reserved: Math.round(baseBudget * 0.1),
-        institution: 'Main Institution'
-      });
-    });
-
-    return result.sort((a, b) => b.planned - a.planned);
+  async getDepartmentSpending(_year: number, _institutionId: string): Promise<DepartmentSpending[]> {
+    // Para budgets da instituição, não há departments específicos
+    // Retornar array vazio pois os budgets da instituição não têm departments associados
+    return await Promise.resolve([]);
   }
 
-  getSpendingOverTime(year: number): SpendingOverTime[] {
+  getSpendingOverTime(year: number, _institutionId: string): SpendingOverTime[] {
     // TODO: Implementar consulta real a dados históricos mensais de transações
     // Como não temos dados históricos mensais, vamos simular baseado nos budgets
     // e criar uma distribuição mensal aproximada
@@ -181,11 +147,13 @@ export class AnnualBudgetService {
     });
   }
 
-  async getBudgetDistribution(year: number): Promise<BudgetDistribution> {
-    // Buscar todos os budgets do ano
+  async getBudgetDistribution(year: number, institutionId: string): Promise<BudgetDistribution> {
+    // Buscar apenas budgets da instituição do ano especificado
     const budgets = await this.annualBudgetRepository.findMany({
       where: {
         year: { equals: year },
+        institution_id: { equals: institutionId },
+        entity_type: { equals: 'INSTITUTION' },
         is_deleted: { equals: false }
       }
     });

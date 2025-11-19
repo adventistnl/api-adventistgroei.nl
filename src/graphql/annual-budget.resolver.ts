@@ -38,20 +38,29 @@ export class AnnualBudgetResolver {
 
   @Query(() => BudgetKPIs)
   @Permission()
-  async budgetKPIs(@Args('year', { type: () => Int }) year: number): Promise<BudgetKPIs> {
-    return await this.annualBudgetService.getBudgetKPIs(year);
+  async budgetKPIs(
+    @Args('year', { type: () => Int }) year: number,
+    @Args('institutionId') institutionId: string
+  ): Promise<BudgetKPIs> {
+    return await this.annualBudgetService.getBudgetKPIs(year, institutionId);
   }
 
   @Query(() => [DepartmentSpending])
   @Permission()
-  async departmentSpending(@Args('year', { type: () => Int }) year: number): Promise<DepartmentSpending[]> {
-    return await this.annualBudgetService.getDepartmentSpending(year);
+  async departmentSpending(
+    @Args('year', { type: () => Int }) year: number,
+    @Args('institutionId') institutionId: string
+  ): Promise<DepartmentSpending[]> {
+    return await this.annualBudgetService.getDepartmentSpending(year, institutionId);
   }
 
   @Query(() => [SpendingOverTime])
   @Permission()
-  spendingOverTime(@Args('year', { type: () => Int }) year: number): SpendingOverTime[] {
-    return this.annualBudgetService.getSpendingOverTime(year);
+  spendingOverTime(
+    @Args('year', { type: () => Int }) year: number,
+    @Args('institutionId') institutionId: string
+  ): SpendingOverTime[] {
+    return this.annualBudgetService.getSpendingOverTime(year, institutionId);
   }
 
   @Query(() => [EntityDistribution])
@@ -62,8 +71,11 @@ export class AnnualBudgetResolver {
 
   @Query(() => BudgetDistribution)
   @Permission()
-  async budgetDistribution(@Args('year', { type: () => Int }) year: number): Promise<BudgetDistribution> {
-    return await this.annualBudgetService.getBudgetDistribution(year);
+  async budgetDistribution(
+    @Args('year', { type: () => Int }) year: number,
+    @Args('institutionId') institutionId: string
+  ): Promise<BudgetDistribution> {
+    return await this.annualBudgetService.getBudgetDistribution(year, institutionId);
   }
 
   @ResolveField(() => Institution, { nullable: true })
