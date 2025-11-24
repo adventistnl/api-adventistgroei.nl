@@ -467,6 +467,35 @@ export class AnnualBudgetRepository {
       );
     }
 
+    // Se estiver bloqueando um budget da instituição, bloquear também todos os budgets dos departamentos
+    if (newLockState && existingBudget.entity_type === AnnualBudgetEntityType.INSTITUTION && existingBudget.institution_id) {
+      // Buscar todos os budgets dos departamentos desta instituição que não estão deletados
+      const departmentBudgets = await this.prisma.annualBudget.findMany({
+        where: {
+          institution_id: existingBudget.institution_id,
+          entity_type: AnnualBudgetEntityType.INSTITUTION_DEPARTMENT,
+          is_deleted: false,
+        },
+      });
+
+      // Bloquear todos os budgets dos departamentos
+      if (departmentBudgets.length > 0) {
+        await this.prisma.annualBudget.updateMany({
+          where: {
+            id: {
+              in: departmentBudgets.map(budget => budget.id),
+            },
+          },
+          data: {
+            is_locked: true,
+            updated_by: userId,
+          },
+        });
+
+        this.logger.log(`Bloqueados ${departmentBudgets.length} budgets de departamentos da instituição ${existingBudget.institution_id}`);
+      }
+    }
+
     const updatedBudget = await this.prisma.annualBudget.update({
       where: { id },
       data: {
