@@ -24,6 +24,18 @@ export class AnnualBudgetRepository {
       );
     }
 
+    // Para budgets de departamento, buscar o institution_id do department
+    let institutionId: string | undefined;
+    if (entity_type === AnnualBudgetEntityType.INSTITUTION_DEPARTMENT || entity_type === AnnualBudgetEntityType.CHURCH_DEPARTMENT) {
+      const department = await this.prisma.department.findUnique({
+        where: { id: entity_id },
+        select: { institution_id: true, church_id: true }
+      });
+      if (department) {
+        institutionId = department.institution_id;
+      }
+    }
+
     return this.prisma.annualBudget.create({
       data: {
         ...budgetData,
@@ -36,7 +48,10 @@ export class AnnualBudgetRepository {
         ...(entity_type === AnnualBudgetEntityType.INSTITUTION && { institution: { connect: { id: entity_id } } }),
         ...(entity_type === AnnualBudgetEntityType.CHURCH && { church: { connect: { id: entity_id } } }),
         ...((entity_type === AnnualBudgetEntityType.INSTITUTION_DEPARTMENT ||
-            entity_type === AnnualBudgetEntityType.CHURCH_DEPARTMENT) && { department: { connect: { id: entity_id } } }),
+            entity_type === AnnualBudgetEntityType.CHURCH_DEPARTMENT) && { 
+          department: { connect: { id: entity_id } },
+          institution_id: institutionId
+        }),
       }
     });
   }
@@ -467,18 +482,21 @@ export class AnnualBudgetRepository {
       );
     }
 
-    // Se estiver bloqueando um budget da instituição, bloquear também todos os budgets dos departamentos
+    // Se estiver bloqueando um budget da instituição, bloquear também todos os budgets dos departamentos que ainda estão abertos
     if (newLockState && existingBudget.entity_type === AnnualBudgetEntityType.INSTITUTION && existingBudget.institution_id) {
-      // Buscar todos os budgets dos departamentos desta instituição que não estão deletados
+      // Buscar todos os budgets dos departamentos desta instituição que não estão deletados e não estão bloqueados
       const departmentBudgets = await this.prisma.annualBudget.findMany({
         where: {
           institution_id: existingBudget.institution_id,
           entity_type: AnnualBudgetEntityType.INSTITUTION_DEPARTMENT,
           is_deleted: false,
+          is_locked: false, // Apenas os que ainda estão abertos
         },
       });
 
-      // Bloquear todos os budgets dos departamentos
+      this.logger.log(`Encontrados ${departmentBudgets.length} budgets de departamento abertos para bloquear na instituição ${existingBudget.institution_id}`);
+
+      // Bloquear todos os budgets dos departamentos que estavam abertos
       if (departmentBudgets.length > 0) {
         await this.prisma.annualBudget.updateMany({
           where: {
