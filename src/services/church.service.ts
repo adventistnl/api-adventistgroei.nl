@@ -34,7 +34,7 @@ export class ChurchService {
     return await this.churchRepository.findManyByFilters(filters);
   }
 
-  async getKPIData(churchId: string): Promise<{ totalChurches: number; totalMembers: number; totalDepartments: number; totalSubsidyRequests: number; totalBudget: number; totalUsedBudget: number; budgetUtilization: number; avgMembersPerChurch: number }> {
+  async getKPIData(churchId: string): Promise<{ totalMembers: number; totalDepartments: number; totalSubsidyRequests: number; totalBudget: number; totalUsedBudget: number; budgetUtilization: number }> {
     return await this.churchRepository.getKPIData(churchId);
   }
 }

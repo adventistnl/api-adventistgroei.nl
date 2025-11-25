@@ -16,13 +16,17 @@ import { DirectMessage } from 'src/@generated/direct-message/direct-message.mode
 import { SubsidyRequest } from 'src/@generated/subsidy-request/subsidy-request.model';
 import { Contact } from 'src/@generated/contact/contact.model';
 import { AnnualBudget } from 'src/@generated/annual-budget/annual-budget.model';
-import { ChurchKPIData } from 'src/models/church.model';
+import { ChurchKPIData, ChurchChartData } from 'src/models/church.model';
+import { PrismaService } from '../services/prisma.service';
 
 
 @Resolver(() => Institution)
 @UseGuards(PermissionsGuard)
 export class InstitutionResolver {
-  constructor(private readonly institutionService: InstitutionService) {}
+  constructor(
+    private readonly institutionService: InstitutionService,
+    private readonly prisma: PrismaService
+  ) {}
 
   @Permission()
   @Mutation(() => Institution)
@@ -123,8 +127,13 @@ export class InstitutionResolver {
   }
 
   @ResolveField(() => Int, { name: 'churches_count' })
-  churchesCount(@Parent() institution: Institution) {
-    return institution._count?.churches ?? 0;
+  async churchesCount(@Parent() institution: Institution) {
+    return await this.prisma.church.count({
+      where: {
+        institution_id: institution.id,
+        is_deleted: false
+      }
+    });
   }
 
   @ResolveField(() => Int, { name: 'departments_count' })
@@ -140,5 +149,10 @@ export class InstitutionResolver {
   @ResolveField(() => ChurchKPIData, { name: 'churchesKpiData' })
   async churchesKpiData(@Parent() institution: Institution) {
     return await this.institutionService.getChurchesKpiDataForInstitution(institution.id);
+  }
+
+  @ResolveField(() => [ChurchChartData], { name: 'activeChurchesChartData' })
+  async activeChurchesChartData(@Parent() institution: Institution) {
+    return await this.institutionService.getActiveChurchesChartData(institution.id);
   }
 }

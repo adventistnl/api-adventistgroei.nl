@@ -29,6 +29,30 @@ export class ChurchKPIData {
 }
 
 @ObjectType()
+export class ChurchChartData {
+  @Field()
+  church: string;
+
+  @Field()
+  fullName: string;
+
+  @Field()
+  members: number;
+
+  @Field()
+  activeMembers: number;
+
+  @Field()
+  projects: number;
+
+  @Field()
+  activeProjects: number;
+
+  @Field()
+  fill: string;
+}
+
+@ObjectType()
 export class ChurchModel {
   @Field()
   id: string;

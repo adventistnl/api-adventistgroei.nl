@@ -36,23 +36,31 @@ export class AnnualBudgetRepository {
       }
     }
 
-    return this.prisma.annualBudget.create({
-      data: {
-        ...budgetData,
-        entity_type,
-        created_by: userId,
-        updated_by: userId,
-        requested_by: userId,
-        total_expenses: budgetData.total_expenses || 0,
-        balance: budgetData.planned_budget - (budgetData.total_expenses || 0),
-        ...(entity_type === AnnualBudgetEntityType.INSTITUTION && { institution: { connect: { id: entity_id } } }),
-        ...(entity_type === AnnualBudgetEntityType.CHURCH && { church: { connect: { id: entity_id } } }),
-        ...((entity_type === AnnualBudgetEntityType.INSTITUTION_DEPARTMENT ||
-            entity_type === AnnualBudgetEntityType.CHURCH_DEPARTMENT) && { 
-          department: { connect: { id: entity_id } },
-          institution_id: institutionId
-        }),
+    // Construir dados do orçamento
+    const budgetCreateData: any = {
+      ...budgetData,
+      entity_type,
+      created_by: userId,
+      updated_by: userId,
+      requested_by: userId,
+      total_expenses: budgetData.total_expenses || 0,
+      balance: budgetData.planned_budget - (budgetData.total_expenses || 0),
+    };
+
+    // Adicionar conexões baseadas no tipo de entidade
+    if (entity_type === AnnualBudgetEntityType.INSTITUTION) {
+      budgetCreateData.institution = { connect: { id: entity_id } };
+    } else if (entity_type === AnnualBudgetEntityType.CHURCH) {
+      budgetCreateData.church = { connect: { id: entity_id } };
+    } else if (entity_type === AnnualBudgetEntityType.INSTITUTION_DEPARTMENT || entity_type === AnnualBudgetEntityType.CHURCH_DEPARTMENT) {
+      budgetCreateData.department = { connect: { id: entity_id } };
+      if (institutionId) {
+        budgetCreateData.institution_id = institutionId;
       }
+    }
+
+    return this.prisma.annualBudget.create({
+      data: budgetCreateData,
     });
   }
 

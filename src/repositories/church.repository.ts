@@ -300,7 +300,7 @@ export class ChurchRepository {
     });
   }
 
-  async findManyByFilters(filters: Partial<Record<keyof Church, any>>): Promise<Church[]> {
+  async findManyByFilters(filters: Partial<Record<keyof Church, any>>, includeDeleted: boolean = false): Promise<Church[]> {
     const allowedKeys: (keyof Church)[] = ['institution_id', 'region_id', 'name', 'is_deleted'];
 
     for (const key of Object.keys(filters)) {
@@ -311,7 +311,6 @@ export class ChurchRepository {
 
     return this.prisma.church.findMany({
       where: {
-        is_deleted: false,
         ...filters,
       },
       include: {
@@ -350,12 +349,23 @@ export class ChurchRepository {
     }
   }
 
-  async getKPIData(churchId: string): Promise<{ totalChurches: number; totalMembers: number; totalDepartments: number; totalSubsidyRequests: number; totalBudget: number; totalUsedBudget: number; budgetUtilization: number; avgMembersPerChurch: number }> {
-    await this.findById(churchId);
-
-    const totalChurches = await this.prisma.church.count({
-      where: { is_deleted: false },
+  async getKPIData(churchId: string): Promise<{ totalMembers: number; totalDepartments: number; totalSubsidyRequests: number; totalBudget: number; totalUsedBudget: number; budgetUtilization: number }> {
+    // Check if church exists and is not deleted
+    const church = await this.prisma.church.findUnique({
+      where: { id: churchId },
     });
+
+    if (!church || church.is_deleted) {
+      // Return empty KPI data for deleted or non-existent churches
+      return {
+        totalMembers: 0,
+        totalDepartments: 0,
+        totalSubsidyRequests: 0,
+        totalBudget: 0,
+        totalUsedBudget: 0,
+        budgetUtilization: 0,
+      };
+    }
 
     const totalMembers = await this.prisma.user.count({
       where: { church_id: churchId, is_deleted: false },
@@ -381,20 +391,13 @@ export class ChurchRepository {
     const totalUsedBudget = budgets._sum.total_expenses?.toNumber() || 0;
     const budgetUtilization = totalBudget > 0 ? (totalUsedBudget / totalBudget) * 100 : 0;
 
-    const allChurches = await this.prisma.church.count({
-      where: { is_deleted: false },
-    });
-    const avgMembersPerChurch = allChurches > 0 ? Math.round(await this.prisma.user.count({ where: { is_deleted: false } }) / allChurches) : 0;
-
     return {
-      totalChurches,
       totalMembers,
       totalDepartments,
       totalSubsidyRequests,
       totalBudget,
       totalUsedBudget,
       budgetUtilization,
-      avgMembersPerChurch,
     };
   }
 }

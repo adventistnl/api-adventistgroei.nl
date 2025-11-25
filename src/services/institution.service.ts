@@ -7,6 +7,7 @@ import { Institution } from '../@generated/institution/institution.model';
 import { CustomGraphQLError, ErrorCode } from '../common/errors/custom-graphql-error';
 import { ContactRepository, ChurchRepository, CommunicationRepository, DepartmentRepository, InstitutionRepository, ProjectRepository, NotificationRepository, RegionRepository, SettingRepository, SubsidyRequestRepository, UserRepository, AnnualBudgetRepository } from 'src/repositories';
 import { DirectMessageRepository } from 'src/repositories/direct-message.repository';
+import { ChurchChartData } from '../models/church.model';
 
 @Injectable()
 export class InstitutionService {
@@ -58,7 +59,7 @@ export class InstitutionService {
   }
 
   async getChurches(institutionId: string) {
-    const churches = await this.churchRepository.findManyByFilters({ institution_id: institutionId, is_deleted: false });
+    const churches = await this.churchRepository.findManyByFilters({ institution_id: institutionId}, true);
     return churches;
   }
 
@@ -105,8 +106,11 @@ export class InstitutionService {
   }
 
   async getChurchesKpiDataForInstitution(institutionId: string) {
-    // Get all churches for this institution and calculate their KPI data
-    const churches = await this.churchRepository.findManyByFilters({ institution_id: institutionId });
+    // Get all ACTIVE churches for this institution and calculate their KPI data
+    const churches = await this.churchRepository.findManyByFilters({ 
+      institution_id: institutionId,
+      is_deleted: false 
+    });
     
     if (churches.length === 0) {
       return {
@@ -125,28 +129,75 @@ export class InstitutionService {
       churches.map(church => this.churchRepository.getKPIData(church.id)),
     );
 
-    // Aggregate all KPI data
-    const aggregated = {
-      totalChurches: churches.length,
-      totalMembers: kpiDataByChurch.reduce((sum, kpi) => sum + kpi.totalMembers, 0),
-      totalDepartments: kpiDataByChurch.reduce((sum, kpi) => sum + kpi.totalDepartments, 0),
-      totalSubsidyRequests: kpiDataByChurch.reduce((sum, kpi) => sum + kpi.totalSubsidyRequests, 0),
-      totalBudget: kpiDataByChurch.reduce((sum, kpi) => sum + kpi.totalBudget, 0),
-      totalUsedBudget: kpiDataByChurch.reduce((sum, kpi) => sum + kpi.totalUsedBudget, 0),
-      budgetUtilization: 0,
-      avgMembersPerChurch: 0,
-    };
+    // Calculate totals for active churches in this institution
+    const totalMembers = kpiDataByChurch.reduce((sum, kpi) => sum + kpi.totalMembers, 0);
+    const totalDepartments = kpiDataByChurch.reduce((sum, kpi) => sum + kpi.totalDepartments, 0);
+    const totalSubsidyRequests = kpiDataByChurch.reduce((sum, kpi) => sum + kpi.totalSubsidyRequests, 0);
+    const totalBudget = kpiDataByChurch.reduce((sum, kpi) => sum + kpi.totalBudget, 0);
+    const totalUsedBudget = kpiDataByChurch.reduce((sum, kpi) => sum + kpi.totalUsedBudget, 0);
 
     // Calculate utilization percentage
-    aggregated.budgetUtilization = aggregated.totalBudget > 0
-      ? parseFloat(((aggregated.totalUsedBudget / aggregated.totalBudget) * 100).toFixed(2))
+    const budgetUtilization = totalBudget > 0
+      ? parseFloat(((totalUsedBudget / totalBudget) * 100).toFixed(2))
       : 0;
 
-    // Calculate average members per church
-    aggregated.avgMembersPerChurch = churches.length > 0
-      ? parseFloat((aggregated.totalMembers / churches.length).toFixed(2))
+    // Calculate average members per church for this institution only
+    const avgMembersPerChurch = churches.length > 0
+      ? parseFloat((totalMembers / churches.length).toFixed(2))
       : 0;
 
-    return aggregated;
+    return {
+      totalChurches: churches.length, // Only active churches in this institution
+      totalMembers,
+      totalDepartments,
+      totalSubsidyRequests,
+      totalBudget,
+      totalUsedBudget,
+      budgetUtilization,
+      avgMembersPerChurch,
+    };
+  }
+
+  async getActiveChurchesChartData(institutionId: string): Promise<ChurchChartData[]> {
+    // Get all ACTIVE churches for this institution for chart display
+    const churches = await this.churchRepository.findManyByFilters({ 
+      institution_id: institutionId,
+      is_deleted: false 
+    });
+
+    if (churches.length === 0) {
+      return [];
+    }
+
+    // Paleta de cores para diferenciar igrejas
+    const colors = ['#3b82f6', '#8b5cf6', '#10b981', '#f59e0b', '#ef4444', '#06b6d4', '#ec4899'];
+
+    // Process data for charts
+    const chartData: ChurchChartData[] = churches.map((church: any, index: number) => {
+      // Calculate members
+      const members = church.users?.length || 0;
+      const activeMembers = church.users?.filter((u: any) => !u.is_deleted).length || 0;
+
+      // Calculate projects from departments
+      const allProjects = church.departments?.reduce((sum: number, dept: any) => {
+        return sum + (dept.projects?.length || 0);
+      }, 0) || 0;
+
+      const activeProjects = church.departments?.reduce((sum: number, dept: any) => {
+        return sum + (dept.projects?.filter((p: any) => !p.is_deleted).length || 0);
+      }, 0) || 0;
+
+      return {
+        church: church.name.replace('Igreja ', '').replace(' de ', ' '),
+        fullName: church.name,
+        members,
+        activeMembers,
+        projects: allProjects,
+        activeProjects,
+        fill: colors[index % colors.length]
+      };
+    });
+
+    return chartData;
   }
 }
