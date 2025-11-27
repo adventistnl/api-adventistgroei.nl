@@ -443,4 +443,57 @@ export class UserRepository {
       return 0; // Return 0 as fallback
     }
   }
+
+  async getChurchesByRegionForInstitution(institutionId: string): Promise<{ region: string; name: string; churches: number; color?: string; fill: string }[]> {
+    try {
+      // Use Prisma aggregation to count churches by region
+      const churchesByRegion = await this.prisma.church.groupBy({
+        by: ['region_id'],
+        where: {
+          institution_id: institutionId,
+          is_deleted: false,
+          region: {
+            is_deleted: false
+          }
+        },
+        _count: {
+          id: true
+        }
+      });
+
+      // Get region details for each grouped result
+      const results = await Promise.all(
+        churchesByRegion.map(async (cr) => {
+          if (!cr.region_id) {
+            // Handle churches without region
+            return {
+              region: 'no-region',
+              name: 'Sem Região',
+              churches: cr._count.id,
+              color: '#6b7280',
+              fill: '#6b7280'
+            };
+          }
+
+          const region = await this.prisma.region.findUnique({
+            where: { id: cr.region_id },
+            select: { name: true, color: true }
+          });
+
+          return {
+            region: cr.region_id,
+            name: region?.name || 'Região Desconhecida',
+            churches: cr._count.id,
+            color: region?.color || '#3b82f6',
+            fill: region?.color || '#3b82f6'
+          };
+        })
+      );
+
+      return results.sort((a, b) => a.name.localeCompare(b.name));
+    } catch (error) {
+      console.error('Error getting churches by region:', error);
+      return []; // Return empty array as fallback
+    }
+  }
 }

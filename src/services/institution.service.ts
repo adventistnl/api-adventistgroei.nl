@@ -202,14 +202,16 @@ export class InstitutionService {
   }
 
   async getInstitutionChartsData(institutionId: string) {
-    const [usersByRoleData, monthlyUserGrowth] = await Promise.all([
+    const [usersByRoleData, monthlyUserGrowth, churchesByRegionData] = await Promise.all([
       this.userRepository.getUsersByRoleForInstitution(institutionId),
-      this.userRepository.getMonthlyUserGrowthForInstitution(institutionId)
+      this.userRepository.getMonthlyUserGrowthForInstitution(institutionId),
+      this.userRepository.getChurchesByRegionForInstitution(institutionId)
     ]);
 
     return {
       usersByRole: usersByRoleData,
-      monthlyUserGrowth
+      monthlyUserGrowth,
+      churchesByRegion: churchesByRegionData
     };
   }
 }

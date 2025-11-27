@@ -58,10 +58,31 @@ export class UsersByRoleData {
 }
 
 @ObjectType()
+export class ChurchesByRegionData {
+  @Field()
+  region: string;
+
+  @Field()
+  name: string;
+
+  @Field()
+  churches: number;
+
+  @Field({ nullable: true })
+  color?: string;
+
+  @Field()
+  fill: string;
+}
+
+@ObjectType()
 export class InstitutionChartsData {
   @Field(() => [UsersByRoleData])
   usersByRole: UsersByRoleData[];
 
   @Field({ nullable: true })
   monthlyUserGrowth?: number;
+
+  @Field(() => [ChurchesByRegionData])
+  churchesByRegion: ChurchesByRegionData[];
 }
