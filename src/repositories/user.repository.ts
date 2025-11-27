@@ -104,12 +104,15 @@ export class UserRepository {
   }
 
   async update(user_to_update_id: string, data: UserUpdateDto, requester_id: string): Promise<Omit<User, 'password'>> {
-    const user = await this.prisma.user.findUnique({ where: { id: user_to_update_id } });
+    const user = await this.prisma.user.findUnique({ 
+      where: { id: user_to_update_id },
+      include: { contact: true }
+    });
     if (!user) throw new Error('User not found');
     if (data.language_preference && !Object.values(LanguagePreference).includes(data.language_preference as LanguagePreference)) {
       throw new Error('Invalid language preference');
     }
-    const { contact_id, church_id, department_id, institution_id, ...rest } = data;
+    const { contact_id, church_id, department_id, institution_id, phone, address, contact, ...rest } = data;
 
     // os métodos já estouram erros caso não encontrem
     if (institution_id) await this.institutioRepository.findById(institution_id);
@@ -121,18 +124,37 @@ export class UserRepository {
       Object.entries(rest).filter(([_, value]) => value !== undefined)
     );
 
-    const contactData = contact_id && data.contact
-      ? { connect: { id: contact_id }, update: { ...data.contact, updated_by: requester_id } }
-      : contact_id
-      ? { connect: { id: contact_id } }
-      : data.contact
-      ? {
-          upsert: {
-            create: { ...data.contact, is_primary: true, created_by: requester_id, updated_by: requester_id },
-            update: { ...data.contact, updated_by: requester_id },
-          },
-        }
-      : undefined;
+    // Handle contact data - merge phone and address with contact object
+    const contactUpdateData = {
+      ...(contact || {}),
+      ...(phone !== undefined && { phone }),
+      ...(address !== undefined && { address }),
+    };
+
+    let contactData;
+    if (user.contact_id) {
+      // User has existing contact - update it
+      contactData = Object.keys(contactUpdateData).length > 0 
+        ? { 
+            connect: { id: user.contact_id }, 
+            update: { 
+              ...contactUpdateData, 
+              updated_by: requester_id 
+            } 
+          }
+        : { connect: { id: user.contact_id } };
+    } else if (Object.keys(contactUpdateData).length > 0) {
+      // User has no contact but we have contact data - create new contact
+      contactData = {
+        create: {
+          ...contactUpdateData,
+          email: data.email || user.email,
+          is_primary: true,
+          created_by: requester_id,
+          updated_by: requester_id,
+        },
+      };
+    }
 
     return await this.prisma.user.update({
       omit: { password: true },
@@ -141,7 +163,10 @@ export class UserRepository {
         ...filteredData,
         language_preference: data.language_preference ? LanguagePreference[data.language_preference] : undefined,
         updated_by: requester_id,
-        contact: contactData,
+        ...(contactData && { contact: contactData }),
+        ...(church_id && { church: { connect: { id: church_id } } }),
+        ...(department_id && { department: { connect: { id: department_id } } }),
+        ...(institution_id && { institution: { connect: { id: institution_id } } }),
       },
     });
   }
@@ -168,6 +193,67 @@ export class UserRepository {
     });
     if (!user) throw new CustomGraphQLError('User not found', ErrorCode.NOT_FOUND, 404);
     return user;
+  }
+
+  async findByIdWithRoles(id: string): Promise<UserWithRoles | null> {
+    const user = await this.prisma.user.findUnique({
+      where: { id, is_deleted: false },
+      include: {
+        user_roles: {
+          where: { is_deleted: false, role: { is_deleted: false } },
+          include: {
+            role: {
+              include: {
+                role_permissions: {
+                  where: { is_deleted: false },
+                  include: {
+                    permission: true,
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    });
+
+    if (!user) return null;
+    if (!user.user_roles || user.user_roles.length === 0) {
+      // Return user even if no roles (unlike findByEmail which throws error)
+      const userWithRoles: UserWithRoles = {
+        ...user,
+        user_roles: [],
+        language_preference: (user.language_preference as any) || LanguagePreference.en,
+      };
+      return userWithRoles;
+    }
+
+    const userWithRoles: UserWithRoles = {
+      ...user,
+      user_roles: user.user_roles.map((ur) => {
+        const role = ur.role;
+        const permissionsByGroup: Record<string, PermissionModel[]> = {};
+
+        role.role_permissions.forEach((rp) => {
+          const perm = rp.permission;
+          const group = perm.group ? String(perm.group) : 'OUTRO';
+          if (!permissionsByGroup[group]) permissionsByGroup[group] = [];
+          permissionsByGroup[group].push({ ...perm, group });
+        });
+
+        return {
+          id: role.id,
+          name: role.name,
+          description: role.description,
+          key_code: role.key_code,
+          is_fixed: role.is_fixed,
+          permissions: Object.entries(permissionsByGroup).map(([group, data]) => ({ group, data })),
+        };
+      }),
+      language_preference: (user.language_preference as any) || LanguagePreference.en,
+    };
+
+    return userWithRoles;
   }
 
   async findByEmail(email: string): Promise<UserWithRoles | null> {

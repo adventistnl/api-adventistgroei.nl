@@ -28,6 +28,10 @@ export class UserService {
     return await this.userRepository.findById(id);
   }
 
+  async getUserByIdWithRoles(id: string): Promise<UserWithRoles | null> {
+    return await this.userRepository.findByIdWithRoles(id);
+  }
+
   async findByEmail(email: string): Promise<UserWithRoles | null> {
     return await this.userRepository.findByEmail(email);
   }

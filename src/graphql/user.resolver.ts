@@ -1,4 +1,4 @@
-import { Resolver, Mutation, Args, Query, Context } from '@nestjs/graphql';
+import { Resolver, Mutation, Args, Query, Context, ResolveField, Parent } from '@nestjs/graphql';
 import { UserService } from '../services/user.service';
 import { UserModel } from '../models/user.model';
 import { User } from '@prisma/client';
@@ -6,11 +6,23 @@ import { UserCreateDto, UserUpdateDto } from '../dto/user.dto';
 import { Permission } from '../middlewares/permissions.decorator';
 import { UseGuards } from '@nestjs/common';
 import { PermissionsGuard } from '../middlewares/permissions.guard';
+import { ContactService } from '../services/contact.service';
+import { InstitutionService } from '../services/institution.service';
+import { ChurchService } from '../services/church.service';
+import { Contact } from 'src/@generated/contact/contact.model';
+import { Institution } from 'src/@generated/institution/institution.model';
+import { Church } from 'src/@generated/church/church.model';
+import { UserWithRoles } from '../models';
 
 @Resolver(() => UserModel)
 @UseGuards(PermissionsGuard)
 export class UserResolver {
-  constructor(private readonly userService: UserService) {}
+  constructor(
+    private readonly userService: UserService,
+    private readonly contactService: ContactService,
+    private readonly institutionService: InstitutionService,
+    private readonly churchService: ChurchService,
+  ) {}
 
   @Mutation(() => UserModel)
   async createUser(
@@ -29,6 +41,12 @@ export class UserResolver {
   @Query(() => UserModel, { nullable: true })
   async user(@Args('id') id: string): Promise<Omit<User, 'password'> | null> {
     return await this.userService.getUserById(id);
+  }
+
+  @Permission()
+  @Query(() => UserWithRoles, { nullable: true })
+  async userWithRoles(@Args('id') id: string): Promise<UserWithRoles | null> {
+    return await this.userService.getUserByIdWithRoles(id);
   }
 
   @Permission()
@@ -72,5 +90,22 @@ export class UserResolver {
   ): Promise<Omit<User, 'password'>> {
     const requester_id = context.userId;
     return await this.userService.removeRoleFromUser(userId, roleId, requester_id);
+  }
+
+  @ResolveField(() => Contact, { nullable: true })
+  async contact(@Parent() user: UserModel): Promise<Contact | null> {
+    if (!user.contact_id) return null;
+    return await this.contactService.getContactById(user.contact_id);
+  }
+
+  @ResolveField(() => Institution, { nullable: true })
+  async institution(@Parent() user: UserModel): Promise<Institution | null> {
+    return await this.institutionService.getInstitutionById(user.institution_id);
+  }
+
+  @ResolveField(() => Church, { nullable: true })
+  async church(@Parent() user: UserModel): Promise<Church | null> {
+    if (!user.church_id) return null;
+    return await this.churchService.getChurchById(user.church_id);
   }
 }

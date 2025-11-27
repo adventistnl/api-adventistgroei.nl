@@ -1,5 +1,5 @@
 import { InputType, Field } from '@nestjs/graphql';
-import { ContactCreateDto } from './contact.dto';
+import { ContactCreateDto, ContactUpdateDto } from './contact.dto';
 import { IsOptional, IsString  } from 'class-validator';
 import { GenderType } from 'src/@generated/prisma/gender-type.enum';
 
@@ -83,9 +83,15 @@ export class UserUpdateDto {
   @Field(() => Boolean, { nullable: true })
   is_deleted?: boolean;
 
-  @Field(() => ContactCreateDto, { nullable: true })
-  contact?: ContactCreateDto;
+  @Field(() => ContactUpdateDto, { nullable: true })
+  contact?: ContactUpdateDto;
 
   @Field(() => GenderType, { nullable: true })
   gender?: GenderType;
+
+  @Field(() => String, { nullable: true })
+  phone?: string;
+
+  @Field(() => String, { nullable: true })
+  address?: string;
 }
