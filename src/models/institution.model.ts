@@ -44,3 +44,24 @@ export class InstitutionModel {
   @Field({ nullable: true })
   deleted_by?: string;
 }
+
+@ObjectType()
+export class UsersByRoleData {
+  @Field()
+  role: string;
+
+  @Field()
+  count: number;
+
+  @Field()
+  fill: string;
+}
+
+@ObjectType()
+export class InstitutionChartsData {
+  @Field(() => [UsersByRoleData])
+  usersByRole: UsersByRoleData[];
+
+  @Field({ nullable: true })
+  monthlyUserGrowth?: number;
+}

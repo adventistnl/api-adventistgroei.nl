@@ -17,6 +17,7 @@ import { SubsidyRequest } from 'src/@generated/subsidy-request/subsidy-request.m
 import { Contact } from 'src/@generated/contact/contact.model';
 import { AnnualBudget } from 'src/@generated/annual-budget/annual-budget.model';
 import { ChurchKPIData, ChurchChartData } from 'src/models/church.model';
+import { InstitutionChartsData } from 'src/models/institution.model';
 import { PrismaService } from '../services/prisma.service';
 
 
@@ -154,5 +155,10 @@ export class InstitutionResolver {
   @ResolveField(() => [ChurchChartData], { name: 'activeChurchesChartData' })
   async activeChurchesChartData(@Parent() institution: Institution) {
     return await this.institutionService.getActiveChurchesChartData(institution.id);
+  }
+
+  @ResolveField(() => InstitutionChartsData, { name: 'institutionChartsData' })
+  async institutionChartsData(@Parent() institution: Institution) {
+    return await this.institutionService.getInstitutionChartsData(institution.id);
   }
 }

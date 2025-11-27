@@ -250,7 +250,7 @@ export class UserRepository {
       }
     }
 
-    return this.prisma.user.findMany({
+    const users = await this.prisma.user.findMany({
       where: {
         ...filters,
       },
@@ -262,6 +262,24 @@ export class UserRepository {
         user_roles: { include: { role: true }, where: { is_deleted: false } },
       },
     });
+
+    console.log('🔍 UserRepository.findManyByFilters DEBUG:', {
+      filters,
+      users_count: users.length,
+      users_sample: users.slice(0, 2).map(u => ({
+        id: u.id,
+        name: u.name,
+        email: u.email,
+        user_roles_from_db: u.user_roles?.map(ur => ({
+          id: ur.id,
+          role_name: ur.role?.name,
+          role_key_code: ur.role?.key_code,
+          is_deleted: ur.is_deleted
+        })) || 'NO_ROLES'
+      }))
+    });
+
+    return users;
   }
 
   async addRoleToUser(userId: string, roleId: string, requesterId: string): Promise<Omit<User, 'password'>> {
@@ -344,5 +362,85 @@ export class UserRepository {
     });
 
     return updatedUser;
+  }
+
+  async getUsersByRoleForInstitution(institutionId: string): Promise<{ role: string; fill: string; count: number }[]> {
+    // Use Prisma aggregation instead of raw SQL
+    const userRoles = await this.prisma.userRole.groupBy({
+      by: ['role_id'],
+      where: {
+        user: {
+          institution_id: institutionId,
+          is_deleted: false
+        },
+        is_deleted: false,
+        role: {
+          is_deleted: false
+        }
+      },
+      _count: {
+        user_id: true
+      }
+    });
+
+    // Get role details for each grouped result
+    const results = await Promise.all(
+      userRoles.map(async (ur) => {
+        const role = await this.prisma.role.findUnique({
+          where: { id: ur.role_id },
+          select: { name: true, color: true }
+        });
+
+        return {
+          role: role?.name || 'Unknown',
+          fill: role?.color || '#3b82f6',
+          count: ur._count.user_id
+        };
+      })
+    );
+
+    return results.sort((a, b) => a.role.localeCompare(b.role));
+  }
+
+  async getMonthlyUserGrowthForInstitution(institutionId: string): Promise<number> {
+    try {
+      const now = new Date();
+      const currentMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+      const lastMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+
+      // Count users created this month
+      const currentMonthUsers = await this.prisma.user.count({
+        where: {
+          institution_id: institutionId,
+          created_at: {
+            gte: currentMonth
+          },
+          is_deleted: false
+        }
+      });
+
+      // Count users created last month
+      const lastMonthUsers = await this.prisma.user.count({
+        where: {
+          institution_id: institutionId,
+          created_at: {
+            gte: lastMonth,
+            lt: currentMonth
+          },
+          is_deleted: false
+        }
+      });
+
+      // Calculate growth percentage
+      if (lastMonthUsers === 0) {
+        return currentMonthUsers > 0 ? 100 : 0;
+      }
+
+      const growth = ((currentMonthUsers - lastMonthUsers) / lastMonthUsers) * 100;
+      return Math.round(growth * 100) / 100; // Round to 2 decimal places
+    } catch (error) {
+      console.error('Error calculating monthly user growth:', error);
+      return 0; // Return 0 as fallback
+    }
   }
 }
