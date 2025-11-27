@@ -223,7 +223,7 @@ export class UserRepository {
       const userWithRoles: UserWithRoles = {
         ...user,
         user_roles: [],
-        language_preference: (user.language_preference as any) || LanguagePreference.en,
+        language_preference: user.language_preference as LanguagePreference|| LanguagePreference.en,
       };
       return userWithRoles;
     }
@@ -250,7 +250,7 @@ export class UserRepository {
           permissions: Object.entries(permissionsByGroup).map(([group, data]) => ({ group, data })),
         };
       }),
-      language_preference: (user.language_preference as any) || LanguagePreference.en,
+      language_preference: user.language_preference as LanguagePreference || LanguagePreference.en,
     };
 
     return userWithRoles;
