@@ -1,4 +1,4 @@
-import { ObjectType, Field, registerEnumType } from '@nestjs/graphql';
+import { ObjectType, Field, registerEnumType, Float } from '@nestjs/graphql';
 import { LanguagePreference } from 'src/@generated/prisma/language-preference.enum';
 
 registerEnumType(LanguagePreference, {
@@ -43,6 +43,12 @@ export class InstitutionModel {
 
   @Field({ nullable: true })
   deleted_by?: string;
+
+  @Field(() => Float, { name: 'total_budget' })
+  total_budget: number;
+
+  @Field({ name: 'has_budget_record' })
+  has_budget_record: boolean;
 }
 
 @ObjectType()

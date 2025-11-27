@@ -1,4 +1,4 @@
-import { Resolver, Mutation, Args, Query, Context, ResolveField, Parent, Int } from '@nestjs/graphql';
+import { Resolver, Mutation, Args, Query, Context, ResolveField, Parent, Int, Float } from '@nestjs/graphql';
 import { InstitutionService } from '../services/institution.service';
 import { Institution } from '../@generated/institution/institution.model';
 import { Permission } from '../middlewares/permissions.decorator';
@@ -145,6 +145,18 @@ export class InstitutionResolver {
   @ResolveField(() => Int, { name: 'users_count' })
   usersCount(@Parent() institution: Institution) {
     return institution._count?.users ?? 0;
+  }
+
+  @ResolveField(() => Float, { name: 'total_budget' })
+  async totalBudget(@Parent() institution: Institution) {
+    const budgets = await this.institutionService.getAnnualBudgetByInstitutionId(institution.id);
+    return budgets.reduce((total, budget) => total + Number(budget.planned_budget || 0), 0);
+  }
+
+  @ResolveField(() => Boolean, { name: 'has_budget_record' })
+  async hasBudgetRecord(@Parent() institution: Institution) {
+    const budgets = await this.institutionService.getAnnualBudgetByInstitutionId(institution.id);
+    return budgets.length > 0;
   }
 
   @ResolveField(() => ChurchKPIData, { name: 'churchesKpiData' })
