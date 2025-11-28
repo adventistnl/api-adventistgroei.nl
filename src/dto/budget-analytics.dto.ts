@@ -40,6 +40,18 @@ export class DepartmentSpending {
 }
 
 @ObjectType()
+export class DepartmentMonthlySpending {
+  @Field(() => String)
+  departmentId!: string;
+
+  @Field(() => String)
+  departmentName!: string;
+
+  @Field(() => Float)
+  amount!: number;
+}
+
+@ObjectType()
 export class SpendingOverTime {
   @Field(() => String)
   date!: string;
@@ -47,20 +59,8 @@ export class SpendingOverTime {
   @Field(() => String)
   month!: string;
 
-  @Field(() => Float)
-  finance!: number;
-
-  @Field(() => Float)
-  operations!: number;
-
-  @Field(() => Float)
-  hr!: number;
-
-  @Field(() => Float)
-  it!: number;
-
-  @Field(() => Float)
-  marketing!: number;
+  @Field(() => [DepartmentMonthlySpending])
+  departments!: DepartmentMonthlySpending[];
 }
 
 @ObjectType()

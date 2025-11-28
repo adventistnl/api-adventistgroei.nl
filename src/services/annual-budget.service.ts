@@ -111,38 +111,41 @@ export class AnnualBudgetService {
     return await Promise.resolve([]);
   }
 
-  getSpendingOverTime(year: number, _institutionId: string): SpendingOverTime[] {
-    // TODO: Implementar consulta real a dados históricos mensais de transações
-    // Como não temos dados históricos mensais, vamos simular baseado nos budgets
-    // e criar uma distribuição mensal aproximada
+  async getSpendingOverTime(year: number, institutionId: string): Promise<SpendingOverTime[]> {
     const months = [
       'January', 'February', 'March', 'April', 'May', 'June',
       'July', 'August', 'September', 'October', 'November', 'December'
     ];
 
-    // TODO: Substituir por valores reais calculados a partir de transações mensais
-    // Valores base para simulação (em um sistema real, isso viria de transações mensais)
-    const baseValues = {
-      finance: 8000,
-      operations: 12000,
-      hr: 5000,
-      it: 4000,
-      marketing: 6000
-    };
+    // Buscar todos os budgets dos departamentos da instituição para o ano especificado
+    const departmentBudgets = await this.annualBudgetRepository.findManyWithRelations({
+      where: {
+        year: { equals: year },
+        institution_id: { equals: institutionId },
+        entity_type: { equals: 'INSTITUTION_DEPARTMENT' },
+        is_deleted: { equals: false }
+      }
+    });
 
+    // Filtrar apenas budgets com department válido
+    const validBudgets = departmentBudgets.filter(budget => budget.department);
+
+    // Criar estrutura de dados mensal
     return months.map((month, index) => {
-      // TODO: Remover variação aleatória e usar dados reais
-      // Adicionar variação mensal (+/- 20%)
-      const variation = 0.8 + Math.random() * 0.4; // 0.8 to 1.2
+      const monthDate = `${year}-${String(index + 1).padStart(2, '0')}-01`;
+      
+      // Para cada departamento, usar o valor atual de total_expenses
+      // Como não temos histórico mensal, mostramos o valor atual em cada mês
+      const departments = validBudgets.map(budget => ({
+        departmentId: budget.department_id || '',
+        departmentName: budget.department?.name || 'Unknown Department',
+        amount: Number(budget.total_expenses) || 0
+      }));
 
       return {
-        date: `${year}-${String(index + 1).padStart(2, '0')}-01`,
+        date: monthDate,
         month,
-        finance: Math.round(baseValues.finance * variation),
-        operations: Math.round(baseValues.operations * variation),
-        hr: Math.round(baseValues.hr * variation),
-        it: Math.round(baseValues.it * variation),
-        marketing: Math.round(baseValues.marketing * variation)
+        departments
       };
     });
   }

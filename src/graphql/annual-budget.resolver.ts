@@ -56,11 +56,11 @@ export class AnnualBudgetResolver {
 
   @Query(() => [SpendingOverTime])
   @Permission()
-  spendingOverTime(
+  async spendingOverTime(
     @Args('year', { type: () => Int }) year: number,
     @Args('institutionId') institutionId: string
-  ): SpendingOverTime[] {
-    return this.annualBudgetService.getSpendingOverTime(year, institutionId);
+  ): Promise<SpendingOverTime[]> {
+    return await this.annualBudgetService.getSpendingOverTime(year, institutionId);
   }
 
   @Query(() => [EntityDistribution])
