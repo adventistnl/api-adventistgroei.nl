@@ -105,10 +105,27 @@ export class AnnualBudgetService {
     };
   }
 
-  async getDepartmentSpending(_year: number, _institutionId: string): Promise<DepartmentSpending[]> {
-    // Para budgets da instituição, não há departments específicos
-    // Retornar array vazio pois os budgets da instituição não têm departments associados
-    return await Promise.resolve([]);
+  async getDepartmentSpending(year: number, institutionId: string): Promise<DepartmentSpending[]> {
+    // Buscar todos os budgets dos departamentos da instituição para o ano especificado
+    const departmentBudgets = await this.annualBudgetRepository.findManyWithRelations({
+      where: {
+        year: { equals: year },
+        institution_id: { equals: institutionId },
+        entity_type: { equals: 'INSTITUTION_DEPARTMENT' },
+        is_deleted: { equals: false }
+      }
+    });
+
+    // Mapear para o formato esperado
+    return departmentBudgets
+      .filter(budget => budget.department)
+      .map(budget => ({
+        name: budget.department?.name || 'Unknown Department',
+        planned: Number(budget.planned_budget) || 0,
+        approved: Number(budget.approved_amount || 0),
+        reserved: Number(budget.total_expenses) || 0, // Reserved = Spent (total_expenses)
+        institution: institutionId
+      }));
   }
 
   async getSpendingOverTime(year: number, institutionId: string): Promise<SpendingOverTime[]> {
