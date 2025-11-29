@@ -54,9 +54,6 @@ export class AnnualBudgetRepository {
       budgetCreateData.church = { connect: { id: entity_id } };
     } else if (entity_type === AnnualBudgetEntityType.INSTITUTION_DEPARTMENT || entity_type === AnnualBudgetEntityType.CHURCH_DEPARTMENT) {
       budgetCreateData.department = { connect: { id: entity_id } };
-      if (institutionId) {
-        budgetCreateData.institution_id = institutionId;
-      }
     }
 
     return this.prisma.annualBudget.create({
