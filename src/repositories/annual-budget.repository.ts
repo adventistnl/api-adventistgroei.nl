@@ -52,7 +52,13 @@ export class AnnualBudgetRepository {
       budgetCreateData.institution = { connect: { id: entity_id } };
     } else if (entity_type === AnnualBudgetEntityType.CHURCH) {
       budgetCreateData.church = { connect: { id: entity_id } };
-    } else if (entity_type === AnnualBudgetEntityType.INSTITUTION_DEPARTMENT || entity_type === AnnualBudgetEntityType.CHURCH_DEPARTMENT) {
+    } else if (entity_type === AnnualBudgetEntityType.INSTITUTION_DEPARTMENT) {
+      budgetCreateData.department = { connect: { id: entity_id } };
+      // Para budgets de departamento, também conectar a instituição
+      if (institutionId) {
+        budgetCreateData.institution = { connect: { id: institutionId } };
+      }
+    } else if (entity_type === AnnualBudgetEntityType.CHURCH_DEPARTMENT) {
       budgetCreateData.department = { connect: { id: entity_id } };
     }
 
