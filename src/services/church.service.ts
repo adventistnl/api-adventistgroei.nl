@@ -37,4 +37,8 @@ export class ChurchService {
   async getKPIData(churchId: string): Promise<{ totalMembers: number; totalDepartments: number; totalSubsidyRequests: number; totalBudget: number; totalUsedBudget: number; budgetUtilization: number }> {
     return await this.churchRepository.getKPIData(churchId);
   }
+
+  async getUsersByChurchId(churchId: string): Promise<any[]> {
+    return this.churchRepository.getUsersByChurchId(churchId);
+  }
 }

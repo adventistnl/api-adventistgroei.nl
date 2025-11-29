@@ -27,8 +27,8 @@
     "prisma:format": "prisma format",
     "seed:permissions": "ts-node -r tsconfig-paths/register src/scripts/seed-permissions.ts",
     "seed:roles": "ts-node -r tsconfig-paths/register src/scripts/seed-roles.ts",
-    "seed:developer": "ts-node -r tsconfig-paths/register src/scripts/seed-developer-role.ts",
-    "seed:all": "npm run seed:permissions && npm run seed:roles && npm run seed:developer"
+    "seed:users": "ts-node -r tsconfig-paths/register src/scripts/seed-users.ts",
+    "seed:all": "pnpm run seed:permissions && pnpm run seed:roles && pnpm run seed:users"
   },
   "dependencies": {
     "@nestjs/apollo": "^13.1.0",

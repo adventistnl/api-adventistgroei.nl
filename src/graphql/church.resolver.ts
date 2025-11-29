@@ -1,11 +1,12 @@
-import { Resolver, Mutation, Args, Query, Context } from '@nestjs/graphql';
+import { Resolver, Mutation, Args, Query, Context, ResolveField, Parent } from '@nestjs/graphql';
 import { ChurchService } from '../services/church.service';
 import { ChurchModel } from '../models/church.model';
-import { Church } from '@prisma/client';
+import { Church } from 'src/@generated/church/church.model';
 import { ChurchCreateDto, ChurchUpdateDto } from '../dto/church.dto';
 import { Permission } from '../middlewares/permissions.decorator';
 import { UseGuards } from '@nestjs/common';
 import { PermissionsGuard } from '../middlewares/permissions.guard';
+import { User } from 'src/@generated/user/user.model';
 
 @Resolver(() => ChurchModel)
 @UseGuards(PermissionsGuard)
@@ -54,4 +55,14 @@ export class ChurchResolver {
     return await this.churchService.deleteChurch(churchId, userId);
   }
 
+}
+
+@Resolver(() => Church)
+export class ChurchGeneratedResolver {
+  constructor(private readonly churchService: ChurchService) {}
+
+  @ResolveField(() => [User])
+  async users(@Parent() church: Church): Promise<User[]> {
+    return this.churchService.getUsersByChurchId(church.id);
+  }
 }

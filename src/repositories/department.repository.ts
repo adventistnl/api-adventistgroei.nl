@@ -329,4 +329,11 @@ export class DepartmentRepository {
       include: { church: true, contact: true, users: true, annual_budgets: true },
     });
   }
+
+  async getUsersByDepartmentId(departmentId: string): Promise<any[]> {
+    return this.prisma.user.findMany({
+      where: { department_id: departmentId, is_deleted: false },
+      include: { user_roles: { include: { role: true } } },
+    });
+  }
 }

@@ -50,7 +50,7 @@ export class InstitutionService {
     return await this.institutionRepository.findAll();
   }
 
-  async getInstitutionById(id: string): Promise<Institution | null> {
+  async getInstitutionById(id: string): Promise<Institution> {
     const institution = await this.institutionRepository.findById(id);
     if (!institution) {
       throw new CustomGraphQLError('Institution not found', ErrorCode.NOT_FOUND, 404);

@@ -400,4 +400,11 @@ export class ChurchRepository {
       budgetUtilization,
     };
   }
+
+  async getUsersByChurchId(churchId: string): Promise<any[]> {
+    return this.prisma.user.findMany({
+      where: { church_id: churchId, is_deleted: false },
+      include: { user_roles: { include: { role: true } } },
+    });
+  }
 }

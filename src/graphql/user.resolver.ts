@@ -1,7 +1,7 @@
 import { Resolver, Mutation, Args, Query, Context, ResolveField, Parent } from '@nestjs/graphql';
 import { UserService } from '../services/user.service';
 import { UserModel } from '../models/user.model';
-import { User } from '@prisma/client';
+import { User } from 'src/@generated/user/user.model';
 import { UserCreateDto, UserUpdateDto } from '../dto/user.dto';
 import { Permission } from '../middlewares/permissions.decorator';
 import { UseGuards } from '@nestjs/common';
@@ -98,13 +98,34 @@ export class UserResolver {
     return await this.contactService.getContactById(user.contact_id);
   }
 
-  @ResolveField(() => Institution, { nullable: true })
-  async institution(@Parent() user: UserModel): Promise<Institution | null> {
+  @ResolveField(() => Church, { nullable: true })
+  async church(@Parent() user: UserModel): Promise<Church | null> {
+    if (!user.church_id) return null;
+    return await this.churchService.getChurchById(user.church_id);
+  }
+}
+
+@Resolver(() => User)
+export class UserGeneratedResolver {
+  constructor(
+    private readonly contactService: ContactService,
+    private readonly institutionService: InstitutionService,
+    private readonly churchService: ChurchService,
+  ) {}
+
+  @ResolveField(() => Contact, { nullable: true })
+  async contact(@Parent() user: User): Promise<Contact | null> {
+    if (!user.contact_id) return null;
+    return await this.contactService.getContactById(user.contact_id);
+  }
+
+  @ResolveField(() => Institution)
+  async institution(@Parent() user: User): Promise<Institution> {
     return await this.institutionService.getInstitutionById(user.institution_id);
   }
 
   @ResolveField(() => Church, { nullable: true })
-  async church(@Parent() user: UserModel): Promise<Church | null> {
+  async church(@Parent() user: User): Promise<Church | null> {
     if (!user.church_id) return null;
     return await this.churchService.getChurchById(user.church_id);
   }

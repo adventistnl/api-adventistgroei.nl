@@ -1,10 +1,11 @@
-import { Resolver, Query, Mutation, Args, Context } from '@nestjs/graphql';
+import { Resolver, Query, Mutation, Args, Context, ResolveField, Parent } from '@nestjs/graphql';
 import { DepartmentService } from '../services/department.service';
 import { Department } from '../@generated/department/department.model';
 import { Permission } from '../middlewares/permissions.decorator';
 import { UseGuards } from '@nestjs/common';
 import { PermissionsGuard } from '../middlewares/permissions.guard';
 import { DepartmentCreateDto, DepartmentUpdateDto } from 'src/dto';
+import { User } from 'src/@generated/user/user.model';
 
 @Resolver(() => Department)
 @UseGuards(PermissionsGuard)
@@ -49,5 +50,10 @@ export class DepartmentResolver {
     @Context() context: { userId: string }
   ): Promise<Department> {
     return this.departmentService.deleteDepartment(id, context.userId);
+  }
+
+  @ResolveField(() => [User])
+  async users(@Parent() department: Department): Promise<User[]> {
+    return this.departmentService.getUsersByDepartmentId(department.id);
   }
 }

@@ -31,4 +31,8 @@ export class DepartmentService {
   async deleteDepartment(id: string, userId: string): Promise<Department> {
     return this.departmentRepository.softDelete(id, userId);
   }
+
+  async getUsersByDepartmentId(departmentId: string): Promise<any[]> {
+    return this.departmentRepository.getUsersByDepartmentId(departmentId);
+  }
 }
