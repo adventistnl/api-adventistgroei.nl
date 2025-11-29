@@ -7,6 +7,30 @@ import { RegionKPIData } from '../models';
 
 @Injectable()
 export class RegionRepository {
+      // ...existing code...
+    /**
+     * Busca uma região pelo nome da cidade (território).
+     * Retorna a região que contém a cidade informada no JSON territory.
+     */
+    async findRegionByCity(city: string): Promise<Region | null> {
+      const regions = await this.prisma.region.findMany({
+        where: { is_deleted: false },
+      });
+      for (const region of regions) {
+        if (!region.territory) continue;
+        // territory: { [country]: { [state]: [city, ...] } }
+        for (const country of Object.keys(region.territory)) {
+          const states = region.territory[country];
+          for (const state of Object.keys(states)) {
+            const cities = states[state];
+            if (cities.includes(city)) {
+              return region;
+            }
+          }
+        }
+      }
+      return null;
+    }
   constructor(
     private readonly prisma: PrismaService,
     
@@ -24,6 +48,16 @@ export class RegionRepository {
   }
 
   async create(data: RegionCreateDto, userId: string): Promise<Region> {
+    // Validação de unicidade de cidade
+    if (data.territory) {
+      const cities = this.extractCitiesFromTerritory(data.territory);
+      for (const city of cities) {
+        const region = await this.findRegionByCity(city);
+        if (region) {
+          throw new CustomGraphQLError(`Já existe uma região com a cidade '${city}'.`, ErrorCode.BAD_REQUEST, 400);
+        }
+      }
+    }
     return await this.prisma.region.create({
       data: {
         description: data.description,
@@ -38,6 +72,16 @@ export class RegionRepository {
 
   async update(regionId: string, data: RegionUpdateDto, userId: string): Promise<Region> {
     await this.findById(regionId);
+    // Validação de unicidade de cidade
+    if (data.territory) {
+      const cities = this.extractCitiesFromTerritory(data.territory);
+      for (const city of cities) {
+        const region = await this.findRegionByCity(city);
+        if (region && region.id !== regionId) {
+          throw new CustomGraphQLError(`Já existe uma região com a cidade '${city}'.`, ErrorCode.BAD_REQUEST, 400);
+        }
+      }
+    }
     return await this.prisma.region.update({
       where: { id: regionId },
       data: {
@@ -48,6 +92,21 @@ export class RegionRepository {
         updated_by: userId,
       },
     });
+  }
+
+  /**
+   * Extrai todas as cidades de um objeto territory
+   */
+  extractCitiesFromTerritory(territory: Record<string, Record<string, string[]>>): string[] {
+    const cities: string[] = [];
+    for (const country of Object.keys(territory)) {
+      const states = territory[country];
+      for (const state of Object.keys(states)) {
+        const stateCities = states[state];
+        cities.push(...stateCities);
+      }
+    }
+    return cities;
   }
 
   async softDelete(id: string, userId: string): Promise<Region> {

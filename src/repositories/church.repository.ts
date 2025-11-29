@@ -16,12 +16,14 @@ export class ChurchRepository {
   async create(data: ChurchCreateDto, userId: string): Promise<Church> {
     // Validação de relacionamentos
     await this.validateInstitution(data.institution_id);
-    if (data.region_id) {
-      await this.validateRegion(data.region_id);
-    }
 
     let contactId: string | undefined = undefined;
+    let regionId: string | undefined = undefined;
+
+    // Cria contato e obtém cidade
+    let city: string | undefined = undefined;
     if (data.contact) {
+      city = data.contact.city;
       const contact = await this.prisma.contact.create({
         data: {
           ...data.contact,
@@ -33,10 +35,18 @@ export class ChurchRepository {
       contactId = contact.id;
     }
 
+    // Busca região pela cidade
+    if (city) {
+      const region = await this.regionRepository.findRegionByCity(city);
+      if (region) {
+        regionId = region.id;
+      }
+    }
+
     return await this.prisma.church.create({
       data: {
         institution: { connect: { id: data.institution_id } },
-        region: data.region_id ? { connect: { id: data.region_id } } : undefined,
+        region: regionId ? { connect: { id: regionId } } : undefined,
         name: data.name,
         type: data.type || 'STANDARD',
         contact:  contactId ? { connect: { id: contactId } } : undefined,
@@ -49,32 +59,40 @@ export class ChurchRepository {
 
   async update(churchId: string, data: ChurchUpdateDto, userId: string): Promise<Church> {
     await this.findById(churchId);
-    if (data.region_id) {
-      await this.regionRepository.findById(data.region_id);
-    }
     if (data.institution_id) {
       await this.institutionRepository.findById(data.institution_id);
     }
-    
+
     // Check if contact exists before trying to update
     let contactData = {};
+    let regionId: string | undefined = undefined;
+    let city: string | undefined = undefined;
     if (data.contact) {
+      city = data.contact.city;
       const church = await this.prisma.church.findUnique({
         where: { id: churchId },
         select: { contact_id: true },
       });
-      
+
       // Filter out undefined and null values from contact data
       const cleanContactData = Object.fromEntries(
         Object.entries(data.contact).filter(([_, v]) => v !== undefined && v !== null)
       );
-      
+
       if (church?.contact_id) {
         // Contact exists, update it
         contactData = { contact: { update: { ...cleanContactData, updated_by: userId } } };
       } else {
-        // Contact doesn't exist, create it with is_primary default to true
+        // Contact doesn't exist, create it com is_primary default true
         contactData = { contact: { create: { ...cleanContactData, is_primary: true, created_by: userId, updated_by: userId } } };
+      }
+    }
+
+    // Busca região pela cidade
+    if (city) {
+      const region = await this.regionRepository.findRegionByCity(city);
+      if (region) {
+        regionId = region.id;
       }
     }
 
@@ -84,7 +102,7 @@ export class ChurchRepository {
         ...(data.institution_id && { institution: { connect: { id: data.institution_id } } }),
         ...(data.type && { type: data.type }),
         ...(data.name && { name: data.name }),
-        ...(data.region_id && { region: { connect: { id: data.region_id } } }),
+        ...(regionId && { region: { connect: { id: regionId } } }),
         ...contactData,
         updated_by: userId,
       },
