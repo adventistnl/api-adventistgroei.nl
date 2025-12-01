@@ -349,22 +349,6 @@ export class UserRepository {
       },
     });
 
-    console.log('🔍 UserRepository.findManyByFilters DEBUG:', {
-      filters,
-      users_count: users.length,
-      users_sample: users.slice(0, 2).map(u => ({
-        id: u.id,
-        name: u.name,
-        email: u.email,
-        user_roles_from_db: u.user_roles?.map(ur => ({
-          id: ur.id,
-          role_name: ur.role?.name,
-          role_key_code: ur.role?.key_code,
-          is_deleted: ur.is_deleted
-        })) || 'NO_ROLES'
-      }))
-    });
-
     return users;
   }
 
