@@ -4,6 +4,7 @@ import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule } from '@nestjs/config';
 import { ScheduleModule } from '@nestjs/schedule';
+import { APP_FILTER, APP_INTERCEPTOR } from '@nestjs/core';
 import { getUserIdFromRequest } from './middlewares/auth-context.helper';
 
 import { JwtStrategy } from './middlewares';
@@ -12,6 +13,9 @@ import * as Resolvers from './graphql';
 import * as Repositories from './repositories';
 import * as CronServices from './cron/services';
 import { ContextDto } from './dto/context.dto';
+import { LoggerService } from './services/logger.service';
+import { LoggingInterceptor } from './interceptors/logging.interceptor';
+import { GlobalExceptionFilter } from './filters/global-exception.filter';
 
 const JWT_SECRET = process.env.JWT_SECRET;
 
@@ -39,6 +43,17 @@ const JWT_SECRET = process.env.JWT_SECRET;
     }),
   ],
   providers: [
+    // Logging system
+    LoggerService,
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: LoggingInterceptor,
+    },
+    {
+      provide: APP_FILTER,
+      useClass: GlobalExceptionFilter,
+    },
+    // Application services
     ...Object.values(Services),
     ...Object.values(Resolvers),
     ...Object.values(Repositories),
