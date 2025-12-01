@@ -301,6 +301,20 @@ export class ChurchRepository {
     return church;
   }
 
+  // Método para buscar uma igreja sem lançar erro - usado em resolvers de relacionamento
+  async findByIdSafe(id: string): Promise<Church | null> {
+    const church = await this.prisma.church.findUnique({
+      where: { id },
+    });
+
+    // Retorna null se a igreja não existe ou foi deletada, sem lançar erro
+    if (!church || church.is_deleted) {
+      return null;
+    }
+
+    return church;
+  }
+
   async findOneByFilters(filters: Partial<Record<keyof Church, any>>): Promise<Church | null> {
     const allowedKeys: (keyof Church)[] = ['institution_id', 'region_id', 'name', 'is_deleted'];
 

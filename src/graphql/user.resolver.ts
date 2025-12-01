@@ -101,7 +101,7 @@ export class UserResolver {
   @ResolveField(() => Church, { nullable: true })
   async church(@Parent() user: UserModel): Promise<Church | null> {
     if (!user.church_id) return null;
-    return await this.churchService.getChurchById(user.church_id);
+    return await this.churchService.getChurchByIdSafe(user.church_id);
   }
 }
 
@@ -127,6 +127,6 @@ export class UserGeneratedResolver {
   @ResolveField(() => Church, { nullable: true })
   async church(@Parent() user: User): Promise<Church | null> {
     if (!user.church_id) return null;
-    return await this.churchService.getChurchById(user.church_id);
+    return await this.churchService.getChurchByIdSafe(user.church_id);
   }
 }
