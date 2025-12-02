@@ -80,7 +80,7 @@ export class AnnualBudgetUncheckedUpdateManyWithoutDepartmentInput {
 
     @Field(() => DecimalFieldUpdateOperationsInput, {nullable:true})
     @Type(() => DecimalFieldUpdateOperationsInput)
-    requested_amount?: DecimalFieldUpdateOperationsInput;
+    allocated_amount?: DecimalFieldUpdateOperationsInput;
 
     @Field(() => NullableDecimalFieldUpdateOperationsInput, {nullable:true})
     @Type(() => NullableDecimalFieldUpdateOperationsInput)

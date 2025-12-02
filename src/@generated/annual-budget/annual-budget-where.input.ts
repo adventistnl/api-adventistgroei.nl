@@ -99,7 +99,7 @@ export class AnnualBudgetWhereInput {
 
     @Field(() => DecimalFilter, {nullable:true})
     @Type(() => DecimalFilter)
-    requested_amount?: DecimalFilter;
+    allocated_amount?: DecimalFilter;
 
     @Field(() => DecimalNullableFilter, {nullable:true})
     @Type(() => DecimalNullableFilter)

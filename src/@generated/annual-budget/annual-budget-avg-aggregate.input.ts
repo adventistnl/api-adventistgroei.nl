@@ -17,7 +17,7 @@ export class AnnualBudgetAvgAggregateInput {
     balance?: true;
 
     @Field(() => Boolean, {nullable:true})
-    requested_amount?: true;
+    allocated_amount?: true;
 
     @Field(() => Boolean, {nullable:true})
     approved_amount?: true;

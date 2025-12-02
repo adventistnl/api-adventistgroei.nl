@@ -3,7 +3,7 @@ import { UseGuards } from '@nestjs/common';
 import { PermissionsGuard } from '../middlewares/permissions.guard';
 import { AnnualBudget } from 'src/@generated/annual-budget/annual-budget.model';
 import { FindManyAnnualBudgetArgs } from 'src/@generated/annual-budget/find-many-annual-budget.args';
-import { AnnualBudgetCreateDto, AnnualBudgetUpdateDto, DeleteBudgetResponse, ApproveAnnualBudgetDto, ApproveBudgetResponse, RejectAnnualBudgetDto, RejectBudgetResponse, RequestRevisionAnnualBudgetDto, RequestRevisionBudgetResponse, ToggleLockBudgetResponse } from 'src/dto/annual_budget.dto';
+import { AnnualBudgetCreateDto, AnnualBudgetUpdateDto, DeleteBudgetResponse, ApproveAnnualBudgetDto, ApproveBudgetResponse, RejectAnnualBudgetDto, RejectBudgetResponse, RequestRevisionAnnualBudgetDto, RequestRevisionBudgetResponse, ToggleLockBudgetResponse, RecalculateAllocatedAmountsResponse } from 'src/dto/annual_budget.dto';
 import { BudgetKPIs, DepartmentSpending, SpendingOverTime, BudgetDistribution, EntityDistribution } from 'src/dto/budget-analytics.dto';
 import { Permission } from 'src/middlewares';
 import { AnnualBudgetService } from 'src/services/annual-budget.service';
@@ -191,6 +191,12 @@ export class AnnualBudgetResolver {
     @Context() context: { userId: string },
   ): Promise<ToggleLockBudgetResponse> {
     return this.annualBudgetService.toggleLock(id, context.userId);
+  }
+
+  @Mutation(() => RecalculateAllocatedAmountsResponse)
+  @Permission()
+  async recalculateInstitutionAllocatedAmounts(): Promise<RecalculateAllocatedAmountsResponse> {
+    return this.annualBudgetService.recalculateAllAllocatedAmounts();
   }
 
 }

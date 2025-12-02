@@ -66,7 +66,7 @@ export class AnnualBudgetCountAggregate {
     department_id!: number;
 
     @Field(() => Int, {nullable:false})
-    requested_amount!: number;
+    allocated_amount!: number;
 
     @Field(() => Int, {nullable:false})
     approved_amount!: number;

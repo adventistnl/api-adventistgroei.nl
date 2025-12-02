@@ -82,12 +82,21 @@ export class AnnualBudgetService {
       }
     });
 
+    if (!budgets || budgets.length === 0) {
+      return {
+        totalInstitutionBudget: 0,
+        totalAllocated: 0,
+        totalSpent: 0,
+        budgetRemaining: 0,
+        budgetUtilization: 0,
+        activeDepartments: 0
+      };
+    }
+
     // Calcular totais baseados nos dados reais do budget da instituição
-    const totalInstitutionBudget = (budgets[0].planned_budget as unknown as number) || 0
-
-    const totalAllocated = (budgets[0].total_expenses as unknown as number) || 0
-
-    const totalSpent = (budgets[0].total_expenses as unknown as number) || 0
+    const totalInstitutionBudget = (budgets[0].planned_budget as unknown as number) || 0;
+    const totalAllocated = (budgets[0].allocated_amount as unknown as number) || 0;
+    const totalSpent = (budgets[0].total_expenses as unknown as number) || 0;
 
     const budgetRemaining = totalInstitutionBudget - totalSpent;
     const budgetUtilization = totalInstitutionBudget > 0 ?
@@ -237,5 +246,9 @@ export class AnnualBudgetService {
 
     // Ordenar por valor decrescente
     return entities.sort((a, b) => b.amount - a.amount);
+  }
+
+  async recalculateAllAllocatedAmounts(): Promise<{ updated: number; message: string }> {
+    return this.annualBudgetRepository.recalculateAllInstitutionAllocatedAmounts();
   }
 }

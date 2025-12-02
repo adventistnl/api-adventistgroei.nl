@@ -27,7 +27,7 @@ const JWT_SECRET = process.env.JWT_SECRET;
       driver: ApolloDriver,
       playground: true,
       introspection: true,
-      autoSchemaFile: true,
+      autoSchemaFile: 'schema.gql',
       context: async ({ req }: { req: { headers: Record<string, string> } }): Promise<ContextDto> => {
         const ctx = await getUserIdFromRequest(req);
         return {

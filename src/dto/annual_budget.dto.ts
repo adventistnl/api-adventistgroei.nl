@@ -18,7 +18,7 @@ export class AnnualBudgetCreateDto {
   justification?: string;
 
   @Field(() => Float, {nullable:false})
-  requested_amount!: number;
+  allocated_amount!: number;
 
   @Field(() => AnnualBudgetEntityType, {nullable:false})
   entity_type!: `${AnnualBudgetEntityType}`;
@@ -180,4 +180,13 @@ export class ToggleLockBudgetResponse {
 
   @Field(() => Date)
   updated_at!: Date;
+}
+
+@ObjectType()
+export class RecalculateAllocatedAmountsResponse {
+  @Field(() => Int)
+  updated!: number;
+
+  @Field(() => String)
+  message!: string;
 }

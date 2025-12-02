@@ -21,7 +21,7 @@ export enum AnnualBudgetScalarFieldEnum {
     institution_id = "institution_id",
     church_id = "church_id",
     department_id = "department_id",
-    requested_amount = "requested_amount",
+    allocated_amount = "allocated_amount",
     approved_amount = "approved_amount",
     requested_by = "requested_by",
     reviewed_by = "reviewed_by",

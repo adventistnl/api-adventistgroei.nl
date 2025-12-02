@@ -72,7 +72,7 @@ export class AnnualBudgetOrderByWithRelationInput {
     department_id?: SortOrderInput;
 
     @Field(() => SortOrder, {nullable:true})
-    requested_amount?: `${SortOrder}`;
+    allocated_amount?: `${SortOrder}`;
 
     @Field(() => SortOrderInput, {nullable:true})
     @Type(() => SortOrderInput)

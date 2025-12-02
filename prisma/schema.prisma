@@ -376,7 +376,7 @@ model AnnualBudget {
   church                Church?            @relation(fields: [church_id], references: [id])
   department_id         String?
   department            Department?        @relation(fields: [department_id], references: [id])
-  requested_amount      Decimal
+  allocated_amount      Decimal
   approved_amount       Decimal?
   requested_by          String
   reviewed_by           String?

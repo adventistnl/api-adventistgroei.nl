@@ -18,7 +18,7 @@ export class AnnualBudgetSumOrderByAggregateInput {
     balance?: `${SortOrder}`;
 
     @Field(() => SortOrder, {nullable:true})
-    requested_amount?: `${SortOrder}`;
+    allocated_amount?: `${SortOrder}`;
 
     @Field(() => SortOrder, {nullable:true})
     approved_amount?: `${SortOrder}`;

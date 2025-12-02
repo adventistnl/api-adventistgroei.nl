@@ -75,7 +75,7 @@ export class AnnualBudgetCreateWithoutInstitutionInput {
     @Field(() => GraphQLDecimal, {nullable:false})
     @Type(() => Object)
     @Transform(transformToDecimal)
-    requested_amount!: Decimal;
+    allocated_amount!: Decimal;
 
     @Field(() => GraphQLDecimal, {nullable:true})
     @Type(() => Object)

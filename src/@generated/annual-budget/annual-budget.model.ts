@@ -78,7 +78,7 @@ export class AnnualBudget {
     department_id!: string | null;
 
     @Field(() => GraphQLDecimal, {nullable:false})
-    requested_amount!: Decimal;
+    allocated_amount!: Decimal;
 
     @Field(() => GraphQLDecimal, {nullable:true})
     approved_amount!: Decimal | null;

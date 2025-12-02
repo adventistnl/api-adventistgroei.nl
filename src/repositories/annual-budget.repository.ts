@@ -47,6 +47,12 @@ export class AnnualBudgetRepository {
       balance: budgetData.planned_budget - (budgetData.total_expenses || 0),
     };
 
+    // Para departamentos, o allocated_amount deve ser igual ao planned_budget
+    if (entity_type === AnnualBudgetEntityType.INSTITUTION_DEPARTMENT || 
+        entity_type === AnnualBudgetEntityType.CHURCH_DEPARTMENT) {
+      budgetCreateData.allocated_amount = budgetData.planned_budget;
+    }
+
     // Adicionar conexões baseadas no tipo de entidade
     if (entity_type === AnnualBudgetEntityType.INSTITUTION) {
       budgetCreateData.institution = { connect: { id: entity_id } };
@@ -62,8 +68,19 @@ export class AnnualBudgetRepository {
       budgetCreateData.department = { connect: { id: entity_id } };
     }
 
-    return this.prisma.annualBudget.create({
-      data: budgetCreateData,
+    // Usar transação para garantir consistência dos dados
+    return this.prisma.$transaction(async (tx) => {
+      // Criar o orçamento do departamento
+      const createdBudget = await tx.annualBudget.create({
+        data: budgetCreateData,
+      });
+
+      // Se for um orçamento de departamento de instituição, atualizar o orçamento da instituição
+      if (entity_type === AnnualBudgetEntityType.INSTITUTION_DEPARTMENT && institutionId) {
+        await this.updateInstitutionAllocatedAmount(tx, institutionId, dto.year);
+      }
+
+      return createdBudget;
     });
   }
 
@@ -147,6 +164,11 @@ export class AnnualBudgetRepository {
     // Verificar se o orçamento existe
     const existingBudget = await this.prisma.annualBudget.findUnique({
       where: { id },
+      include: {
+        department: {
+          select: { institution_id: true }
+        }
+      }
     });
 
     if (!existingBudget) {
@@ -171,7 +193,7 @@ export class AnnualBudgetRepository {
     }
 
     // Preparar dados para atualização
-    const updateData: Partial<AnnualBudgetUpdateDto & { updated_by: string; balance?: number }> = {
+    const updateData: Partial<AnnualBudgetUpdateDto & { updated_by: string; balance?: number; allocated_amount?: number }> = {
       ...dto,
       updated_by: userId,
     };
@@ -184,9 +206,33 @@ export class AnnualBudgetRepository {
       updateData.balance = newPlannedBudget - newTotalExpenses;
     }
 
-    return this.prisma.annualBudget.update({
-      where: { id },
-      data: updateData,
+    // Para orçamentos de departamento, atualizar allocated_amount quando planned_budget muda
+    if (existingBudget.entity_type === AnnualBudgetEntityType.INSTITUTION_DEPARTMENT && 
+        dto.planned_budget !== undefined) {
+      updateData.allocated_amount = Number(dto.planned_budget);
+    }
+
+    // Usar transação para garantir consistência dos dados
+    return this.prisma.$transaction(async (tx) => {
+      // Atualizar o orçamento
+      const updatedBudget = await tx.annualBudget.update({
+        where: { id },
+        data: updateData,
+      });
+
+      // Se for um orçamento de departamento de instituição e o allocated_amount mudou, recalcular orçamento da instituição
+      if (existingBudget.entity_type === AnnualBudgetEntityType.INSTITUTION_DEPARTMENT && 
+          existingBudget.department?.institution_id &&
+          dto.planned_budget !== undefined) {
+        
+        await this.updateInstitutionAllocatedAmount(
+          tx, 
+          existingBudget.department.institution_id, 
+          existingBudget.year
+        );
+      }
+
+      return updatedBudget;
     });
   }
 
@@ -234,6 +280,11 @@ export class AnnualBudgetRepository {
     // Verificar se o orçamento existe
     const existingBudget = await this.prisma.annualBudget.findUnique({
       where: { id },
+      include: {
+        department: {
+          select: { institution_id: true }
+        }
+      }
     });
 
     if (!existingBudget) {
@@ -249,21 +300,35 @@ export class AnnualBudgetRepository {
       );
     }
 
-    // Soft delete: marcar como deletado
-    await this.prisma.annualBudget.update({
-      where: { id },
-      data: {
-        is_deleted: true,
-        deleted_at: new Date(),
-        deleted_by: userId,
-        updated_by: userId,
-      },
-    });
+    // Usar transação para garantir consistência dos dados
+    return this.prisma.$transaction(async (tx) => {
+      // Soft delete: marcar como deletado
+      await tx.annualBudget.update({
+        where: { id },
+        data: {
+          is_deleted: true,
+          deleted_at: new Date(),
+          deleted_by: userId,
+          updated_by: userId,
+        },
+      });
 
-    return {
-      success: true,
-      message: 'Annual budget deleted successfully.',
-    };
+      // Se for um orçamento de departamento de instituição, recalcular o total alocado da instituição
+      if (existingBudget.entity_type === AnnualBudgetEntityType.INSTITUTION_DEPARTMENT && 
+          existingBudget.department?.institution_id) {
+        
+        await this.updateInstitutionAllocatedAmount(
+          tx, 
+          existingBudget.department.institution_id, 
+          existingBudget.year
+        );
+      }
+
+      return {
+        success: true,
+        message: 'Annual budget deleted successfully.',
+      };
+    });
   }
 
   async approve(id: string, dto: { approved_amount?: number; notes?: string }, userId: string): Promise<{
@@ -294,9 +359,9 @@ export class AnnualBudgetRepository {
     }
 
     // Validar approved_amount se fornecido
-    if (dto.approved_amount !== undefined && dto.approved_amount > Number(existingBudget.requested_amount)) {
+    if (dto.approved_amount !== undefined && dto.approved_amount > Number(existingBudget.allocated_amount)) {
       throw new CustomGraphQLError(
-        'Approved amount cannot be greater than requested amount.',
+        'Approved amount cannot be greater than allocated amount.',
         ErrorCode.BAD_REQUEST,
         400
       );
@@ -312,7 +377,7 @@ export class AnnualBudgetRepository {
       notes?: string;
     }> = {
       status: AnnualBudgetStatus.APPROVED,
-      approved_amount: dto.approved_amount ?? Number(existingBudget.requested_amount),
+      approved_amount: dto.approved_amount ?? Number(existingBudget.allocated_amount),
       approval_date: new Date(),
       approved_by: userId,
       updated_by: userId,
@@ -493,38 +558,7 @@ export class AnnualBudgetRepository {
       );
     }
 
-    // Se estiver bloqueando um budget da instituição, bloquear também todos os budgets dos departamentos que ainda estão abertos
-    if (newLockState && existingBudget.entity_type === AnnualBudgetEntityType.INSTITUTION && existingBudget.institution_id) {
-      // Buscar todos os budgets dos departamentos desta instituição que não estão deletados e não estão bloqueados
-      const departmentBudgets = await this.prisma.annualBudget.findMany({
-        where: {
-          institution_id: existingBudget.institution_id,
-          entity_type: AnnualBudgetEntityType.INSTITUTION_DEPARTMENT,
-          is_deleted: false,
-          is_locked: false, // Apenas os que ainda estão abertos
-        },
-      });
-
-      this.logger.log(`Encontrados ${departmentBudgets.length} budgets de departamento abertos para bloquear na instituição ${existingBudget.institution_id}`);
-
-      // Bloquear todos os budgets dos departamentos que estavam abertos
-      if (departmentBudgets.length > 0) {
-        await this.prisma.annualBudget.updateMany({
-          where: {
-            id: {
-              in: departmentBudgets.map(budget => budget.id),
-            },
-          },
-          data: {
-            is_locked: true,
-            updated_by: userId,
-          },
-        });
-
-        this.logger.log(`Bloqueados ${departmentBudgets.length} budgets de departamentos da instituição ${existingBudget.institution_id}`);
-      }
-    }
-
+    // Atualizar apenas o orçamento atual - não afetar outros orçamentos
     const updatedBudget = await this.prisma.annualBudget.update({
       where: { id },
       data: {
@@ -533,11 +567,105 @@ export class AnnualBudgetRepository {
       },
     });
 
+    this.logger.log(`Budget ${id} lock state changed to: ${newLockState}`);
+
     return {
       id: updatedBudget.id,
       is_locked: updatedBudget.is_locked,
       updated_at: updatedBudget.updated_at,
     };
+  }
+
+  /**
+   * Atualiza o valor alocado do orçamento da instituição recalculando a soma de todos os departamentos
+   */
+  private async updateInstitutionAllocatedAmount(
+    tx: any, 
+    institutionId: string, 
+    year: number, 
+    amount?: number, 
+    operation?: 'ADD' | 'SUBTRACT'
+  ): Promise<void> {
+    // Recalcular o total alocado baseado na soma atual de todos os departamentos da instituição
+    const departmentBudgetsSum = await tx.annualBudget.aggregate({
+      where: {
+        department: {
+          institution_id: institutionId
+        },
+        year: year,
+        entity_type: {
+          in: [AnnualBudgetEntityType.INSTITUTION_DEPARTMENT, AnnualBudgetEntityType.CHURCH_DEPARTMENT]
+        },
+        is_deleted: false
+      },
+      _sum: {
+        allocated_amount: true
+      }
+    });
+
+    const totalAllocatedAmount = Number(departmentBudgetsSum._sum.allocated_amount || 0);
+
+    // Buscar o orçamento da instituição para o ano especificado
+    const institutionBudget = await tx.annualBudget.findFirst({
+      where: {
+        institution_id: institutionId,
+        year: year,
+        entity_type: AnnualBudgetEntityType.INSTITUTION,
+        is_deleted: false
+      }
+    });
+
+    if (institutionBudget) {
+      const currentAllocated = Number(institutionBudget.allocated_amount || 0);
+
+      // Atualizar o allocated_amount da instituição com o total calculado
+      await tx.annualBudget.update({
+        where: { id: institutionBudget.id },
+        data: {
+          allocated_amount: totalAllocatedAmount,
+          updated_at: new Date()
+        }
+      });
+
+      this.logger.log(`Updated institution budget allocated amount: ${currentAllocated} -> ${totalAllocatedAmount} (recalculated from departments)`);
+    } else {
+      this.logger.warn(`No institution budget found for institution ${institutionId} and year ${year}`);
+    }
+  }
+
+  /**
+   * Método público para recalcular os valores alocados de todas as instituições
+   */
+  async recalculateAllInstitutionAllocatedAmounts(): Promise<{ updated: number; message: string }> {
+    let updatedCount = 0;
+
+    return this.prisma.$transaction(async (tx) => {
+      // Buscar todas as instituições que têm orçamentos
+      const institutionBudgets = await tx.annualBudget.findMany({
+        where: {
+          entity_type: AnnualBudgetEntityType.INSTITUTION,
+          is_deleted: false
+        },
+        select: {
+          institution_id: true,
+          year: true
+        },
+        distinct: ['institution_id', 'year']
+      });
+
+      // Recalcular cada combinação de instituição/ano
+      for (const budget of institutionBudgets) {
+        if (budget.institution_id) {
+          await this.updateInstitutionAllocatedAmount(tx, budget.institution_id, budget.year);
+          updatedCount++;
+        }
+      }
+
+      return {
+        updated: updatedCount,
+        message: `Successfully recalculated allocated amounts for ${updatedCount} institution budgets.`
+      };
+    });
   }
 
 }

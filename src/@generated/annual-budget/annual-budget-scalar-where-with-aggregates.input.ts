@@ -95,7 +95,7 @@ export class AnnualBudgetScalarWhereWithAggregatesInput {
 
     @Field(() => DecimalWithAggregatesFilter, {nullable:true})
     @Type(() => DecimalWithAggregatesFilter)
-    requested_amount?: DecimalWithAggregatesFilter;
+    allocated_amount?: DecimalWithAggregatesFilter;
 
     @Field(() => DecimalNullableWithAggregatesFilter, {nullable:true})
     @Type(() => DecimalNullableWithAggregatesFilter)

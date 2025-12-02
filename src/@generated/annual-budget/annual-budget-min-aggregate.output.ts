@@ -72,7 +72,7 @@ export class AnnualBudgetMinAggregate {
     department_id?: string;
 
     @Field(() => GraphQLDecimal, {nullable:true})
-    requested_amount?: Decimal;
+    allocated_amount?: Decimal;
 
     @Field(() => GraphQLDecimal, {nullable:true})
     approved_amount?: Decimal;
