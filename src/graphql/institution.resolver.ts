@@ -16,7 +16,7 @@ import { DirectMessage } from 'src/@generated/direct-message/direct-message.mode
 import { SubsidyRequest } from 'src/@generated/subsidy-request/subsidy-request.model';
 import { Contact } from 'src/@generated/contact/contact.model';
 import { AnnualBudget } from 'src/@generated/annual-budget/annual-budget.model';
-import { ChurchKPIData, ChurchChartData } from 'src/models/church.model';
+import { ChurchKPIData, ChurchChartData, ChurchActivityData } from 'src/models/church.model';
 import { InstitutionChartsData } from 'src/models/institution.model';
 import { PrismaService } from '../services/prisma.service';
 
@@ -166,6 +166,12 @@ export class InstitutionResolver {
   @ResolveField(() => ChurchKPIData, { name: 'churchesKpiData' })
   async churchesKpiData(@Parent() institution: Institution) {
     return await this.institutionService.getChurchesKpiDataForInstitution(institution.id);
+  }
+
+  @Permission()
+  @ResolveField(() => [ChurchActivityData], { name: 'churchesActivityData' })
+  async churchesActivityData(@Parent() institution: Institution) {
+    return await this.institutionService.getChurchesActivityDataForInstitution(institution.id);
   }
 
   @ResolveField(() => [ChurchChartData], { name: 'activeChurchesChartData' })

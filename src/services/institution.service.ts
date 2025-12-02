@@ -7,7 +7,7 @@ import { Institution } from '../@generated/institution/institution.model';
 import { CustomGraphQLError, ErrorCode } from '../common/errors/custom-graphql-error';
 import { ContactRepository, ChurchRepository, CommunicationRepository, DepartmentRepository, InstitutionRepository, ProjectRepository, NotificationRepository, RegionRepository, SettingRepository, SubsidyRequestRepository, UserRepository, AnnualBudgetRepository } from 'src/repositories';
 import { DirectMessageRepository } from 'src/repositories/direct-message.repository';
-import { ChurchChartData } from '../models/church.model';
+import { ChurchChartData, ChurchActivityData } from '../models/church.model';
 
 @Injectable()
 export class InstitutionService {
@@ -156,6 +156,177 @@ export class InstitutionService {
       budgetUtilization,
       avgMembersPerChurch,
     };
+  }
+
+  async getChurchesActivityDataForInstitution(institutionId: string) {
+    // Get all ACTIVE churches for this institution with full relations
+    const churches = await this.churchRepository.findManyByFilters({ 
+      institution_id: institutionId,
+      is_deleted: false 
+    }, false, {
+      include: {
+        users: { where: { is_deleted: false } },
+        departments: { 
+          where: { is_deleted: false },
+          include: {
+            users: { where: { is_deleted: false } },
+            projects: { where: { is_deleted: false } }
+          }
+        }
+      }
+    });
+
+    if (churches.length === 0) {
+      return [];
+    }
+
+    // Calculate activity score for each church
+    const calculateChurchActivity = (church: any) => {
+      let activityScore = 5; // Base score per active church
+      let hasRecentActivity = false;
+      let hasRecentDepartments = false;
+      let hasRecentProjects = false;
+      let hasUpdatedChurch = false;
+      let hasNewUsers = false;
+      
+      const thirtyDaysAgo = new Date();
+      thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+      
+      const sevenDaysAgo = new Date();
+      sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+      
+      // User activity points
+      if (church.users && church.users.length > 0) {
+        church.users.forEach((user: any) => {
+          activityScore += 2; // Base points per active user
+          
+          try {
+            const userUpdateDate = new Date(user.updated_at || user.created_at);
+            
+            // Recent activity bonus (30 days)
+            if (userUpdateDate > thirtyDaysAgo) {
+              activityScore += 5;
+              hasRecentActivity = true;
+            }
+            
+            // New user bonus (7 days)
+            if (new Date(user.created_at) > sevenDaysAgo) {
+              activityScore += 8;
+              hasNewUsers = true;
+            }
+          } catch (e) {
+            // Invalid date, use base points only
+          }
+        });
+      }
+      
+      // Department activity points
+      if (church.departments && church.departments.length > 0) {
+        church.departments.forEach((dept: any) => {
+          activityScore += 3; // Base points per active department
+          
+          try {
+            const deptUpdateDate = new Date(dept.updated_at || dept.created_at);
+            
+            // Recent department activity
+            if (deptUpdateDate > thirtyDaysAgo) {
+              activityScore += 8;
+              hasRecentDepartments = true;
+            }
+            
+            // Project activity points
+            if (dept.projects && dept.projects.length > 0) {
+              dept.projects.forEach((project: any) => {
+                activityScore += 1; // Base points per active project
+                
+                try {
+                  const projectUpdateDate = new Date(project.updated_at || project.created_at);
+                  
+                  // Recent project activity
+                  if (projectUpdateDate > thirtyDaysAgo) {
+                    activityScore += 3;
+                    hasRecentProjects = true;
+                  }
+                } catch (e) {
+                  // Invalid date
+                }
+              });
+            }
+          } catch (e) {
+            // Invalid date
+          }
+        });
+      }
+      
+      // Church activity points
+      try {
+        const churchUpdateDate = new Date(church.updated_at || church.created_at);
+        
+        if (churchUpdateDate > thirtyDaysAgo) {
+          activityScore += 10;
+          hasUpdatedChurch = true;
+        }
+      } catch (e) {
+        // Invalid date
+      }
+      
+      return {
+        activityScore: Math.max(activityScore, 1), // Minimum 1 point per church
+        hasRecentActivity,
+        hasRecentDepartments,
+        hasRecentProjects,
+        hasUpdatedChurch,
+        hasNewUsers
+      };
+    };
+
+    // Generate monthly activity data
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const currentMonth = new Date().getMonth();
+    const currentYear = new Date().getFullYear();
+    
+    const result: ChurchActivityData[] = [];
+    
+    for (const church of churches) {
+      const activityData = calculateChurchActivity(church as any);
+      
+      // Create data for each month
+      for (let monthIndex = 0; monthIndex < months.length; monthIndex++) {
+        let monthlyActivity = 0;
+        
+        if (monthIndex <= currentMonth) {
+          // Calculate activity based on score and month
+          const baseActivity = activityData.activityScore / 12;
+          const monthProgress = (monthIndex + 1) / 12;
+          
+          // Add variation based on recent activity
+          const hasRecentActivity = (church as any).updated_at && 
+            new Date((church as any).updated_at) > new Date(currentYear, monthIndex, 1);
+          
+          monthlyActivity = Math.floor(baseActivity * monthProgress * (hasRecentActivity ? 1.5 : 1));
+        }
+        
+        result.push({
+          church_id: church.id,
+          church_name: church.name,
+          month: months[monthIndex],
+          year: currentYear,
+          activity_score: Math.max(monthlyActivity, 0),
+          user_count: (church as any).users?.length || 0,
+          department_count: (church as any).departments?.length || 0,
+          project_count: (church as any).departments?.reduce((sum: number, dept: any) => {
+            return sum + (dept.projects?.length || 0);
+          }, 0) || 0,
+          has_recent_activity: activityData.hasRecentActivity,
+          has_recent_departments: activityData.hasRecentDepartments,
+          has_recent_projects: activityData.hasRecentProjects,
+          has_updated_church: activityData.hasUpdatedChurch,
+          has_new_users: activityData.hasNewUsers
+        });
+      }
+    }
+    
+    return result;
   }
 
   async getActiveChurchesChartData(institutionId: string): Promise<ChurchChartData[]> {

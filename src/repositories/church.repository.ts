@@ -332,7 +332,11 @@ export class ChurchRepository {
     });
   }
 
-  async findManyByFilters(filters: Partial<Record<keyof Church, any>>, includeDeleted: boolean = false): Promise<Church[]> {
+  async findManyByFilters(
+    filters: Partial<Record<keyof Church, any>>, 
+    includeDeleted: boolean = false,
+    options?: any
+  ): Promise<Church[]> {
     const allowedKeys: (keyof Church)[] = ['institution_id', 'region_id', 'name', 'is_deleted'];
 
     for (const key of Object.keys(filters)) {
@@ -341,28 +345,29 @@ export class ChurchRepository {
       }
     }
 
+    const defaultInclude = {
+      annual_budgets: true,
+      contact: true,
+      region: true,
+      users: true,
+      departments: {
+        include: {
+          annual_budgets: true,
+          contact: true,
+          church: true,
+          users: true,
+          projects: true,
+        },
+      },
+    };
+
     return this.prisma.church.findMany({
       where: {
         ...filters,
       },
-      include: {
-        annual_budgets: true,
-        contact: true,
-        departments: {
-          include: {
-            users: true
-          }
-        },
-        region: true,
-        users: { 
-          include: {
-            user_roles: {
-              include: {
-                role: true
-              }
-            }
-          }
-        }
+      include: options?.include || defaultInclude,
+      orderBy: {
+        created_at: 'desc',
       },
     });
   }

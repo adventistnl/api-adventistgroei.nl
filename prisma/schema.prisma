@@ -139,6 +139,7 @@ enum PermissionResolverName {
   spendingOverTime
   entityDistribution
   budgetDistribution
+  churchesActivityData
 }
 
 enum PermissionGroup {

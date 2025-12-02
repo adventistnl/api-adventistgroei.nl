@@ -93,7 +93,8 @@ export enum PermissionResolverName {
     departmentSpending = "departmentSpending",
     spendingOverTime = "spendingOverTime",
     entityDistribution = "entityDistribution",
-    budgetDistribution = "budgetDistribution"
+    budgetDistribution = "budgetDistribution",
+    churchesActivityData = "churchesActivityData"
 }
 
 

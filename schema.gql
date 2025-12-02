@@ -183,6 +183,7 @@ enum PermissionResolverName {
   spendingOverTime
   entityDistribution
   budgetDistribution
+  churchesActivityData
 }
 
 enum PermissionGroup {
@@ -1001,6 +1002,7 @@ type Institution {
   total_budget: Float!
   has_budget_record: Boolean!
   churchesKpiData: ChurchKPIData!
+  churchesActivityData: [ChurchActivityData!]!
   activeChurchesChartData: [ChurchChartData!]!
   institutionChartsData: InstitutionChartsData!
 }
@@ -1100,6 +1102,22 @@ type ChurchKPIData {
   totalUsedBudget: Float!
   budgetUtilization: Float!
   avgMembersPerChurch: Float!
+}
+
+type ChurchActivityData {
+  church_id: String!
+  church_name: String!
+  month: String!
+  year: Float!
+  activity_score: Float!
+  user_count: Float!
+  department_count: Float!
+  project_count: Float!
+  has_recent_activity: Boolean!
+  has_recent_departments: Boolean!
+  has_recent_projects: Boolean!
+  has_updated_church: Boolean!
+  has_new_users: Boolean!
 }
 
 type ChurchChartData {
