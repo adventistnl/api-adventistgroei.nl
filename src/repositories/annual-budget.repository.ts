@@ -530,50 +530,106 @@ export class AnnualBudgetRepository {
     is_locked: boolean;
     updated_at: Date;
   }> {
-    // Verificar se o orçamento existe
-    const existingBudget = await this.prisma.annualBudget.findUnique({
-      where: { id },
+    return this.prisma.$transaction(async (tx) => {
+      // Verificar se o orçamento existe
+      const existingBudget = await tx.annualBudget.findUnique({
+        where: { id },
+        include: {
+          institution: true,
+          department: {
+            include: {
+              institution: true
+            }
+          }
+        }
+      });
+
+      if (!existingBudget) {
+        throw new NotFoundException(`Annual budget with ID '${id}' not found.`);
+      }
+
+      this.logger.log(`Processing toggle lock for budget ${id}, type: ${existingBudget.entity_type}, current lock: ${existingBudget.is_locked}`);
+
+      // Regras de negócio para toggle lock
+      let newLockState = !existingBudget.is_locked;
+
+      if (existingBudget.status === AnnualBudgetStatus.APPROVED && existingBudget.is_locked) {
+        throw new CustomGraphQLError(
+          'Cannot unlock an approved budget.',
+          ErrorCode.BAD_REQUEST,
+          400
+        );
+      }
+
+      if (existingBudget.status === AnnualBudgetStatus.SUBMITTED && existingBudget.is_locked) {
+        throw new CustomGraphQLError(
+          'Cannot unlock a submitted budget.',
+          ErrorCode.BAD_REQUEST,
+          400
+        );
+      }
+
+      // Atualizar o orçamento atual
+      const updatedBudget = await tx.annualBudget.update({
+        where: { id },
+        data: {
+          is_locked: newLockState,
+          updated_by: userId,
+        },
+      });
+
+      // Se for um orçamento de INSTITUIÇÃO e está sendo TRANCADO, trancar também todos os departamentos filhos
+      if (existingBudget.entity_type === AnnualBudgetEntityType.INSTITUTION && 
+          newLockState === true && 
+          existingBudget.institution_id) {
+        
+        this.logger.log(`Institution budget ${id} is being locked - will also lock department budgets for institution ${existingBudget.institution_id}`);
+        
+        // Buscar todos os departamentos da instituição
+        const departments = await tx.department.findMany({
+          where: {
+            institution_id: existingBudget.institution_id
+          },
+          select: { id: true, name: true }
+        });
+
+        this.logger.log(`Found ${departments.length} departments for institution ${existingBudget.institution_id}: ${departments.map(d => d.name).join(', ')}`);
+
+        // Trancar todos os orçamentos dos departamentos filhos para o mesmo ano
+        if (departments.length > 0) {
+          const departmentIds = departments.map(dept => dept.id);
+          
+          this.logger.log(`Looking for department budgets with department_ids: ${departmentIds.join(', ')} for year ${existingBudget.year}`);
+          
+          const updatedDepartmentBudgets = await tx.annualBudget.updateMany({
+            where: {
+              department_id: { in: departmentIds },
+              year: existingBudget.year,
+              is_deleted: false,
+              entity_type: AnnualBudgetEntityType.INSTITUTION_DEPARTMENT
+            },
+            data: {
+              is_locked: true,
+              updated_by: userId,
+            }
+          });
+
+          this.logger.log(`Institution budget ${id} locked - successfully locked ${updatedDepartmentBudgets.count} department budgets out of ${departments.length} departments`);
+        } else {
+          this.logger.log(`No departments found for institution ${existingBudget.institution_id}`);
+        }
+      } else if (existingBudget.entity_type === AnnualBudgetEntityType.INSTITUTION_DEPARTMENT) {
+        this.logger.log(`Department budget ${id} lock state changed - this should NOT affect institution budget`);
+      }
+
+      this.logger.log(`Budget ${id} lock state changed to: ${newLockState}`);
+
+      return {
+        id: updatedBudget.id,
+        is_locked: updatedBudget.is_locked,
+        updated_at: updatedBudget.updated_at,
+      };
     });
-
-    if (!existingBudget) {
-      throw new NotFoundException(`Annual budget with ID '${id}' not found.`);
-    }
-
-    // Regras de negócio para toggle lock
-    let newLockState = !existingBudget.is_locked;
-
-    if (existingBudget.status === AnnualBudgetStatus.APPROVED && existingBudget.is_locked) {
-      throw new CustomGraphQLError(
-        'Cannot unlock an approved budget.',
-        ErrorCode.BAD_REQUEST,
-        400
-      );
-    }
-
-    if (existingBudget.status === AnnualBudgetStatus.SUBMITTED && existingBudget.is_locked) {
-      throw new CustomGraphQLError(
-        'Cannot unlock a submitted budget.',
-        ErrorCode.BAD_REQUEST,
-        400
-      );
-    }
-
-    // Atualizar apenas o orçamento atual - não afetar outros orçamentos
-    const updatedBudget = await this.prisma.annualBudget.update({
-      where: { id },
-      data: {
-        is_locked: newLockState,
-        updated_by: userId,
-      },
-    });
-
-    this.logger.log(`Budget ${id} lock state changed to: ${newLockState}`);
-
-    return {
-      id: updatedBudget.id,
-      is_locked: updatedBudget.is_locked,
-      updated_at: updatedBudget.updated_at,
-    };
   }
 
   /**
