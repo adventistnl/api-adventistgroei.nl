@@ -94,6 +94,8 @@ export class ChurchRepository {
       if (region) {
         regionId = region.id;
       }
+      // Se não há região para a cidade, regionId permanece undefined
+      // e será desconectada no update abaixo
     }
 
     return await this.prisma.church.update({
@@ -102,7 +104,11 @@ export class ChurchRepository {
         ...(data.institution_id && { institution: { connect: { id: data.institution_id } } }),
         ...(data.type && { type: data.type }),
         ...(data.name && { name: data.name }),
-        ...(regionId && { region: { connect: { id: regionId } } }),
+        // Sempre atualiza a região quando a cidade for informada
+        // Conecta se há regionId, ou desconecta (null) se não há região para a cidade
+        ...(city !== undefined && {
+          region: regionId ? { connect: { id: regionId } } : { disconnect: true }
+        }),
         ...contactData,
         updated_by: userId,
       },
