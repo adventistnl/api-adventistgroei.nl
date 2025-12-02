@@ -578,7 +578,9 @@ export class AnnualBudgetRepository {
         },
       });
 
-      // Se for um orçamento de INSTITUIÇÃO e está sendo TRANCADO, trancar também todos os departamentos filhos
+      // LÓGICA DE LOCK EM CASCATA:
+      // - INSTITUTION lock: Tranca a instituição E todos os departamentos filhos (cascata)
+      // - DEPARTMENT lock: Tranca apenas o departamento específico (independente)
       if (existingBudget.entity_type === AnnualBudgetEntityType.INSTITUTION && 
           newLockState === true && 
           existingBudget.institution_id) {
@@ -619,7 +621,8 @@ export class AnnualBudgetRepository {
           this.logger.log(`No departments found for institution ${existingBudget.institution_id}`);
         }
       } else if (existingBudget.entity_type === AnnualBudgetEntityType.INSTITUTION_DEPARTMENT) {
-        this.logger.log(`Department budget ${id} lock state changed - this should NOT affect institution budget`);
+        this.logger.log(`Department budget ${id} lock state changed - department locks are INDEPENDENT and do not affect other entities`);
+        // Departamentos têm lock independente - não afetam instituição nem outros departamentos
       }
 
       this.logger.log(`Budget ${id} lock state changed to: ${newLockState}`);
