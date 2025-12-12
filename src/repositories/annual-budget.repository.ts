@@ -44,14 +44,11 @@ export class AnnualBudgetRepository {
       updated_by: userId,
       requested_by: userId,
       total_expenses: budgetData.total_expenses || 0,
-      balance: budgetData.planned_budget - (budgetData.total_expenses || 0),
+      allocated_amount: budgetData.allocated_amount || 0,
     };
 
-    // Para departamentos, o allocated_amount deve ser igual ao planned_budget
-    if (entity_type === AnnualBudgetEntityType.INSTITUTION_DEPARTMENT || 
-        entity_type === AnnualBudgetEntityType.CHURCH_DEPARTMENT) {
-      budgetCreateData.allocated_amount = budgetData.planned_budget;
-    }
+    // Calcular balance: planned_budget - (total_expenses + allocated_amount)
+    budgetCreateData.balance = budgetData.planned_budget - (budgetCreateData.total_expenses + budgetCreateData.allocated_amount);
 
     // Adicionar conexões baseadas no tipo de entidade
     if (entity_type === AnnualBudgetEntityType.INSTITUTION) {
@@ -198,18 +195,26 @@ export class AnnualBudgetRepository {
       updated_by: userId,
     };
 
-    // Recalcular balance se planned_budget ou total_expenses foram alterados
+    // Recalcular balance: planned_budget - (total_expenses + allocated_amount)
     if (dto.planned_budget !== undefined || dto.total_expenses !== undefined) {
       const newPlannedBudget = dto.planned_budget !== undefined ? Number(dto.planned_budget) : Number(existingBudget.planned_budget);
       const newTotalExpenses = dto.total_expenses !== undefined ? Number(dto.total_expenses) : Number(existingBudget.total_expenses);
+      const currentAllocatedAmount = Number(existingBudget.allocated_amount || 0);
 
-      updateData.balance = newPlannedBudget - newTotalExpenses;
+      updateData.balance = newPlannedBudget - (newTotalExpenses + currentAllocatedAmount);
     }
 
     // Para orçamentos de departamento, atualizar allocated_amount quando planned_budget muda
-    if (existingBudget.entity_type === AnnualBudgetEntityType.INSTITUTION_DEPARTMENT && 
+    if (existingBudget.entity_type === AnnualBudgetEntityType.INSTITUTION_DEPARTMENT &&
         dto.planned_budget !== undefined) {
       updateData.allocated_amount = Number(dto.planned_budget);
+
+      // Recalcular balance com o novo allocated_amount
+      const newPlannedBudget = Number(dto.planned_budget);
+      const newTotalExpenses = dto.total_expenses !== undefined ? Number(dto.total_expenses) : Number(existingBudget.total_expenses);
+      const newAllocatedAmount = Number(dto.planned_budget);
+
+      updateData.balance = newPlannedBudget - (newTotalExpenses + newAllocatedAmount);
     }
 
     // Usar transação para garantir consistência dos dados
@@ -676,17 +681,23 @@ export class AnnualBudgetRepository {
 
     if (institutionBudget) {
       const currentAllocated = Number(institutionBudget.allocated_amount || 0);
+      const plannedBudget = Number(institutionBudget.planned_budget);
+      const totalExpenses = Number(institutionBudget.total_expenses || 0);
 
-      // Atualizar o allocated_amount da instituição com o total calculado
+      // Calcular novo balance: planned_budget - (total_expenses + allocated_amount)
+      const newBalance = plannedBudget - (totalExpenses + totalAllocatedAmount);
+
+      // Atualizar o allocated_amount e balance da instituição
       await tx.annualBudget.update({
         where: { id: institutionBudget.id },
         data: {
           allocated_amount: totalAllocatedAmount,
+          balance: newBalance,
           updated_at: new Date()
         }
       });
 
-      this.logger.log(`Updated institution budget allocated amount: ${currentAllocated} -> ${totalAllocatedAmount} (recalculated from departments)`);
+      this.logger.log(`Updated institution budget - allocated: ${currentAllocated} -> ${totalAllocatedAmount}, balance: ${Number(institutionBudget.balance)} -> ${newBalance} (recalculated from departments)`);
     } else {
       this.logger.warn(`No institution budget found for institution ${institutionId} and year ${year}`);
     }
