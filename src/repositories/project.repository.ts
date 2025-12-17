@@ -119,6 +119,47 @@ export class ProjectRepository {
       }
     }
 
+    // Create SpecialProject if is_special_case = true
+    if (data.is_special_case) {
+      // Get or create a default subsidy status for special projects
+      let subsidyStatus = await this.prisma.subsidyStatus.findFirst({
+        where: {
+          name: 'Pending',
+          department_id: data.department_id,
+          is_deleted: false
+        }
+      });
+
+      if (!subsidyStatus) {
+        subsidyStatus = await this.prisma.subsidyStatus.create({
+          data: {
+            name: 'Pending',
+            description: 'Pending approval for special project',
+            order: 1,
+            department_id: data.department_id,
+            assigned_to: ownerId,
+            created_by: userId,
+            updated_by: userId,
+          }
+        });
+      }
+
+      await this.prisma.specialProjects.create({
+        data: {
+          department_id: data.department_id,
+          institution_id: data.institution_id,
+          project_id: createdProject.id,
+          justification_note: data.special_case_reason,
+          budget: data.special_budget ? new Decimal(data.special_budget) : null,
+          subsidy_status_id: subsidyStatus.id,
+          type: data.location_church_plant ? 'CHURCH_PLANTING' : 'SPECIAL',
+          location_church_plant: data.location_church_plant,
+          created_by: userId,
+          updated_by: userId,
+        }
+      });
+    }
+
     return createdProject;
   }
   

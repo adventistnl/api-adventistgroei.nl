@@ -3452,6 +3452,10 @@ input ProjectCreateDto {
   is_event: Boolean! = false
   event: EventCreateDto
   activities: [ProjectActivityCreateDto!]
+  is_special_case: Boolean! = false
+  special_case_reason: String
+  location_church_plant: String
+  special_budget: Float
 }
 
 input EventCreateDto {

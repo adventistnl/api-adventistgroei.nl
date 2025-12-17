@@ -105,6 +105,26 @@ export class ProjectCreateDto {
   @Field(() => [ProjectActivityCreateDto], { nullable: true })
   @IsOptional()
   activities?: ProjectActivityCreateDto[];
+
+  @Field({ defaultValue: false })
+  @IsOptional()
+  @IsBoolean()
+  is_special_case?: boolean;
+
+  @Field({ nullable: true })
+  @IsOptional()
+  @IsString()
+  special_case_reason?: string;
+
+  @Field({ nullable: true })
+  @IsOptional()
+  @IsString()
+  location_church_plant?: string;
+
+  @Field({ nullable: true })
+  @IsOptional()
+  @IsNumber()
+  special_budget?: number;
 }
 
 
