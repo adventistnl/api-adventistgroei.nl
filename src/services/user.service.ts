@@ -24,6 +24,10 @@ export class UserService {
     return await this.userRepository.findAll();
   }
 
+  async getUsersByInstitution(institution_id: string): Promise<Omit<User, 'password'>[]> {
+    return await this.userRepository.findByInstitution(institution_id);
+  }
+
   async getUserById(id: string): Promise<Omit<User, 'password'> | null> {
     return await this.userRepository.findById(id);
   }

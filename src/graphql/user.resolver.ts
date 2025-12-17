@@ -33,7 +33,12 @@ export class UserResolver {
 
   @Permission()
   @Query(() => [UserModel])
-  async users(): Promise<Omit<User, 'password'>[]> {
+  async users(
+    @Args('institution_id', { nullable: true }) institution_id?: string
+  ): Promise<Omit<User, 'password'>[]> {
+    if (institution_id) {
+      return await this.userService.getUsersByInstitution(institution_id);
+    }
     return await this.userService.getUsers();
   }
 

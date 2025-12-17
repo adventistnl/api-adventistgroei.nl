@@ -34,14 +34,26 @@ export class ProjectCreateManyOwnerInput {
     @Field(() => ProjectType, {nullable:false})
     type!: `${ProjectType}`;
 
+    @Field(() => Boolean, {nullable:true})
+    is_private?: boolean;
+
+    @Field(() => Boolean, {nullable:true})
+    required_volunteers?: boolean;
+
+    @Field(() => Date, {nullable:false})
+    start_at!: Date | string;
+
+    @Field(() => Date, {nullable:false})
+    end_at!: Date | string;
+
     @Field(() => Date, {nullable:true})
     created_at?: Date | string;
 
     @Field(() => Date, {nullable:true})
     updated_at?: Date | string;
 
-    @Field(() => Date, {nullable:false})
-    deadline!: Date | string;
+    @Field(() => Date, {nullable:true})
+    deadline?: Date | string;
 
     @Field(() => String, {nullable:false})
     created_by!: string;

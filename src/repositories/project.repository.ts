@@ -19,9 +19,53 @@ export class ProjectRepository {
   ) {}
 
   async create(data: ProjectCreateDto, userId: string): Promise<Project> {
-    await this.institutionRepository.findById(data.institution_id);
+    // Validações condicionais
+    if (data.institution_id) {
+      await this.institutionRepository.findById(data.institution_id);
+    }
     await this.departmentRepository.findById(data.department_id);
-    await this.userRepository.findById(data.owner_id);
+
+    const ownerId = data.owner_id || userId;
+    await this.userRepository.findById(ownerId);
+
+    // Criar evento se is_event = true e dados do evento foram fornecidos
+    let eventId: string | undefined;
+    if (data.is_event && data.event) {
+      // Criar um contato básico para o evento (pode ser melhorado depois)
+      const eventContact = await this.prisma.contact.create({
+        data: {
+          name: data.event.title,
+          address: data.event.location,
+          is_primary: false,
+          created_by: userId,
+          updated_by: userId,
+        },
+      });
+
+      const createdEvent = await this.prisma.event.create({
+        data: {
+          title: data.event.title,
+          description: data.event.description,
+          type: data.event.type,
+          max_participants: data.event.max_participants,
+          ticket_amount: new Decimal(data.event.ticket_amount),
+          location: data.event.location,
+          subscription_expires_at: new Date(data.event.subscription_expires_at),
+          language_preference: data.language_preference,
+          is_private: data.is_private,
+          required_volunteers: data.required_volunteers,
+          start_at: new Date(data.start_at),
+          end_at: new Date(data.end_at),
+          contact_id: eventContact.id,
+          target_type: 'institution',
+          target_id: data.institution_id || '',
+          created_by: userId,
+          updated_by: userId,
+        },
+      });
+
+      eventId = createdEvent.id;
+    }
 
     const createdProject = await this.prisma.project.create({
       data: {
@@ -30,41 +74,48 @@ export class ProjectRepository {
         language_preference: data.language_preference,
         budget: new Decimal(data.budget),
         type: data.type,
-        deadline: new Date(data.deadline),
+        is_private: data.is_private,
+        required_volunteers: data.required_volunteers,
+        start_at: new Date(data.start_at),
+        end_at: new Date(data.end_at),
+        deadline: data.deadline ? new Date(data.deadline) : undefined,
         created_by: userId,
         updated_by: userId,
         is_deleted: false,
         department: { connect: { id: data.department_id } },
-        owner: { connect: { id: data.owner_id } },
-        Institution: { connect: { id: data.institution_id } },
+        owner: { connect: { id: ownerId } },
+        Institution: data.institution_id ? { connect: { id: data.institution_id } } : undefined,
+        event: eventId ? { connect: { id: eventId } } : undefined,
       },
     });
 
-    for (const activity of data.activities) {
-      const createdActivity = await this.prisma.projectActivity.create({
-        data: {
-          project: { connect: { id: createdProject.id } },
-          name: activity.name,
-          description: activity.description,
-          budget_amount: new Decimal(activity.budget_amount),
-          deadline: new Date(activity.deadline),
-          owner: { connect: { id: activity.owner_id } },
-          tags: activity.tags,
-          created_by: userId,
-          updated_by: userId,
-        },
-      });
-
-      if (activity.activity_funding) {
-        await this.prisma.activityFunding.create({
+    if (data.activities && data.activities.length > 0) {
+      for (const activity of data.activities) {
+        const createdActivity = await this.prisma.projectActivity.create({
           data: {
-            activity_id: createdActivity.id,
-            entity_contribution_amount: new Decimal(activity.activity_funding.entity_contribution_amount),
-            entity_contribution_percent: activity.activity_funding.entity_contribution_percent,
-            entity_type: activity.activity_funding.entity_type,
-            entity_id: activity.activity_funding.entity_id,
+            project: { connect: { id: createdProject.id } },
+            name: activity.name,
+            description: activity.description,
+            budget_amount: new Decimal(activity.budget_amount),
+            deadline: new Date(activity.deadline),
+            owner: { connect: { id: activity.owner_id } },
+            tags: activity.tags,
+            created_by: userId,
+            updated_by: userId,
           },
         });
+
+        if (activity.activity_funding) {
+          await this.prisma.activityFunding.create({
+            data: {
+              activity_id: createdActivity.id,
+              entity_contribution_amount: new Decimal(activity.activity_funding.entity_contribution_amount),
+              entity_contribution_percent: activity.activity_funding.entity_contribution_percent,
+              entity_type: activity.activity_funding.entity_type,
+              entity_id: activity.activity_funding.entity_id,
+            },
+          });
+        }
       }
     }
 
@@ -93,6 +144,10 @@ export class ProjectRepository {
       description: rest.description,
       language_preference: rest.language_preference,
       type: rest.type,
+      is_private: rest.is_private,
+      required_volunteers: rest.required_volunteers,
+      start_at: rest.start_at ? new Date(rest.start_at) : undefined,
+      end_at: rest.end_at ? new Date(rest.end_at) : undefined,
       deadline: rest.deadline ? new Date(rest.deadline) : undefined,
       updated_by: userId,
     };

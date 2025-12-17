@@ -12,6 +12,10 @@ export class DepartmentService {
     return this.departmentRepository.findAll();
   }
 
+  async getDepartmentsByInstitution(institution_id: string): Promise<Department[]> {
+    return this.departmentRepository.findByInstitution(institution_id);
+  }
+
   async getDepartmentById(id: string): Promise<Department> {
     const department = await this.departmentRepository.findById(id);
     if (!department) {

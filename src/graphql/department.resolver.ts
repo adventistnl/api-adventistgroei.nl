@@ -14,7 +14,12 @@ export class DepartmentResolver {
 
   @Permission()
   @Query(() => [Department])
-  async departments(): Promise<Department[]> {
+  async departments(
+    @Args('institution_id', { nullable: true }) institution_id?: string
+  ): Promise<Department[]> {
+    if (institution_id) {
+      return this.departmentService.getDepartmentsByInstitution(institution_id);
+    }
     return this.departmentService.getDepartments();
   }
 

@@ -547,9 +547,13 @@ type Project {
   owner_id: String!
   language_preference: LanguagePreference!
   type: ProjectType!
+  is_private: Boolean!
+  required_volunteers: Boolean!
+  start_at: DateTime!
+  end_at: DateTime!
   created_at: DateTime!
   updated_at: DateTime!
-  deadline: DateTime!
+  deadline: DateTime
   created_by: String!
   updated_by: String!
   is_deleted: Boolean!
@@ -575,11 +579,8 @@ enum LanguagePreference {
 }
 
 enum ProjectType {
-  MISSION
-  EVANGELISM
-  SOCIAL
-  CHURCH_PLANTING
-  OTHER
+  Local
+  Global
 }
 
 type EventCount {
@@ -1314,12 +1315,12 @@ type Query {
   institution(id: String!): Institution
   regions: [Region!]!
   region(id: String!): Region
-  users: [UserModel!]!
+  users(institution_id: String): [UserModel!]!
   user(id: String!): UserModel
   userWithRoles(id: String!): UserWithRoles
   roles: [RoleModel!]!
   role(id: String!): RoleModel
-  departments: [Department!]!
+  departments(institution_id: String): [Department!]!
   department(id: String!): Department
   communications: [Communication!]!
   communication(id: String!): Communication
@@ -2049,9 +2050,13 @@ input ProjectWhereInput {
   owner_id: StringFilter
   language_preference: EnumLanguagePreferenceFilter
   type: EnumProjectTypeFilter
+  is_private: BoolFilter
+  required_volunteers: BoolFilter
+  start_at: DateTimeFilter
+  end_at: DateTimeFilter
   created_at: DateTimeFilter
   updated_at: DateTimeFilter
-  deadline: DateTimeFilter
+  deadline: DateTimeNullableFilter
   created_by: StringFilter
   updated_by: StringFilter
   is_deleted: BoolFilter
@@ -3437,10 +3442,26 @@ input ProjectCreateDto {
   budget: Float!
   type: ProjectType!
   department_id: String!
-  institution_id: String!
-  owner_id: String!
-  deadline: String!
-  activities: [ProjectActivityCreateDto!]!
+  institution_id: String
+  owner_id: String
+  start_at: String!
+  end_at: String!
+  deadline: String
+  is_private: Boolean! = false
+  required_volunteers: Boolean! = false
+  is_event: Boolean! = false
+  event: EventCreateDto
+  activities: [ProjectActivityCreateDto!]
+}
+
+input EventCreateDto {
+  title: String!
+  description: String!
+  type: EventType!
+  max_participants: Float!
+  ticket_amount: Float!
+  location: String!
+  subscription_expires_at: String!
 }
 
 input ProjectActivityCreateDto {
@@ -3469,7 +3490,11 @@ input ProjectUpdateDto {
   department_id: String
   institution_id: String
   owner_id: String
+  start_at: String
+  end_at: String
   deadline: String
+  is_private: Boolean
+  required_volunteers: Boolean
   activities: [ProjectActivityUpdateDto!]
 }
 

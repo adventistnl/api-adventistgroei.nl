@@ -29,6 +29,18 @@ export class ProjectCountAggregateInput {
     type?: true;
 
     @Field(() => Boolean, {nullable:true})
+    is_private?: true;
+
+    @Field(() => Boolean, {nullable:true})
+    required_volunteers?: true;
+
+    @Field(() => Boolean, {nullable:true})
+    start_at?: true;
+
+    @Field(() => Boolean, {nullable:true})
+    end_at?: true;
+
+    @Field(() => Boolean, {nullable:true})
     created_at?: true;
 
     @Field(() => Boolean, {nullable:true})

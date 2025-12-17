@@ -1,11 +1,8 @@
 import { registerEnumType } from '@nestjs/graphql';
 
 export enum ProjectType {
-    MISSION = "MISSION",
-    EVANGELISM = "EVANGELISM",
-    SOCIAL = "SOCIAL",
-    CHURCH_PLANTING = "CHURCH_PLANTING",
-    OTHER = "OTHER"
+    Local = "Local",
+    Global = "Global"
 }
 
 

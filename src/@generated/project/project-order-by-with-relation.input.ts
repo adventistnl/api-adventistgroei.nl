@@ -40,13 +40,25 @@ export class ProjectOrderByWithRelationInput {
     type?: `${SortOrder}`;
 
     @Field(() => SortOrder, {nullable:true})
+    is_private?: `${SortOrder}`;
+
+    @Field(() => SortOrder, {nullable:true})
+    required_volunteers?: `${SortOrder}`;
+
+    @Field(() => SortOrder, {nullable:true})
+    start_at?: `${SortOrder}`;
+
+    @Field(() => SortOrder, {nullable:true})
+    end_at?: `${SortOrder}`;
+
+    @Field(() => SortOrder, {nullable:true})
     created_at?: `${SortOrder}`;
 
     @Field(() => SortOrder, {nullable:true})
     updated_at?: `${SortOrder}`;
 
-    @Field(() => SortOrder, {nullable:true})
-    deadline?: `${SortOrder}`;
+    @Field(() => SortOrderInput, {nullable:true})
+    deadline?: SortOrderInput;
 
     @Field(() => SortOrder, {nullable:true})
     created_by?: `${SortOrder}`;

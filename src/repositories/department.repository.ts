@@ -18,6 +18,15 @@ export class DepartmentRepository {
     return this.prisma.department.findMany();
   }
 
+  async findByInstitution(institution_id: string): Promise<Department[]> {
+    return this.prisma.department.findMany({
+      where: {
+        institution_id,
+        is_deleted: false
+      }
+    });
+  }
+
   async findById(id: string): Promise<Department | null> {
     const department = await this.prisma.department.findUnique({ where: { id } });
     if (!department) {

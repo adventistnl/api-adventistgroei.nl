@@ -42,14 +42,26 @@ export class Project {
     @Field(() => ProjectType, {nullable:false})
     type!: `${ProjectType}`;
 
+    @Field(() => Boolean, {defaultValue:false,nullable:false})
+    is_private!: boolean;
+
+    @Field(() => Boolean, {defaultValue:false,nullable:false})
+    required_volunteers!: boolean;
+
+    @Field(() => Date, {nullable:false})
+    start_at!: Date;
+
+    @Field(() => Date, {nullable:false})
+    end_at!: Date;
+
     @Field(() => Date, {nullable:false})
     created_at!: Date;
 
     @Field(() => Date, {nullable:false})
     updated_at!: Date;
 
-    @Field(() => Date, {nullable:false})
-    deadline!: Date;
+    @Field(() => Date, {nullable:true})
+    deadline!: Date | null;
 
     @Field(() => String, {nullable:false})
     created_by!: string;

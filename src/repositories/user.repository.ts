@@ -187,6 +187,15 @@ export class UserRepository {
     return await this.prisma.user.findMany({ where: { is_deleted: false } });
   }
 
+  async findByInstitution(institution_id: string): Promise<Omit<User, 'password'>[]> {
+    return await this.prisma.user.findMany({
+      where: {
+        institution_id,
+        is_deleted: false
+      }
+    });
+  }
+
   async findById(id: string): Promise<Omit<User, 'password'> | null> {
     const user = await this.prisma.user.findUnique({
       where: { id, is_deleted: false },

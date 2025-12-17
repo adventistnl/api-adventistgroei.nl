@@ -32,6 +32,18 @@ export class ProjectMaxAggregate {
     @Field(() => ProjectType, {nullable:true})
     type?: `${ProjectType}`;
 
+    @Field(() => Boolean, {nullable:true})
+    is_private?: boolean;
+
+    @Field(() => Boolean, {nullable:true})
+    required_volunteers?: boolean;
+
+    @Field(() => Date, {nullable:true})
+    start_at?: Date | string;
+
+    @Field(() => Date, {nullable:true})
+    end_at?: Date | string;
+
     @Field(() => Date, {nullable:true})
     created_at?: Date | string;
 

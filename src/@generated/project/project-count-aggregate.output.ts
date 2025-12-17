@@ -30,6 +30,18 @@ export class ProjectCountAggregate {
     type!: number;
 
     @Field(() => Int, {nullable:false})
+    is_private!: number;
+
+    @Field(() => Int, {nullable:false})
+    required_volunteers!: number;
+
+    @Field(() => Int, {nullable:false})
+    start_at!: number;
+
+    @Field(() => Int, {nullable:false})
+    end_at!: number;
+
+    @Field(() => Int, {nullable:false})
     created_at!: number;
 
     @Field(() => Int, {nullable:false})

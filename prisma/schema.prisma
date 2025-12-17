@@ -186,11 +186,8 @@ enum CommunicationStatus {
 }
 
 enum ProjectType {
-  MISSION
-  EVANGELISM
-  SOCIAL
-  CHURCH_PLANTING
-  OTHER
+  Local
+  Global
 }
 
 enum AnnualBudgetStatus {
@@ -469,9 +466,13 @@ model Project {
   owner               User                    @relation(fields: [owner_id], references: [id])
   language_preference LanguagePreference
   type                ProjectType
+  is_private          Boolean                 @default(false)
+  required_volunteers Boolean                 @default(false)
+  start_at            DateTime
+  end_at              DateTime
   created_at          DateTime                @default(now())
   updated_at          DateTime                @updatedAt
-  deadline            DateTime
+  deadline            DateTime?
   created_by          String
   updated_by          String
   is_deleted          Boolean                 @default(false)
