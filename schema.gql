@@ -1255,6 +1255,39 @@ type LinkContactResult {
   message: String
 }
 
+type ProjectKPIs {
+  totalProjects: Int!
+  activeProjects: Int!
+  completedProjects: Int!
+  upcomingProjects: Int!
+  totalBudget: Float!
+  totalSubsidyRequests: Int!
+  totalSubsidyAmount: Float!
+  projectsWithVolunteers: Int!
+  averageBudgetPerProject: Float!
+}
+
+type ProjectsByDepartment {
+  department: String!
+  projects: Int!
+  budget_used: Float!
+  remaining_budget: Float!
+  annual_budget: Float
+}
+
+type SubsidyStatusDistribution {
+  status: String!
+  count: Int!
+  color: String!
+}
+
+type ProjectsTimeline {
+  month: String!
+  created: Int!
+  completed: Int!
+  budget: Float!
+}
+
 type BudgetKPIs {
   totalInstitutionBudget: Float!
   totalAllocated: Float!
@@ -1328,6 +1361,10 @@ type Query {
   directMessage(id: String!): DirectMessage
   projects: [Project!]!
   project(id: String!): Project
+  projectKPIs(institutionId: String): ProjectKPIs!
+  projectsByDepartment(institutionId: String): [ProjectsByDepartment!]!
+  subsidyStatusDistribution(institutionId: String): [SubsidyStatusDistribution!]!
+  projectsTimeline(institutionId: String): [ProjectsTimeline!]!
   notifications: [Notification!]!
   notification(id: String!): Notification
   settings: [Setting!]!

@@ -284,6 +284,16 @@ export class ProjectRepository {
             owner: true, // Inclui o relacionamento com o proprietário da atividade
           },
         },
+        subsidies: {
+          where: { is_deleted: false },
+          include: {
+            subsidy_status: true,
+            institution: true,
+          },
+        },
+        special_projects: {
+          where: { is_deleted: false },
+        },
       },
     });
   }
