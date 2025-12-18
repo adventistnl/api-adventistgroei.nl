@@ -9,8 +9,10 @@ export class ProjectResolver {
   constructor(private readonly projectService: ProjectService) {}
 
   @Query(() => [Project])
-  async projects(): Promise<Project[]> {
-    return this.projectService.findAll();
+  async projects(
+    @Args('institutionId', { nullable: true }) institutionId?: string
+  ): Promise<Project[]> {
+    return this.projectService.findAll(institutionId);
   }
 
   @Query(() => Project, { nullable: true })

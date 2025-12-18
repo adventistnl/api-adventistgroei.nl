@@ -9,6 +9,8 @@ import { BoolFilter } from '../prisma/bool-filter.input';
 import { DateTimeNullableFilter } from '../prisma/date-time-nullable-filter.input';
 import { StringNullableFilter } from '../prisma/string-nullable-filter.input';
 import { EnumActivityTagsNullableListFilter } from '../prisma/enum-activity-tags-nullable-list-filter.input';
+import { EnumActivityStatusFilter } from '../prisma/enum-activity-status-filter.input';
+import { EnumActivityPriorityFilter } from '../prisma/enum-activity-priority-filter.input';
 import { SubsidyRequestListRelationFilter } from '../subsidy-request/subsidy-request-list-relation-filter.input';
 import { ProjectScalarRelationFilter } from '../project/project-scalar-relation-filter.input';
 import { SubsidyReceiptListRelationFilter } from '../subsidy-receipt/subsidy-receipt-list-relation-filter.input';
@@ -76,6 +78,15 @@ export class ProjectActivityWhereUniqueInput {
 
     @Field(() => EnumActivityTagsNullableListFilter, {nullable:true})
     tags?: EnumActivityTagsNullableListFilter;
+
+    @Field(() => EnumActivityStatusFilter, {nullable:true})
+    status?: EnumActivityStatusFilter;
+
+    @Field(() => EnumActivityPriorityFilter, {nullable:true})
+    priority?: EnumActivityPriorityFilter;
+
+    @Field(() => BoolFilter, {nullable:true})
+    is_subsidized?: BoolFilter;
 
     @Field(() => SubsidyRequestListRelationFilter, {nullable:true})
     @Type(() => SubsidyRequestListRelationFilter)

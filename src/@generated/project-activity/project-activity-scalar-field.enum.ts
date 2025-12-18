@@ -15,7 +15,10 @@ export enum ProjectActivityScalarFieldEnum {
     deleted_by = "deleted_by",
     deadline = "deadline",
     owner_id = "owner_id",
-    tags = "tags"
+    tags = "tags",
+    status = "status",
+    priority = "priority",
+    is_subsidized = "is_subsidized"
 }
 
 

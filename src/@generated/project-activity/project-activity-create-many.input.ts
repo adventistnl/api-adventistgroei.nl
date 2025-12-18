@@ -6,6 +6,8 @@ import { transformToDecimal } from 'prisma-graphql-type-decimal';
 import { Transform } from 'class-transformer';
 import { Type } from 'class-transformer';
 import { ProjectActivityCreatetagsInput } from './project-activity-createtags.input';
+import { ActivityStatus } from '../prisma/activity-status.enum';
+import { ActivityPriority } from '../prisma/activity-priority.enum';
 
 @InputType()
 export class ProjectActivityCreateManyInput {
@@ -57,4 +59,13 @@ export class ProjectActivityCreateManyInput {
     @Field(() => ProjectActivityCreatetagsInput, {nullable:true})
     @Type(() => ProjectActivityCreatetagsInput)
     tags?: ProjectActivityCreatetagsInput;
+
+    @Field(() => ActivityStatus, {nullable:true})
+    status?: `${ActivityStatus}`;
+
+    @Field(() => ActivityPriority, {nullable:true})
+    priority?: `${ActivityPriority}`;
+
+    @Field(() => Boolean, {nullable:true})
+    is_subsidized?: boolean;
 }

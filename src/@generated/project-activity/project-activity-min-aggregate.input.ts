@@ -45,4 +45,13 @@ export class ProjectActivityMinAggregateInput {
 
     @Field(() => Boolean, {nullable:true})
     owner_id?: true;
+
+    @Field(() => Boolean, {nullable:true})
+    status?: true;
+
+    @Field(() => Boolean, {nullable:true})
+    priority?: true;
+
+    @Field(() => Boolean, {nullable:true})
+    is_subsidized?: true;
 }

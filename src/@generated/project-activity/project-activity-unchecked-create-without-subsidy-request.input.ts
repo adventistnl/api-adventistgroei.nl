@@ -6,6 +6,8 @@ import { transformToDecimal } from 'prisma-graphql-type-decimal';
 import { Transform } from 'class-transformer';
 import { Type } from 'class-transformer';
 import { ProjectActivityCreatetagsInput } from './project-activity-createtags.input';
+import { ActivityStatus } from '../prisma/activity-status.enum';
+import { ActivityPriority } from '../prisma/activity-priority.enum';
 import { SubsidyReceiptUncheckedCreateNestedManyWithoutProject_activityInput } from '../subsidy-receipt/subsidy-receipt-unchecked-create-nested-many-without-project-activity.input';
 import { ActivityDocumentsUncheckedCreateNestedManyWithoutProject_activityInput } from '../activity-documents/activity-documents-unchecked-create-nested-many-without-project-activity.input';
 import { ActivityFundingUncheckedCreateNestedOneWithoutActivityInput } from '../activity-funding/activity-funding-unchecked-create-nested-one-without-activity.input';
@@ -60,6 +62,15 @@ export class ProjectActivityUncheckedCreateWithoutSubsidy_requestInput {
     @Field(() => ProjectActivityCreatetagsInput, {nullable:true})
     @Type(() => ProjectActivityCreatetagsInput)
     tags?: ProjectActivityCreatetagsInput;
+
+    @Field(() => ActivityStatus, {nullable:true})
+    status?: `${ActivityStatus}`;
+
+    @Field(() => ActivityPriority, {nullable:true})
+    priority?: `${ActivityPriority}`;
+
+    @Field(() => Boolean, {nullable:true})
+    is_subsidized?: boolean;
 
     @Field(() => SubsidyReceiptUncheckedCreateNestedManyWithoutProject_activityInput, {nullable:true})
     @Type(() => SubsidyReceiptUncheckedCreateNestedManyWithoutProject_activityInput)

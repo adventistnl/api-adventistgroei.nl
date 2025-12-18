@@ -28,8 +28,8 @@ export class ProjectService {
     return this.projectRepository.findById(id);
   }
 
-  async findAll(): Promise<Project[]> {
-    return this.projectRepository.findAll();
+  async findAll(institutionId?: string): Promise<Project[]> {
+    return this.projectRepository.findAll(institutionId);
   }
 
   async getProjectsByChurch(churchId: string): Promise<Project[]> {

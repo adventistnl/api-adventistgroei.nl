@@ -487,6 +487,9 @@ type ProjectActivity {
   deadline: DateTime!
   owner_id: String!
   tags: [ActivityTags!]
+  status: ActivityStatus!
+  priority: ActivityPriority!
+  is_subsidized: Boolean!
   subsidy_request: [SubsidyRequest!]
   project: Project!
   subsidy_receipts: [SubsidyReceipt!]
@@ -508,6 +511,20 @@ enum ActivityTags {
   TRAINING
   FEEDING
   ACCOMMODATION
+}
+
+enum ActivityStatus {
+  TODO
+  IN_PROGRESS
+  COMPLETED
+  ON_HOLD
+}
+
+enum ActivityPriority {
+  URGENT
+  HIGH
+  MEDIUM
+  LOW
 }
 
 type SpecialProjects {
@@ -1359,7 +1376,7 @@ type Query {
   communication(id: String!): Communication
   directMessages: [DirectMessage!]!
   directMessage(id: String!): DirectMessage
-  projects: [Project!]!
+  projects(institutionId: String): [Project!]!
   project(id: String!): Project
   projectKPIs(institutionId: String): ProjectKPIs!
   projectsByDepartment(institutionId: String): [ProjectsByDepartment!]!
@@ -2054,6 +2071,9 @@ input ProjectActivityWhereInput {
   deadline: DateTimeFilter
   owner_id: StringFilter
   tags: EnumActivityTagsNullableListFilter
+  status: EnumActivityStatusFilter
+  priority: EnumActivityPriorityFilter
+  is_subsidized: BoolFilter
   subsidy_request: SubsidyRequestListRelationFilter
   project: ProjectScalarRelationFilter
   subsidy_receipts: SubsidyReceiptListRelationFilter
@@ -2068,6 +2088,34 @@ input EnumActivityTagsNullableListFilter {
   hasEvery: [ActivityTags!]
   hasSome: [ActivityTags!]
   isEmpty: Boolean
+}
+
+input EnumActivityStatusFilter {
+  equals: ActivityStatus
+  in: [ActivityStatus!]
+  notIn: [ActivityStatus!]
+  not: NestedEnumActivityStatusFilter
+}
+
+input NestedEnumActivityStatusFilter {
+  equals: ActivityStatus
+  in: [ActivityStatus!]
+  notIn: [ActivityStatus!]
+  not: NestedEnumActivityStatusFilter
+}
+
+input EnumActivityPriorityFilter {
+  equals: ActivityPriority
+  in: [ActivityPriority!]
+  notIn: [ActivityPriority!]
+  not: NestedEnumActivityPriorityFilter
+}
+
+input NestedEnumActivityPriorityFilter {
+  equals: ActivityPriority
+  in: [ActivityPriority!]
+  notIn: [ActivityPriority!]
+  not: NestedEnumActivityPriorityFilter
 }
 
 input ProjectScalarRelationFilter {
@@ -3236,7 +3284,10 @@ type Mutation {
   deleteSubsidyStatus(id: String!): SubsidyStatus!
   addProjectVoluntary(data: AddProjectVoluntaryDto!): VoluntariesOnProjects!
   removeProjectVoluntary(data: RemoveProjectVoluntaryDto!): VoluntariesOnProjects!
+  createProjectActivity(input: ProjectActivityCreateDto!): ProjectActivity!
+  updateProjectActivity(input: ProjectActivityUpdateDto!): ProjectActivity!
   deleteProjectActivity(id: ID!): ProjectActivity!
+  batchUpdateProjectActivities(data: ProjectActivityBatchUpdateDto!): [ProjectActivity!]!
   inviteUser(data: InviteUserDto!): InviteModel!
   validateInviteToken(token: String!): ValidateOutputModel!
 
@@ -3506,12 +3557,14 @@ input EventCreateDto {
 }
 
 input ProjectActivityCreateDto {
+  project_id: String!
   name: String!
   description: String!
   budget_amount: Float!
   deadline: String!
   owner_id: String!
   tags: [ActivityTags!]!
+  is_subsidized: Boolean
   activity_funding: ActivityFundingCreateDto!
 }
 
@@ -3640,6 +3693,14 @@ input AddProjectVoluntaryDto {
 input RemoveProjectVoluntaryDto {
   project_id: String!
   user_id: String!
+}
+
+input ProjectActivityBatchUpdateDto {
+  ids: [String!]!
+  status: ActivityStatus
+  priority: ActivityPriority
+  activity_tag: ActivityTags
+  is_subsidized: Boolean
 }
 
 input InviteUserDto {

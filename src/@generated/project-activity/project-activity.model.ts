@@ -4,6 +4,8 @@ import { ID } from '@nestjs/graphql';
 import { GraphQLDecimal } from 'prisma-graphql-type-decimal';
 import { Decimal } from '@prisma/client/runtime/library';
 import { ActivityTags } from '../prisma/activity-tags.enum';
+import { ActivityStatus } from '../prisma/activity-status.enum';
+import { ActivityPriority } from '../prisma/activity-priority.enum';
 import { SubsidyRequest } from '../subsidy-request/subsidy-request.model';
 import { Project } from '../project/project.model';
 import { SubsidyReceipt } from '../subsidy-receipt/subsidy-receipt.model';
@@ -59,6 +61,15 @@ export class ProjectActivity {
 
     @Field(() => [ActivityTags], {nullable:true})
     tags!: Array<`${ActivityTags}`>;
+
+    @Field(() => ActivityStatus, {defaultValue:'TODO',nullable:false})
+    status!: `${ActivityStatus}`;
+
+    @Field(() => ActivityPriority, {defaultValue:'MEDIUM',nullable:false})
+    priority!: `${ActivityPriority}`;
+
+    @Field(() => Boolean, {defaultValue:false,nullable:false})
+    is_subsidized!: boolean;
 
     @Field(() => [SubsidyRequest], {nullable:true})
     subsidy_request?: Array<SubsidyRequest>;

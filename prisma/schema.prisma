@@ -236,6 +236,20 @@ enum ActivityTags {
   ACCOMMODATION
 }
 
+enum ActivityStatus {
+  TODO
+  IN_PROGRESS
+  COMPLETED
+  ON_HOLD
+}
+
+enum ActivityPriority {
+  URGENT
+  HIGH
+  MEDIUM
+  LOW
+}
+
 enum EntityType {
   INSTITUTION
   REGION
@@ -620,7 +634,10 @@ model ProjectActivity {
   owner_id            String
   owner               User                @relation(fields: [owner_id], references: [id])
   tags                ActivityTags[]
-  activity_funding    ActivityFunding?    
+  activity_funding    ActivityFunding?
+  status              ActivityStatus      @default(TODO)
+  priority            ActivityPriority    @default(MEDIUM)
+  is_subsidized       Boolean             @default(false)
 }
 
 model SubsidyReceipt {

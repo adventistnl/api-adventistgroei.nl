@@ -50,5 +50,14 @@ export class ProjectActivityCountAggregateInput {
     tags?: true;
 
     @Field(() => Boolean, {nullable:true})
+    status?: true;
+
+    @Field(() => Boolean, {nullable:true})
+    priority?: true;
+
+    @Field(() => Boolean, {nullable:true})
+    is_subsidized?: true;
+
+    @Field(() => Boolean, {nullable:true})
     _all?: true;
 }

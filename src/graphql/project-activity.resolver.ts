@@ -4,6 +4,7 @@ import { UseGuards } from '@nestjs/common';
 import { PermissionsGuard } from '../middlewares/permissions.guard';
 import { ProjectActivity } from 'src/@generated/project-activity/project-activity.model';
 import { Permission } from 'src/middlewares';
+import { ProjectActivityBatchUpdateDto, ProjectActivityCreateDto, ProjectActivityUpdateDto } from '../dto/project-activity.dto';
 
 @Resolver(() => ProjectActivity)
 export class ProjectActivityResolver {
@@ -24,25 +25,25 @@ export class ProjectActivityResolver {
     return this.service.findById(id);
   }
 
-  // @Mutation(() => ProjectActivity)
-  // @UseGuards(PermissionsGuard)
-  // @Permission()
-  // async createProjectActivity(
-  //   @Args('input') input: ProjectActivityCreateDto,
-  //   @Context('userId') userId: string,
-  // ) {
-  //   return this.service.create(input, userId);
-  // }
+  @Mutation(() => ProjectActivity)
+  @UseGuards(PermissionsGuard)
+  @Permission()
+  async createProjectActivity(
+    @Args('input') input: ProjectActivityCreateDto,
+    @Context('userId') userId: string,
+  ) {
+    return this.service.create(input, userId);
+  }
 
-  // @Mutation(() => ProjectActivity)
-  // @UseGuards(PermissionsGuard)
-  // @Permission()
-  // async updateProjectActivity(
-  //   @Args('input') input: ProjectActivityUpdateDto,
-  //   @Context('userId') userId: string,
-  // ) {
-  //   return this.service.update(input, userId);
-  // }
+  @Mutation(() => ProjectActivity)
+  @UseGuards(PermissionsGuard)
+  @Permission()
+  async updateProjectActivity(
+    @Args('input') input: ProjectActivityUpdateDto,
+    @Context('userId') userId: string,
+  ) {
+    return this.service.update(input, userId);
+  }
 
   @Mutation(() => ProjectActivity)
   @UseGuards(PermissionsGuard)
@@ -52,5 +53,15 @@ export class ProjectActivityResolver {
     @Context('userId') userId: string,
   ) {
     return this.service.softDelete(id, userId);
+  }
+
+  @Mutation(() => [ProjectActivity])
+  @UseGuards(PermissionsGuard)
+  @Permission()
+  async batchUpdateProjectActivities(
+    @Args('data') data: ProjectActivityBatchUpdateDto,
+    @Context('userId') userId: string,
+  ) {
+    return this.service.batchUpdate(data, userId);
   }
 }

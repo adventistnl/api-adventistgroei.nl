@@ -352,9 +352,21 @@ export class ProjectRepository {
     });
   }
 
-  async findAll(): Promise<Project[]> {
+  async findAll(institutionId?: string): Promise<Project[]> {
     return this.prisma.project.findMany({
-      where: { is_deleted: false },
+      where: {
+        is_deleted: false,
+        ...(institutionId && {
+          OR: [
+            { institution_id: institutionId },
+            {
+              department: {
+                institution_id: institutionId,
+              },
+            },
+          ],
+        }),
+      },
       include: {
         owner: true, // Inclui o relacionamento com o proprietário
         department: true,

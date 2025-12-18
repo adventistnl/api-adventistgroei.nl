@@ -51,5 +51,14 @@ export class ProjectActivityCountAggregate {
     tags!: number;
 
     @Field(() => Int, {nullable:false})
+    status!: number;
+
+    @Field(() => Int, {nullable:false})
+    priority!: number;
+
+    @Field(() => Int, {nullable:false})
+    is_subsidized!: number;
+
+    @Field(() => Int, {nullable:false})
     _all!: number;
 }

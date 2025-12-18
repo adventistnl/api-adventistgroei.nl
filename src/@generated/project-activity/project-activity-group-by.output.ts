@@ -3,6 +3,8 @@ import { ObjectType } from '@nestjs/graphql';
 import { Decimal } from '@prisma/client/runtime/library';
 import { GraphQLDecimal } from 'prisma-graphql-type-decimal';
 import { ActivityTags } from '../prisma/activity-tags.enum';
+import { ActivityStatus } from '../prisma/activity-status.enum';
+import { ActivityPriority } from '../prisma/activity-priority.enum';
 import { ProjectActivityCountAggregate } from './project-activity-count-aggregate.output';
 import { ProjectActivityAvgAggregate } from './project-activity-avg-aggregate.output';
 import { ProjectActivitySumAggregate } from './project-activity-sum-aggregate.output';
@@ -56,6 +58,15 @@ export class ProjectActivityGroupBy {
 
     @Field(() => [ActivityTags], {nullable:true})
     tags?: Array<`${ActivityTags}`>;
+
+    @Field(() => ActivityStatus, {nullable:false})
+    status!: `${ActivityStatus}`;
+
+    @Field(() => ActivityPriority, {nullable:false})
+    priority!: `${ActivityPriority}`;
+
+    @Field(() => Boolean, {nullable:false})
+    is_subsidized!: boolean;
 
     @Field(() => ProjectActivityCountAggregate, {nullable:true})
     _count?: ProjectActivityCountAggregate;

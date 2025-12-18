@@ -1,7 +1,9 @@
 import { InputType, Field } from '@nestjs/graphql';
-import { IsOptional, IsString, IsNumber, IsDateString, IsEnum } from 'class-validator';
+import { IsOptional, IsString, IsNumber, IsDateString, IsEnum, IsBoolean, IsArray } from 'class-validator';
 import { ActivityTags } from 'src/@generated/prisma/activity-tags.enum';
 import { EntityType } from 'src/@generated/prisma/entity-type.enum';
+import { ActivityStatus } from 'src/@generated/prisma/activity-status.enum';
+import { ActivityPriority } from 'src/@generated/prisma/activity-priority.enum';
 
 
 @InputType()
@@ -27,6 +29,10 @@ export class ActivityFundingCreateDto {
 export class ProjectActivityCreateDto {
   @Field()
   @IsString()
+  project_id: string;
+
+  @Field()
+  @IsString()
   name: string;
 
   @Field()
@@ -47,6 +53,11 @@ export class ProjectActivityCreateDto {
 
   @Field(() => [ActivityTags])
   tags: ActivityTags[];
+
+  @Field({ nullable: true })
+  @IsOptional()
+  @IsBoolean()
+  is_subsidized?: boolean;
 
   @Field(() => ActivityFundingCreateDto)
   activity_funding: ActivityFundingCreateDto;
@@ -113,4 +124,31 @@ export class ProjectActivityUpdateDto {
   @Field(() => ActivityFundingUpdateDto, { nullable: true })
   @IsOptional()
   activity_funding?: ActivityFundingUpdateDto;
+}
+
+@InputType()
+export class ProjectActivityBatchUpdateDto {
+  @Field(() => [String])
+  @IsArray()
+  ids: string[];
+
+  @Field(() => ActivityStatus, { nullable: true })
+  @IsOptional()
+  @IsEnum(ActivityStatus)
+  status?: ActivityStatus;
+
+  @Field(() => ActivityPriority, { nullable: true })
+  @IsOptional()
+  @IsEnum(ActivityPriority)
+  priority?: ActivityPriority;
+
+  @Field(() => ActivityTags, { nullable: true })
+  @IsOptional()
+  @IsEnum(ActivityTags)
+  activity_tag?: ActivityTags;
+
+  @Field({ nullable: true })
+  @IsOptional()
+  @IsBoolean()
+  is_subsidized?: boolean;
 }

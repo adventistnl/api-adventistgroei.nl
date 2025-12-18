@@ -49,4 +49,13 @@ export class ProjectActivityCountOrderByAggregateInput {
 
     @Field(() => SortOrder, {nullable:true})
     tags?: `${SortOrder}`;
+
+    @Field(() => SortOrder, {nullable:true})
+    status?: `${SortOrder}`;
+
+    @Field(() => SortOrder, {nullable:true})
+    priority?: `${SortOrder}`;
+
+    @Field(() => SortOrder, {nullable:true})
+    is_subsidized?: `${SortOrder}`;
 }
