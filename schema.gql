@@ -166,6 +166,7 @@ enum PermissionResolverName {
   createProjectActivity
   updateProjectActivity
   deleteProjectActivity
+  batchUpdateProjectActivities
   sendInviteEmail
   inviteUser
   validateInviteToken
@@ -183,7 +184,12 @@ enum PermissionResolverName {
   spendingOverTime
   entityDistribution
   budgetDistribution
+  recalculateInstitutionAllocatedAmounts
   churchesActivityData
+  projectKPIs
+  projectsByDepartment
+  subsidyStatusDistribution
+  projectsTimeline
 }
 
 enum PermissionGroup {
@@ -465,10 +471,40 @@ enum EntityType {
   USER
 }
 
+type ProjectActivityLog {
+  id: ID!
+  activity_id: String!
+  user_id: String!
+  action: ProjectActivityLogAction!
+  field_name: String
+  old_value: String
+  new_value: String
+  metadata: JSON
+  created_at: DateTime!
+  activity: ProjectActivity!
+  user: User!
+}
+
+enum ProjectActivityLogAction {
+  CREATED
+  UPDATED
+  DELETED
+  STATUS_CHANGED
+  PRIORITY_CHANGED
+  ASSIGNED
+  UNASSIGNED
+  BUDGET_UPDATED
+  DEADLINE_UPDATED
+  TAG_ADDED
+  TAG_REMOVED
+  SUBSIDIZED_CHANGED
+}
+
 type ProjectActivityCount {
   subsidy_request: Int!
   subsidy_receipts: Int!
   activity_documents: Int!
+  logs: Int!
 }
 
 type ProjectActivity {
@@ -498,6 +534,7 @@ type ProjectActivity {
   activity_documents: [ActivityDocuments!]
   owner: User!
   activity_funding: ActivityFunding
+  logs: [ProjectActivityLog!]
   _count: ProjectActivityCount!
 }
 
@@ -802,6 +839,7 @@ type UserCount {
   Project: Int!
   approved_annual_budgets: Int!
   project_activities: Int!
+  project_activity_logs: Int!
 }
 
 type User {
@@ -839,6 +877,7 @@ type User {
   Project: [Project!]
   approved_annual_budgets: [AnnualBudget!]
   project_activities: [ProjectActivity!]
+  project_activity_logs: [ProjectActivityLog!]
   _count: UserCount!
 }
 
@@ -1396,6 +1435,7 @@ type Query {
   subsidyStatus(id: String!): SubsidyStatus
   projectActivities(filters: String): [ProjectActivity!]!
   projectActivity(id: ID!): ProjectActivity!
+  projectActivityLogs(activityId: ID!): [ProjectActivityLog!]!
   annualBudgets(where: AnnualBudgetWhereInput, orderBy: [AnnualBudgetOrderByWithRelationInput!], cursor: AnnualBudgetWhereUniqueInput, take: Int, skip: Int, distinct: [AnnualBudgetScalarFieldEnum!]): [AnnualBudget!]!
   annualBudget(id: String!): AnnualBudget
   budgetKPIs(year: Int!, institutionId: String!): BudgetKPIs!
@@ -1747,6 +1787,7 @@ input UserWhereInput {
   Project: ProjectListRelationFilter
   approved_annual_budgets: AnnualBudgetListRelationFilter
   project_activities: ProjectActivityListRelationFilter
+  project_activity_logs: ProjectActivityLogListRelationFilter
 }
 
 input EnumGenderTypeNullableFilter {
@@ -2084,6 +2125,7 @@ input ProjectActivityWhereInput {
   activity_documents: ActivityDocumentsListRelationFilter
   owner: UserScalarRelationFilter
   activity_funding: ActivityFundingNullableScalarRelationFilter
+  logs: ProjectActivityLogListRelationFilter
 }
 
 input EnumActivityTagsNullableListFilter {
@@ -2540,6 +2582,43 @@ input NestedEnumEntityTypeFilter {
   not: NestedEnumEntityTypeFilter
 }
 
+input ProjectActivityLogListRelationFilter {
+  every: ProjectActivityLogWhereInput
+  some: ProjectActivityLogWhereInput
+  none: ProjectActivityLogWhereInput
+}
+
+input ProjectActivityLogWhereInput {
+  AND: [ProjectActivityLogWhereInput!]
+  OR: [ProjectActivityLogWhereInput!]
+  NOT: [ProjectActivityLogWhereInput!]
+  id: StringFilter
+  activity_id: StringFilter
+  user_id: StringFilter
+  action: EnumProjectActivityLogActionFilter
+  field_name: StringNullableFilter
+  old_value: StringNullableFilter
+  new_value: StringNullableFilter
+  metadata: JsonNullableFilter
+  created_at: DateTimeFilter
+  activity: ProjectActivityScalarRelationFilter
+  user: UserScalarRelationFilter
+}
+
+input EnumProjectActivityLogActionFilter {
+  equals: ProjectActivityLogAction
+  in: [ProjectActivityLogAction!]
+  notIn: [ProjectActivityLogAction!]
+  not: NestedEnumProjectActivityLogActionFilter
+}
+
+input NestedEnumProjectActivityLogActionFilter {
+  equals: ProjectActivityLogAction
+  in: [ProjectActivityLogAction!]
+  notIn: [ProjectActivityLogAction!]
+  not: NestedEnumProjectActivityLogActionFilter
+}
+
 input AnnualReportListRelationFilter {
   every: AnnualReportWhereInput
   some: AnnualReportWhereInput
@@ -2984,6 +3063,7 @@ input UserOrderByWithRelationInput {
   Project: ProjectOrderByRelationAggregateInput
   approved_annual_budgets: AnnualBudgetOrderByRelationAggregateInput
   project_activities: ProjectActivityOrderByRelationAggregateInput
+  project_activity_logs: ProjectActivityLogOrderByRelationAggregateInput
 }
 
 input ContactOrderByWithRelationInput {
@@ -3179,6 +3259,10 @@ input VoluntariesOnProjectsOrderByRelationAggregateInput {
 }
 
 input ProjectActivityOrderByRelationAggregateInput {
+  _count: SortOrder
+}
+
+input ProjectActivityLogOrderByRelationAggregateInput {
   _count: SortOrder
 }
 

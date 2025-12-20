@@ -122,6 +122,8 @@ enum PermissionResolverName {
   createProjectActivity
   updateProjectActivity
   deleteProjectActivity
+  batchUpdateProjectActivities
+  projectActivityLogs
   sendInviteEmail
   inviteUser
   validateInviteToken
@@ -139,7 +141,12 @@ enum PermissionResolverName {
   spendingOverTime
   entityDistribution
   budgetDistribution
+  recalculateInstitutionAllocatedAmounts
   churchesActivityData
+  projectKPIs
+  projectsByDepartment
+  subsidyStatusDistribution
+  projectsTimeline
 }
 
 enum PermissionGroup {
@@ -467,6 +474,7 @@ model User {
   Project                   Project[]
   approved_annual_budgets   AnnualBudget[]           @relation("ApprovedAnnualBudgets")
   project_activities        ProjectActivity[]
+  project_activity_logs     ProjectActivityLog[]
 }
 
 model Project {
@@ -614,32 +622,66 @@ model SubsidyRequest {
 }
 
 model ProjectActivity {
-  id                  String              @id @default(uuid())
+  id                  String                   @id @default(uuid())
   subsidy_request     SubsidyRequest[]
   project_id          String
-  project             Project             @relation(fields: [project_id], references: [id])
+  project             Project                  @relation(fields: [project_id], references: [id])
   name                String
   description         String
   budget_amount       Decimal
-  created_at          DateTime            @default(now())
-  updated_at          DateTime            @updatedAt
+  created_at          DateTime                 @default(now())
+  updated_at          DateTime                 @updatedAt
   created_by          String
   updated_by          String
-  is_deleted          Boolean             @default(false)
+  is_deleted          Boolean                  @default(false)
   deleted_at          DateTime?
   deleted_by          String?
   subsidy_receipts    SubsidyReceipt[]
   activity_documents  ActivityDocuments[]
   deadline            DateTime
   owner_id            String
-  owner               User                @relation(fields: [owner_id], references: [id])
+  owner               User                     @relation(fields: [owner_id], references: [id])
   tags                ActivityTags[]
-  custom_tags         String[]            @default([])
+  custom_tags         String[]                 @default([])
   activity_tag        ActivityTags?
   activity_funding    ActivityFunding?
-  status              ActivityStatus      @default(TODO)
-  priority            ActivityPriority    @default(MEDIUM)
-  is_subsidized       Boolean             @default(false)
+  status              ActivityStatus           @default(TODO)
+  priority            ActivityPriority         @default(MEDIUM)
+  is_subsidized       Boolean                  @default(false)
+  logs                ProjectActivityLog[]
+}
+
+enum ProjectActivityLogAction {
+  CREATED
+  UPDATED
+  DELETED
+  STATUS_CHANGED
+  PRIORITY_CHANGED
+  ASSIGNED
+  UNASSIGNED
+  BUDGET_UPDATED
+  DEADLINE_UPDATED
+  TAG_ADDED
+  TAG_REMOVED
+  SUBSIDIZED_CHANGED
+}
+
+model ProjectActivityLog {
+  id                String                     @id @default(uuid())
+  activity_id       String
+  activity          ProjectActivity            @relation(fields: [activity_id], references: [id], onDelete: Cascade)
+  user_id           String
+  user              User                       @relation(fields: [user_id], references: [id])
+  action            ProjectActivityLogAction
+  field_name        String?                    // Nome do campo alterado (ex: "status", "priority")
+  old_value         String?                    // Valor antigo em formato JSON ou string
+  new_value         String?                    // Valor novo em formato JSON ou string
+  metadata          Json?                      // Metadados adicionais em JSON
+  created_at        DateTime                   @default(now())
+
+  @@index([activity_id])
+  @@index([user_id])
+  @@index([created_at])
 }
 
 model SubsidyReceipt {

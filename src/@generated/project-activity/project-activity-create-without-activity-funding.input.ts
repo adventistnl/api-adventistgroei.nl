@@ -15,6 +15,7 @@ import { ProjectCreateNestedOneWithoutActivitiesInput } from '../project/project
 import { SubsidyReceiptCreateNestedManyWithoutProject_activityInput } from '../subsidy-receipt/subsidy-receipt-create-nested-many-without-project-activity.input';
 import { ActivityDocumentsCreateNestedManyWithoutProject_activityInput } from '../activity-documents/activity-documents-create-nested-many-without-project-activity.input';
 import { UserCreateNestedOneWithoutProject_activitiesInput } from '../user/user-create-nested-one-without-project-activities.input';
+import { ProjectActivityLogCreateNestedManyWithoutActivityInput } from '../project-activity-log/project-activity-log-create-nested-many-without-activity.input';
 
 @InputType()
 export class ProjectActivityCreateWithoutActivity_fundingInput {
@@ -96,4 +97,8 @@ export class ProjectActivityCreateWithoutActivity_fundingInput {
     @Field(() => UserCreateNestedOneWithoutProject_activitiesInput, {nullable:false})
     @Type(() => UserCreateNestedOneWithoutProject_activitiesInput)
     owner!: UserCreateNestedOneWithoutProject_activitiesInput;
+
+    @Field(() => ProjectActivityLogCreateNestedManyWithoutActivityInput, {nullable:true})
+    @Type(() => ProjectActivityLogCreateNestedManyWithoutActivityInput)
+    logs?: ProjectActivityLogCreateNestedManyWithoutActivityInput;
 }

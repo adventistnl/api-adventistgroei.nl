@@ -20,6 +20,7 @@ import { VoluntariesOnProjects } from '../voluntaries-on-projects/voluntaries-on
 import { Project } from '../project/project.model';
 import { AnnualBudget } from '../annual-budget/annual-budget.model';
 import { ProjectActivity } from '../project-activity/project-activity.model';
+import { ProjectActivityLog } from '../project-activity-log/project-activity-log.model';
 import { UserCount } from './user-count.output';
 
 @ObjectType()
@@ -126,6 +127,9 @@ export class User {
 
     @Field(() => [ProjectActivity], {nullable:true})
     project_activities?: Array<ProjectActivity>;
+
+    @Field(() => [ProjectActivityLog], {nullable:true})
+    project_activity_logs?: Array<ProjectActivityLog>;
 
     @Field(() => UserCount, {nullable:false})
     _count?: UserCount;

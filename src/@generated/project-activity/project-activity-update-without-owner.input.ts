@@ -17,6 +17,7 @@ import { ProjectUpdateOneRequiredWithoutActivitiesNestedInput } from '../project
 import { SubsidyReceiptUpdateManyWithoutProject_activityNestedInput } from '../subsidy-receipt/subsidy-receipt-update-many-without-project-activity-nested.input';
 import { ActivityDocumentsUpdateManyWithoutProject_activityNestedInput } from '../activity-documents/activity-documents-update-many-without-project-activity-nested.input';
 import { ActivityFundingUpdateOneWithoutActivityNestedInput } from '../activity-funding/activity-funding-update-one-without-activity-nested.input';
+import { ProjectActivityLogUpdateManyWithoutActivityNestedInput } from '../project-activity-log/project-activity-log-update-many-without-activity-nested.input';
 
 @InputType()
 export class ProjectActivityUpdateWithoutOwnerInput {
@@ -97,4 +98,8 @@ export class ProjectActivityUpdateWithoutOwnerInput {
     @Field(() => ActivityFundingUpdateOneWithoutActivityNestedInput, {nullable:true})
     @Type(() => ActivityFundingUpdateOneWithoutActivityNestedInput)
     activity_funding?: ActivityFundingUpdateOneWithoutActivityNestedInput;
+
+    @Field(() => ProjectActivityLogUpdateManyWithoutActivityNestedInput, {nullable:true})
+    @Type(() => ProjectActivityLogUpdateManyWithoutActivityNestedInput)
+    logs?: ProjectActivityLogUpdateManyWithoutActivityNestedInput;
 }

@@ -12,6 +12,7 @@ import { SubsidyReceipt } from '../subsidy-receipt/subsidy-receipt.model';
 import { ActivityDocuments } from '../activity-documents/activity-documents.model';
 import { User } from '../user/user.model';
 import { ActivityFunding } from '../activity-funding/activity-funding.model';
+import { ProjectActivityLog } from '../project-activity-log/project-activity-log.model';
 import { ProjectActivityCount } from './project-activity-count.output';
 
 @ObjectType()
@@ -94,6 +95,9 @@ export class ProjectActivity {
 
     @Field(() => ActivityFunding, {nullable:true})
     activity_funding?: ActivityFunding | null;
+
+    @Field(() => [ProjectActivityLog], {nullable:true})
+    logs?: Array<ProjectActivityLog>;
 
     @Field(() => ProjectActivityCount, {nullable:false})
     _count?: ProjectActivityCount;

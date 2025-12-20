@@ -18,6 +18,7 @@ import { SubsidyReceiptListRelationFilter } from '../subsidy-receipt/subsidy-rec
 import { ActivityDocumentsListRelationFilter } from '../activity-documents/activity-documents-list-relation-filter.input';
 import { UserScalarRelationFilter } from '../user/user-scalar-relation-filter.input';
 import { ActivityFundingNullableScalarRelationFilter } from '../activity-funding/activity-funding-nullable-scalar-relation-filter.input';
+import { ProjectActivityLogListRelationFilter } from '../project-activity-log/project-activity-log-list-relation-filter.input';
 
 @InputType()
 export class ProjectActivityWhereInput {
@@ -118,4 +119,8 @@ export class ProjectActivityWhereInput {
     @Field(() => ActivityFundingNullableScalarRelationFilter, {nullable:true})
     @Type(() => ActivityFundingNullableScalarRelationFilter)
     activity_funding?: ActivityFundingNullableScalarRelationFilter;
+
+    @Field(() => ProjectActivityLogListRelationFilter, {nullable:true})
+    @Type(() => ProjectActivityLogListRelationFilter)
+    logs?: ProjectActivityLogListRelationFilter;
 }

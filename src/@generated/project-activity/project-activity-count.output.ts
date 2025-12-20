@@ -13,4 +13,7 @@ export class ProjectActivityCount {
 
     @Field(() => Int, {nullable:false})
     activity_documents?: number;
+
+    @Field(() => Int, {nullable:false})
+    logs?: number;
 }

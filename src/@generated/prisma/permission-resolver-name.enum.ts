@@ -77,6 +77,8 @@ export enum PermissionResolverName {
     createProjectActivity = "createProjectActivity",
     updateProjectActivity = "updateProjectActivity",
     deleteProjectActivity = "deleteProjectActivity",
+    batchUpdateProjectActivities = "batchUpdateProjectActivities",
+    projectActivityLogs = "projectActivityLogs",
     sendInviteEmail = "sendInviteEmail",
     inviteUser = "inviteUser",
     validateInviteToken = "validateInviteToken",
@@ -94,7 +96,12 @@ export enum PermissionResolverName {
     spendingOverTime = "spendingOverTime",
     entityDistribution = "entityDistribution",
     budgetDistribution = "budgetDistribution",
-    churchesActivityData = "churchesActivityData"
+    recalculateInstitutionAllocatedAmounts = "recalculateInstitutionAllocatedAmounts",
+    churchesActivityData = "churchesActivityData",
+    projectKPIs = "projectKPIs",
+    projectsByDepartment = "projectsByDepartment",
+    subsidyStatusDistribution = "subsidyStatusDistribution",
+    projectsTimeline = "projectsTimeline"
 }
 
 

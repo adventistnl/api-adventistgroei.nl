@@ -25,6 +25,7 @@ import { VoluntariesOnProjectsListRelationFilter } from '../voluntaries-on-proje
 import { ProjectListRelationFilter } from '../project/project-list-relation-filter.input';
 import { AnnualBudgetListRelationFilter } from '../annual-budget/annual-budget-list-relation-filter.input';
 import { ProjectActivityListRelationFilter } from '../project-activity/project-activity-list-relation-filter.input';
+import { ProjectActivityLogListRelationFilter } from '../project-activity-log/project-activity-log-list-relation-filter.input';
 
 @InputType()
 export class UserWhereInput {
@@ -151,4 +152,8 @@ export class UserWhereInput {
     @Field(() => ProjectActivityListRelationFilter, {nullable:true})
     @Type(() => ProjectActivityListRelationFilter)
     project_activities?: ProjectActivityListRelationFilter;
+
+    @Field(() => ProjectActivityLogListRelationFilter, {nullable:true})
+    @Type(() => ProjectActivityLogListRelationFilter)
+    project_activity_logs?: ProjectActivityLogListRelationFilter;
 }

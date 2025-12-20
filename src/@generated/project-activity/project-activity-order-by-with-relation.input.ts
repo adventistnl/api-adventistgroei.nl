@@ -9,6 +9,7 @@ import { SubsidyReceiptOrderByRelationAggregateInput } from '../subsidy-receipt/
 import { ActivityDocumentsOrderByRelationAggregateInput } from '../activity-documents/activity-documents-order-by-relation-aggregate.input';
 import { UserOrderByWithRelationInput } from '../user/user-order-by-with-relation.input';
 import { ActivityFundingOrderByWithRelationInput } from '../activity-funding/activity-funding-order-by-with-relation.input';
+import { ProjectActivityLogOrderByRelationAggregateInput } from '../project-activity-log/project-activity-log-order-by-relation-aggregate.input';
 
 @InputType()
 export class ProjectActivityOrderByWithRelationInput {
@@ -96,4 +97,8 @@ export class ProjectActivityOrderByWithRelationInput {
     @Field(() => ActivityFundingOrderByWithRelationInput, {nullable:true})
     @Type(() => ActivityFundingOrderByWithRelationInput)
     activity_funding?: ActivityFundingOrderByWithRelationInput;
+
+    @Field(() => ProjectActivityLogOrderByRelationAggregateInput, {nullable:true})
+    @Type(() => ProjectActivityLogOrderByRelationAggregateInput)
+    logs?: ProjectActivityLogOrderByRelationAggregateInput;
 }

@@ -1,14 +1,19 @@
 import { Resolver, Query, Mutation, Args, Context, ID } from '@nestjs/graphql';
 import { ProjectActivityService } from '../services/project-activity.service';
+import { ProjectActivityLogService } from '../services/project-activity-log.service';
 import { UseGuards } from '@nestjs/common';
 import { PermissionsGuard } from '../middlewares/permissions.guard';
 import { ProjectActivity } from 'src/@generated/project-activity/project-activity.model';
+import { ProjectActivityLog } from 'src/@generated/project-activity-log/project-activity-log.model';
 import { Permission } from 'src/middlewares';
 import { ProjectActivityBatchUpdateDto, ProjectActivityCreateDto, ProjectActivityUpdateDto } from '../dto/project-activity.dto';
 
 @Resolver(() => ProjectActivity)
 export class ProjectActivityResolver {
-  constructor(private readonly service: ProjectActivityService) {}
+  constructor(
+    private readonly service: ProjectActivityService,
+    private readonly logService: ProjectActivityLogService,
+  ) {}
 
   @Query(() => [ProjectActivity], { name: 'projectActivities' })
   @UseGuards(PermissionsGuard)
@@ -23,6 +28,13 @@ export class ProjectActivityResolver {
   @Permission()
   async findById(@Args('id', { type: () => ID }) id: string) {
     return this.service.findById(id);
+  }
+
+  @Query(() => [ProjectActivityLog], { name: 'projectActivityLogs' })
+  @UseGuards(PermissionsGuard)
+  @Permission()
+  async getActivityLogs(@Args('activityId', { type: () => ID }) activityId: string) {
+    return this.logService.getActivityLogs(activityId);
   }
 
   @Mutation(() => ProjectActivity)

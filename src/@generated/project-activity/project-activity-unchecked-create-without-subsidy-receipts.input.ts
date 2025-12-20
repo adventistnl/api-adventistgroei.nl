@@ -13,6 +13,7 @@ import { ActivityPriority } from '../prisma/activity-priority.enum';
 import { SubsidyRequestUncheckedCreateNestedManyWithoutProject_activitiesInput } from '../subsidy-request/subsidy-request-unchecked-create-nested-many-without-project-activities.input';
 import { ActivityDocumentsUncheckedCreateNestedManyWithoutProject_activityInput } from '../activity-documents/activity-documents-unchecked-create-nested-many-without-project-activity.input';
 import { ActivityFundingUncheckedCreateNestedOneWithoutActivityInput } from '../activity-funding/activity-funding-unchecked-create-nested-one-without-activity.input';
+import { ProjectActivityLogUncheckedCreateNestedManyWithoutActivityInput } from '../project-activity-log/project-activity-log-unchecked-create-nested-many-without-activity.input';
 
 @InputType()
 export class ProjectActivityUncheckedCreateWithoutSubsidy_receiptsInput {
@@ -92,4 +93,8 @@ export class ProjectActivityUncheckedCreateWithoutSubsidy_receiptsInput {
     @Field(() => ActivityFundingUncheckedCreateNestedOneWithoutActivityInput, {nullable:true})
     @Type(() => ActivityFundingUncheckedCreateNestedOneWithoutActivityInput)
     activity_funding?: ActivityFundingUncheckedCreateNestedOneWithoutActivityInput;
+
+    @Field(() => ProjectActivityLogUncheckedCreateNestedManyWithoutActivityInput, {nullable:true})
+    @Type(() => ProjectActivityLogUncheckedCreateNestedManyWithoutActivityInput)
+    logs?: ProjectActivityLogUncheckedCreateNestedManyWithoutActivityInput;
 }

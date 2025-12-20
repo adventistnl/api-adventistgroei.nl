@@ -43,4 +43,7 @@ export class UserCount {
 
     @Field(() => Int, {nullable:false})
     project_activities?: number;
+
+    @Field(() => Int, {nullable:false})
+    project_activity_logs?: number;
 }

@@ -15,6 +15,7 @@ import { EnumActivityPriorityFieldUpdateOperationsInput } from '../prisma/enum-a
 import { SubsidyReceiptUncheckedUpdateManyWithoutProject_activityNestedInput } from '../subsidy-receipt/subsidy-receipt-unchecked-update-many-without-project-activity-nested.input';
 import { ActivityDocumentsUncheckedUpdateManyWithoutProject_activityNestedInput } from '../activity-documents/activity-documents-unchecked-update-many-without-project-activity-nested.input';
 import { ActivityFundingUncheckedUpdateOneWithoutActivityNestedInput } from '../activity-funding/activity-funding-unchecked-update-one-without-activity-nested.input';
+import { ProjectActivityLogUncheckedUpdateManyWithoutActivityNestedInput } from '../project-activity-log/project-activity-log-unchecked-update-many-without-activity-nested.input';
 
 @InputType()
 export class ProjectActivityUncheckedUpdateWithoutSubsidy_requestInput {
@@ -93,4 +94,8 @@ export class ProjectActivityUncheckedUpdateWithoutSubsidy_requestInput {
     @Field(() => ActivityFundingUncheckedUpdateOneWithoutActivityNestedInput, {nullable:true})
     @Type(() => ActivityFundingUncheckedUpdateOneWithoutActivityNestedInput)
     activity_funding?: ActivityFundingUncheckedUpdateOneWithoutActivityNestedInput;
+
+    @Field(() => ProjectActivityLogUncheckedUpdateManyWithoutActivityNestedInput, {nullable:true})
+    @Type(() => ProjectActivityLogUncheckedUpdateManyWithoutActivityNestedInput)
+    logs?: ProjectActivityLogUncheckedUpdateManyWithoutActivityNestedInput;
 }
