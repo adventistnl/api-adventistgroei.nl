@@ -54,6 +54,21 @@ export class ProjectActivityCreateDto {
   @Field(() => [ActivityTags])
   tags: ActivityTags[];
 
+  @Field(() => [String], { nullable: true })
+  @IsOptional()
+  @IsArray()
+  custom_tags?: string[];
+
+  @Field(() => ActivityStatus, { nullable: true })
+  @IsOptional()
+  @IsEnum(ActivityStatus)
+  status?: ActivityStatus;
+
+  @Field(() => ActivityPriority, { nullable: true })
+  @IsOptional()
+  @IsEnum(ActivityPriority)
+  priority?: ActivityPriority;
+
   @Field({ nullable: true })
   @IsOptional()
   @IsBoolean()
@@ -120,6 +135,31 @@ export class ProjectActivityUpdateDto {
   @Field(() => [ActivityTags], { nullable: true })
   @IsOptional()
   tags?: ActivityTags[];
+
+  @Field(() => [String], { nullable: true })
+  @IsOptional()
+  @IsArray()
+  custom_tags?: string[];
+
+  @Field(() => ActivityStatus, { nullable: true })
+  @IsOptional()
+  @IsEnum(ActivityStatus)
+  status?: ActivityStatus;
+
+  @Field(() => ActivityPriority, { nullable: true })
+  @IsOptional()
+  @IsEnum(ActivityPriority)
+  priority?: ActivityPriority;
+
+  @Field({ nullable: true })
+  @IsOptional()
+  @IsBoolean()
+  is_subsidized?: boolean;
+
+  @Field(() => ActivityTags, { nullable: true })
+  @IsOptional()
+  @IsEnum(ActivityTags)
+  activity_tag?: ActivityTags;
 
   @Field(() => ActivityFundingUpdateDto, { nullable: true })
   @IsOptional()

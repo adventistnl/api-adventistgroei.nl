@@ -487,6 +487,8 @@ type ProjectActivity {
   deadline: DateTime!
   owner_id: String!
   tags: [ActivityTags!]
+  custom_tags: [String!]
+  activity_tag: ActivityTags
   status: ActivityStatus!
   priority: ActivityPriority!
   is_subsidized: Boolean!
@@ -2071,6 +2073,8 @@ input ProjectActivityWhereInput {
   deadline: DateTimeFilter
   owner_id: StringFilter
   tags: EnumActivityTagsNullableListFilter
+  custom_tags: StringNullableListFilter
+  activity_tag: EnumActivityTagsNullableFilter
   status: EnumActivityStatusFilter
   priority: EnumActivityPriorityFilter
   is_subsidized: BoolFilter
@@ -2088,6 +2092,28 @@ input EnumActivityTagsNullableListFilter {
   hasEvery: [ActivityTags!]
   hasSome: [ActivityTags!]
   isEmpty: Boolean
+}
+
+input StringNullableListFilter {
+  equals: [String!]
+  has: String
+  hasEvery: [String!]
+  hasSome: [String!]
+  isEmpty: Boolean
+}
+
+input EnumActivityTagsNullableFilter {
+  equals: ActivityTags
+  in: [ActivityTags!]
+  notIn: [ActivityTags!]
+  not: NestedEnumActivityTagsNullableFilter
+}
+
+input NestedEnumActivityTagsNullableFilter {
+  equals: ActivityTags
+  in: [ActivityTags!]
+  notIn: [ActivityTags!]
+  not: NestedEnumActivityTagsNullableFilter
 }
 
 input EnumActivityStatusFilter {
@@ -3564,6 +3590,9 @@ input ProjectActivityCreateDto {
   deadline: String!
   owner_id: String!
   tags: [ActivityTags!]!
+  custom_tags: [String!]
+  status: ActivityStatus
+  priority: ActivityPriority
   is_subsidized: Boolean
   activity_funding: ActivityFundingCreateDto!
 }
@@ -3600,6 +3629,11 @@ input ProjectActivityUpdateDto {
   deadline: String
   owner_id: String
   tags: [ActivityTags!]
+  custom_tags: [String!]
+  status: ActivityStatus
+  priority: ActivityPriority
+  is_subsidized: Boolean
+  activity_tag: ActivityTags
   activity_funding: ActivityFundingUpdateDto
 }
 

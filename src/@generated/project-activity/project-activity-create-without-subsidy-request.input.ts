@@ -6,6 +6,8 @@ import { transformToDecimal } from 'prisma-graphql-type-decimal';
 import { Transform } from 'class-transformer';
 import { Type } from 'class-transformer';
 import { ProjectActivityCreatetagsInput } from './project-activity-createtags.input';
+import { ProjectActivityCreatecustom_tagsInput } from './project-activity-createcustom-tags.input';
+import { ActivityTags } from '../prisma/activity-tags.enum';
 import { ActivityStatus } from '../prisma/activity-status.enum';
 import { ActivityPriority } from '../prisma/activity-priority.enum';
 import { ProjectCreateNestedOneWithoutActivitiesInput } from '../project/project-create-nested-one-without-activities.input';
@@ -58,6 +60,13 @@ export class ProjectActivityCreateWithoutSubsidy_requestInput {
     @Field(() => ProjectActivityCreatetagsInput, {nullable:true})
     @Type(() => ProjectActivityCreatetagsInput)
     tags?: ProjectActivityCreatetagsInput;
+
+    @Field(() => ProjectActivityCreatecustom_tagsInput, {nullable:true})
+    @Type(() => ProjectActivityCreatecustom_tagsInput)
+    custom_tags?: ProjectActivityCreatecustom_tagsInput;
+
+    @Field(() => ActivityTags, {nullable:true})
+    activity_tag?: `${ActivityTags}`;
 
     @Field(() => ActivityStatus, {nullable:true})
     status?: `${ActivityStatus}`;

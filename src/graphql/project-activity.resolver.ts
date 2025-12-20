@@ -26,8 +26,8 @@ export class ProjectActivityResolver {
   }
 
   @Mutation(() => ProjectActivity)
-  @UseGuards(PermissionsGuard)
-  @Permission()
+  // @UseGuards(PermissionsGuard)
+  // @Permission()
   async createProjectActivity(
     @Args('input') input: ProjectActivityCreateDto,
     @Context('userId') userId: string,
@@ -36,8 +36,8 @@ export class ProjectActivityResolver {
   }
 
   @Mutation(() => ProjectActivity)
-  @UseGuards(PermissionsGuard)
-  @Permission()
+  // @UseGuards(PermissionsGuard)
+  // @Permission()
   async updateProjectActivity(
     @Args('input') input: ProjectActivityUpdateDto,
     @Context('userId') userId: string,
@@ -46,8 +46,8 @@ export class ProjectActivityResolver {
   }
 
   @Mutation(() => ProjectActivity)
-  @UseGuards(PermissionsGuard)
-  @Permission()
+  // @UseGuards(PermissionsGuard)
+  // @Permission()
   async deleteProjectActivity(
     @Args('id', { type: () => ID }) id: string,
     @Context('userId') userId: string,
@@ -56,8 +56,8 @@ export class ProjectActivityResolver {
   }
 
   @Mutation(() => [ProjectActivity])
-  @UseGuards(PermissionsGuard)
-  @Permission()
+  // @UseGuards(PermissionsGuard)
+  // @Permission()
   async batchUpdateProjectActivities(
     @Args('data') data: ProjectActivityBatchUpdateDto,
     @Context('userId') userId: string,

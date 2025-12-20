@@ -18,7 +18,10 @@ export class ProjectActivityRepository {
           deadline: data.deadline,
           owner_id: data.owner_id,
           tags: data.tags,
+          custom_tags: data.custom_tags || [],
           project_id: data.project_id,
+          status: data.status,
+          priority: data.priority,
           is_subsidized: data.is_subsidized ?? false,
           created_by: userId,
           updated_by: userId,
@@ -53,6 +56,11 @@ export class ProjectActivityRepository {
       if (data.deadline !== undefined) updateData.deadline = data.deadline;
       if (data.owner_id !== undefined) updateData.owner_id = data.owner_id;
       if (data.tags !== undefined) updateData.tags = data.tags;
+      if (data.custom_tags !== undefined) updateData.custom_tags = data.custom_tags;
+      if (data.status !== undefined) updateData.status = data.status;
+      if (data.priority !== undefined) updateData.priority = data.priority;
+      if (data.is_subsidized !== undefined) updateData.is_subsidized = data.is_subsidized;
+      if (data.activity_tag !== undefined) updateData.activity_tag = data.activity_tag;
 
       return await this.prisma.projectActivity.update({
         where: { id: data.id },
@@ -83,15 +91,51 @@ export class ProjectActivityRepository {
 
   async softDelete(id: string, userId: string): Promise<ProjectActivity> {
     try {
-      return await this.prisma.projectActivity.update({
-        where: { id },
-        data: {
-          is_deleted: true,
-          deleted_at: new Date(),
-          deleted_by: userId,
-        },
+      const deletionDate = new Date();
+
+      // Soft delete all related records in a transaction
+      return await this.prisma.$transaction(async (tx) => {
+        // 1. Soft delete activity funding
+        await tx.activityFunding.updateMany({
+          where: { activity_id: id, is_deleted: false },
+          data: {
+            is_deleted: true,
+            deleted_at: deletionDate,
+            deleted_by: userId,
+          },
+        });
+
+        // 2. Soft delete activity documents
+        await tx.activityDocuments.updateMany({
+          where: { project_activity_id: id, is_deleted: false },
+          data: {
+            is_deleted: true,
+            deleted_at: deletionDate,
+            deleted_by: userId,
+          },
+        });
+
+        // 3. Soft delete subsidy receipts
+        await tx.subsidyReceipt.updateMany({
+          where: { project_activities_id: id, is_deleted: false },
+          data: {
+            is_deleted: true,
+            deleted_at: deletionDate,
+            deleted_by: userId,
+          },
+        });
+
+        // 4. Finally, soft delete the activity itself
+        return await tx.projectActivity.update({
+          where: { id },
+          data: {
+            is_deleted: true,
+            deleted_at: deletionDate,
+            deleted_by: userId,
+          },
+        });
       });
-    } catch {
+    } catch (error) {
       throw new CustomGraphQLError('Erro ao deletar ProjectActivity', ErrorCode.INTERNAL_SERVER_ERROR, 500);
     }
   }
@@ -114,9 +158,7 @@ export class ProjectActivityRepository {
         updateData.is_subsidized = data.is_subsidized;
       }
       if (data.activity_tag !== undefined) {
-        // For tags, we need to update the array
-        // Since it's an array field, we'll handle it differently
-        updateData.tags = { set: [data.activity_tag] };
+        updateData.activity_tag = data.activity_tag;
       }
 
       // Use updateMany to update all activities with the given IDs

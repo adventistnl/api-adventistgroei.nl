@@ -62,6 +62,12 @@ export class ProjectActivity {
     @Field(() => [ActivityTags], {nullable:true})
     tags!: Array<`${ActivityTags}`>;
 
+    @Field(() => [String], {nullable:true})
+    custom_tags!: Array<string>;
+
+    @Field(() => ActivityTags, {nullable:true})
+    activity_tag!: `${ActivityTags}` | null;
+
     @Field(() => ActivityStatus, {defaultValue:'TODO',nullable:false})
     status!: `${ActivityStatus}`;
 

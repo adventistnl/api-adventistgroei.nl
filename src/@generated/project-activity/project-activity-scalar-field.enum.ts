@@ -16,6 +16,8 @@ export enum ProjectActivityScalarFieldEnum {
     deadline = "deadline",
     owner_id = "owner_id",
     tags = "tags",
+    custom_tags = "custom_tags",
+    activity_tag = "activity_tag",
     status = "status",
     priority = "priority",
     is_subsidized = "is_subsidized"

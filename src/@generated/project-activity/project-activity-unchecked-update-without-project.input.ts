@@ -8,6 +8,8 @@ import { BoolFieldUpdateOperationsInput } from '../prisma/bool-field-update-oper
 import { NullableDateTimeFieldUpdateOperationsInput } from '../prisma/nullable-date-time-field-update-operations.input';
 import { NullableStringFieldUpdateOperationsInput } from '../prisma/nullable-string-field-update-operations.input';
 import { ProjectActivityUpdatetagsInput } from './project-activity-updatetags.input';
+import { ProjectActivityUpdatecustom_tagsInput } from './project-activity-updatecustom-tags.input';
+import { NullableEnumActivityTagsFieldUpdateOperationsInput } from '../prisma/nullable-enum-activity-tags-field-update-operations.input';
 import { EnumActivityStatusFieldUpdateOperationsInput } from '../prisma/enum-activity-status-field-update-operations.input';
 import { EnumActivityPriorityFieldUpdateOperationsInput } from '../prisma/enum-activity-priority-field-update-operations.input';
 import { SubsidyRequestUncheckedUpdateManyWithoutProject_activitiesNestedInput } from '../subsidy-request/subsidy-request-unchecked-update-many-without-project-activities-nested.input';
@@ -61,6 +63,13 @@ export class ProjectActivityUncheckedUpdateWithoutProjectInput {
     @Field(() => ProjectActivityUpdatetagsInput, {nullable:true})
     @Type(() => ProjectActivityUpdatetagsInput)
     tags?: ProjectActivityUpdatetagsInput;
+
+    @Field(() => ProjectActivityUpdatecustom_tagsInput, {nullable:true})
+    @Type(() => ProjectActivityUpdatecustom_tagsInput)
+    custom_tags?: ProjectActivityUpdatecustom_tagsInput;
+
+    @Field(() => NullableEnumActivityTagsFieldUpdateOperationsInput, {nullable:true})
+    activity_tag?: NullableEnumActivityTagsFieldUpdateOperationsInput;
 
     @Field(() => EnumActivityStatusFieldUpdateOperationsInput, {nullable:true})
     status?: EnumActivityStatusFieldUpdateOperationsInput;

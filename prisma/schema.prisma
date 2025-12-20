@@ -634,6 +634,8 @@ model ProjectActivity {
   owner_id            String
   owner               User                @relation(fields: [owner_id], references: [id])
   tags                ActivityTags[]
+  custom_tags         String[]            @default([])
+  activity_tag        ActivityTags?
   activity_funding    ActivityFunding?
   status              ActivityStatus      @default(TODO)
   priority            ActivityPriority    @default(MEDIUM)

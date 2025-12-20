@@ -59,6 +59,12 @@ export class ProjectActivityGroupBy {
     @Field(() => [ActivityTags], {nullable:true})
     tags?: Array<`${ActivityTags}`>;
 
+    @Field(() => [String], {nullable:true})
+    custom_tags?: Array<string>;
+
+    @Field(() => ActivityTags, {nullable:true})
+    activity_tag?: `${ActivityTags}`;
+
     @Field(() => ActivityStatus, {nullable:false})
     status!: `${ActivityStatus}`;
 

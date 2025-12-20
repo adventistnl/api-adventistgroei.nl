@@ -280,6 +280,9 @@ export class ProjectRepository {
         department: true,
         Institution: true,
         activities: {
+          where: {
+            is_deleted: false,
+          },
           include: {
             owner: true, // Inclui o relacionamento com o proprietário da atividade
           },
@@ -317,6 +320,9 @@ export class ProjectRepository {
         department: true,
         Institution: true,
         activities: {
+          where: {
+            is_deleted: false,
+          },
           include: {
             owner: true, // Inclui o relacionamento com o proprietário da atividade
           },
@@ -344,6 +350,9 @@ export class ProjectRepository {
         department: true,
         Institution: true,
         activities: {
+          where: {
+            is_deleted: false,
+          },
           include: {
             owner: true, // Inclui o relacionamento com o proprietário da atividade
           },
@@ -372,6 +381,9 @@ export class ProjectRepository {
         department: true,
         Institution: true,
         activities: {
+          where: {
+            is_deleted: false,
+          },
           include: {
             owner: true, // Inclui o relacionamento com o proprietário da atividade
           },
@@ -393,6 +405,9 @@ export class ProjectRepository {
         department: true,
         Institution: true,
         activities: {
+          where: {
+            is_deleted: false,
+          },
           include: {
             owner: true,
           },
