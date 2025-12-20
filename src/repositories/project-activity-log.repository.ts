@@ -22,13 +22,7 @@ export class ProjectActivityLogRepository {
         metadata: data.metadata,
       },
       include: {
-        user: {
-          select: {
-            id: true,
-            name: true,
-            email: true,
-          },
-        },
+        user: true,
       },
     });
   }
@@ -42,13 +36,7 @@ export class ProjectActivityLogRepository {
         activity_id: activityId,
       },
       include: {
-        user: {
-          select: {
-            id: true,
-            name: true,
-            email: true,
-          },
-        },
+        user: true,
       },
       orderBy: {
         created_at: 'desc',

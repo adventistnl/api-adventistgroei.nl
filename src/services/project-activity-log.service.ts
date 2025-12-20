@@ -40,9 +40,36 @@ export class ProjectActivityLogService {
       user_id: userId,
       action,
       field_name: fieldName,
-      old_value: oldValue ? JSON.stringify(oldValue) : null,
-      new_value: newValue ? JSON.stringify(newValue) : null,
+      old_value: this.valueToString(oldValue),
+      new_value: this.valueToString(newValue),
     });
+  }
+
+  /**
+   * Converte valor para string para salvar no banco
+   */
+  private valueToString(value: any): string | undefined {
+    if (value === null || value === undefined) {
+      return undefined;
+    }
+
+    // Handle Prisma Decimal type
+    if (value && typeof value === 'object' && typeof value.toString === 'function' && 'toFixed' in value) {
+      return value.toString();
+    }
+
+    // Handle Date objects
+    if (value instanceof Date) {
+      return value.toISOString();
+    }
+
+    // Handle objects/arrays
+    if (typeof value === 'object') {
+      return JSON.stringify(value);
+    }
+
+    // Handle primitives
+    return String(value);
   }
 
   /**
@@ -98,7 +125,17 @@ export class ProjectActivityLogService {
     ];
 
     for (const field of fieldsToTrack) {
-      if (oldData[field] !== newData[field] && newData[field] !== undefined) {
+      // Skip if field is not present in newData
+      if (newData[field] === undefined) {
+        continue;
+      }
+
+      // Normalize values for comparison
+      const oldValue = this.normalizeValue(oldData[field]);
+      const newValue = this.normalizeValue(newData[field]);
+
+      // Only log if value actually changed
+      if (oldValue !== newValue) {
         let action = ProjectActivityLogAction.UPDATED;
 
         // Determinar ação específica baseada no campo
@@ -127,5 +164,40 @@ export class ProjectActivityLogService {
     }
 
     return logs;
+  }
+
+  /**
+   * Normaliza valores para comparação (converte Decimal para string, Date para ISO, etc.)
+   */
+  private normalizeValue(value: any): any {
+    if (value === null || value === undefined) {
+      return null;
+    }
+
+    // Handle Prisma Decimal type (has toString and toFixed methods)
+    if (value && typeof value === 'object' && typeof value.toString === 'function' && 'toFixed' in value) {
+      return value.toString();
+    }
+
+    // Handle Date objects
+    if (value instanceof Date) {
+      return value.toISOString();
+    }
+
+    // Handle strings that look like ISO dates - normalize to ISO format
+    if (typeof value === 'string' && /^\d{4}-\d{2}-\d{2}T/.test(value)) {
+      try {
+        return new Date(value).toISOString();
+      } catch {
+        return value;
+      }
+    }
+
+    // Handle numbers (important for budget_amount)
+    if (typeof value === 'number') {
+      return value.toString();
+    }
+
+    return value;
   }
 }

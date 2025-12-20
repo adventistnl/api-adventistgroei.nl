@@ -30,7 +30,7 @@ export class ProjectActivityService {
       // Get old data before update
       const oldActivity = await this.repository.findById(input.id);
       if (!oldActivity) {
-        throw new CustomGraphQLError('Atividade não encontrada', ErrorCode.NOT_FOUND);
+        throw new CustomGraphQLError('Atividade não encontrada', ErrorCode.NOT_FOUND, 404);
       }
 
       // Perform update
@@ -79,7 +79,7 @@ export class ProjectActivityService {
     for (const activityId of data.ids) {
       const oldActivity = oldActivitiesMap.get(activityId);
       if (oldActivity) {
-        await this.logService.logChanges(activityId, userId, oldActivity, data.data);
+        await this.logService.logChanges(activityId, userId, oldActivity, data);
       }
     }
 

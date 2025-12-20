@@ -167,6 +167,7 @@ enum PermissionResolverName {
   updateProjectActivity
   deleteProjectActivity
   batchUpdateProjectActivities
+  projectActivityLogs
   sendInviteEmail
   inviteUser
   validateInviteToken

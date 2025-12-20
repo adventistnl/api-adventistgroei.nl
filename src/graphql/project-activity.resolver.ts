@@ -32,7 +32,7 @@ export class ProjectActivityResolver {
 
   @Query(() => [ProjectActivityLog], { name: 'projectActivityLogs' })
   @UseGuards(PermissionsGuard)
-  @Permission()
+  @Permission('projectActivityLogs')
   async getActivityLogs(@Args('activityId', { type: () => ID }) activityId: string) {
     return this.logService.getActivityLogs(activityId);
   }
