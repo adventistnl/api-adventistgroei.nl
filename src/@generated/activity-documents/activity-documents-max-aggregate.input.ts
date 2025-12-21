@@ -14,6 +14,12 @@ export class ActivityDocumentsMaxAggregateInput {
     file_url?: true;
 
     @Field(() => Boolean, {nullable:true})
+    drive_file_id?: true;
+
+    @Field(() => Boolean, {nullable:true})
+    filename?: true;
+
+    @Field(() => Boolean, {nullable:true})
     type?: true;
 
     @Field(() => Boolean, {nullable:true})

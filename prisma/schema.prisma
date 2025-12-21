@@ -147,6 +147,11 @@ enum PermissionResolverName {
   projectsByDepartment
   subsidyStatusDistribution
   projectsTimeline
+  uploadActivityDocument
+  downloadActivityDocument
+  deleteActivityDocument
+  validateActivityDocument
+  getActivityDocuments
 }
 
 enum PermissionGroup {
@@ -162,6 +167,7 @@ enum PermissionGroup {
   DIRECT_MESSAGE
   PROJECT
   ACTIVITY
+  ACTIVITY_DOCUMENT
   NOTIFICATION
   SETTING
   SUBSIDY_REQUEST
@@ -947,6 +953,8 @@ model ActivityDocuments {
   id                  String           @id @default(uuid())
   activity_id         String
   file_url            String
+  drive_file_id       String?
+  filename            String           // Nome original do arquivo
   type                String
   is_validated        Boolean          @default(false)
   uploaded_by         String

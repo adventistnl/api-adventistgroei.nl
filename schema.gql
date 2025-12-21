@@ -191,6 +191,11 @@ enum PermissionResolverName {
   projectsByDepartment
   subsidyStatusDistribution
   projectsTimeline
+  uploadActivityDocument
+  downloadActivityDocument
+  deleteActivityDocument
+  validateActivityDocument
+  getActivityDocuments
 }
 
 enum PermissionGroup {
@@ -206,6 +211,7 @@ enum PermissionGroup {
   DIRECT_MESSAGE
   PROJECT
   ACTIVITY
+  ACTIVITY_DOCUMENT
   NOTIFICATION
   SETTING
   SUBSIDY_REQUEST
@@ -431,6 +437,8 @@ type ActivityDocuments {
   id: ID!
   activity_id: String!
   file_url: String!
+  drive_file_id: String
+  filename: String!
   type: String!
   is_validated: Boolean!
   uploaded_by: String!
@@ -1437,6 +1445,8 @@ type Query {
   projectActivities(filters: String): [ProjectActivity!]!
   projectActivity(id: ID!): ProjectActivity!
   projectActivityLogs(activityId: ID!): [ProjectActivityLog!]!
+  downloadActivityDocument(id: ID!): String!
+  getActivityDocuments(activityId: ID!): [ActivityDocuments!]!
   annualBudgets(where: AnnualBudgetWhereInput, orderBy: [AnnualBudgetOrderByWithRelationInput!], cursor: AnnualBudgetWhereUniqueInput, take: Int, skip: Int, distinct: [AnnualBudgetScalarFieldEnum!]): [AnnualBudget!]!
   annualBudget(id: String!): AnnualBudget
   budgetKPIs(year: Int!, institutionId: String!): BudgetKPIs!
@@ -2502,6 +2512,8 @@ input ActivityDocumentsWhereInput {
   id: StringFilter
   activity_id: StringFilter
   file_url: StringFilter
+  drive_file_id: StringNullableFilter
+  filename: StringFilter
   type: StringFilter
   is_validated: BoolFilter
   uploaded_by: StringFilter
@@ -3399,6 +3411,9 @@ type Mutation {
   updateProjectActivity(input: ProjectActivityUpdateDto!): ProjectActivity!
   deleteProjectActivity(id: ID!): ProjectActivity!
   batchUpdateProjectActivities(data: ProjectActivityBatchUpdateDto!): [ProjectActivity!]!
+  uploadActivityDocument(input: UploadActivityDocumentDto!, file: Upload!): ActivityDocuments!
+  deleteActivityDocument(id: ID!): ActivityDocuments!
+  validateActivityDocument(id: ID!): ActivityDocuments!
   inviteUser(data: InviteUserDto!): InviteModel!
   validateInviteToken(token: String!): ValidateOutputModel!
 
@@ -3650,7 +3665,7 @@ input ProjectCreateDto {
   required_volunteers: Boolean! = false
   is_event: Boolean! = false
   event: EventCreateDto
-  activities: [ProjectActivityCreateDto!]
+  activities: [ProjectActivityCreateWithoutProjectDto!]
   is_special_case: Boolean! = false
   special_case_reason: String
   location_church_plant: String
@@ -3667,8 +3682,7 @@ input EventCreateDto {
   subscription_expires_at: String!
 }
 
-input ProjectActivityCreateDto {
-  project_id: String!
+input ProjectActivityCreateWithoutProjectDto {
   name: String!
   description: String!
   budget_amount: Float!
@@ -3814,6 +3828,21 @@ input RemoveProjectVoluntaryDto {
   user_id: String!
 }
 
+input ProjectActivityCreateDto {
+  name: String!
+  description: String!
+  budget_amount: Float!
+  deadline: String!
+  owner_id: String!
+  tags: [ActivityTags!]!
+  custom_tags: [String!]
+  status: ActivityStatus
+  priority: ActivityPriority
+  is_subsidized: Boolean
+  activity_funding: ActivityFundingCreateDto!
+  project_id: String!
+}
+
 input ProjectActivityBatchUpdateDto {
   ids: [String!]!
   status: ActivityStatus
@@ -3821,6 +3850,15 @@ input ProjectActivityBatchUpdateDto {
   activity_tag: ActivityTags
   is_subsidized: Boolean
 }
+
+input UploadActivityDocumentDto {
+  activity_id: String!
+  project_activity_id: String!
+  type: String!
+}
+
+"""The `Upload` scalar type represents a file upload."""
+scalar Upload
 
 input InviteUserDto {
   role_ids: [String!]!

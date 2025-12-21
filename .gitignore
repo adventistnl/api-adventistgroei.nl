@@ -123,3 +123,6 @@ temp/
 Thumbs.db
 ehthumbs.db
 Desktop.ini
+
+
+config/service-account-key.json

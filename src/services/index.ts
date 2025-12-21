@@ -18,6 +18,8 @@ export * from './subsidy-status.service';
 export * from './project-voluntary.service';
 export * from './project-activity.service';
 export * from './project-activity-log.service';
+export * from './google-drive.service';
+export * from './activity-documents.service';
 export * from './invite.service';
 export * from './email.service';
 export * from './annual-budget.service';

@@ -14,6 +14,12 @@ export class ActivityDocumentsMinAggregate {
     file_url?: string;
 
     @Field(() => String, {nullable:true})
+    drive_file_id?: string;
+
+    @Field(() => String, {nullable:true})
+    filename?: string;
+
+    @Field(() => String, {nullable:true})
     type?: string;
 
     @Field(() => Boolean, {nullable:true})

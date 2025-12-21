@@ -25,12 +25,9 @@ export class ActivityFundingCreateDto {
   entity_id: string;
 }
 
+// DTO para criar atividade SEM project_id (usado quando criado junto com projeto)
 @InputType()
-export class ProjectActivityCreateDto {
-  @Field()
-  @IsString()
-  project_id: string;
-
+export class ProjectActivityCreateWithoutProjectDto {
   @Field()
   @IsString()
   name: string;
@@ -76,6 +73,14 @@ export class ProjectActivityCreateDto {
 
   @Field(() => ActivityFundingCreateDto)
   activity_funding: ActivityFundingCreateDto;
+}
+
+// DTO para criar atividade COM project_id (usado para adicionar atividade a projeto existente)
+@InputType()
+export class ProjectActivityCreateDto extends ProjectActivityCreateWithoutProjectDto {
+  @Field()
+  @IsString()
+  project_id: string;
 }
 
 @InputType()

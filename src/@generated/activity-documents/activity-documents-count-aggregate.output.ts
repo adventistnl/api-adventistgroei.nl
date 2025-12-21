@@ -15,6 +15,12 @@ export class ActivityDocumentsCountAggregate {
     file_url!: number;
 
     @Field(() => Int, {nullable:false})
+    drive_file_id!: number;
+
+    @Field(() => Int, {nullable:false})
+    filename!: number;
+
+    @Field(() => Int, {nullable:false})
     type!: number;
 
     @Field(() => Int, {nullable:false})

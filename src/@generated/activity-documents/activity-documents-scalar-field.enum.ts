@@ -4,6 +4,8 @@ export enum ActivityDocumentsScalarFieldEnum {
     id = "id",
     activity_id = "activity_id",
     file_url = "file_url",
+    drive_file_id = "drive_file_id",
+    filename = "filename",
     type = "type",
     is_validated = "is_validated",
     uploaded_by = "uploaded_by",

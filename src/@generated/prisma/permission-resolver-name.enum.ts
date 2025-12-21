@@ -101,7 +101,12 @@ export enum PermissionResolverName {
     projectKPIs = "projectKPIs",
     projectsByDepartment = "projectsByDepartment",
     subsidyStatusDistribution = "subsidyStatusDistribution",
-    projectsTimeline = "projectsTimeline"
+    projectsTimeline = "projectsTimeline",
+    uploadActivityDocument = "uploadActivityDocument",
+    downloadActivityDocument = "downloadActivityDocument",
+    deleteActivityDocument = "deleteActivityDocument",
+    validateActivityDocument = "validateActivityDocument",
+    getActivityDocuments = "getActivityDocuments"
 }
 
 

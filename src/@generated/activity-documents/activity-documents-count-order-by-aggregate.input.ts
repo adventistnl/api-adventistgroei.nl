@@ -15,6 +15,12 @@ export class ActivityDocumentsCountOrderByAggregateInput {
     file_url?: `${SortOrder}`;
 
     @Field(() => SortOrder, {nullable:true})
+    drive_file_id?: `${SortOrder}`;
+
+    @Field(() => SortOrder, {nullable:true})
+    filename?: `${SortOrder}`;
+
+    @Field(() => SortOrder, {nullable:true})
     type?: `${SortOrder}`;
 
     @Field(() => SortOrder, {nullable:true})

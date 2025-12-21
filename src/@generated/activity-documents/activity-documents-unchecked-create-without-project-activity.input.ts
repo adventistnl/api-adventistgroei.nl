@@ -13,6 +13,12 @@ export class ActivityDocumentsUncheckedCreateWithoutProject_activityInput {
     @Field(() => String, {nullable:false})
     file_url!: string;
 
+    @Field(() => String, {nullable:true})
+    drive_file_id?: string;
+
+    @Field(() => String, {nullable:false})
+    filename!: string;
+
     @Field(() => String, {nullable:false})
     type!: string;
 

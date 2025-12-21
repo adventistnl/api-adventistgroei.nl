@@ -4,7 +4,7 @@ import { Type } from 'class-transformer';
 import { LanguagePreference } from '../@generated/prisma/language-preference.enum';
 import { ProjectType } from '../@generated/prisma/project-type.enum';
 import { EventType } from '../@generated/prisma/event-type.enum';
-import { ProjectActivityCreateDto, ProjectActivityUpdateDto } from './project-activity.dto';
+import { ProjectActivityCreateDto, ProjectActivityUpdateDto, ProjectActivityCreateWithoutProjectDto } from './project-activity.dto';
 
 @InputType()
 export class EventCreateDto {
@@ -102,9 +102,9 @@ export class ProjectCreateDto {
   @Type(() => EventCreateDto)
   event?: EventCreateDto;
 
-  @Field(() => [ProjectActivityCreateDto], { nullable: true })
+  @Field(() => [ProjectActivityCreateWithoutProjectDto], { nullable: true })
   @IsOptional()
-  activities?: ProjectActivityCreateDto[];
+  activities?: ProjectActivityCreateWithoutProjectDto[];
 
   @Field({ defaultValue: false })
   @IsOptional()

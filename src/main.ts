@@ -25,15 +25,15 @@ async function bootstrap() {
   app.enableCors({
     origin: origins,
     credentials: true,
-    methods: 'GET,POST,OPTIONS',
-    allowedHeaders: 'Content-Type,Authorization',
+    methods: 'GET,POST,DELETE,OPTIONS',
+    allowedHeaders: 'Content-Type,Authorization,apollo-require-preflight',
   });
 
   logger.info('CORS configured', {
     additional: {
       origins,
       credentials: true,
-      methods: 'GET,POST,OPTIONS',
+      methods: 'GET,POST,DELETE,OPTIONS',
     },
   });
 

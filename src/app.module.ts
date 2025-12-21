@@ -8,6 +8,7 @@ import { APP_FILTER, APP_INTERCEPTOR } from '@nestjs/core';
 import { getUserIdFromRequest } from './middlewares/auth-context.helper';
 
 import { JwtStrategy } from './middlewares';
+import { JwtAuthGuard } from './middlewares/jwt-auth.guard';
 import * as Services from './services';
 import * as Resolvers from './graphql';
 import * as Repositories from './repositories';
@@ -16,6 +17,7 @@ import { ContextDto } from './dto/context.dto';
 import { LoggerService } from './services/logger.service';
 import { LoggingInterceptor } from './interceptors/logging.interceptor';
 import { GlobalExceptionFilter } from './filters/global-exception.filter';
+import { ActivityDocumentsController } from './controllers/activity-documents.controller';
 
 const JWT_SECRET = process.env.JWT_SECRET;
 
@@ -28,6 +30,7 @@ const JWT_SECRET = process.env.JWT_SECRET;
       playground: true,
       introspection: true,
       autoSchemaFile: 'schema.gql',
+      csrfPrevention: false, // Desabilitar CSRF para permitir file uploads
       context: async ({ req }: { req: { headers: Record<string, string> } }): Promise<ContextDto> => {
         const ctx = await getUserIdFromRequest(req);
         return {
@@ -42,6 +45,7 @@ const JWT_SECRET = process.env.JWT_SECRET;
       signOptions: { expiresIn: '30d' },
     }),
   ],
+  controllers: [ActivityDocumentsController],
   providers: [
     // Logging system
     LoggerService,
@@ -59,6 +63,7 @@ const JWT_SECRET = process.env.JWT_SECRET;
     ...Object.values(Repositories),
     ...Object.values(CronServices),
     JwtStrategy,
+    JwtAuthGuard,
   ],
 })
 
