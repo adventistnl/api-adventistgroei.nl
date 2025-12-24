@@ -16,8 +16,8 @@ import { SubsidyRequestUpdateManyWithoutProject_activitiesNestedInput } from '..
 import { ProjectUpdateOneRequiredWithoutActivitiesNestedInput } from '../project/project-update-one-required-without-activities-nested.input';
 import { SubsidyReceiptUpdateManyWithoutProject_activityNestedInput } from '../subsidy-receipt/subsidy-receipt-update-many-without-project-activity-nested.input';
 import { ActivityDocumentsUpdateManyWithoutProject_activityNestedInput } from '../activity-documents/activity-documents-update-many-without-project-activity-nested.input';
-import { UserUpdateOneRequiredWithoutProject_activitiesNestedInput } from '../user/user-update-one-required-without-project-activities-nested.input';
 import { ProjectActivityLogUpdateManyWithoutActivityNestedInput } from '../project-activity-log/project-activity-log-update-many-without-activity-nested.input';
+import { ProjectActivityAssigneeUpdateManyWithoutActivityNestedInput } from '../project-activity-assignee/project-activity-assignee-update-many-without-activity-nested.input';
 
 @InputType()
 export class ProjectActivityUpdateWithoutActivity_fundingInput {
@@ -95,11 +95,11 @@ export class ProjectActivityUpdateWithoutActivity_fundingInput {
     @Type(() => ActivityDocumentsUpdateManyWithoutProject_activityNestedInput)
     activity_documents?: ActivityDocumentsUpdateManyWithoutProject_activityNestedInput;
 
-    @Field(() => UserUpdateOneRequiredWithoutProject_activitiesNestedInput, {nullable:true})
-    @Type(() => UserUpdateOneRequiredWithoutProject_activitiesNestedInput)
-    owner?: UserUpdateOneRequiredWithoutProject_activitiesNestedInput;
-
     @Field(() => ProjectActivityLogUpdateManyWithoutActivityNestedInput, {nullable:true})
     @Type(() => ProjectActivityLogUpdateManyWithoutActivityNestedInput)
     logs?: ProjectActivityLogUpdateManyWithoutActivityNestedInput;
+
+    @Field(() => ProjectActivityAssigneeUpdateManyWithoutActivityNestedInput, {nullable:true})
+    @Type(() => ProjectActivityAssigneeUpdateManyWithoutActivityNestedInput)
+    assignees?: ProjectActivityAssigneeUpdateManyWithoutActivityNestedInput;
 }

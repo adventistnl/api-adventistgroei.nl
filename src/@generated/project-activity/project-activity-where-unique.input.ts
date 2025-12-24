@@ -17,9 +17,9 @@ import { SubsidyRequestListRelationFilter } from '../subsidy-request/subsidy-req
 import { ProjectScalarRelationFilter } from '../project/project-scalar-relation-filter.input';
 import { SubsidyReceiptListRelationFilter } from '../subsidy-receipt/subsidy-receipt-list-relation-filter.input';
 import { ActivityDocumentsListRelationFilter } from '../activity-documents/activity-documents-list-relation-filter.input';
-import { UserScalarRelationFilter } from '../user/user-scalar-relation-filter.input';
 import { ActivityFundingNullableScalarRelationFilter } from '../activity-funding/activity-funding-nullable-scalar-relation-filter.input';
 import { ProjectActivityLogListRelationFilter } from '../project-activity-log/project-activity-log-list-relation-filter.input';
+import { ProjectActivityAssigneeListRelationFilter } from '../project-activity-assignee/project-activity-assignee-list-relation-filter.input';
 
 @InputType()
 export class ProjectActivityWhereUniqueInput {
@@ -76,9 +76,6 @@ export class ProjectActivityWhereUniqueInput {
     @Field(() => DateTimeFilter, {nullable:true})
     deadline?: DateTimeFilter;
 
-    @Field(() => StringFilter, {nullable:true})
-    owner_id?: StringFilter;
-
     @Field(() => EnumActivityTagsNullableListFilter, {nullable:true})
     tags?: EnumActivityTagsNullableListFilter;
 
@@ -113,10 +110,6 @@ export class ProjectActivityWhereUniqueInput {
     @Type(() => ActivityDocumentsListRelationFilter)
     activity_documents?: ActivityDocumentsListRelationFilter;
 
-    @Field(() => UserScalarRelationFilter, {nullable:true})
-    @Type(() => UserScalarRelationFilter)
-    owner?: UserScalarRelationFilter;
-
     @Field(() => ActivityFundingNullableScalarRelationFilter, {nullable:true})
     @Type(() => ActivityFundingNullableScalarRelationFilter)
     activity_funding?: ActivityFundingNullableScalarRelationFilter;
@@ -124,4 +117,8 @@ export class ProjectActivityWhereUniqueInput {
     @Field(() => ProjectActivityLogListRelationFilter, {nullable:true})
     @Type(() => ProjectActivityLogListRelationFilter)
     logs?: ProjectActivityLogListRelationFilter;
+
+    @Field(() => ProjectActivityAssigneeListRelationFilter, {nullable:true})
+    @Type(() => ProjectActivityAssigneeListRelationFilter)
+    assignees?: ProjectActivityAssigneeListRelationFilter;
 }

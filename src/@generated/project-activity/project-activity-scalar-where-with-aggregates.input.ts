@@ -68,9 +68,6 @@ export class ProjectActivityScalarWhereWithAggregatesInput {
     @Field(() => DateTimeWithAggregatesFilter, {nullable:true})
     deadline?: DateTimeWithAggregatesFilter;
 
-    @Field(() => StringWithAggregatesFilter, {nullable:true})
-    owner_id?: StringWithAggregatesFilter;
-
     @Field(() => EnumActivityTagsNullableListFilter, {nullable:true})
     tags?: EnumActivityTagsNullableListFilter;
 

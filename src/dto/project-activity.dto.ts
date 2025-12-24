@@ -44,9 +44,9 @@ export class ProjectActivityCreateWithoutProjectDto {
   @IsDateString()
   deadline: string;
 
-  @Field()
-  @IsString()
-  owner_id: string;
+  @Field(() => [String])
+  @IsArray()
+  assignee_ids: string[];
 
   @Field(() => [ActivityTags])
   tags: ActivityTags[];
@@ -132,10 +132,10 @@ export class ProjectActivityUpdateDto {
   @IsDateString()
   deadline?: string;
 
-  @Field({ nullable: true })
+  @Field(() => [String], { nullable: true })
   @IsOptional()
-  @IsString()
-  owner_id?: string;
+  @IsArray()
+  assignee_ids?: string[];
 
   @Field(() => [ActivityTags], { nullable: true })
   @IsOptional()

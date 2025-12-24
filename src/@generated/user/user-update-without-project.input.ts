@@ -23,8 +23,8 @@ import { SubsidyRequestUpdateManyWithoutRequesterNestedInput } from '../subsidy-
 import { SubsidyStatusUpdateManyWithoutAssigned_userNestedInput } from '../subsidy-status/subsidy-status-update-many-without-assigned-user-nested.input';
 import { VoluntariesOnProjectsUpdateManyWithoutUserNestedInput } from '../voluntaries-on-projects/voluntaries-on-projects-update-many-without-user-nested.input';
 import { AnnualBudgetUpdateManyWithoutApproved_userNestedInput } from '../annual-budget/annual-budget-update-many-without-approved-user-nested.input';
-import { ProjectActivityUpdateManyWithoutOwnerNestedInput } from '../project-activity/project-activity-update-many-without-owner-nested.input';
 import { ProjectActivityLogUpdateManyWithoutUserNestedInput } from '../project-activity-log/project-activity-log-update-many-without-user-nested.input';
+import { ProjectActivityAssigneeUpdateManyWithoutUserNestedInput } from '../project-activity-assignee/project-activity-assignee-update-many-without-user-nested.input';
 
 @InputType()
 export class UserUpdateWithoutProjectInput {
@@ -123,11 +123,11 @@ export class UserUpdateWithoutProjectInput {
     @Type(() => AnnualBudgetUpdateManyWithoutApproved_userNestedInput)
     approved_annual_budgets?: AnnualBudgetUpdateManyWithoutApproved_userNestedInput;
 
-    @Field(() => ProjectActivityUpdateManyWithoutOwnerNestedInput, {nullable:true})
-    @Type(() => ProjectActivityUpdateManyWithoutOwnerNestedInput)
-    project_activities?: ProjectActivityUpdateManyWithoutOwnerNestedInput;
-
     @Field(() => ProjectActivityLogUpdateManyWithoutUserNestedInput, {nullable:true})
     @Type(() => ProjectActivityLogUpdateManyWithoutUserNestedInput)
     project_activity_logs?: ProjectActivityLogUpdateManyWithoutUserNestedInput;
+
+    @Field(() => ProjectActivityAssigneeUpdateManyWithoutUserNestedInput, {nullable:true})
+    @Type(() => ProjectActivityAssigneeUpdateManyWithoutUserNestedInput)
+    activity_assignments?: ProjectActivityAssigneeUpdateManyWithoutUserNestedInput;
 }

@@ -14,7 +14,6 @@ export enum ProjectActivityScalarFieldEnum {
     deleted_at = "deleted_at",
     deleted_by = "deleted_by",
     deadline = "deadline",
-    owner_id = "owner_id",
     tags = "tags",
     custom_tags = "custom_tags",
     activity_tag = "activity_tag",

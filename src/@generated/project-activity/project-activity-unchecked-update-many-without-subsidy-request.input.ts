@@ -56,9 +56,6 @@ export class ProjectActivityUncheckedUpdateManyWithoutSubsidy_requestInput {
     @Field(() => DateTimeFieldUpdateOperationsInput, {nullable:true})
     deadline?: DateTimeFieldUpdateOperationsInput;
 
-    @Field(() => StringFieldUpdateOperationsInput, {nullable:true})
-    owner_id?: StringFieldUpdateOperationsInput;
-
     @Field(() => ProjectActivityUpdatetagsInput, {nullable:true})
     @Type(() => ProjectActivityUpdatetagsInput)
     tags?: ProjectActivityUpdatetagsInput;

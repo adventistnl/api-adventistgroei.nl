@@ -14,8 +14,8 @@ import { SubsidyRequestCreateNestedManyWithoutProject_activitiesInput } from '..
 import { ProjectCreateNestedOneWithoutActivitiesInput } from '../project/project-create-nested-one-without-activities.input';
 import { SubsidyReceiptCreateNestedManyWithoutProject_activityInput } from '../subsidy-receipt/subsidy-receipt-create-nested-many-without-project-activity.input';
 import { ActivityDocumentsCreateNestedManyWithoutProject_activityInput } from '../activity-documents/activity-documents-create-nested-many-without-project-activity.input';
-import { UserCreateNestedOneWithoutProject_activitiesInput } from '../user/user-create-nested-one-without-project-activities.input';
 import { ActivityFundingCreateNestedOneWithoutActivityInput } from '../activity-funding/activity-funding-create-nested-one-without-activity.input';
+import { ProjectActivityAssigneeCreateNestedManyWithoutActivityInput } from '../project-activity-assignee/project-activity-assignee-create-nested-many-without-activity.input';
 
 @InputType()
 export class ProjectActivityCreateWithoutLogsInput {
@@ -94,11 +94,11 @@ export class ProjectActivityCreateWithoutLogsInput {
     @Type(() => ActivityDocumentsCreateNestedManyWithoutProject_activityInput)
     activity_documents?: ActivityDocumentsCreateNestedManyWithoutProject_activityInput;
 
-    @Field(() => UserCreateNestedOneWithoutProject_activitiesInput, {nullable:false})
-    @Type(() => UserCreateNestedOneWithoutProject_activitiesInput)
-    owner!: UserCreateNestedOneWithoutProject_activitiesInput;
-
     @Field(() => ActivityFundingCreateNestedOneWithoutActivityInput, {nullable:true})
     @Type(() => ActivityFundingCreateNestedOneWithoutActivityInput)
     activity_funding?: ActivityFundingCreateNestedOneWithoutActivityInput;
+
+    @Field(() => ProjectActivityAssigneeCreateNestedManyWithoutActivityInput, {nullable:true})
+    @Type(() => ProjectActivityAssigneeCreateNestedManyWithoutActivityInput)
+    assignees?: ProjectActivityAssigneeCreateNestedManyWithoutActivityInput;
 }

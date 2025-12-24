@@ -15,9 +15,9 @@ import { EnumActivityPriorityFieldUpdateOperationsInput } from '../prisma/enum-a
 import { SubsidyRequestUpdateManyWithoutProject_activitiesNestedInput } from '../subsidy-request/subsidy-request-update-many-without-project-activities-nested.input';
 import { ProjectUpdateOneRequiredWithoutActivitiesNestedInput } from '../project/project-update-one-required-without-activities-nested.input';
 import { ActivityDocumentsUpdateManyWithoutProject_activityNestedInput } from '../activity-documents/activity-documents-update-many-without-project-activity-nested.input';
-import { UserUpdateOneRequiredWithoutProject_activitiesNestedInput } from '../user/user-update-one-required-without-project-activities-nested.input';
 import { ActivityFundingUpdateOneWithoutActivityNestedInput } from '../activity-funding/activity-funding-update-one-without-activity-nested.input';
 import { ProjectActivityLogUpdateManyWithoutActivityNestedInput } from '../project-activity-log/project-activity-log-update-many-without-activity-nested.input';
+import { ProjectActivityAssigneeUpdateManyWithoutActivityNestedInput } from '../project-activity-assignee/project-activity-assignee-update-many-without-activity-nested.input';
 
 @InputType()
 export class ProjectActivityUpdateWithoutSubsidy_receiptsInput {
@@ -91,10 +91,6 @@ export class ProjectActivityUpdateWithoutSubsidy_receiptsInput {
     @Type(() => ActivityDocumentsUpdateManyWithoutProject_activityNestedInput)
     activity_documents?: ActivityDocumentsUpdateManyWithoutProject_activityNestedInput;
 
-    @Field(() => UserUpdateOneRequiredWithoutProject_activitiesNestedInput, {nullable:true})
-    @Type(() => UserUpdateOneRequiredWithoutProject_activitiesNestedInput)
-    owner?: UserUpdateOneRequiredWithoutProject_activitiesNestedInput;
-
     @Field(() => ActivityFundingUpdateOneWithoutActivityNestedInput, {nullable:true})
     @Type(() => ActivityFundingUpdateOneWithoutActivityNestedInput)
     activity_funding?: ActivityFundingUpdateOneWithoutActivityNestedInput;
@@ -102,4 +98,8 @@ export class ProjectActivityUpdateWithoutSubsidy_receiptsInput {
     @Field(() => ProjectActivityLogUpdateManyWithoutActivityNestedInput, {nullable:true})
     @Type(() => ProjectActivityLogUpdateManyWithoutActivityNestedInput)
     logs?: ProjectActivityLogUpdateManyWithoutActivityNestedInput;
+
+    @Field(() => ProjectActivityAssigneeUpdateManyWithoutActivityNestedInput, {nullable:true})
+    @Type(() => ProjectActivityAssigneeUpdateManyWithoutActivityNestedInput)
+    assignees?: ProjectActivityAssigneeUpdateManyWithoutActivityNestedInput;
 }

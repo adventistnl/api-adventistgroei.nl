@@ -52,9 +52,6 @@ export class ProjectActivityCreateManyProjectInput {
     @Field(() => Date, {nullable:false})
     deadline!: Date | string;
 
-    @Field(() => String, {nullable:false})
-    owner_id!: string;
-
     @Field(() => ProjectActivityCreatetagsInput, {nullable:true})
     @Type(() => ProjectActivityCreatetagsInput)
     tags?: ProjectActivityCreatetagsInput;

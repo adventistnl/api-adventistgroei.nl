@@ -45,9 +45,6 @@ export class ProjectActivityCountAggregate {
     deadline!: number;
 
     @Field(() => Int, {nullable:false})
-    owner_id!: number;
-
-    @Field(() => Int, {nullable:false})
     tags!: number;
 
     @Field(() => Int, {nullable:false})

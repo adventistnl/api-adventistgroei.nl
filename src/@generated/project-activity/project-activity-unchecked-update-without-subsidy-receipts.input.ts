@@ -16,6 +16,7 @@ import { SubsidyRequestUncheckedUpdateManyWithoutProject_activitiesNestedInput }
 import { ActivityDocumentsUncheckedUpdateManyWithoutProject_activityNestedInput } from '../activity-documents/activity-documents-unchecked-update-many-without-project-activity-nested.input';
 import { ActivityFundingUncheckedUpdateOneWithoutActivityNestedInput } from '../activity-funding/activity-funding-unchecked-update-one-without-activity-nested.input';
 import { ProjectActivityLogUncheckedUpdateManyWithoutActivityNestedInput } from '../project-activity-log/project-activity-log-unchecked-update-many-without-activity-nested.input';
+import { ProjectActivityAssigneeUncheckedUpdateManyWithoutActivityNestedInput } from '../project-activity-assignee/project-activity-assignee-unchecked-update-many-without-activity-nested.input';
 
 @InputType()
 export class ProjectActivityUncheckedUpdateWithoutSubsidy_receiptsInput {
@@ -60,9 +61,6 @@ export class ProjectActivityUncheckedUpdateWithoutSubsidy_receiptsInput {
     @Field(() => DateTimeFieldUpdateOperationsInput, {nullable:true})
     deadline?: DateTimeFieldUpdateOperationsInput;
 
-    @Field(() => StringFieldUpdateOperationsInput, {nullable:true})
-    owner_id?: StringFieldUpdateOperationsInput;
-
     @Field(() => ProjectActivityUpdatetagsInput, {nullable:true})
     @Type(() => ProjectActivityUpdatetagsInput)
     tags?: ProjectActivityUpdatetagsInput;
@@ -98,4 +96,8 @@ export class ProjectActivityUncheckedUpdateWithoutSubsidy_receiptsInput {
     @Field(() => ProjectActivityLogUncheckedUpdateManyWithoutActivityNestedInput, {nullable:true})
     @Type(() => ProjectActivityLogUncheckedUpdateManyWithoutActivityNestedInput)
     logs?: ProjectActivityLogUncheckedUpdateManyWithoutActivityNestedInput;
+
+    @Field(() => ProjectActivityAssigneeUncheckedUpdateManyWithoutActivityNestedInput, {nullable:true})
+    @Type(() => ProjectActivityAssigneeUncheckedUpdateManyWithoutActivityNestedInput)
+    assignees?: ProjectActivityAssigneeUncheckedUpdateManyWithoutActivityNestedInput;
 }

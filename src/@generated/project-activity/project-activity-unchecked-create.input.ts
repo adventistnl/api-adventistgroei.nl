@@ -15,6 +15,7 @@ import { SubsidyReceiptUncheckedCreateNestedManyWithoutProject_activityInput } f
 import { ActivityDocumentsUncheckedCreateNestedManyWithoutProject_activityInput } from '../activity-documents/activity-documents-unchecked-create-nested-many-without-project-activity.input';
 import { ActivityFundingUncheckedCreateNestedOneWithoutActivityInput } from '../activity-funding/activity-funding-unchecked-create-nested-one-without-activity.input';
 import { ProjectActivityLogUncheckedCreateNestedManyWithoutActivityInput } from '../project-activity-log/project-activity-log-unchecked-create-nested-many-without-activity.input';
+import { ProjectActivityAssigneeUncheckedCreateNestedManyWithoutActivityInput } from '../project-activity-assignee/project-activity-assignee-unchecked-create-nested-many-without-activity.input';
 
 @InputType()
 export class ProjectActivityUncheckedCreateInput {
@@ -60,9 +61,6 @@ export class ProjectActivityUncheckedCreateInput {
     @Field(() => Date, {nullable:false})
     deadline!: Date | string;
 
-    @Field(() => String, {nullable:false})
-    owner_id!: string;
-
     @Field(() => ProjectActivityCreatetagsInput, {nullable:true})
     @Type(() => ProjectActivityCreatetagsInput)
     tags?: ProjectActivityCreatetagsInput;
@@ -102,4 +100,8 @@ export class ProjectActivityUncheckedCreateInput {
     @Field(() => ProjectActivityLogUncheckedCreateNestedManyWithoutActivityInput, {nullable:true})
     @Type(() => ProjectActivityLogUncheckedCreateNestedManyWithoutActivityInput)
     logs?: ProjectActivityLogUncheckedCreateNestedManyWithoutActivityInput;
+
+    @Field(() => ProjectActivityAssigneeUncheckedCreateNestedManyWithoutActivityInput, {nullable:true})
+    @Type(() => ProjectActivityAssigneeUncheckedCreateNestedManyWithoutActivityInput)
+    assignees?: ProjectActivityAssigneeUncheckedCreateNestedManyWithoutActivityInput;
 }

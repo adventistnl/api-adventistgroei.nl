@@ -479,8 +479,8 @@ model User {
   voluntary_projects        VoluntariesOnProjects[]
   Project                   Project[]
   approved_annual_budgets   AnnualBudget[]           @relation("ApprovedAnnualBudgets")
-  project_activities        ProjectActivity[]
   project_activity_logs     ProjectActivityLog[]
+  activity_assignments      ProjectActivityAssignee[] @relation("ActivityAssignees")
 }
 
 model Project {
@@ -645,8 +645,6 @@ model ProjectActivity {
   subsidy_receipts    SubsidyReceipt[]
   activity_documents  ActivityDocuments[]
   deadline            DateTime
-  owner_id            String
-  owner               User                     @relation(fields: [owner_id], references: [id])
   tags                ActivityTags[]
   custom_tags         String[]                 @default([])
   activity_tag        ActivityTags?
@@ -655,6 +653,22 @@ model ProjectActivity {
   priority            ActivityPriority         @default(MEDIUM)
   is_subsidized       Boolean                  @default(false)
   logs                ProjectActivityLog[]
+  assignees           ProjectActivityAssignee[]
+}
+
+// Tabela de relação muitos-para-muitos entre ProjectActivity e User (responsáveis)
+model ProjectActivityAssignee {
+  id                  String          @id @default(uuid())
+  activity_id         String
+  activity            ProjectActivity @relation(fields: [activity_id], references: [id], onDelete: Cascade)
+  user_id             String
+  user                User            @relation("ActivityAssignees", fields: [user_id], references: [id])
+  created_at          DateTime        @default(now())
+  created_by          String
+
+  @@unique([activity_id, user_id])
+  @@index([activity_id])
+  @@index([user_id])
 }
 
 enum ProjectActivityLogAction {

@@ -180,7 +180,11 @@ export class ActivityDocumentsService {
             owner: true,
           },
         },
-        owner: true,
+        assignees: {
+          include: {
+            user: true,
+          },
+        },
       },
     });
 

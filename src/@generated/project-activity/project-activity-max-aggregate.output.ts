@@ -48,9 +48,6 @@ export class ProjectActivityMaxAggregate {
     @Field(() => Date, {nullable:true})
     deadline?: Date | string;
 
-    @Field(() => String, {nullable:true})
-    owner_id?: string;
-
     @Field(() => ActivityTags, {nullable:true})
     activity_tag?: `${ActivityTags}`;
 

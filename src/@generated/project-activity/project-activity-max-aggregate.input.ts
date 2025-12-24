@@ -44,9 +44,6 @@ export class ProjectActivityMaxAggregateInput {
     deadline?: true;
 
     @Field(() => Boolean, {nullable:true})
-    owner_id?: true;
-
-    @Field(() => Boolean, {nullable:true})
     activity_tag?: true;
 
     @Field(() => Boolean, {nullable:true})

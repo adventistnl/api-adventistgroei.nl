@@ -68,9 +68,6 @@ export class ProjectActivityScalarWhereInput {
     @Field(() => DateTimeFilter, {nullable:true})
     deadline?: DateTimeFilter;
 
-    @Field(() => StringFilter, {nullable:true})
-    owner_id?: StringFilter;
-
     @Field(() => EnumActivityTagsNullableListFilter, {nullable:true})
     tags?: EnumActivityTagsNullableListFilter;
 

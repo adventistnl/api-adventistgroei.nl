@@ -509,11 +509,22 @@ enum ProjectActivityLogAction {
   SUBSIDIZED_CHANGED
 }
 
+type ProjectActivityAssignee {
+  id: ID!
+  activity_id: String!
+  user_id: String!
+  created_at: DateTime!
+  created_by: String!
+  activity: ProjectActivity!
+  user: User!
+}
+
 type ProjectActivityCount {
   subsidy_request: Int!
   subsidy_receipts: Int!
   activity_documents: Int!
   logs: Int!
+  assignees: Int!
 }
 
 type ProjectActivity {
@@ -530,7 +541,6 @@ type ProjectActivity {
   deleted_at: DateTime
   deleted_by: String
   deadline: DateTime!
-  owner_id: String!
   tags: [ActivityTags!]
   custom_tags: [String!]
   activity_tag: ActivityTags
@@ -541,9 +551,9 @@ type ProjectActivity {
   project: Project!
   subsidy_receipts: [SubsidyReceipt!]
   activity_documents: [ActivityDocuments!]
-  owner: User!
   activity_funding: ActivityFunding
   logs: [ProjectActivityLog!]
+  assignees: [ProjectActivityAssignee!]
   _count: ProjectActivityCount!
 }
 
@@ -847,8 +857,8 @@ type UserCount {
   voluntary_projects: Int!
   Project: Int!
   approved_annual_budgets: Int!
-  project_activities: Int!
   project_activity_logs: Int!
+  activity_assignments: Int!
 }
 
 type User {
@@ -885,8 +895,8 @@ type User {
   voluntary_projects: [VoluntariesOnProjects!]
   Project: [Project!]
   approved_annual_budgets: [AnnualBudget!]
-  project_activities: [ProjectActivity!]
   project_activity_logs: [ProjectActivityLog!]
+  activity_assignments: [ProjectActivityAssignee!]
   _count: UserCount!
 }
 
@@ -1797,8 +1807,8 @@ input UserWhereInput {
   voluntary_projects: VoluntariesOnProjectsListRelationFilter
   Project: ProjectListRelationFilter
   approved_annual_budgets: AnnualBudgetListRelationFilter
-  project_activities: ProjectActivityListRelationFilter
   project_activity_logs: ProjectActivityLogListRelationFilter
+  activity_assignments: ProjectActivityAssigneeListRelationFilter
 }
 
 input EnumGenderTypeNullableFilter {
@@ -2123,7 +2133,6 @@ input ProjectActivityWhereInput {
   deleted_at: DateTimeNullableFilter
   deleted_by: StringNullableFilter
   deadline: DateTimeFilter
-  owner_id: StringFilter
   tags: EnumActivityTagsNullableListFilter
   custom_tags: StringNullableListFilter
   activity_tag: EnumActivityTagsNullableFilter
@@ -2134,9 +2143,9 @@ input ProjectActivityWhereInput {
   project: ProjectScalarRelationFilter
   subsidy_receipts: SubsidyReceiptListRelationFilter
   activity_documents: ActivityDocumentsListRelationFilter
-  owner: UserScalarRelationFilter
   activity_funding: ActivityFundingNullableScalarRelationFilter
   logs: ProjectActivityLogListRelationFilter
+  assignees: ProjectActivityAssigneeListRelationFilter
 }
 
 input EnumActivityTagsNullableListFilter {
@@ -2632,6 +2641,25 @@ input NestedEnumProjectActivityLogActionFilter {
   not: NestedEnumProjectActivityLogActionFilter
 }
 
+input ProjectActivityAssigneeListRelationFilter {
+  every: ProjectActivityAssigneeWhereInput
+  some: ProjectActivityAssigneeWhereInput
+  none: ProjectActivityAssigneeWhereInput
+}
+
+input ProjectActivityAssigneeWhereInput {
+  AND: [ProjectActivityAssigneeWhereInput!]
+  OR: [ProjectActivityAssigneeWhereInput!]
+  NOT: [ProjectActivityAssigneeWhereInput!]
+  id: StringFilter
+  activity_id: StringFilter
+  user_id: StringFilter
+  created_at: DateTimeFilter
+  created_by: StringFilter
+  activity: ProjectActivityScalarRelationFilter
+  user: UserScalarRelationFilter
+}
+
 input AnnualReportListRelationFilter {
   every: AnnualReportWhereInput
   some: AnnualReportWhereInput
@@ -3075,8 +3103,8 @@ input UserOrderByWithRelationInput {
   voluntary_projects: VoluntariesOnProjectsOrderByRelationAggregateInput
   Project: ProjectOrderByRelationAggregateInput
   approved_annual_budgets: AnnualBudgetOrderByRelationAggregateInput
-  project_activities: ProjectActivityOrderByRelationAggregateInput
   project_activity_logs: ProjectActivityLogOrderByRelationAggregateInput
+  activity_assignments: ProjectActivityAssigneeOrderByRelationAggregateInput
 }
 
 input ContactOrderByWithRelationInput {
@@ -3271,11 +3299,11 @@ input VoluntariesOnProjectsOrderByRelationAggregateInput {
   _count: SortOrder
 }
 
-input ProjectActivityOrderByRelationAggregateInput {
+input ProjectActivityLogOrderByRelationAggregateInput {
   _count: SortOrder
 }
 
-input ProjectActivityLogOrderByRelationAggregateInput {
+input ProjectActivityAssigneeOrderByRelationAggregateInput {
   _count: SortOrder
 }
 
@@ -3687,7 +3715,7 @@ input ProjectActivityCreateWithoutProjectDto {
   description: String!
   budget_amount: Float!
   deadline: String!
-  owner_id: String!
+  assignee_ids: [String!]!
   tags: [ActivityTags!]!
   custom_tags: [String!]
   status: ActivityStatus
@@ -3726,7 +3754,7 @@ input ProjectActivityUpdateDto {
   description: String
   budget_amount: Float
   deadline: String
-  owner_id: String
+  assignee_ids: [String!]
   tags: [ActivityTags!]
   custom_tags: [String!]
   status: ActivityStatus
@@ -3833,7 +3861,7 @@ input ProjectActivityCreateDto {
   description: String!
   budget_amount: Float!
   deadline: String!
-  owner_id: String!
+  assignee_ids: [String!]!
   tags: [ActivityTags!]!
   custom_tags: [String!]
   status: ActivityStatus

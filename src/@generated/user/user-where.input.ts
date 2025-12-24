@@ -24,8 +24,8 @@ import { SubsidyStatusListRelationFilter } from '../subsidy-status/subsidy-statu
 import { VoluntariesOnProjectsListRelationFilter } from '../voluntaries-on-projects/voluntaries-on-projects-list-relation-filter.input';
 import { ProjectListRelationFilter } from '../project/project-list-relation-filter.input';
 import { AnnualBudgetListRelationFilter } from '../annual-budget/annual-budget-list-relation-filter.input';
-import { ProjectActivityListRelationFilter } from '../project-activity/project-activity-list-relation-filter.input';
 import { ProjectActivityLogListRelationFilter } from '../project-activity-log/project-activity-log-list-relation-filter.input';
+import { ProjectActivityAssigneeListRelationFilter } from '../project-activity-assignee/project-activity-assignee-list-relation-filter.input';
 
 @InputType()
 export class UserWhereInput {
@@ -149,11 +149,11 @@ export class UserWhereInput {
     @Type(() => AnnualBudgetListRelationFilter)
     approved_annual_budgets?: AnnualBudgetListRelationFilter;
 
-    @Field(() => ProjectActivityListRelationFilter, {nullable:true})
-    @Type(() => ProjectActivityListRelationFilter)
-    project_activities?: ProjectActivityListRelationFilter;
-
     @Field(() => ProjectActivityLogListRelationFilter, {nullable:true})
     @Type(() => ProjectActivityLogListRelationFilter)
     project_activity_logs?: ProjectActivityLogListRelationFilter;
+
+    @Field(() => ProjectActivityAssigneeListRelationFilter, {nullable:true})
+    @Type(() => ProjectActivityAssigneeListRelationFilter)
+    activity_assignments?: ProjectActivityAssigneeListRelationFilter;
 }

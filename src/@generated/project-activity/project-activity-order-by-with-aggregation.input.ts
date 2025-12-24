@@ -52,9 +52,6 @@ export class ProjectActivityOrderByWithAggregationInput {
     deadline?: `${SortOrder}`;
 
     @Field(() => SortOrder, {nullable:true})
-    owner_id?: `${SortOrder}`;
-
-    @Field(() => SortOrder, {nullable:true})
     tags?: `${SortOrder}`;
 
     @Field(() => SortOrder, {nullable:true})

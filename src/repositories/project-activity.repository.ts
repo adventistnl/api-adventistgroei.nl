@@ -10,13 +10,12 @@ export class ProjectActivityRepository {
 
   async create(data: ProjectActivityCreateDto, userId: string): Promise<ProjectActivity> {
     try {
-      return await this.prisma.projectActivity.create({
+      const activity = await this.prisma.projectActivity.create({
         data: {
           name: data.name,
           description: data.description,
           budget_amount: data.budget_amount,
           deadline: data.deadline,
-          owner_id: data.owner_id,
           tags: data.tags,
           custom_tags: data.custom_tags || [],
           project_id: data.project_id,
@@ -33,12 +32,24 @@ export class ProjectActivityRepository {
               entity_id: data.activity_funding.entity_id,
             },
           },
+          // Create assignees (required - at least one)
+          assignees: {
+            create: data.assignee_ids.map(assigneeId => ({
+              user_id: assigneeId,
+              created_by: userId,
+            })),
+          },
         },
         include: {
-          owner: true,
           activity_funding: true,
+          assignees: {
+            include: {
+              user: true,
+            },
+          },
         },
       });
+      return activity;
     } catch (error) {
       throw new CustomGraphQLError('Erro ao criar ProjectActivity', ErrorCode.INTERNAL_SERVER_ERROR, 500);
     }
@@ -46,6 +57,9 @@ export class ProjectActivityRepository {
 
   async update(data: ProjectActivityUpdateDto, userId: string): Promise<ProjectActivity> {
     try {
+      console.log('📦 Repository.update - Data received:', JSON.stringify(data, null, 2));
+      console.log('👥 Repository.update - assignee_ids:', data.assignee_ids);
+
       const updateData: any = {
         updated_by: userId,
       };
@@ -54,7 +68,6 @@ export class ProjectActivityRepository {
       if (data.description !== undefined) updateData.description = data.description;
       if (data.budget_amount !== undefined) updateData.budget_amount = data.budget_amount;
       if (data.deadline !== undefined) updateData.deadline = data.deadline;
-      if (data.owner_id !== undefined) updateData.owner_id = data.owner_id;
       if (data.tags !== undefined) updateData.tags = data.tags;
       if (data.custom_tags !== undefined) updateData.custom_tags = data.custom_tags;
       if (data.status !== undefined) updateData.status = data.status;
@@ -62,12 +75,44 @@ export class ProjectActivityRepository {
       if (data.is_subsidized !== undefined) updateData.is_subsidized = data.is_subsidized;
       if (data.activity_tag !== undefined) updateData.activity_tag = data.activity_tag;
 
+      // Handle assignees update if provided
+      if (data.assignee_ids !== undefined) {
+        console.log('🔄 Updating assignees for activity:', data.id);
+        console.log('🗑️ Deleting existing assignees...');
+        
+        // Delete existing assignees and create new ones
+        const deleteResult = await this.prisma.projectActivityAssignee.deleteMany({
+          where: { activity_id: data.id },
+        });
+        console.log('🗑️ Deleted assignees count:', deleteResult.count);
+
+        if (data.assignee_ids.length > 0) {
+          console.log('✨ Creating new assignees:', data.assignee_ids);
+          await this.prisma.projectActivityAssignee.createMany({
+            data: data.assignee_ids.map(assigneeId => ({
+              activity_id: data.id,
+              user_id: assigneeId,
+              created_by: userId,
+            })),
+          });
+          console.log('✅ New assignees created successfully');
+        } else {
+          console.log('ℹ️ No assignees to create (empty array)');
+        }
+      } else {
+        console.log('⏭️ assignee_ids not provided, skipping assignee update');
+      }
+
       return await this.prisma.projectActivity.update({
         where: { id: data.id },
         data: updateData,
         include: {
-          owner: true,
           activity_funding: true,
+          assignees: {
+            include: {
+              user: true,
+            },
+          },
         },
       });
     } catch (error) {
@@ -76,7 +121,17 @@ export class ProjectActivityRepository {
   }
 
   async findById(id: string): Promise<ProjectActivity | null> {
-    return this.prisma.projectActivity.findUnique({ where: { id, is_deleted: false } });
+    return this.prisma.projectActivity.findUnique({ 
+      where: { id, is_deleted: false },
+      include: {
+        activity_funding: true,
+        assignees: {
+          include: {
+            user: true,
+          },
+        },
+      },
+    });
   }
 
   async findManyByFilters(filters: Partial<Record<keyof ProjectActivity, any>>): Promise<ProjectActivity[]> {
@@ -86,7 +141,17 @@ export class ProjectActivityRepository {
         throw new CustomGraphQLError(`Invalid filter key: ${key}`, ErrorCode.BAD_REQUEST, 400);
       }
     }
-    return this.prisma.projectActivity.findMany({ where: { ...filters, is_deleted: false } });
+    return this.prisma.projectActivity.findMany({ 
+      where: { ...filters, is_deleted: false },
+      include: {
+        activity_funding: true,
+        assignees: {
+          include: {
+            user: true,
+          },
+        },
+      },
+    });
   }
 
   async softDelete(id: string, userId: string): Promise<ProjectActivity> {
@@ -177,7 +242,11 @@ export class ProjectActivityRepository {
           is_deleted: false,
         },
         include: {
-          owner: true,
+          assignees: {
+            include: {
+              user: true,
+            },
+          },
         },
       });
     } catch (error) {

@@ -98,7 +98,6 @@ export class ProjectRepository {
             description: activity.description,
             budget_amount: new Decimal(activity.budget_amount),
             deadline: new Date(activity.deadline),
-            owner: { connect: { id: activity.owner_id } },
             tags: activity.tags,
             created_by: userId,
             updated_by: userId,
@@ -201,7 +200,6 @@ export class ProjectRepository {
             description: activity.description,
             budget_amount: activity.budget_amount ? new Decimal(activity.budget_amount) : undefined,
             deadline: activity.deadline ? new Date(activity.deadline) : undefined,
-            owner: activity.owner_id ? { connect: { id: activity.owner_id } } : undefined,
             tags: activity.tags,
             updated_by: userId,
           };
@@ -232,7 +230,6 @@ export class ProjectRepository {
               description: activity.description || '', // Garantir que seja uma string válida
               budget_amount: activity.budget_amount ? new Decimal(activity.budget_amount) : new Decimal(0), // Valor padrão
               deadline: activity.deadline ? new Date(activity.deadline) : new Date(), // Valor padrão
-              owner: { connect: { id: activity.owner_id } },
               tags: activity.tags,
               created_by: userId,
               updated_by: userId,
@@ -284,7 +281,12 @@ export class ProjectRepository {
             is_deleted: false,
           },
           include: {
-            owner: true, // Inclui o relacionamento com o proprietário da atividade
+            assignees: {
+              include: {
+                user: true, // Inclui os dados do usuário responsável
+              },
+            },
+            activity_funding: true,
           },
         },
         subsidies: {
@@ -324,7 +326,12 @@ export class ProjectRepository {
             is_deleted: false,
           },
           include: {
-            owner: true, // Inclui o relacionamento com o proprietário da atividade
+            assignees: {
+              include: {
+                user: true,
+              },
+            },
+            activity_funding: true,
           },
         },
       },
@@ -354,7 +361,12 @@ export class ProjectRepository {
             is_deleted: false,
           },
           include: {
-            owner: true, // Inclui o relacionamento com o proprietário da atividade
+            assignees: {
+              include: {
+                user: true,
+              },
+            },
+            activity_funding: true,
           },
         },
       },
@@ -385,7 +397,12 @@ export class ProjectRepository {
             is_deleted: false,
           },
           include: {
-            owner: true, // Inclui o relacionamento com o proprietário da atividade
+            assignees: {
+              include: {
+                user: true, // Inclui os dados dos usuários responsáveis
+              },
+            },
+            activity_funding: true,
           },
         },
       },
@@ -409,7 +426,12 @@ export class ProjectRepository {
             is_deleted: false,
           },
           include: {
-            owner: true,
+            assignees: {
+              include: {
+                user: true, // Inclui os dados dos usuários responsáveis
+              },
+            },
+            activity_funding: true,
           },
         },
       },

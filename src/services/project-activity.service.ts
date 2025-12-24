@@ -27,6 +27,10 @@ export class ProjectActivityService {
 
   async update(input: ProjectActivityUpdateDto, userId: string): Promise<ProjectActivity> {
     try {
+      // Debug log
+      console.log('📝 ProjectActivityService.update - Input received:', JSON.stringify(input, null, 2));
+      console.log('👥 assignee_ids received:', input.assignee_ids);
+
       // Get old data before update
       const oldActivity = await this.repository.findById(input.id);
       if (!oldActivity) {

@@ -7,9 +7,9 @@ import { Type } from 'class-transformer';
 import { ProjectOrderByWithRelationInput } from '../project/project-order-by-with-relation.input';
 import { SubsidyReceiptOrderByRelationAggregateInput } from '../subsidy-receipt/subsidy-receipt-order-by-relation-aggregate.input';
 import { ActivityDocumentsOrderByRelationAggregateInput } from '../activity-documents/activity-documents-order-by-relation-aggregate.input';
-import { UserOrderByWithRelationInput } from '../user/user-order-by-with-relation.input';
 import { ActivityFundingOrderByWithRelationInput } from '../activity-funding/activity-funding-order-by-with-relation.input';
 import { ProjectActivityLogOrderByRelationAggregateInput } from '../project-activity-log/project-activity-log-order-by-relation-aggregate.input';
+import { ProjectActivityAssigneeOrderByRelationAggregateInput } from '../project-activity-assignee/project-activity-assignee-order-by-relation-aggregate.input';
 
 @InputType()
 export class ProjectActivityOrderByWithRelationInput {
@@ -54,9 +54,6 @@ export class ProjectActivityOrderByWithRelationInput {
     deadline?: `${SortOrder}`;
 
     @Field(() => SortOrder, {nullable:true})
-    owner_id?: `${SortOrder}`;
-
-    @Field(() => SortOrder, {nullable:true})
     tags?: `${SortOrder}`;
 
     @Field(() => SortOrder, {nullable:true})
@@ -90,10 +87,6 @@ export class ProjectActivityOrderByWithRelationInput {
     @Type(() => ActivityDocumentsOrderByRelationAggregateInput)
     activity_documents?: ActivityDocumentsOrderByRelationAggregateInput;
 
-    @Field(() => UserOrderByWithRelationInput, {nullable:true})
-    @Type(() => UserOrderByWithRelationInput)
-    owner?: UserOrderByWithRelationInput;
-
     @Field(() => ActivityFundingOrderByWithRelationInput, {nullable:true})
     @Type(() => ActivityFundingOrderByWithRelationInput)
     activity_funding?: ActivityFundingOrderByWithRelationInput;
@@ -101,4 +94,8 @@ export class ProjectActivityOrderByWithRelationInput {
     @Field(() => ProjectActivityLogOrderByRelationAggregateInput, {nullable:true})
     @Type(() => ProjectActivityLogOrderByRelationAggregateInput)
     logs?: ProjectActivityLogOrderByRelationAggregateInput;
+
+    @Field(() => ProjectActivityAssigneeOrderByRelationAggregateInput, {nullable:true})
+    @Type(() => ProjectActivityAssigneeOrderByRelationAggregateInput)
+    assignees?: ProjectActivityAssigneeOrderByRelationAggregateInput;
 }

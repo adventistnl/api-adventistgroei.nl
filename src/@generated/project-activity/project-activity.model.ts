@@ -10,9 +10,9 @@ import { SubsidyRequest } from '../subsidy-request/subsidy-request.model';
 import { Project } from '../project/project.model';
 import { SubsidyReceipt } from '../subsidy-receipt/subsidy-receipt.model';
 import { ActivityDocuments } from '../activity-documents/activity-documents.model';
-import { User } from '../user/user.model';
 import { ActivityFunding } from '../activity-funding/activity-funding.model';
 import { ProjectActivityLog } from '../project-activity-log/project-activity-log.model';
+import { ProjectActivityAssignee } from '../project-activity-assignee/project-activity-assignee.model';
 import { ProjectActivityCount } from './project-activity-count.output';
 
 @ObjectType()
@@ -57,9 +57,6 @@ export class ProjectActivity {
     @Field(() => Date, {nullable:false})
     deadline!: Date;
 
-    @Field(() => String, {nullable:false})
-    owner_id!: string;
-
     @Field(() => [ActivityTags], {nullable:true})
     tags!: Array<`${ActivityTags}`>;
 
@@ -90,14 +87,14 @@ export class ProjectActivity {
     @Field(() => [ActivityDocuments], {nullable:true})
     activity_documents?: Array<ActivityDocuments>;
 
-    @Field(() => User, {nullable:false})
-    owner?: User;
-
     @Field(() => ActivityFunding, {nullable:true})
     activity_funding?: ActivityFunding | null;
 
     @Field(() => [ProjectActivityLog], {nullable:true})
     logs?: Array<ProjectActivityLog>;
+
+    @Field(() => [ProjectActivityAssignee], {nullable:true})
+    assignees?: Array<ProjectActivityAssignee>;
 
     @Field(() => ProjectActivityCount, {nullable:false})
     _count?: ProjectActivityCount;

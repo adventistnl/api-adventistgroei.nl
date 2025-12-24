@@ -53,9 +53,6 @@ export class ProjectActivityGroupBy {
     @Field(() => Date, {nullable:false})
     deadline!: Date | string;
 
-    @Field(() => String, {nullable:false})
-    owner_id!: string;
-
     @Field(() => [ActivityTags], {nullable:true})
     tags?: Array<`${ActivityTags}`>;
 
