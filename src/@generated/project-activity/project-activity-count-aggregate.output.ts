@@ -51,9 +51,6 @@ export class ProjectActivityCountAggregate {
     custom_tags!: number;
 
     @Field(() => Int, {nullable:false})
-    activity_tag!: number;
-
-    @Field(() => Int, {nullable:false})
     status!: number;
 
     @Field(() => Int, {nullable:false})

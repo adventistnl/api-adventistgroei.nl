@@ -7,6 +7,8 @@ import { InstitutionRepository } from './institution.repository';
 import { DepartmentRepository } from './department.repository';
 import { UserRepository } from './user.repository';
 import { EntityType } from '../@generated/prisma/entity-type.enum';
+import { ProjectActivityLogRepository } from './project-activity-log.repository';
+import { ProjectActivityLogAction } from '../@generated/prisma/project-activity-log-action.enum';
 
 @Injectable()
 export class ProjectRepository {
@@ -14,7 +16,9 @@ export class ProjectRepository {
     private readonly prisma: PrismaService,
     private readonly institutionRepository: InstitutionRepository,
     private readonly departmentRepository: DepartmentRepository,
-    private readonly userRepository: UserRepository
+    private readonly userRepository: UserRepository,
+    private readonly activityLogRepository: ProjectActivityLogRepository
+
 
   ) {}
 
@@ -91,6 +95,12 @@ export class ProjectRepository {
 
     if (data.activities && data.activities.length > 0) {
       for (const activity of data.activities) {
+        // Ensure current user is in assignee_ids if not already present
+        let assigneeIds = activity.assignee_ids || [];
+        if (!assigneeIds.includes(userId)) {
+          assigneeIds = [userId, ...assigneeIds];
+        }
+
         const createdActivity = await this.prisma.projectActivity.create({
           data: {
             project: { connect: { id: createdProject.id } },
@@ -101,7 +111,23 @@ export class ProjectRepository {
             tags: activity.tags,
             created_by: userId,
             updated_by: userId,
+            // Create assignees (current user + any additional assignees)
+            assignees: {
+              create: assigneeIds.map(assigneeId => ({
+                user_id: assigneeId,
+                created_by: userId,
+              })),
+            },
+
           },
+        });
+
+        // Log creation
+        await this.activityLogRepository.create({
+          activity_id: createdActivity.id,
+          user_id: userId,
+          action: ProjectActivityLogAction.CREATED,
+          metadata: { name: createdActivity.name }
         });
 
         if (activity.activity_funding) {
@@ -221,9 +247,14 @@ export class ProjectRepository {
             where: { id: activity.id },
             data: updateActivityData,
           });
+           await this.activityLogRepository.create({
+              activity_id: activity.id,
+              user_id: userId,
+              action: ProjectActivityLogAction.UPDATED,
+           });
         } else {
           // Criar nova atividade
-          await this.prisma.projectActivity.create({
+          const createdActivity = await this.prisma.projectActivity.create({
             data: {
               project: { connect: { id } },
               name: activity.name || '', // Garantir que seja uma string válida
@@ -246,6 +277,14 @@ export class ProjectRepository {
                   }
                 : undefined,
             },
+          });
+
+          // Log creation
+          await this.activityLogRepository.create({
+             activity_id: createdActivity.id,
+             user_id: userId,
+             action: ProjectActivityLogAction.CREATED,
+             metadata: { name: createdActivity.name }
           });
         }
       }

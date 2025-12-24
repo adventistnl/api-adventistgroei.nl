@@ -50,9 +50,6 @@ export class ProjectActivityCountAggregateInput {
     custom_tags?: true;
 
     @Field(() => Boolean, {nullable:true})
-    activity_tag?: true;
-
-    @Field(() => Boolean, {nullable:true})
     status?: true;
 
     @Field(() => Boolean, {nullable:true})

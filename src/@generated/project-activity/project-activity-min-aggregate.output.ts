@@ -2,7 +2,6 @@ import { Field } from '@nestjs/graphql';
 import { ObjectType } from '@nestjs/graphql';
 import { Decimal } from '@prisma/client/runtime/library';
 import { GraphQLDecimal } from 'prisma-graphql-type-decimal';
-import { ActivityTags } from '../prisma/activity-tags.enum';
 import { ActivityStatus } from '../prisma/activity-status.enum';
 import { ActivityPriority } from '../prisma/activity-priority.enum';
 
@@ -47,9 +46,6 @@ export class ProjectActivityMinAggregate {
 
     @Field(() => Date, {nullable:true})
     deadline?: Date | string;
-
-    @Field(() => ActivityTags, {nullable:true})
-    activity_tag?: `${ActivityTags}`;
 
     @Field(() => ActivityStatus, {nullable:true})
     status?: `${ActivityStatus}`;

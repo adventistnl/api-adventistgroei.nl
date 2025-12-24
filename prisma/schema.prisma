@@ -647,7 +647,6 @@ model ProjectActivity {
   deadline            DateTime
   tags                ActivityTags[]
   custom_tags         String[]                 @default([])
-  activity_tag        ActivityTags?
   activity_funding    ActivityFunding?
   status              ActivityStatus           @default(TODO)
   priority            ActivityPriority         @default(MEDIUM)

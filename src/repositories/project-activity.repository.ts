@@ -3,13 +3,24 @@ import { ProjectActivity } from 'src/@generated/project-activity/project-activit
 import { CustomGraphQLError, ErrorCode } from 'src/common/errors/custom-graphql-error';
 import { ProjectActivityBatchUpdateDto, ProjectActivityCreateDto, ProjectActivityUpdateDto } from 'src/dto/project-activity.dto';
 import { PrismaService } from 'src/services';
+import { ProjectActivityLogRepository } from './project-activity-log.repository';
+import { ProjectActivityLogAction } from '../@generated/prisma/project-activity-log-action.enum';
 
 @Injectable()
 export class ProjectActivityRepository {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly activityLogRepository: ProjectActivityLogRepository
+  ) {}
 
   async create(data: ProjectActivityCreateDto, userId: string): Promise<ProjectActivity> {
     try {
+      // Ensure current user is in assignee_ids if not already present
+      let assigneeIds = data.assignee_ids || [];
+      if (!assigneeIds.includes(userId)) {
+        assigneeIds = [userId, ...assigneeIds];
+      }
+
       const activity = await this.prisma.projectActivity.create({
         data: {
           name: data.name,
@@ -32,9 +43,9 @@ export class ProjectActivityRepository {
               entity_id: data.activity_funding.entity_id,
             },
           },
-          // Create assignees (required - at least one)
+          // Create assignees (current user + any additional assignees)
           assignees: {
-            create: data.assignee_ids.map(assigneeId => ({
+            create: assigneeIds.map(assigneeId => ({
               user_id: assigneeId,
               created_by: userId,
             })),
@@ -49,8 +60,17 @@ export class ProjectActivityRepository {
           },
         },
       });
+
+      // Log creation
+      await this.activityLogRepository.create({
+        activity_id: activity.id,
+        user_id: userId,
+        action: ProjectActivityLogAction.CREATED,
+        metadata: { name: activity.name }
+      });
+
       return activity;
-    } catch (error) {
+    } catch (_error) {
       throw new CustomGraphQLError('Erro ao criar ProjectActivity', ErrorCode.INTERNAL_SERVER_ERROR, 500);
     }
   }
@@ -73,7 +93,7 @@ export class ProjectActivityRepository {
       if (data.status !== undefined) updateData.status = data.status;
       if (data.priority !== undefined) updateData.priority = data.priority;
       if (data.is_subsidized !== undefined) updateData.is_subsidized = data.is_subsidized;
-      if (data.activity_tag !== undefined) updateData.activity_tag = data.activity_tag;
+      if (data.is_subsidized !== undefined) updateData.is_subsidized = data.is_subsidized;
 
       // Handle assignees update if provided
       if (data.assignee_ids !== undefined) {
@@ -103,7 +123,9 @@ export class ProjectActivityRepository {
         console.log('⏭️ assignee_ids not provided, skipping assignee update');
       }
 
-      return await this.prisma.projectActivity.update({
+      const oldActivity = await this.prisma.projectActivity.findUnique({ where: { id: data.id } });
+
+      const updatedActivity = await this.prisma.projectActivity.update({
         where: { id: data.id },
         data: updateData,
         include: {
@@ -115,7 +137,109 @@ export class ProjectActivityRepository {
           },
         },
       });
-    } catch (error) {
+
+      // Logging changes
+      if (oldActivity) {
+        // Status Change
+        if (oldActivity.status !== updatedActivity.status) {
+          await this.activityLogRepository.create({
+            activity_id: updatedActivity.id,
+            user_id: userId,
+            action: ProjectActivityLogAction.STATUS_CHANGED,
+            field_name: 'status',
+            old_value: oldActivity.status,
+            new_value: updatedActivity.status
+          });
+        }
+
+        // Priority Change
+        if (oldActivity.priority !== updatedActivity.priority) {
+          await this.activityLogRepository.create({
+            activity_id: updatedActivity.id,
+            user_id: userId,
+            action: ProjectActivityLogAction.PRIORITY_CHANGED,
+            field_name: 'priority',
+            old_value: oldActivity.priority,
+            new_value: updatedActivity.priority
+          });
+        }
+
+        // Budget Change (Using toString for Decimal comparison)
+        if (oldActivity.budget_amount.toString() !== updatedActivity.budget_amount.toString()) {
+          await this.activityLogRepository.create({
+            activity_id: updatedActivity.id,
+            user_id: userId,
+            action: ProjectActivityLogAction.BUDGET_UPDATED,
+            field_name: 'budget_amount',
+            old_value: oldActivity.budget_amount.toString(),
+            new_value: updatedActivity.budget_amount.toString()
+          });
+        }
+
+        // Deadline Change
+        if (oldActivity.deadline?.toISOString() !== updatedActivity.deadline?.toISOString()) {
+          await this.activityLogRepository.create({
+            activity_id: updatedActivity.id,
+            user_id: userId,
+            action: ProjectActivityLogAction.DEADLINE_UPDATED,
+            field_name: 'deadline',
+            old_value: oldActivity.deadline ? oldActivity.deadline.toISOString() : undefined,
+            new_value: updatedActivity.deadline ? updatedActivity.deadline.toISOString() : undefined
+          });
+        }
+        
+        // Tags Change 
+        // Simple stringify comparison for array
+         if (JSON.stringify(oldActivity.tags) !== JSON.stringify(updatedActivity.tags)) {
+           // We can log generic UPDATED or multiple TAG_ADDED/REMOVED. 
+           // For now, let's allow generic Update or Tag-specific? 
+           // There is TAG_ADDED/REMOVED. 
+           // Let's log 'UPDATED' with metadata about tags for simplicity as specifically diffing arrays is complex here
+           await this.activityLogRepository.create({
+            activity_id: updatedActivity.id,
+            user_id: userId,
+            action: ProjectActivityLogAction.UPDATED,
+            field_name: 'tags',
+            metadata: { 
+                old_tags: oldActivity.tags,
+                new_tags: updatedActivity.tags
+            }
+          });
+        }
+        
+        // Is Subsidized Change
+        if (oldActivity.is_subsidized !== updatedActivity.is_subsidized) {
+           await this.activityLogRepository.create({
+            activity_id: updatedActivity.id,
+            user_id: userId,
+            action: ProjectActivityLogAction.SUBSIDIZED_CHANGED,
+            field_name: 'is_subsidized',
+            old_value: String(oldActivity.is_subsidized),
+            new_value: String(updatedActivity.is_subsidized)
+          });
+        }
+
+        // Generic Name/Desc update
+        if (oldActivity.name !== updatedActivity.name || oldActivity.description !== updatedActivity.description) {
+           await this.activityLogRepository.create({
+            activity_id: updatedActivity.id,
+            user_id: userId,
+            action: ProjectActivityLogAction.UPDATED,
+            metadata: { 
+                name_changed: oldActivity.name !== updatedActivity.name,
+                desc_changed: oldActivity.description !== updatedActivity.description
+            }
+          });
+        }
+
+        // Assignees updated?
+        // We handle assigns via create/delete logic in update method, so logs might be tricky unless we diff assignees list
+        // Currently assignees are updated via deleteMany/createMany logic (lines 90-103). 
+        // We can just log generic 'UPDATED' or 'ASSIGNED' if we tracked that better.
+      }
+
+      return updatedActivity;
+    } catch (_error) {
       throw new CustomGraphQLError('Erro ao atualizar ProjectActivity', ErrorCode.INTERNAL_SERVER_ERROR, 500);
     }
   }
@@ -159,7 +283,7 @@ export class ProjectActivityRepository {
       const deletionDate = new Date();
 
       // Soft delete all related records in a transaction
-      return await this.prisma.$transaction(async (tx) => {
+      const result = await this.prisma.$transaction(async (tx) => {
         // 1. Soft delete activity funding
         await tx.activityFunding.updateMany({
           where: { activity_id: id, is_deleted: false },
@@ -200,7 +324,17 @@ export class ProjectActivityRepository {
           },
         });
       });
-    } catch (error) {
+
+      // Log deletion
+      await this.activityLogRepository.create({
+        activity_id: id,
+        user_id: userId,
+        action: ProjectActivityLogAction.DELETED,
+        metadata: { name: 'Activity Deleted' }
+      });
+
+      return result;
+    } catch (_error) {
       throw new CustomGraphQLError('Erro ao deletar ProjectActivity', ErrorCode.INTERNAL_SERVER_ERROR, 500);
     }
   }
@@ -222,9 +356,6 @@ export class ProjectActivityRepository {
       if (data.is_subsidized !== undefined) {
         updateData.is_subsidized = data.is_subsidized;
       }
-      if (data.activity_tag !== undefined) {
-        updateData.activity_tag = data.activity_tag;
-      }
 
       // Use updateMany to update all activities with the given IDs
       await this.prisma.projectActivity.updateMany({
@@ -236,7 +367,7 @@ export class ProjectActivityRepository {
       });
 
       // Return the updated activities
-      return this.prisma.projectActivity.findMany({
+      const results = await this.prisma.projectActivity.findMany({
         where: {
           id: { in: data.ids },
           is_deleted: false,
@@ -249,7 +380,24 @@ export class ProjectActivityRepository {
           },
         },
       });
-    } catch (error) {
+
+      // Log batch update for each activity
+      for (const activity of results) {
+        await this.activityLogRepository.create({
+          activity_id: activity.id,
+          user_id: userId,
+          action: ProjectActivityLogAction.UPDATED,
+          metadata: { 
+            note: 'Batch Update',
+            status_changed: data.status,
+            priority_changed: data.priority,
+            subsidized_changed: data.is_subsidized
+          }
+        });
+      }
+
+      return results;
+    } catch (_error) {
       throw new CustomGraphQLError(
         'Erro ao atualizar atividades em lote',
         ErrorCode.INTERNAL_SERVER_ERROR,

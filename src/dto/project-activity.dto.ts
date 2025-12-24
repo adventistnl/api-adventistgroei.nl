@@ -44,9 +44,10 @@ export class ProjectActivityCreateWithoutProjectDto {
   @IsDateString()
   deadline: string;
 
-  @Field(() => [String])
+  @Field(() => [String], { nullable: true })
+  @IsOptional()
   @IsArray()
-  assignee_ids: string[];
+  assignee_ids?: string[];
 
   @Field(() => [ActivityTags])
   tags: ActivityTags[];
@@ -161,11 +162,6 @@ export class ProjectActivityUpdateDto {
   @IsBoolean()
   is_subsidized?: boolean;
 
-  @Field(() => ActivityTags, { nullable: true })
-  @IsOptional()
-  @IsEnum(ActivityTags)
-  activity_tag?: ActivityTags;
-
   @Field(() => ActivityFundingUpdateDto, { nullable: true })
   @IsOptional()
   activity_funding?: ActivityFundingUpdateDto;
@@ -186,11 +182,6 @@ export class ProjectActivityBatchUpdateDto {
   @IsOptional()
   @IsEnum(ActivityPriority)
   priority?: ActivityPriority;
-
-  @Field(() => ActivityTags, { nullable: true })
-  @IsOptional()
-  @IsEnum(ActivityTags)
-  activity_tag?: ActivityTags;
 
   @Field({ nullable: true })
   @IsOptional()

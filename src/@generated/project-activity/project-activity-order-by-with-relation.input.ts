@@ -59,9 +59,6 @@ export class ProjectActivityOrderByWithRelationInput {
     @Field(() => SortOrder, {nullable:true})
     custom_tags?: `${SortOrder}`;
 
-    @Field(() => SortOrderInput, {nullable:true})
-    activity_tag?: SortOrderInput;
-
     @Field(() => SortOrder, {nullable:true})
     status?: `${SortOrder}`;
 

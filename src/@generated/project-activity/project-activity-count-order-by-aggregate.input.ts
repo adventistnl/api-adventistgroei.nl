@@ -51,9 +51,6 @@ export class ProjectActivityCountOrderByAggregateInput {
     custom_tags?: `${SortOrder}`;
 
     @Field(() => SortOrder, {nullable:true})
-    activity_tag?: `${SortOrder}`;
-
-    @Field(() => SortOrder, {nullable:true})
     status?: `${SortOrder}`;
 
     @Field(() => SortOrder, {nullable:true})

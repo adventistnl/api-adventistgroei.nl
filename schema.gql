@@ -543,7 +543,6 @@ type ProjectActivity {
   deadline: DateTime!
   tags: [ActivityTags!]
   custom_tags: [String!]
-  activity_tag: ActivityTags
   status: ActivityStatus!
   priority: ActivityPriority!
   is_subsidized: Boolean!
@@ -2135,7 +2134,6 @@ input ProjectActivityWhereInput {
   deadline: DateTimeFilter
   tags: EnumActivityTagsNullableListFilter
   custom_tags: StringNullableListFilter
-  activity_tag: EnumActivityTagsNullableFilter
   status: EnumActivityStatusFilter
   priority: EnumActivityPriorityFilter
   is_subsidized: BoolFilter
@@ -2162,20 +2160,6 @@ input StringNullableListFilter {
   hasEvery: [String!]
   hasSome: [String!]
   isEmpty: Boolean
-}
-
-input EnumActivityTagsNullableFilter {
-  equals: ActivityTags
-  in: [ActivityTags!]
-  notIn: [ActivityTags!]
-  not: NestedEnumActivityTagsNullableFilter
-}
-
-input NestedEnumActivityTagsNullableFilter {
-  equals: ActivityTags
-  in: [ActivityTags!]
-  notIn: [ActivityTags!]
-  not: NestedEnumActivityTagsNullableFilter
 }
 
 input EnumActivityStatusFilter {
@@ -3715,7 +3699,7 @@ input ProjectActivityCreateWithoutProjectDto {
   description: String!
   budget_amount: Float!
   deadline: String!
-  assignee_ids: [String!]!
+  assignee_ids: [String!]
   tags: [ActivityTags!]!
   custom_tags: [String!]
   status: ActivityStatus
@@ -3760,7 +3744,6 @@ input ProjectActivityUpdateDto {
   status: ActivityStatus
   priority: ActivityPriority
   is_subsidized: Boolean
-  activity_tag: ActivityTags
   activity_funding: ActivityFundingUpdateDto
 }
 
@@ -3861,7 +3844,7 @@ input ProjectActivityCreateDto {
   description: String!
   budget_amount: Float!
   deadline: String!
-  assignee_ids: [String!]!
+  assignee_ids: [String!]
   tags: [ActivityTags!]!
   custom_tags: [String!]
   status: ActivityStatus
@@ -3875,7 +3858,6 @@ input ProjectActivityBatchUpdateDto {
   ids: [String!]!
   status: ActivityStatus
   priority: ActivityPriority
-  activity_tag: ActivityTags
   is_subsidized: Boolean
 }
 

@@ -2,6 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { ActivityDocuments } from 'src/@generated/activity-documents/activity-documents.model';
 import { CustomGraphQLError, ErrorCode } from 'src/common/errors/custom-graphql-error';
 import { PrismaService } from 'src/services';
+import { ProjectActivityLogRepository } from './project-activity-log.repository';
+import { ProjectActivityLogAction } from '../@generated/prisma/project-activity-log-action.enum';
 
 export interface CreateActivityDocumentData {
   activity_id: string;
@@ -25,14 +27,17 @@ export interface UpdateActivityDocumentData {
 
 @Injectable()
 export class ActivityDocumentsRepository {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly activityLogRepository: ProjectActivityLogRepository
+  ) {}
 
   /**
    * Criar novo documento de atividade
    */
   async create(data: CreateActivityDocumentData, userId: string): Promise<ActivityDocuments> {
     try {
-      return await this.prisma.activityDocuments.create({
+      const result = await this.prisma.activityDocuments.create({
         data: {
           activity_id: data.activity_id,
           project_activity_id: data.project_activity_id,
@@ -47,6 +52,18 @@ export class ActivityDocumentsRepository {
           updated_by: userId,
         },
       });
+
+      // Log upload
+      if (data.project_activity_id) {
+        await this.activityLogRepository.create({
+          activity_id: data.project_activity_id,
+          user_id: userId,
+          action: ProjectActivityLogAction.UPDATED,
+          metadata: { file_uploaded: data.filename, file_url: data.file_url }
+        });
+      }
+
+      return result;
     } catch (error) {
       // Log detalhado do erro original para debugging
       console.error('Erro detalhado ao criar documento de atividade:', {
@@ -132,7 +149,7 @@ export class ActivityDocumentsRepository {
     try {
       const deletionDate = new Date();
 
-      return await this.prisma.activityDocuments.update({
+      const result = await this.prisma.activityDocuments.update({
         where: { id },
         data: {
           is_deleted: true,
@@ -140,6 +157,19 @@ export class ActivityDocumentsRepository {
           deleted_by: userId,
         },
       });
+
+      // Log deletion
+      const doc = await this.findById(id);
+      if (doc && doc.project_activity_id) {
+        await this.activityLogRepository.create({
+          activity_id: doc.project_activity_id,
+          user_id: userId,
+          action: ProjectActivityLogAction.UPDATED,
+          metadata: { file_deleted: doc.filename }
+        });
+      }
+
+      return result;
     } catch (error) {
       throw new CustomGraphQLError(
         'Erro ao deletar documento de atividade',
@@ -154,7 +184,7 @@ export class ActivityDocumentsRepository {
    */
   async validateDocument(id: string, userId: string): Promise<ActivityDocuments> {
     try {
-      return await this.prisma.activityDocuments.update({
+      const result = await this.prisma.activityDocuments.update({
         where: { id },
         data: {
           is_validated: true,
@@ -163,6 +193,18 @@ export class ActivityDocumentsRepository {
           updated_at: new Date(),
         },
       });
+
+      // Log validation
+      if (result.project_activity_id) {
+        await this.activityLogRepository.create({
+          activity_id: result.project_activity_id,
+          user_id: userId,
+          action: ProjectActivityLogAction.UPDATED,
+          metadata: { file_validated: result.filename }
+        });
+      }
+
+      return result;
     } catch (error) {
       throw new CustomGraphQLError(
         'Erro ao validar documento de atividade',

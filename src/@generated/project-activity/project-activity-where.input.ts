@@ -9,7 +9,6 @@ import { DateTimeNullableFilter } from '../prisma/date-time-nullable-filter.inpu
 import { StringNullableFilter } from '../prisma/string-nullable-filter.input';
 import { EnumActivityTagsNullableListFilter } from '../prisma/enum-activity-tags-nullable-list-filter.input';
 import { StringNullableListFilter } from '../prisma/string-nullable-list-filter.input';
-import { EnumActivityTagsNullableFilter } from '../prisma/enum-activity-tags-nullable-filter.input';
 import { EnumActivityStatusFilter } from '../prisma/enum-activity-status-filter.input';
 import { EnumActivityPriorityFilter } from '../prisma/enum-activity-priority-filter.input';
 import { SubsidyRequestListRelationFilter } from '../subsidy-request/subsidy-request-list-relation-filter.input';
@@ -80,9 +79,6 @@ export class ProjectActivityWhereInput {
 
     @Field(() => StringNullableListFilter, {nullable:true})
     custom_tags?: StringNullableListFilter;
-
-    @Field(() => EnumActivityTagsNullableFilter, {nullable:true})
-    activity_tag?: EnumActivityTagsNullableFilter;
 
     @Field(() => EnumActivityStatusFilter, {nullable:true})
     status?: EnumActivityStatusFilter;

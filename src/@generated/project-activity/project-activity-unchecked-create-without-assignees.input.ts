@@ -7,7 +7,6 @@ import { Transform } from 'class-transformer';
 import { Type } from 'class-transformer';
 import { ProjectActivityCreatetagsInput } from './project-activity-createtags.input';
 import { ProjectActivityCreatecustom_tagsInput } from './project-activity-createcustom-tags.input';
-import { ActivityTags } from '../prisma/activity-tags.enum';
 import { ActivityStatus } from '../prisma/activity-status.enum';
 import { ActivityPriority } from '../prisma/activity-priority.enum';
 import { SubsidyRequestUncheckedCreateNestedManyWithoutProject_activitiesInput } from '../subsidy-request/subsidy-request-unchecked-create-nested-many-without-project-activities.input';
@@ -67,9 +66,6 @@ export class ProjectActivityUncheckedCreateWithoutAssigneesInput {
     @Field(() => ProjectActivityCreatecustom_tagsInput, {nullable:true})
     @Type(() => ProjectActivityCreatecustom_tagsInput)
     custom_tags?: ProjectActivityCreatecustom_tagsInput;
-
-    @Field(() => ActivityTags, {nullable:true})
-    activity_tag?: `${ActivityTags}`;
 
     @Field(() => ActivityStatus, {nullable:true})
     status?: `${ActivityStatus}`;
