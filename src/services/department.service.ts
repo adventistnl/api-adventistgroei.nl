@@ -3,6 +3,7 @@ import { DepartmentRepository } from '../repositories/department.repository';
 import { Department } from '../@generated/department/department.model';
 import { DepartmentCreateDto, DepartmentUpdateDto } from '../dto/department.dto';
 import { CustomGraphQLError, ErrorCode } from '../common/errors/custom-graphql-error';
+import { DepartmentKPIs, DepartmentActivityData, DepartmentBudgetTimeline } from '../dto/department-analytics.dto';
 
 @Injectable()
 export class DepartmentService {
@@ -38,5 +39,17 @@ export class DepartmentService {
 
   async getUsersByDepartmentId(departmentId: string): Promise<any[]> {
     return this.departmentRepository.getUsersByDepartmentId(departmentId);
+  }
+
+  async getDepartmentKPIs(institution_id?: string, church_id?: string, selectedYear?: number): Promise<DepartmentKPIs> {
+    return this.departmentRepository.getDepartmentKPIs(institution_id, church_id, selectedYear);
+  }
+
+  async getDepartmentActivityData(institution_id?: string, church_id?: string, selectedYear?: number): Promise<DepartmentActivityData[]> {
+    return this.departmentRepository.getDepartmentActivityData(institution_id, church_id, selectedYear);
+  }
+
+  async getDepartmentBudgetTimeline(institution_id?: string, church_id?: string, selectedYear?: number): Promise<DepartmentBudgetTimeline[]> {
+    return this.departmentRepository.getDepartmentBudgetTimeline(institution_id, church_id, selectedYear);
   }
 }

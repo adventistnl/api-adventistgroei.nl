@@ -110,6 +110,9 @@ const permissionsEnabledToClient = [
   { name: 'read projects by department', description: 'Access to projects grouped by department', resolver_name: 'projectsByDepartment' as PermissionResolverName, group: 'PROJECT' as PermissionGroup, key_code: 'PROJECTS_BY_DEPARTMENT_ACCESS', disabled_to_client: false },
   { name: 'read subsidy status distribution', description: 'Access to subsidy status distribution', resolver_name: 'subsidyStatusDistribution' as PermissionResolverName, group: 'PROJECT' as PermissionGroup, key_code: 'SUBSIDY_STATUS_DISTRIBUTION_ACCESS', disabled_to_client: false },
   { name: 'read projects timeline', description: 'Access to projects timeline', resolver_name: 'projectsTimeline' as PermissionResolverName, group: 'PROJECT' as PermissionGroup, key_code: 'PROJECTS_TIMELINE_ACCESS', disabled_to_client: false },
+  { name: 'read department KPIs', description: 'Access to department KPIs', resolver_name: 'departmentKPIs' as PermissionResolverName, group: 'DEPARTMENT' as PermissionGroup, key_code: 'DEPARTMENT_KPIS_ACCESS', disabled_to_client: false },
+  { name: 'read department activity data', description: 'Access to department activity data', resolver_name: 'departmentActivityData' as PermissionResolverName, group: 'DEPARTMENT' as PermissionGroup, key_code: 'DEPARTMENT_ACTIVITY_DATA_ACCESS', disabled_to_client: false },
+  { name: 'read department budget timeline', description: 'Access to department budget timeline', resolver_name: 'departmentBudgetTimeline' as PermissionResolverName, group: 'DEPARTMENT' as PermissionGroup, key_code: 'DEPARTMENT_BUDGET_TIMELINE_ACCESS', disabled_to_client: false },
 ];
 
 async function main() {

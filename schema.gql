@@ -191,6 +191,9 @@ enum PermissionResolverName {
   projectsByDepartment
   subsidyStatusDistribution
   projectsTimeline
+  departmentKPIs
+  departmentActivityData
+  departmentBudgetTimeline
   uploadActivityDocument
   downloadActivityDocument
   deleteActivityDocument
@@ -1331,6 +1334,40 @@ type LinkContactResult {
   message: String
 }
 
+type DepartmentKPIs {
+  totalDepartments: Int!
+  activeDepartments: Int!
+  departmentsWithBudget: Int!
+  totalUsers: Int!
+  totalAllocatedBudget: Float!
+  totalSpentBudget: Float!
+  averageBudgetPerDepartment: Float!
+  averageUsersPerDepartment: Float!
+  totalProjects: Int!
+  openProjects: Int!
+  completedProjects: Int!
+}
+
+type DepartmentActivityData {
+  department_id: String!
+  department_name: String!
+  user_count: Int!
+  allocated_amount: Float!
+  spent_amount: Float!
+  project_count: Int!
+  open_projects: Int!
+  completed_projects: Int!
+  activity_count: Int!
+}
+
+type DepartmentBudgetTimeline {
+  month: String!
+  department_id: String!
+  department_name: String!
+  allocated: Float!
+  spent: Float!
+}
+
 type ProjectKPIs {
   totalProjects: Int!
   activeProjects: Int!
@@ -1431,6 +1468,9 @@ type Query {
   role(id: String!): RoleModel
   departments(institution_id: String): [Department!]!
   department(id: String!): Department
+  departmentKPIs(institution_id: String, church_id: String, selectedYear: Float): DepartmentKPIs!
+  departmentActivityData(institution_id: String, church_id: String, selectedYear: Float): [DepartmentActivityData!]!
+  departmentBudgetTimeline(institution_id: String, church_id: String, selectedYear: Float): [DepartmentBudgetTimeline!]!
   communications: [Communication!]!
   communication(id: String!): Communication
   directMessages: [DirectMessage!]!

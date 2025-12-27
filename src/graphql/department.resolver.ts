@@ -6,6 +6,7 @@ import { UseGuards } from '@nestjs/common';
 import { PermissionsGuard } from '../middlewares/permissions.guard';
 import { DepartmentCreateDto, DepartmentUpdateDto } from 'src/dto';
 import { User } from 'src/@generated/user/user.model';
+import { DepartmentKPIs, DepartmentActivityData, DepartmentBudgetTimeline } from '../dto/department-analytics.dto';
 
 @Resolver(() => Department)
 @UseGuards(PermissionsGuard)
@@ -60,5 +61,35 @@ export class DepartmentResolver {
   @ResolveField(() => [User])
   async users(@Parent() department: Department): Promise<User[]> {
     return this.departmentService.getUsersByDepartmentId(department.id);
+  }
+
+  @Permission()
+  @Query(() => DepartmentKPIs)
+  async departmentKPIs(
+    @Args('institution_id', { nullable: true }) institution_id?: string,
+    @Args('church_id', { nullable: true }) church_id?: string,
+    @Args('selectedYear', { nullable: true }) selectedYear?: number
+  ): Promise<DepartmentKPIs> {
+    return this.departmentService.getDepartmentKPIs(institution_id, church_id, selectedYear);
+  }
+
+  @Permission()
+  @Query(() => [DepartmentActivityData])
+  async departmentActivityData(
+    @Args('institution_id', { nullable: true }) institution_id?: string,
+    @Args('church_id', { nullable: true }) church_id?: string,
+    @Args('selectedYear', { nullable: true }) selectedYear?: number
+  ): Promise<DepartmentActivityData[]> {
+    return this.departmentService.getDepartmentActivityData(institution_id, church_id, selectedYear);
+  }
+
+  @Permission()
+  @Query(() => [DepartmentBudgetTimeline])
+  async departmentBudgetTimeline(
+    @Args('institution_id', { nullable: true }) institution_id?: string,
+    @Args('church_id', { nullable: true }) church_id?: string,
+    @Args('selectedYear', { nullable: true }) selectedYear?: number
+  ): Promise<DepartmentBudgetTimeline[]> {
+    return this.departmentService.getDepartmentBudgetTimeline(institution_id, church_id, selectedYear);
   }
 }

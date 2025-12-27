@@ -147,6 +147,9 @@ enum PermissionResolverName {
   projectsByDepartment
   subsidyStatusDistribution
   projectsTimeline
+  departmentKPIs
+  departmentActivityData
+  departmentBudgetTimeline
   uploadActivityDocument
   downloadActivityDocument
   deleteActivityDocument
