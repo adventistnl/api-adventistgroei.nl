@@ -68,6 +68,7 @@ enum PermissionResolverName {
   createChurch
   updateChurch
   deleteChurch
+  churchActivityTimeline
   permissions
   createRole
   updateRole

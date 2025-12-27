@@ -45,4 +45,8 @@ export class ChurchService {
   async getUsersByChurchId(churchId: string): Promise<any[]> {
     return this.churchRepository.getUsersByChurchId(churchId);
   }
+
+  async getChurchActivityTimeline(institution_id?: string, selectedYear?: number): Promise<any[]> {
+    return this.churchRepository.getChurchActivityTimeline(institution_id, selectedYear);
+  }
 }

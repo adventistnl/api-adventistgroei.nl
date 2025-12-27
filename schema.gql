@@ -112,6 +112,7 @@ enum PermissionResolverName {
   createChurch
   updateChurch
   deleteChurch
+  churchActivityTimeline
   permissions
   createRole
   updateRole
@@ -1457,6 +1458,7 @@ type Query {
   permissions: [PermissionGroupPermissionsModel!]!
   churches: [ChurchModel!]!
   church(id: String!): ChurchModel
+  churchActivityTimeline(institution_id: String, selectedYear: Float): [JSON!]!
   institutions: [Institution!]!
   institution(id: String!): Institution
   regions: [Region!]!

@@ -450,4 +450,120 @@ export class ChurchRepository {
       include: { user_roles: { include: { role: true } } },
     });
   }
+
+  async getChurchActivityTimeline(institution_id?: string, selectedYear?: number): Promise<any[]> {
+    const currentDate = new Date();
+
+    // Define "atividade recente" como nos últimos 30 dias
+    const recentActivityDate = new Date();
+    recentActivityDate.setDate(recentActivityDate.getDate() - 30);
+
+    const whereClause = {
+      is_deleted: false,
+      ...(institution_id && { institution_id }),
+    };
+
+    // Buscar todas as igrejas
+    const churches = await this.prisma.church.findMany({
+      where: whereClause,
+      select: {
+        id: true,
+        name: true,
+        updated_at: true,
+        users: {
+          where: { is_deleted: false },
+          select: {
+            id: true,
+            created_at: true,
+            updated_at: true,
+          },
+        },
+        departments: {
+          where: { is_deleted: false },
+          select: {
+            id: true,
+            updated_at: true,
+            projects: {
+              where: { is_deleted: false },
+              select: {
+                id: true,
+                updated_at: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    // Gerar dados mensais para os últimos 12 meses
+    const monthlyData: Array<Record<string, any>> = [];
+    for (let i = 11; i >= 0; i--) {
+      const targetDate = new Date(currentDate);
+      targetDate.setMonth(currentDate.getMonth() - i);
+      const monthKey = targetDate.toLocaleString('en-US', { month: 'short', year: 'numeric' });
+      const monthStart = new Date(targetDate.getFullYear(), targetDate.getMonth(), 1);
+      const monthEnd = new Date(targetDate.getFullYear(), targetDate.getMonth() + 1, 0, 23, 59, 59);
+
+      const monthData: any = { month: monthKey };
+
+      churches.forEach((church) => {
+        // Base: 5 pontos por igreja
+        let totalPoints = 5;
+
+        // Usuários
+        const usersInMonth = church.users.filter(u =>
+          new Date(u.created_at) <= monthEnd
+        ).length;
+        const newUsersInMonth = church.users.filter(u =>
+          new Date(u.created_at) >= monthStart && new Date(u.created_at) <= monthEnd
+        ).length;
+        const recentUserActivity = church.users.filter(u =>
+          new Date(u.updated_at) >= recentActivityDate &&
+          new Date(u.updated_at) <= monthEnd &&
+          new Date(u.updated_at) >= monthStart
+        ).length;
+
+        const userPoints = (usersInMonth * 2) + (recentUserActivity * 5) + (newUsersInMonth * 8);
+
+        // Departamentos
+        const departmentsInMonth = church.departments.filter(d =>
+          new Date(d.updated_at) <= monthEnd
+        ).length;
+        const recentDeptActivity = church.departments.filter(d =>
+          new Date(d.updated_at) >= recentActivityDate &&
+          new Date(d.updated_at) <= monthEnd &&
+          new Date(d.updated_at) >= monthStart
+        ).length;
+
+        const departmentPoints = (departmentsInMonth * 3) + (recentDeptActivity * 8);
+
+        // Projetos
+        const allProjects = church.departments.flatMap(d => d.projects);
+        const projectsInMonth = allProjects.filter(p =>
+          new Date(p.updated_at) <= monthEnd
+        ).length;
+        const recentProjectActivity = allProjects.filter(p =>
+          new Date(p.updated_at) >= recentActivityDate &&
+          new Date(p.updated_at) <= monthEnd &&
+          new Date(p.updated_at) >= monthStart
+        ).length;
+
+        const projectPoints = (projectsInMonth * 1) + (recentProjectActivity * 3);
+
+        // Igreja: 10 pontos por atualização recente
+        const churchRecentUpdate = new Date(church.updated_at) >= recentActivityDate &&
+          new Date(church.updated_at) <= monthEnd &&
+          new Date(church.updated_at) >= monthStart ? 10 : 0;
+
+        totalPoints += userPoints + departmentPoints + projectPoints + churchRecentUpdate;
+
+        // Adicionar ao objeto do mês com o nome da igreja como chave
+        monthData[church.name] = totalPoints;
+      });
+
+      monthlyData.push(monthData);
+    }
+
+    return monthlyData;
+  }
 }

@@ -62,6 +62,7 @@ const permissionsEnabledToClient = [
   { name: 'read region', description: 'Access to a single region', resolver_name: 'region' as PermissionResolverName, group: 'REGION' as PermissionGroup, key_code: 'REGION_ACCESS', disabled_to_client: false },
   { name: 'read churches', description: 'Access to churches', resolver_name: 'churches' as PermissionResolverName, group: 'CHURCH' as PermissionGroup, key_code: 'CHURCHES_ACCESS', disabled_to_client: false },
   { name: 'read church', description: 'Access to a single church', resolver_name: 'church' as PermissionResolverName, group: 'CHURCH' as PermissionGroup, key_code: 'CHURCH_ACCESS', disabled_to_client: false },
+  { name: 'read church activity timeline', description: 'Access to church activity timeline', resolver_name: 'churchActivityTimeline' as PermissionResolverName, group: 'CHURCH' as PermissionGroup, key_code: 'CHURCH_ACTIVITY_TIMELINE_ACCESS', disabled_to_client: false },
   { name: 'read permissions', description: 'Access to permissions', resolver_name: 'permissions' as PermissionResolverName, group: 'PERMISSION' as PermissionGroup, key_code: 'PERMISSIONS_ACCESS', disabled_to_client: false },
   { name: 'read role', description: 'Access to a single role', resolver_name: 'role' as PermissionResolverName, group: 'ROLE' as PermissionGroup, key_code: 'ROLE_ACCESS', disabled_to_client: false },
   { name: 'read roles', description: 'Access to roles', resolver_name: 'roles' as PermissionResolverName, group: 'ROLE' as PermissionGroup, key_code: 'ROLES_ACCESS', disabled_to_client: false },

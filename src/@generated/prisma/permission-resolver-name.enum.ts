@@ -23,6 +23,7 @@ export enum PermissionResolverName {
     createChurch = "createChurch",
     updateChurch = "updateChurch",
     deleteChurch = "deleteChurch",
+    churchActivityTimeline = "churchActivityTimeline",
     permissions = "permissions",
     createRole = "createRole",
     updateRole = "updateRole",
