@@ -36,6 +36,15 @@ export class AnnualBudgetRepository {
       }
     }
 
+    // Validar que o budget do departamento não ultrapassa o orçamento disponível da instituição
+    if (entity_type === AnnualBudgetEntityType.INSTITUTION_DEPARTMENT && institutionId) {
+      await this.validateDepartmentBudgetAllocation(
+        institutionId,
+        dto.year,
+        budgetData.allocated_amount || 0
+      );
+    }
+
     // Construir dados do orçamento
     const budgetCreateData: any = {
       ...budgetData,
@@ -44,11 +53,17 @@ export class AnnualBudgetRepository {
       updated_by: userId,
       requested_by: userId,
       total_expenses: budgetData.total_expenses || 0,
-      allocated_amount: budgetData.allocated_amount || 0,
     };
 
-    // Calcular balance: planned_budget - (total_expenses + allocated_amount)
-    budgetCreateData.balance = budgetData.planned_budget - (budgetCreateData.total_expenses + budgetCreateData.allocated_amount);
+    // allocated_amount SEMPRE inclui total_expenses
+    // allocated_amount = manual_reserved + total_expenses
+    const manualReserved = Number(budgetData.allocated_amount || 0);
+    const expenses = Number(budgetData.total_expenses || 0);
+    budgetCreateData.allocated_amount = manualReserved + expenses;
+
+    // Calcular balance: planned_budget - allocated_amount
+    // (allocated já inclui expenses, não subtrair novamente!)
+    budgetCreateData.balance = budgetData.planned_budget - budgetCreateData.allocated_amount;
 
     // Adicionar conexões baseadas no tipo de entidade
     if (entity_type === AnnualBudgetEntityType.INSTITUTION) {
@@ -74,7 +89,8 @@ export class AnnualBudgetRepository {
 
       // Se for um orçamento de departamento de instituição, atualizar o orçamento da instituição
       if (entity_type === AnnualBudgetEntityType.INSTITUTION_DEPARTMENT && institutionId) {
-        await this.updateInstitutionAllocatedAmount(tx, institutionId, dto.year);
+        const allocatedAmount = Number(createdBudget.allocated_amount);
+        await this.updateInstitutionAllocatedAmount(tx, institutionId, dto.year, allocatedAmount, 'ADD');
       }
 
       return createdBudget;
@@ -195,26 +211,81 @@ export class AnnualBudgetRepository {
       updated_by: userId,
     };
 
-    // Recalcular balance: planned_budget - (total_expenses + allocated_amount)
-    if (dto.planned_budget !== undefined || dto.total_expenses !== undefined) {
-      const newPlannedBudget = dto.planned_budget !== undefined ? Number(dto.planned_budget) : Number(existingBudget.planned_budget);
-      const newTotalExpenses = dto.total_expenses !== undefined ? Number(dto.total_expenses) : Number(existingBudget.total_expenses);
-      const currentAllocatedAmount = Number(existingBudget.allocated_amount || 0);
+    // Para institution budget, allocated_amount = manual + total_expenses + departamentos
+    if (existingBudget.entity_type === AnnualBudgetEntityType.INSTITUTION) {
+      // Calcular soma atual dos departamentos
+      const departmentSum = await this.prisma.annualBudget.aggregate({
+        where: {
+          department: {
+            institution_id: existingBudget.institution_id!
+          },
+          year: existingBudget.year,
+          entity_type: {
+            in: [AnnualBudgetEntityType.INSTITUTION_DEPARTMENT, AnnualBudgetEntityType.CHURCH_DEPARTMENT]
+          },
+          is_deleted: false
+        },
+        _sum: {
+          allocated_amount: true
+        }
+      });
 
-      updateData.balance = newPlannedBudget - (newTotalExpenses + currentAllocatedAmount);
+      const allocatedFromDepts = Number(departmentSum._sum.allocated_amount || 0);
+      const currentExpenses = Number(existingBudget.total_expenses || 0);
+
+      // Calcular a parte manual ATUAL (antes da atualização)
+      // allocated_amount = manual + expenses + departments
+      const currentManual = Number(existingBudget.allocated_amount) - currentExpenses - allocatedFromDepts;
+
+      // Por padrão, manter a parte manual atual
+      let newManual = currentManual;
+
+      // Se dto.allocated_amount foi enviado, é o TOTAL desejado pelo usuário (manual + expenses + departments)
+      // Calcular a diferença e aplicar na parte manual
+      if (dto.allocated_amount !== undefined) {
+        const desiredTotal = Number(dto.allocated_amount);
+        const currentTotal = Number(existingBudget.allocated_amount);
+        const difference = desiredTotal - currentTotal;
+        newManual = currentManual + difference;
+      }
+
+      // Pegar expenses (novo se informado, ou atual)
+      const newExpenses = dto.total_expenses !== undefined ? Number(dto.total_expenses) : currentExpenses;
+
+      // Recalcular o allocated_amount total se mudou allocated ou expenses
+      // Total = manual + expenses + departamentos
+      if (dto.allocated_amount !== undefined || dto.total_expenses !== undefined) {
+        updateData.allocated_amount = newManual + newExpenses + allocatedFromDepts;
+      }
     }
 
-    // Para orçamentos de departamento, atualizar allocated_amount quando planned_budget muda
-    if (existingBudget.entity_type === AnnualBudgetEntityType.INSTITUTION_DEPARTMENT &&
-        dto.planned_budget !== undefined) {
-      updateData.allocated_amount = Number(dto.planned_budget);
+    // Recalcular balance: planned_budget - allocated_amount
+    // (allocated já inclui total_expenses, não subtrair novamente!)
+    if (dto.planned_budget !== undefined || dto.total_expenses !== undefined || dto.allocated_amount !== undefined) {
+      const newPlannedBudget = dto.planned_budget !== undefined ? Number(dto.planned_budget) : Number(existingBudget.planned_budget);
+      const newAllocatedAmount = updateData.allocated_amount !== undefined
+        ? Number(updateData.allocated_amount)
+        : Number(existingBudget.allocated_amount || 0);
 
-      // Recalcular balance com o novo allocated_amount
-      const newPlannedBudget = Number(dto.planned_budget);
-      const newTotalExpenses = dto.total_expenses !== undefined ? Number(dto.total_expenses) : Number(existingBudget.total_expenses);
-      const newAllocatedAmount = Number(dto.planned_budget);
+      updateData.balance = newPlannedBudget - newAllocatedAmount;
 
-      updateData.balance = newPlannedBudget - (newTotalExpenses + newAllocatedAmount);
+      // Validar que a mudança não excede o orçamento disponível da instituição (apenas para department budgets)
+      if (existingBudget.entity_type === AnnualBudgetEntityType.INSTITUTION_DEPARTMENT &&
+          existingBudget.department?.institution_id) {
+        // Calcular a diferença entre o novo e o antigo allocated_amount
+        const oldAllocatedAmount = Number(existingBudget.allocated_amount || 0);
+        const additionalAmount = newAllocatedAmount - oldAllocatedAmount;
+
+        // Se está aumentando o allocated_amount, validar disponibilidade
+        if (additionalAmount > 0) {
+          await this.validateDepartmentBudgetAllocationForUpdate(
+            existingBudget.department.institution_id,
+            existingBudget.year,
+            additionalAmount,
+            existingBudget.id // Excluir o próprio budget do cálculo
+          );
+        }
+      }
     }
 
     // Usar transação para garantir consistência dos dados
@@ -225,16 +296,27 @@ export class AnnualBudgetRepository {
         data: updateData,
       });
 
-      // Se for um orçamento de departamento de instituição e o allocated_amount mudou, recalcular orçamento da instituição
-      if (existingBudget.entity_type === AnnualBudgetEntityType.INSTITUTION_DEPARTMENT && 
-          existingBudget.department?.institution_id &&
-          dto.planned_budget !== undefined) {
-        
-        await this.updateInstitutionAllocatedAmount(
-          tx, 
-          existingBudget.department.institution_id, 
-          existingBudget.year
-        );
+      // Se for um orçamento de departamento de instituição e o allocated_amount mudou, atualizar orçamento da instituição
+      if (existingBudget.entity_type === AnnualBudgetEntityType.INSTITUTION_DEPARTMENT &&
+          existingBudget.department?.institution_id) {
+
+        const oldAllocated = Number(existingBudget.allocated_amount || 0);
+        const newAllocated = Number(updatedBudget.allocated_amount || 0);
+        const difference = newAllocated - oldAllocated;
+
+        // Só atualizar se houve mudança
+        if (difference !== 0) {
+          const operation = difference > 0 ? 'ADD' : 'SUBTRACT';
+          const amount = Math.abs(difference);
+
+          await this.updateInstitutionAllocatedAmount(
+            tx,
+            existingBudget.department.institution_id,
+            existingBudget.year,
+            amount,
+            operation
+          );
+        }
       }
 
       return updatedBudget;
@@ -318,14 +400,17 @@ export class AnnualBudgetRepository {
         },
       });
 
-      // Se for um orçamento de departamento de instituição, recalcular o total alocado da instituição
-      if (existingBudget.entity_type === AnnualBudgetEntityType.INSTITUTION_DEPARTMENT && 
+      // Se for um orçamento de departamento de instituição, subtrair o allocated_amount da instituição
+      if (existingBudget.entity_type === AnnualBudgetEntityType.INSTITUTION_DEPARTMENT &&
           existingBudget.department?.institution_id) {
-        
+
+        const allocatedAmount = Number(existingBudget.allocated_amount || 0);
         await this.updateInstitutionAllocatedAmount(
-          tx, 
-          existingBudget.department.institution_id, 
-          existingBudget.year
+          tx,
+          existingBudget.department.institution_id,
+          existingBudget.year,
+          allocatedAmount,
+          'SUBTRACT'
         );
       }
 
@@ -641,17 +726,33 @@ export class AnnualBudgetRepository {
   }
 
   /**
-   * Atualiza o valor alocado do orçamento da instituição recalculando a soma de todos os departamentos
+   * Valida se o orçamento do departamento não excede o disponível da instituição
    */
-  private async updateInstitutionAllocatedAmount(
-    tx: any, 
-    institutionId: string, 
-    year: number, 
-    amount?: number, 
-    operation?: 'ADD' | 'SUBTRACT'
+  private async validateDepartmentBudgetAllocation(
+    institutionId: string,
+    year: number,
+    requestedAmount: number
   ): Promise<void> {
-    // Recalcular o total alocado baseado na soma atual de todos os departamentos da instituição
-    const departmentBudgetsSum = await tx.annualBudget.aggregate({
+    // Buscar o orçamento da instituição para o ano especificado
+    const institutionBudget = await this.prisma.annualBudget.findFirst({
+      where: {
+        institution_id: institutionId,
+        year: year,
+        entity_type: AnnualBudgetEntityType.INSTITUTION,
+        is_deleted: false
+      }
+    });
+
+    if (!institutionBudget) {
+      throw new CustomGraphQLError(
+        `No institution budget found for year ${year}. Please create an institution budget first.`,
+        ErrorCode.NOT_FOUND,
+        404
+      );
+    }
+
+    // Calcular quanto já está alocado para outros departamentos
+    const departmentBudgetsSum = await this.prisma.annualBudget.aggregate({
       where: {
         department: {
           institution_id: institutionId
@@ -667,8 +768,97 @@ export class AnnualBudgetRepository {
       }
     });
 
-    const totalAllocatedAmount = Number(departmentBudgetsSum._sum.allocated_amount || 0);
+    const currentlyAllocatedByDepts = Number(departmentBudgetsSum._sum.allocated_amount || 0);
+    const plannedBudget = Number(institutionBudget.planned_budget);
+    const institutionAllocated = Number(institutionBudget.allocated_amount || 0);
 
+    // Disponível = planned_budget - institution_allocated_amount
+    // (porque institution.allocated já inclui manual + expenses + todos os departments)
+    const availableAmount = plannedBudget - institutionAllocated;
+
+    if (requestedAmount > availableAmount) {
+      throw new CustomGraphQLError(
+        `Requested amount (${requestedAmount}) exceeds available institution budget (${availableAmount}). Institution total allocated: ${institutionAllocated}, Already allocated by departments: ${currentlyAllocatedByDepts}, Planned budget: ${plannedBudget}.`,
+        ErrorCode.BAD_REQUEST,
+        400
+      );
+    }
+  }
+
+  /**
+   * Valida se o aumento do orçamento do departamento não excede o disponível da instituição (para updates)
+   */
+  private async validateDepartmentBudgetAllocationForUpdate(
+    institutionId: string,
+    year: number,
+    additionalAmount: number,
+    excludeBudgetId: string
+  ): Promise<void> {
+    // Buscar o orçamento da instituição para o ano especificado
+    const institutionBudget = await this.prisma.annualBudget.findFirst({
+      where: {
+        institution_id: institutionId,
+        year: year,
+        entity_type: AnnualBudgetEntityType.INSTITUTION,
+        is_deleted: false
+      }
+    });
+
+    if (!institutionBudget) {
+      throw new CustomGraphQLError(
+        `No institution budget found for year ${year}. Please create an institution budget first.`,
+        ErrorCode.NOT_FOUND,
+        404
+      );
+    }
+
+    // Calcular quanto já está alocado para outros departamentos (excluindo o budget atual)
+    const departmentBudgetsSum = await this.prisma.annualBudget.aggregate({
+      where: {
+        department: {
+          institution_id: institutionId
+        },
+        year: year,
+        entity_type: {
+          in: [AnnualBudgetEntityType.INSTITUTION_DEPARTMENT, AnnualBudgetEntityType.CHURCH_DEPARTMENT]
+        },
+        is_deleted: false,
+        id: {
+          not: excludeBudgetId // Excluir o próprio budget do cálculo
+        }
+      },
+      _sum: {
+        allocated_amount: true
+      }
+    });
+
+    const currentlyAllocatedByOthers = Number(departmentBudgetsSum._sum.allocated_amount || 0);
+    const plannedBudget = Number(institutionBudget.planned_budget);
+    const institutionAllocated = Number(institutionBudget.allocated_amount || 0);
+
+    // Disponível = planned_budget - institution_allocated_amount + allocated dos outros departments
+    // (porque institution.allocated já inclui manual + expenses + todos os departments)
+    const availableAmount = plannedBudget - institutionAllocated + currentlyAllocatedByOthers;
+
+    if (additionalAmount > availableAmount) {
+      throw new CustomGraphQLError(
+        `Additional amount (${additionalAmount}) exceeds available institution budget (${availableAmount}). Institution total allocated: ${institutionAllocated}, Already allocated by other departments: ${currentlyAllocatedByOthers}, Planned budget: ${plannedBudget}.`,
+        ErrorCode.BAD_REQUEST,
+        400
+      );
+    }
+  }
+
+  /**
+   * Atualiza o valor alocado do orçamento da instituição somando/subtraindo a mudança nos departamentos
+   */
+  private async updateInstitutionAllocatedAmount(
+    tx: any,
+    institutionId: string,
+    year: number,
+    amountChange?: number,
+    operation?: 'ADD' | 'SUBTRACT'
+  ): Promise<void> {
     // Buscar o orçamento da instituição para o ano especificado
     const institutionBudget = await tx.annualBudget.findFirst({
       where: {
@@ -679,28 +869,78 @@ export class AnnualBudgetRepository {
       }
     });
 
-    if (institutionBudget) {
+    if (!institutionBudget) {
+      this.logger.warn(`No institution budget found for institution ${institutionId} and year ${year}`);
+      return;
+    }
+
+    // Se não foi passado amount, recalcular baseado na soma de todos os departamentos
+    if (amountChange === undefined || operation === undefined) {
+      const departmentBudgetsSum = await tx.annualBudget.aggregate({
+        where: {
+          department: {
+            institution_id: institutionId
+          },
+          year: year,
+          entity_type: {
+            in: [AnnualBudgetEntityType.INSTITUTION_DEPARTMENT, AnnualBudgetEntityType.CHURCH_DEPARTMENT]
+          },
+          is_deleted: false
+        },
+        _sum: {
+          allocated_amount: true
+        }
+      });
+
+      const totalAllocatedFromDepts = Number(departmentBudgetsSum._sum.allocated_amount || 0);
       const currentAllocated = Number(institutionBudget.allocated_amount || 0);
       const plannedBudget = Number(institutionBudget.planned_budget);
       const totalExpenses = Number(institutionBudget.total_expenses || 0);
 
-      // Calcular novo balance: planned_budget - (total_expenses + allocated_amount)
-      const newBalance = plannedBudget - (totalExpenses + totalAllocatedAmount);
+      // Calcular a parte manual atual: allocated_amount = manual + expenses + departments
+      const currentManual = currentAllocated - totalExpenses - totalAllocatedFromDepts;
 
-      // Atualizar o allocated_amount e balance da instituição
+      // Recalcular allocated_amount = manual + expenses + departments
+      const newAllocatedAmount = currentManual + totalExpenses + totalAllocatedFromDepts;
+
+      // Calcular novo balance: planned_budget - allocated_amount
+      const newBalance = plannedBudget - newAllocatedAmount;
+
       await tx.annualBudget.update({
         where: { id: institutionBudget.id },
         data: {
-          allocated_amount: totalAllocatedAmount,
+          allocated_amount: newAllocatedAmount,
           balance: newBalance,
           updated_at: new Date()
         }
       });
 
-      this.logger.log(`Updated institution budget - allocated: ${currentAllocated} -> ${totalAllocatedAmount}, balance: ${Number(institutionBudget.balance)} -> ${newBalance} (recalculated from departments)`);
-    } else {
-      this.logger.warn(`No institution budget found for institution ${institutionId} and year ${year}`);
+      this.logger.log(`Recalculated institution budget - allocated: ${currentAllocated} -> ${newAllocatedAmount}`);
+      return;
     }
+
+    // Aplicar a mudança (ADD ou SUBTRACT) ao valor existente
+    const currentAllocated = Number(institutionBudget.allocated_amount || 0);
+    const plannedBudget = Number(institutionBudget.planned_budget);
+
+    const newAllocatedAmount = operation === 'ADD'
+      ? currentAllocated + amountChange
+      : currentAllocated - amountChange;
+
+    // Calcular novo balance: planned_budget - allocated_amount
+    const newBalance = plannedBudget - newAllocatedAmount;
+
+    // Atualizar o allocated_amount e balance da instituição
+    await tx.annualBudget.update({
+      where: { id: institutionBudget.id },
+      data: {
+        allocated_amount: newAllocatedAmount,
+        balance: newBalance,
+        updated_at: new Date()
+      }
+    });
+
+    this.logger.log(`Updated institution budget - allocated: ${currentAllocated} ${operation} ${amountChange} = ${newAllocatedAmount}`);
   }
 
   /**

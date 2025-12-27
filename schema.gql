@@ -3548,6 +3548,7 @@ input AnnualBudgetUpdateDto {
   notes: String
   documents: [String!]
   total_expenses: Float
+  allocated_amount: Float
 }
 
 input InstitutionCreateDto {

@@ -64,6 +64,9 @@ export class AnnualBudgetUpdateDto {
 
   @Field(() => Float, { nullable: true })
   total_expenses?: number;
+
+  @Field(() => Float, { nullable: true })
+  allocated_amount?: number;
 }
 
 // DTOs for additional mutations

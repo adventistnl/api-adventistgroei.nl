@@ -94,13 +94,19 @@ export class AnnualBudgetService {
     }
 
     // Calcular totais baseados nos dados reais do budget da instituição
-    const totalInstitutionBudget = (budgets[0].planned_budget as unknown as number) || 0;
-    const totalAllocated = (budgets[0].allocated_amount as unknown as number) || 0;
-    const totalSpent = (budgets[0].total_expenses as unknown as number) || 0;
+    // Converter Decimal para Number corretamente
+    const totalInstitutionBudget = Number(budgets[0].planned_budget) || 0;
+    const totalAllocated = Number(budgets[0].allocated_amount) || 0;
+    const totalSpent = Number(budgets[0].total_expenses) || 0;
 
-    const budgetRemaining = totalInstitutionBudget - totalSpent;
+    // budgetRemaining = quanto ainda pode ser alocado para departamentos
+    // = planned_budget - allocated_amount
+    const budgetRemaining = totalInstitutionBudget - totalAllocated;
+
+    // budgetUtilization = % do budget que foi alocado para departamentos
+    // = (allocated_amount / planned_budget) * 100
     const budgetUtilization = totalInstitutionBudget > 0 ?
-      (totalSpent / totalInstitutionBudget) * 100 : 0;
+      (totalAllocated / totalInstitutionBudget) * 100 : 0;
 
     // Para budgets da instituição, não há departments específicos
     // O activeDepartments será 0 pois são budgets da instituição principal
