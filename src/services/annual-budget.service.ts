@@ -1,21 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { AnnualBudget } from '@prisma/client';
 import { FindManyAnnualBudgetArgs } from 'src/@generated/annual-budget/find-many-annual-budget.args';
-import { AnnualBudgetCreateDto, AnnualBudgetUpdateDto } from 'src/dto/annual_budget.dto';
 import { BudgetKPIs, DepartmentSpending, SpendingOverTime, BudgetDistribution, EntityDistribution } from 'src/dto/budget-analytics.dto';
 import { AnnualBudgetRepository } from 'src/repositories/annual-budget.repository';
 
 @Injectable()
 export class AnnualBudgetService {
   constructor(private readonly annualBudgetRepository: AnnualBudgetRepository) {}
-
-  async create(data: AnnualBudgetCreateDto, userId: string): Promise<AnnualBudget> {
-    return this.annualBudgetRepository.create(data, userId);
-  }
-
-  async update(id: string, data: AnnualBudgetUpdateDto, userId: string): Promise<AnnualBudget> {
-    return this.annualBudgetRepository.update(id, data, userId);
-  }
 
   async delete(id: string, userId: string): Promise<{ success: boolean; message: string }> {
     return this.annualBudgetRepository.delete(id, userId);
@@ -99,24 +90,33 @@ export class AnnualBudgetService {
     const totalAllocated = Number(budgets[0].allocated_amount) || 0;
     const totalSpent = Number(budgets[0].total_expenses) || 0;
 
-    // budgetRemaining = quanto ainda pode ser alocado para departamentos
-    // = planned_budget - allocated_amount
-    const budgetRemaining = totalInstitutionBudget - totalAllocated;
+    // budgetRemaining = saldo restante do orçamento da instituição
+    // Usar o balance já calculado no banco: planned_budget - (allocated_amount + total_expenses)
+    const budgetRemaining = Number(budgets[0].balance) || 0;
 
-    // budgetUtilization = % do budget que foi alocado para departamentos
-    // = (allocated_amount / planned_budget) * 100
+    // budgetUtilization = % do budget que foi utilizado (alocado + gasto)
+    // = ((allocated_amount + total_expenses) / planned_budget) * 100
     const budgetUtilization = totalInstitutionBudget > 0 ?
-      (totalAllocated / totalInstitutionBudget) * 100 : 0;
+      ((totalAllocated + totalSpent) / totalInstitutionBudget) * 100 : 0;
 
-    // Para budgets da instituição, não há departments específicos
-    // O activeDepartments será 0 pois são budgets da instituição principal
+    // Contar quantos departamentos têm budget ativo para este ano
+    const departmentBudgets = await this.annualBudgetRepository.findMany({
+      where: {
+        year: { equals: year },
+        institution_id: { equals: institutionId },
+        entity_type: { equals: 'INSTITUTION_DEPARTMENT' },
+        is_deleted: { equals: false }
+      }
+    });
+    const activeDepartments = departmentBudgets.length;
+
     return {
       totalInstitutionBudget,
       totalAllocated,
       totalSpent,
       budgetRemaining,
       budgetUtilization: Math.round(budgetUtilization * 100) / 100, // Arredondar para 2 casas
-      activeDepartments: 0 // Budgets da instituição não têm departments associados
+      activeDepartments
     };
   }
 
@@ -256,5 +256,29 @@ export class AnnualBudgetService {
 
   async recalculateAllAllocatedAmounts(): Promise<{ updated: number; message: string }> {
     return this.annualBudgetRepository.recalculateAllInstitutionAllocatedAmounts();
+  }
+
+  // ============================================
+  // INSTITUTION BUDGET SPECIFIC METHODS
+  // ============================================
+
+  async createInstitutionBudget(data: any, userId: string): Promise<AnnualBudget> {
+    return this.annualBudgetRepository.createInstitutionBudget(data, userId);
+  }
+
+  async updateInstitutionBudget(id: string, data: any, userId: string): Promise<AnnualBudget> {
+    return this.annualBudgetRepository.updateInstitutionBudget(id, data, userId);
+  }
+
+  // ============================================
+  // DEPARTMENT BUDGET SPECIFIC METHODS
+  // ============================================
+
+  async createDepartmentBudget(data: any, userId: string): Promise<AnnualBudget> {
+    return this.annualBudgetRepository.createDepartmentBudget(data, userId);
+  }
+
+  async updateDepartmentBudget(id: string, data: any, userId: string): Promise<AnnualBudget> {
+    return this.annualBudgetRepository.updateDepartmentBudget(id, data, userId);
   }
 }

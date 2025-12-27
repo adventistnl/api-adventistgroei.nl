@@ -3,7 +3,7 @@ import { UseGuards } from '@nestjs/common';
 import { PermissionsGuard } from '../middlewares/permissions.guard';
 import { AnnualBudget } from 'src/@generated/annual-budget/annual-budget.model';
 import { FindManyAnnualBudgetArgs } from 'src/@generated/annual-budget/find-many-annual-budget.args';
-import { AnnualBudgetCreateDto, AnnualBudgetUpdateDto, DeleteBudgetResponse, ApproveAnnualBudgetDto, ApproveBudgetResponse, RejectAnnualBudgetDto, RejectBudgetResponse, RequestRevisionAnnualBudgetDto, RequestRevisionBudgetResponse, ToggleLockBudgetResponse, RecalculateAllocatedAmountsResponse } from 'src/dto/annual_budget.dto';
+import { DeleteBudgetResponse, ApproveAnnualBudgetDto, ApproveBudgetResponse, RejectAnnualBudgetDto, RejectBudgetResponse, RequestRevisionAnnualBudgetDto, RequestRevisionBudgetResponse, ToggleLockBudgetResponse, RecalculateAllocatedAmountsResponse, InstitutionBudgetCreateDto, InstitutionBudgetUpdateDto, DepartmentBudgetCreateDto, DepartmentBudgetUpdateDto } from 'src/dto/annual_budget.dto';
 import { BudgetKPIs, DepartmentSpending, SpendingOverTime, BudgetDistribution, EntityDistribution } from 'src/dto/budget-analytics.dto';
 import { Permission } from 'src/middlewares';
 import { AnnualBudgetService } from 'src/services/annual-budget.service';
@@ -126,25 +126,6 @@ export class AnnualBudgetResolver {
     return Math.max(0, approvedAmount - spentAmount);
   }
 
-  @Mutation(() => AnnualBudget)
-  @Permission()
-  async createAnnualBudget(
-    @Args('data') data: AnnualBudgetCreateDto,
-    @Context() context: { userId: string },
-  ): Promise<AnnualBudget> {
-    return this.annualBudgetService.create(data, context.userId);
-  }
-
-  @Mutation(() => AnnualBudget)
-  @Permission()
-  async updateAnnualBudget(
-    @Args('id') id: string,
-    @Args('data') data: AnnualBudgetUpdateDto,
-    @Context() context: { userId: string },
-  ): Promise<AnnualBudget> {
-    return this.annualBudgetService.update(id, data, context.userId);
-  }
-
   @Mutation(() => DeleteBudgetResponse)
   @Permission()
   async deleteAnnualBudget(
@@ -197,6 +178,52 @@ export class AnnualBudgetResolver {
   @Permission()
   async recalculateInstitutionAllocatedAmounts(): Promise<RecalculateAllocatedAmountsResponse> {
     return this.annualBudgetService.recalculateAllAllocatedAmounts();
+  }
+
+  // ============================================
+  // INSTITUTION BUDGET SPECIFIC MUTATIONS
+  // ============================================
+
+  @Mutation(() => AnnualBudget)
+  @Permission()
+  async createInstitutionBudget(
+    @Args('data') data: InstitutionBudgetCreateDto,
+    @Context() context: { userId: string }
+  ): Promise<AnnualBudget> {
+    return this.annualBudgetService.createInstitutionBudget(data, context.userId);
+  }
+
+  @Mutation(() => AnnualBudget)
+  @Permission()
+  async updateInstitutionBudget(
+    @Args('id') id: string,
+    @Args('data') data: InstitutionBudgetUpdateDto,
+    @Context() context: { userId: string }
+  ): Promise<AnnualBudget> {
+    return this.annualBudgetService.updateInstitutionBudget(id, data, context.userId);
+  }
+
+  // ============================================
+  // DEPARTMENT BUDGET SPECIFIC MUTATIONS
+  // ============================================
+
+  @Mutation(() => AnnualBudget)
+  @Permission()
+  async createDepartmentBudget(
+    @Args('data') data: DepartmentBudgetCreateDto,
+    @Context() context: { userId: string }
+  ): Promise<AnnualBudget> {
+    return this.annualBudgetService.createDepartmentBudget(data, context.userId);
+  }
+
+  @Mutation(() => AnnualBudget)
+  @Permission()
+  async updateDepartmentBudget(
+    @Args('id') id: string,
+    @Args('data') data: DepartmentBudgetUpdateDto,
+    @Context() context: { userId: string }
+  ): Promise<AnnualBudget> {
+    return this.annualBudgetService.updateDepartmentBudget(id, data, context.userId);
   }
 
 }

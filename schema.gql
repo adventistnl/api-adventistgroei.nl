@@ -172,10 +172,8 @@ enum PermissionResolverName {
   sendInviteEmail
   inviteUser
   validateInviteToken
-  createAnnualBudget
   annualBudgets
   annualBudget
-  updateAnnualBudget
   deleteAnnualBudget
   approveAnnualBudget
   rejectAnnualBudget
@@ -187,6 +185,10 @@ enum PermissionResolverName {
   entityDistribution
   budgetDistribution
   recalculateInstitutionAllocatedAmounts
+  createInstitutionBudget
+  updateInstitutionBudget
+  createDepartmentBudget
+  updateDepartmentBudget
   churchesActivityData
   projectKPIs
   projectsByDepartment
@@ -1227,50 +1229,6 @@ type ChurchModel {
   deleted_by: String
 }
 
-type DeleteBudgetResponse {
-  success: Boolean!
-  message: String!
-}
-
-type ApproveBudgetResponse {
-  id: String!
-  status: String!
-  approved_amount: Float
-  approval_date: DateTime
-  approved_by: String
-  notes: String
-  updated_at: DateTime!
-}
-
-type RejectBudgetResponse {
-  id: String!
-  status: String!
-  review_date: DateTime!
-  reviewed_by: String!
-  notes: String
-  updated_at: DateTime!
-}
-
-type RequestRevisionBudgetResponse {
-  id: String!
-  status: String!
-  review_date: DateTime!
-  reviewed_by: String!
-  notes: String
-  updated_at: DateTime!
-}
-
-type ToggleLockBudgetResponse {
-  id: String!
-  is_locked: Boolean!
-  updated_at: DateTime!
-}
-
-type RecalculateAllocatedAmountsResponse {
-  updated: Int!
-  message: String!
-}
-
 type UsersByRoleData {
   role: String!
   count: Float!
@@ -1400,6 +1358,50 @@ type ProjectsTimeline {
   created: Int!
   completed: Int!
   budget: Float!
+}
+
+type DeleteBudgetResponse {
+  success: Boolean!
+  message: String!
+}
+
+type ApproveBudgetResponse {
+  id: String!
+  status: String!
+  approved_amount: Float
+  approval_date: DateTime
+  approved_by: String
+  notes: String
+  updated_at: DateTime!
+}
+
+type RejectBudgetResponse {
+  id: String!
+  status: String!
+  review_date: DateTime!
+  reviewed_by: String!
+  notes: String
+  updated_at: DateTime!
+}
+
+type RequestRevisionBudgetResponse {
+  id: String!
+  status: String!
+  review_date: DateTime!
+  reviewed_by: String!
+  notes: String
+  updated_at: DateTime!
+}
+
+type ToggleLockBudgetResponse {
+  id: String!
+  is_locked: Boolean!
+  updated_at: DateTime!
+}
+
+type RecalculateAllocatedAmountsResponse {
+  updated: Int!
+  message: String!
 }
 
 type BudgetKPIs {
@@ -3473,14 +3475,16 @@ type Mutation {
 
   """Send an invitation email"""
   sendInviteEmail(data: InviteEmailDto!): Boolean!
-  createAnnualBudget(data: AnnualBudgetCreateDto!): AnnualBudget!
-  updateAnnualBudget(id: String!, data: AnnualBudgetUpdateDto!): AnnualBudget!
   deleteAnnualBudget(id: String!): DeleteBudgetResponse!
   approveAnnualBudget(id: String!, data: ApproveAnnualBudgetDto!): ApproveBudgetResponse!
   rejectAnnualBudget(id: String!, data: RejectAnnualBudgetDto!): RejectBudgetResponse!
   requestRevisionAnnualBudget(id: String!, data: RequestRevisionAnnualBudgetDto!): RequestRevisionBudgetResponse!
   toggleBudgetLock(id: String!): ToggleLockBudgetResponse!
   recalculateInstitutionAllocatedAmounts: RecalculateAllocatedAmountsResponse!
+  createInstitutionBudget(data: InstitutionBudgetCreateDto!): AnnualBudget!
+  updateInstitutionBudget(id: String!, data: InstitutionBudgetUpdateDto!): AnnualBudget!
+  createDepartmentBudget(data: DepartmentBudgetCreateDto!): AnnualBudget!
+  updateDepartmentBudget(id: String!, data: DepartmentBudgetUpdateDto!): AnnualBudget!
   sendForgotPasswordCode(input: SendCodeInput!): ForgotPasswordResponse!
   verifyForgotPasswordCode(input: VerifyCodeInput!): ForgotPasswordResponse!
   resetPassword(input: ResetPasswordInput!): ForgotPasswordResponse!
@@ -3495,7 +3499,6 @@ input ChurchCreateDto {
   institution_id: String!
   name: String!
   contact: ContactCreateDto
-  annual_budget: AnnualBudgetCreateDto
   type: ChurchType
 }
 
@@ -3514,41 +3517,14 @@ input ContactCreateDto {
   notes: String
 }
 
-input AnnualBudgetCreateDto {
-  year: Int!
-  planned_budget: Float!
-  description: String!
-  justification: String
-  allocated_amount: Float!
-  entity_type: AnnualBudgetEntityType!
-  priority: AnnualBudgetPriority
-  category: AnnualBudgetCategory
-  notes: String
-  entity_id: String!
-  total_expenses: Float
-}
-
 input ChurchUpdateDto {
   institution_id: String
   name: String
   contact: ContactCreateDto
-  annual_budget: AnnualBudgetUpdateDto
   users: [String!]
   departmens: [String!]
   subsidy_requests: [String!]
   type: ChurchType
-}
-
-input AnnualBudgetUpdateDto {
-  planned_budget: Float
-  description: String
-  justification: String
-  priority: AnnualBudgetPriority
-  category: AnnualBudgetCategory
-  notes: String
-  documents: [String!]
-  total_expenses: Float
-  allocated_amount: Float
 }
 
 input InstitutionCreateDto {
@@ -3557,7 +3533,6 @@ input InstitutionCreateDto {
   language_preference: String!
   description: String
   contact: ContactCreateDto
-  annual_budget: AnnualBudgetCreateDto
 }
 
 input InstitutionUpdateDto {
@@ -3565,7 +3540,6 @@ input InstitutionUpdateDto {
   denomination: String
   description: String
   language_preference: String
-  annual_budget: AnnualBudgetUpdateDto
   contact: ContactUpdateDto
 }
 
@@ -3649,7 +3623,6 @@ input UpdateRoleInput {
 input DepartmentCreateDto {
   name: String!
   description: String!
-  annual_budget: AnnualBudgetCreateDto
   institution: String!
   church: String
   contact: ContactCreateDto
@@ -3658,7 +3631,6 @@ input DepartmentCreateDto {
 input DepartmentUpdateDto {
   name: String
   description: String
-  annual_budget: AnnualBudgetUpdateDto
   institution_id: String
   church_id: String
   contact: ContactCreateDto
@@ -3943,6 +3915,56 @@ input RejectAnnualBudgetDto {
 
 input RequestRevisionAnnualBudgetDto {
   revision_notes: String!
+}
+
+input InstitutionBudgetCreateDto {
+  institution_id: String!
+  year: Int!
+  planned_budget: Float!
+  total_expenses: Float = 0
+  allocated_amount: Float = 0
+  description: String
+  justification: String
+  priority: AnnualBudgetPriority
+  category: AnnualBudgetCategory
+  notes: String
+}
+
+input InstitutionBudgetUpdateDto {
+  planned_budget: Float
+  total_expenses: Float
+  allocated_amount: Float
+  description: String
+  justification: String
+  priority: AnnualBudgetPriority
+  category: AnnualBudgetCategory
+  notes: String
+  documents: [String!]
+}
+
+input DepartmentBudgetCreateDto {
+  department_id: String!
+  year: Int!
+  planned_budget: Float!
+  total_expenses: Float = 0
+  allocated_amount: Float = 0
+  description: String
+  justification: String
+  priority: AnnualBudgetPriority
+  category: AnnualBudgetCategory
+  notes: String
+}
+
+input DepartmentBudgetUpdateDto {
+  planned_budget: Float
+  total_expenses: Float
+  allocated_amount: Float
+  description: String
+  justification: String
+  priority: AnnualBudgetPriority
+  category: AnnualBudgetCategory
+  notes: String
+  documents: [String!]
 }
 
 input SendCodeInput {

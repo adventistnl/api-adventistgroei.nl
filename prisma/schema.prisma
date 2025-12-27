@@ -128,10 +128,8 @@ enum PermissionResolverName {
   sendInviteEmail
   inviteUser
   validateInviteToken
-  createAnnualBudget
   annualBudgets
   annualBudget
-  updateAnnualBudget
   deleteAnnualBudget
   approveAnnualBudget
   rejectAnnualBudget
@@ -143,6 +141,10 @@ enum PermissionResolverName {
   entityDistribution
   budgetDistribution
   recalculateInstitutionAllocatedAmounts
+  createInstitutionBudget
+  updateInstitutionBudget
+  createDepartmentBudget
+  updateDepartmentBudget
   churchesActivityData
   projectKPIs
   projectsByDepartment
