@@ -35,6 +35,12 @@ export class DepartmentSpending {
   @Field(() => Float)
   reserved!: number;
 
+  @Field(() => Float)
+  spent!: number;
+
+  @Field(() => Float)
+  available!: number;
+
   @Field(() => String)
   institution!: string;
 }

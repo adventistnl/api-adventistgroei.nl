@@ -138,7 +138,9 @@ export class AnnualBudgetService {
         name: budget.department?.name || 'Unknown Department',
         planned: Number(budget.planned_budget) || 0,
         approved: Number(budget.approved_amount || 0),
-        reserved: Number(budget.total_expenses) || 0, // Reserved = Spent (total_expenses)
+        reserved: Number(budget.allocated_amount) || 0, // Reserved = Allocated (not yet spent)
+        spent: Number(budget.total_expenses) || 0, // Spent = Total expenses (already used)
+        available: Number(budget.balance) || 0, // Available = Balance (not allocated)
         institution: institutionId
       }));
   }

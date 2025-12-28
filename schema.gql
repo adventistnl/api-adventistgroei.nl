@@ -1420,6 +1420,8 @@ type DepartmentSpending {
   planned: Float!
   approved: Float!
   reserved: Float!
+  spent: Float!
+  available: Float!
   institution: String!
 }
 
