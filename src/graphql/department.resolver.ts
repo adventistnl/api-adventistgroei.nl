@@ -6,6 +6,7 @@ import { UseGuards } from '@nestjs/common';
 import { PermissionsGuard } from '../middlewares/permissions.guard';
 import { DepartmentCreateDto, DepartmentUpdateDto } from 'src/dto';
 import { User } from 'src/@generated/user/user.model';
+import { AnnualBudget } from 'src/@generated/annual-budget/annual-budget.model';
 import { DepartmentKPIs, DepartmentActivityData, DepartmentBudgetTimeline } from '../dto/department-analytics.dto';
 
 @Resolver(() => Department)
@@ -61,6 +62,11 @@ export class DepartmentResolver {
   @ResolveField(() => [User])
   async users(@Parent() department: Department): Promise<User[]> {
     return this.departmentService.getUsersByDepartmentId(department.id);
+  }
+
+  @ResolveField(() => [AnnualBudget], { name: 'annual_budgets' })
+  async annualBudgets(@Parent() department: Department) {
+    return await this.departmentService.getAnnualBudgetsByDepartmentId(department.id);
   }
 
   @Permission()

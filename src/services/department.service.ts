@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { DepartmentRepository } from '../repositories/department.repository';
+import { AnnualBudgetRepository } from '../repositories/annual-budget.repository';
 import { Department } from '../@generated/department/department.model';
 import { DepartmentCreateDto, DepartmentUpdateDto } from '../dto/department.dto';
 import { CustomGraphQLError, ErrorCode } from '../common/errors/custom-graphql-error';
@@ -7,7 +8,10 @@ import { DepartmentKPIs, DepartmentActivityData, DepartmentBudgetTimeline } from
 
 @Injectable()
 export class DepartmentService {
-  constructor(private readonly departmentRepository: DepartmentRepository) {}
+  constructor(
+    private readonly departmentRepository: DepartmentRepository,
+    private readonly annualBudgetRepository: AnnualBudgetRepository
+  ) {}
 
   async getDepartments(): Promise<Department[]> {
     return this.departmentRepository.findAll();
@@ -51,5 +55,9 @@ export class DepartmentService {
 
   async getDepartmentBudgetTimeline(institution_id?: string, church_id?: string, selectedYear?: number): Promise<DepartmentBudgetTimeline[]> {
     return this.departmentRepository.getDepartmentBudgetTimeline(institution_id, church_id, selectedYear);
+  }
+
+  async getAnnualBudgetsByDepartmentId(departmentId: string) {
+    return await this.annualBudgetRepository.findManyByFilters({ department_id: departmentId });
   }
 }

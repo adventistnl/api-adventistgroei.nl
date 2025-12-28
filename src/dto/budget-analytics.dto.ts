@@ -102,3 +102,24 @@ export class EntityDistribution {
   count!: number;
 }
 
+@ObjectType()
+export class InstitutionalDepartmentsKPIs {
+  @Field(() => Float)
+  totalPlanned!: number;
+
+  @Field(() => Float)
+  totalAllocated!: number;
+
+  @Field(() => Float)
+  totalSpent!: number;
+
+  @Field(() => Float)
+  totalAvailable!: number;
+
+  @Field(() => Int)
+  totalDepartments!: number;
+
+  @Field(() => Int)
+  departmentsWithBudget!: number;
+}
+

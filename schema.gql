@@ -184,6 +184,7 @@ enum PermissionResolverName {
   spendingOverTime
   entityDistribution
   budgetDistribution
+  institutionalDepartmentsKPIs
   recalculateInstitutionAllocatedAmounts
   createInstitutionBudget
   updateInstitutionBudget
@@ -983,7 +984,7 @@ type Department {
   annual_reports: [AnnualReport!]
   subsidy_requests: [SubsidyRequest!]
   users: [User!]
-  annual_budgets: [AnnualBudget!]
+  annual_budgets: [AnnualBudget!]!
   _count: DepartmentCount!
 }
 
@@ -1453,6 +1454,15 @@ type EntityDistribution {
   count: Int!
 }
 
+type InstitutionalDepartmentsKPIs {
+  totalPlanned: Float!
+  totalAllocated: Float!
+  totalSpent: Float!
+  totalAvailable: Float!
+  totalDepartments: Int!
+  departmentsWithBudget: Int!
+}
+
 type ForgotPasswordResponse {
   success: Boolean!
   message: String
@@ -1511,6 +1521,7 @@ type Query {
   spendingOverTime(year: Int!, institutionId: String!): [SpendingOverTime!]!
   entityDistribution(year: Int!): [EntityDistribution!]!
   budgetDistribution(year: Int!, institutionId: String!): BudgetDistribution!
+  institutionalDepartmentsKPIs(year: Int!, institutionId: String!): InstitutionalDepartmentsKPIs!
 }
 
 input AnnualBudgetWhereInput {

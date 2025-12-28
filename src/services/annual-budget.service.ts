@@ -3,10 +3,14 @@ import { AnnualBudget } from '@prisma/client';
 import { FindManyAnnualBudgetArgs } from 'src/@generated/annual-budget/find-many-annual-budget.args';
 import { BudgetKPIs, DepartmentSpending, SpendingOverTime, BudgetDistribution, EntityDistribution } from 'src/dto/budget-analytics.dto';
 import { AnnualBudgetRepository } from 'src/repositories/annual-budget.repository';
+import { DepartmentRepository } from 'src/repositories/department.repository';
 
 @Injectable()
 export class AnnualBudgetService {
-  constructor(private readonly annualBudgetRepository: AnnualBudgetRepository) {}
+  constructor(
+    private readonly annualBudgetRepository: AnnualBudgetRepository,
+    private readonly departmentRepository: DepartmentRepository
+  ) {}
 
   async delete(id: string, userId: string): Promise<{ success: boolean; message: string }> {
     return this.annualBudgetRepository.delete(id, userId);
@@ -266,6 +270,58 @@ export class AnnualBudgetService {
 
     // Ordenar por valor decrescente
     return entities.sort((a, b) => b.amount - a.amount);
+  }
+
+  async getInstitutionalDepartmentsKPIs(year: number, institutionId: string) {
+    // Buscar TODOS os departamentos da instituição (não deletados)
+    const allDepartments = await this.departmentRepository.findByInstitution(institutionId);
+
+    // Filtrar apenas departamentos INSTITUCIONAIS (church_id === null)
+    const institutionalDepartments = allDepartments.filter(dept => dept.church_id === null);
+
+    // Buscar budgets dos departamentos para o ano especificado
+    const departmentBudgets = await this.annualBudgetRepository.findMany({
+      where: {
+        year: { equals: year },
+        institution_id: { equals: institutionId },
+        entity_type: { equals: 'INSTITUTION_DEPARTMENT' },
+        is_deleted: { equals: false }
+      }
+    });
+
+    // COLETAR os valores agregados dos departamentos
+    const totalPlanned = departmentBudgets.reduce((sum, budget) =>
+      sum + Number(budget.planned_budget || 0), 0
+    );
+
+    const totalAllocated = departmentBudgets.reduce((sum, budget) =>
+      sum + Number(budget.allocated_amount || 0), 0
+    );
+
+    const totalSpent = departmentBudgets.reduce((sum, budget) =>
+      sum + Number(budget.total_expenses || 0), 0
+    );
+
+    const totalAvailable = departmentBudgets.reduce((sum, budget) =>
+      sum + Number(budget.balance || 0), 0
+    );
+
+    // Total de departamentos = TODOS os departamentos INSTITUCIONAIS (não de igrejas)
+    const totalDepartments = institutionalDepartments.length;
+
+    // Departamentos com budget = apenas os que têm budget no ano atual
+    const departmentsWithBudget = departmentBudgets.filter(
+      budget => Number(budget.planned_budget || 0) > 0
+    ).length;
+
+    return {
+      totalPlanned,
+      totalAllocated,
+      totalSpent,
+      totalAvailable,
+      totalDepartments,
+      departmentsWithBudget
+    };
   }
 
   async recalculateAllAllocatedAmounts(): Promise<{ updated: number; message: string }> {

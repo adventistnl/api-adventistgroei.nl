@@ -140,6 +140,7 @@ enum PermissionResolverName {
   spendingOverTime
   entityDistribution
   budgetDistribution
+  institutionalDepartmentsKPIs
   recalculateInstitutionAllocatedAmounts
   createInstitutionBudget
   updateInstitutionBudget

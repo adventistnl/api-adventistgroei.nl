@@ -4,7 +4,7 @@ import { PermissionsGuard } from '../middlewares/permissions.guard';
 import { AnnualBudget } from 'src/@generated/annual-budget/annual-budget.model';
 import { FindManyAnnualBudgetArgs } from 'src/@generated/annual-budget/find-many-annual-budget.args';
 import { DeleteBudgetResponse, ApproveAnnualBudgetDto, ApproveBudgetResponse, RejectAnnualBudgetDto, RejectBudgetResponse, RequestRevisionAnnualBudgetDto, RequestRevisionBudgetResponse, ToggleLockBudgetResponse, RecalculateAllocatedAmountsResponse, InstitutionBudgetCreateDto, InstitutionBudgetUpdateDto, DepartmentBudgetCreateDto, DepartmentBudgetUpdateDto } from 'src/dto/annual_budget.dto';
-import { BudgetKPIs, DepartmentSpending, SpendingOverTime, BudgetDistribution, EntityDistribution } from 'src/dto/budget-analytics.dto';
+import { BudgetKPIs, DepartmentSpending, SpendingOverTime, BudgetDistribution, EntityDistribution, InstitutionalDepartmentsKPIs } from 'src/dto/budget-analytics.dto';
 import { Permission } from 'src/middlewares';
 import { AnnualBudgetService } from 'src/services/annual-budget.service';
 import { InstitutionRepository } from 'src/repositories/institution.repository';
@@ -76,6 +76,15 @@ export class AnnualBudgetResolver {
     @Args('institutionId') institutionId: string
   ): Promise<BudgetDistribution> {
     return await this.annualBudgetService.getBudgetDistribution(year, institutionId);
+  }
+
+  @Query(() => InstitutionalDepartmentsKPIs)
+  @Permission()
+  async institutionalDepartmentsKPIs(
+    @Args('year', { type: () => Int }) year: number,
+    @Args('institutionId') institutionId: string
+  ): Promise<InstitutionalDepartmentsKPIs> {
+    return await this.annualBudgetService.getInstitutionalDepartmentsKPIs(year, institutionId);
   }
 
   @ResolveField(() => Institution, { nullable: true })

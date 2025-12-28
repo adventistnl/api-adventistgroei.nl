@@ -95,6 +95,7 @@ export enum PermissionResolverName {
     spendingOverTime = "spendingOverTime",
     entityDistribution = "entityDistribution",
     budgetDistribution = "budgetDistribution",
+    institutionalDepartmentsKPIs = "institutionalDepartmentsKPIs",
     recalculateInstitutionAllocatedAmounts = "recalculateInstitutionAllocatedAmounts",
     createInstitutionBudget = "createInstitutionBudget",
     updateInstitutionBudget = "updateInstitutionBudget",
