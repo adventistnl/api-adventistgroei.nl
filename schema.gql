@@ -1083,6 +1083,7 @@ type Institution {
   departments_count: Int!
   users_count: Int!
   total_budget: Float!
+  current_year_budget: Float!
   has_budget_record: Boolean!
   churchesKpiData: ChurchKPIData!
   churchesActivityData: [ChurchActivityData!]!

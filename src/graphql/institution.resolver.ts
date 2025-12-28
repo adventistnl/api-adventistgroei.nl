@@ -157,6 +157,19 @@ export class InstitutionResolver {
     return budgets.reduce((total, budget) => total + Number(budget.planned_budget || 0), 0);
   }
 
+  @ResolveField(() => Float, { name: 'current_year_budget' })
+  async currentYearBudget(@Parent() institution: Institution) {
+    const currentYear = new Date().getFullYear();
+    const budgets = await this.institutionService.getAnnualBudgetByInstitutionId(institution.id);
+
+    // Find budget for current year only
+    const currentYearBudget = budgets.find(
+      budget => budget.year === currentYear && !budget.is_deleted
+    );
+
+    return currentYearBudget ? Number(currentYearBudget.planned_budget || 0) : 0;
+  }
+
   @ResolveField(() => Boolean, { name: 'has_budget_record' })
   async hasBudgetRecord(@Parent() institution: Institution) {
     const budgets = await this.institutionService.getAnnualBudgetByInstitutionId(institution.id);
