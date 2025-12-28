@@ -165,7 +165,11 @@ export class UserRepository {
         updated_by: requester_id,
         ...(contactData && { contact: contactData }),
         ...(church_id && { church: { connect: { id: church_id } } }),
-        ...(department_id && { department: { connect: { id: department_id } } }),
+        ...(department_id !== undefined && {
+          department: department_id === ''
+            ? { disconnect: true }
+            : { connect: { id: department_id } }
+        }),
         ...(institution_id && { institution: { connect: { id: institution_id } } }),
       },
     });
