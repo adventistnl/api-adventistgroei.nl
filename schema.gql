@@ -1439,8 +1439,9 @@ type SpendingOverTime {
 
 type BudgetDistribution {
   total: Float!
+  spent: Float!
   allocated: Float!
-  remaining: Float!
+  available: Float!
   percentageUsed: Float!
 }
 

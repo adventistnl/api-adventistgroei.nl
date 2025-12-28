@@ -185,8 +185,8 @@ export class AnnualBudgetService {
   }
 
   async getBudgetDistribution(year: number, institutionId: string): Promise<BudgetDistribution> {
-    // Buscar apenas budgets da instituição do ano especificado
-    const budgets = await this.annualBudgetRepository.findMany({
+    // Buscar budget da instituição - COLETAR todos os dados diretamente (não calcular)
+    const institutionBudgets = await this.annualBudgetRepository.findMany({
       where: {
         year: { equals: year },
         institution_id: { equals: institutionId },
@@ -195,22 +195,34 @@ export class AnnualBudgetService {
       }
     });
 
-    const total = budgets.reduce((sum, budget) =>
+    // COLETAR todos os valores diretamente do budget da instituição
+    // A instituição já tem os valores agregados dos departamentos
+    const total = institutionBudgets.reduce((sum, budget) =>
       sum + Number(budget.planned_budget), 0
     );
 
-    // Calcular valores alocados (utilizados) - baseado no total_expenses
-    const allocated = budgets.reduce((sum, budget) =>
-      sum + Number(budget.total_expenses), 0
+    // Spent = total_expenses da INSTITUIÇÃO (já agregado)
+    const spent = institutionBudgets.reduce((sum, budget) =>
+      sum + Number(budget.total_expenses || 0), 0
     );
 
-    const remaining = total - allocated;
-    const percentageUsed = total > 0 ? (allocated / total) * 100 : 0;
+    // Allocated = allocated_amount da INSTITUIÇÃO (já agregado)
+    const allocated = institutionBudgets.reduce((sum, budget) =>
+      sum + Number(budget.allocated_amount || 0), 0
+    );
+
+    // Available = balance da INSTITUIÇÃO (já calculado)
+    const available = institutionBudgets.reduce((sum, budget) =>
+      sum + Number(budget.balance || 0), 0
+    );
+
+    const percentageUsed = total > 0 ? ((spent + allocated) / total) * 100 : 0;
 
     return {
       total,
+      spent,
       allocated,
-      remaining: Math.max(0, remaining), // Garante que não seja negativo
+      available: Math.max(0, available), // Garante que não seja negativo
       percentageUsed: Math.round(percentageUsed * 100) / 100
     };
   }

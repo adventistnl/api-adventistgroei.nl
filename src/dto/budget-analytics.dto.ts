@@ -75,10 +75,13 @@ export class BudgetDistribution {
   total!: number;
 
   @Field(() => Float)
+  spent!: number;
+
+  @Field(() => Float)
   allocated!: number;
 
   @Field(() => Float)
-  remaining!: number;
+  available!: number;
 
   @Field(() => Float)
   percentageUsed!: number;
