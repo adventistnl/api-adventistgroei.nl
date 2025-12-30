@@ -1,5 +1,7 @@
 import { InputType, Field, Float } from '@nestjs/graphql';
-import { IsOptional, IsString, IsNumber } from 'class-validator';
+import { IsOptional, IsString, IsNumber, IsArray, ValidateNested } from 'class-validator';
+import { Type } from 'class-transformer';
+import { SubsidyRequestItemInput } from './subsidy-request-item.dto';
 
 @InputType()
 export class SubsidyRequestCreateDto {
@@ -10,7 +12,7 @@ export class SubsidyRequestCreateDto {
   @Field(() => Float)
   @IsNumber()
   total_budget: number;
-  
+
   @Field({ nullable: true })
   @IsString()
   institution_id?: string;
@@ -18,25 +20,35 @@ export class SubsidyRequestCreateDto {
   @Field()
   @IsString()
   requester_id: string;
-  
+
   @Field()
   @IsString()
   department_id: string;
 
-  @Field()
+  @Field({ nullable: true })
+  @IsOptional()
   @IsString()
-  church_id: string;
+  church_id?: string;
 
-  @Field()
-  @IsString() 
-  subsidy_status_id: string;
+  @Field({ nullable: true })
+  @IsOptional()
+  @IsString()
+  subsidy_status_id?: string;
 
-  @Field(() => [String])
-  project_activities: string[];
+  @Field(() => [SubsidyRequestItemInput])
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => SubsidyRequestItemInput)
+  items: SubsidyRequestItemInput[];
 
   @Field()
   @IsString()
   project_id: string;
+
+  @Field({ nullable: true })
+  @IsOptional()
+  @IsString()
+  notes?: string;
 }
 @InputType()
 export class SubsidyRequestUpdateDto {
@@ -45,15 +57,10 @@ export class SubsidyRequestUpdateDto {
   @IsString()
   description?: string;
 
-  @Field({ nullable: true })
+  @Field(() => Float, { nullable: true })
   @IsOptional()
   @IsNumber()
   total_budget?: number;
-
-  // @Field({ nullable: true })
-  // @IsOptional()
-  // @IsString()
-  // project_id?: string;
 
   @Field({ nullable: true })
   @IsOptional()
@@ -79,5 +86,27 @@ export class SubsidyRequestUpdateDto {
   @IsOptional()
   @IsString()
   subsidy_status_id?: string;
+
+  @Field(() => [SubsidyRequestItemInput], { nullable: true })
+  @IsOptional()
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => SubsidyRequestItemInput)
+  items?: SubsidyRequestItemInput[];
+
+  @Field(() => Float, { nullable: true })
+  @IsOptional()
+  @IsNumber()
+  approved_amount?: number;
+
+  @Field({ nullable: true })
+  @IsOptional()
+  @IsString()
+  rejection_reason?: string;
+
+  @Field({ nullable: true })
+  @IsOptional()
+  @IsString()
+  notes?: string;
 }
 

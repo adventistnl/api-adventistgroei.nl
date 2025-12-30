@@ -10,7 +10,7 @@ import { UserCreateNestedOneWithoutSubsidyRequestInput } from '../user/user-crea
 import { DepartmentCreateNestedOneWithoutSubsidy_requestsInput } from '../department/department-create-nested-one-without-subsidy-requests.input';
 import { ChurchCreateNestedOneWithoutSubsidy_requestsInput } from '../church/church-create-nested-one-without-subsidy-requests.input';
 import { SubsidyStatusCreateNestedOneWithoutSubsidy_requestsInput } from '../subsidy-status/subsidy-status-create-nested-one-without-subsidy-requests.input';
-import { ProjectActivityCreateNestedManyWithoutSubsidy_requestInput } from '../project-activity/project-activity-create-nested-many-without-subsidy-request.input';
+import { SubsidyRequestItemCreateNestedManyWithoutSubsidy_requestInput } from '../subsidy-request-item/subsidy-request-item-create-nested-many-without-subsidy-request.input';
 import { SubsidyReceiptCreateNestedManyWithoutSubsidy_requestInput } from '../subsidy-receipt/subsidy-receipt-create-nested-many-without-subsidy-request.input';
 
 @InputType()
@@ -27,17 +27,31 @@ export class SubsidyRequestCreateWithoutProjectInput {
     @Transform(transformToDecimal)
     total_budget!: Decimal;
 
+    @Field(() => GraphQLDecimal, {nullable:true})
+    @Type(() => Object)
+    @Transform(transformToDecimal)
+    approved_amount?: Decimal;
+
+    @Field(() => String, {nullable:true})
+    rejection_reason?: string;
+
     @Field(() => Date, {nullable:true})
     created_at?: Date | string;
 
     @Field(() => Date, {nullable:true})
     updated_at?: Date | string;
 
+    @Field(() => Date, {nullable:true})
+    approved_at?: Date | string;
+
     @Field(() => String, {nullable:false})
     created_by!: string;
 
     @Field(() => String, {nullable:false})
     updated_by!: string;
+
+    @Field(() => String, {nullable:true})
+    approved_by?: string;
 
     @Field(() => Boolean, {nullable:true})
     is_deleted?: boolean;
@@ -60,17 +74,17 @@ export class SubsidyRequestCreateWithoutProjectInput {
     @Type(() => DepartmentCreateNestedOneWithoutSubsidy_requestsInput)
     department!: DepartmentCreateNestedOneWithoutSubsidy_requestsInput;
 
-    @Field(() => ChurchCreateNestedOneWithoutSubsidy_requestsInput, {nullable:false})
+    @Field(() => ChurchCreateNestedOneWithoutSubsidy_requestsInput, {nullable:true})
     @Type(() => ChurchCreateNestedOneWithoutSubsidy_requestsInput)
-    church!: ChurchCreateNestedOneWithoutSubsidy_requestsInput;
+    church?: ChurchCreateNestedOneWithoutSubsidy_requestsInput;
 
     @Field(() => SubsidyStatusCreateNestedOneWithoutSubsidy_requestsInput, {nullable:false})
     @Type(() => SubsidyStatusCreateNestedOneWithoutSubsidy_requestsInput)
     subsidy_status!: SubsidyStatusCreateNestedOneWithoutSubsidy_requestsInput;
 
-    @Field(() => ProjectActivityCreateNestedManyWithoutSubsidy_requestInput, {nullable:true})
-    @Type(() => ProjectActivityCreateNestedManyWithoutSubsidy_requestInput)
-    project_activities?: ProjectActivityCreateNestedManyWithoutSubsidy_requestInput;
+    @Field(() => SubsidyRequestItemCreateNestedManyWithoutSubsidy_requestInput, {nullable:true})
+    @Type(() => SubsidyRequestItemCreateNestedManyWithoutSubsidy_requestInput)
+    items?: SubsidyRequestItemCreateNestedManyWithoutSubsidy_requestInput;
 
     @Field(() => SubsidyReceiptCreateNestedManyWithoutSubsidy_requestInput, {nullable:true})
     @Type(() => SubsidyReceiptCreateNestedManyWithoutSubsidy_requestInput)

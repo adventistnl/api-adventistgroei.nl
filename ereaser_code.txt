@@ -1,0 +1,603 @@
+title AdventistGroei API - Prisma ERD
+
+institutions [icon: building, color: darkblue] {
+  id string pk
+  name string
+  denomination string
+  language_preference enum("en","nl")
+  contact_id string null [ref: > contacts.id, unique]
+  annual_budget_id string null [ref: > annual_budgets.id]
+  created_at timestamp
+  updated_at timestamp
+  created_by string
+  updated_by string
+  is_deleted boolean default false
+  deleted_at timestamp null
+  deleted_by string null
+}
+
+regions [icon: map, color: green] {
+  id string [pk]  // Identificador único da região
+  institution_id string [ref: > institutions.id] // Instituição responsável
+  name string  // Nome da região
+  code string unique // Código curto ou identificador (ex: NL-NORTH)
+  description text null  // Descrição opcional
+  color string default '#10b981'  // Cor associada (ex: para o mapa)
+  icon string default 'map' // Ícone ou símbolo de identificação
+
+  contact_id string null [ref: > contacts.id]
+
+  created_at timestamp
+  updated_at timestamp
+  created_by string [ref: > users.id]
+  updated_by string [ref: > users.id]
+
+  is_deleted boolean default false
+  deleted_at timestamp null
+  deleted_by string null [ref: > users.id]
+}
+
+region_provinces [icon: map-pin, color: yellow] {
+  id string [pk]
+  region_id string null [ref: > regions.id] // Região associada
+  code string unique  // Código ISO ou interno (ex: NL-FR)
+  created_at timestamp
+  updated_at timestamp
+  created_by string [ref: > users.id]
+  updated_by string [ref: > users.id]
+  is_deleted boolean default false
+  deleted_at timestamp null
+}
+
+
+churches [icon: home, color: blue] {
+  id string pk
+  institution_id string [ref: > institutions.id]
+  name string
+  province_code string unique  // Código ISO ou interno (ex: NL-FR)
+  contact_id string null [ref: > contacts.id]
+  created_at timestamp
+  updated_at timestamp
+  created_by string
+  updated_by string
+  is_deleted boolean default false
+  deleted_at timestamp null
+  deleted_by string null
+}
+
+departments [icon: layers, color: darkgreen] {
+  id string pk
+  institution_id string [ref: > institutions.id]
+  church_id string [ref: > churches.id]
+  is_institution_department boolean 
+  name string
+  description string
+  contact_id string null [ref: > contacts.id]
+  annual_budget_id string null [ref: > annual_budgets.id]
+  created_at timestamp
+  updated_at timestamp
+  created_by string
+  updated_by string
+  is_deleted boolean default false
+  deleted_at timestamp null
+  deleted_by string null
+}
+
+annual_budgets [icon: dollar-sign, color: gold] {
+  id string pk
+  year int
+  planned_budget decimal 
+  total_expenses decimal  
+  balance decimal
+  notes string null
+  approved_by string null [ref: > users.id] 
+  status enum("planned","approved","in_progress","closed") default "planned"
+  created_at timestamp
+  updated_at timestamp
+  created_by string
+  updated_by string
+  is_deleted boolean default false
+  deleted_at timestamp null
+  deleted_by string null
+}
+
+funding_policy_groups [icon: layers, color: orange] {
+  id string pk
+  name string                     // Ex: "Church Plans", "Department Projects"
+  entity_id string nullable
+  description text nullable
+  is_active boolean default true
+  created_at timestamp
+  updated_at timestamp
+  created_by string
+}
+
+funding_policy_rules [icon: settings, color: blue] {
+  id string pk
+  group_id string fk -> funding_policy_groups.id
+  rule_type enum(
+    "MAX_PERCENT",                // porcentagem máxima de contribuição
+    "MIN_PERCENT",                // porcentagem mínima
+    "MAX_VALUE_PER_REQUEST",      // valor máximo por solicitação
+    "MIN_VALUE_PER_REQUEST",      // valor mínimo por solicitação
+    "MAX_ACTIVITIES",             // quantidade máxima de atividades
+    "MIN_ACTIVITIES",             // quantidade mínima
+    "MAX_PROJECTS_PER_YEAR",      // máximo de projetos por ano
+    "MAX_PROJECTS_PER_MONTH",     // máximo por mês
+    "MIN_PROJECTS_PER_YEAR",      // mínimo de projetos anuais
+    "MIN_PROJECTS_PER_MONTH"      // mínimo mensal
+  )
+  applies_to enum("REQUESTER","FUNDER")  // define se aplica a quem solicita ou a quem financia
+  comparison_type enum("MAX","MIN")      // tipo de comparação
+  value decimal                          // valor da regra (ex: 65%)
+  unit enum("PERCENT","CURRENCY","COUNT") // tipo de unidade da regra
+  year int nullable                      // caso a regra seja anual
+  created_at timestamp
+  updated_at timestamp
+  created_by string
+}
+
+funding_policy_validations [icon: check-circle, color: green] {
+  id string pk
+  group_id string funding_policy_groups.id
+  field_name string                  // ex: "justification", "supporting_documents"
+  field_label string                 // label para exibição
+  field_type enum("TEXT","NUMBER","DATE","FILE","SELECT")
+  is_required boolean default true
+  options json nullable              // se for SELECT ou múltipla escolha
+  created_at timestamp
+  updated_at timestamp
+  created_by string
+}
+
+
+contacts [icon: address-card, color: teal] {
+  id string pk
+  name string null
+  phone string null
+  mobile string null
+  email string null
+  country string null
+  city string null
+  address string null
+  full_address string null
+  postal_code string null
+  website string null
+  notes string null
+  is_primary boolean
+  created_at timestamp
+  updated_at timestamp
+  created_by string
+  updated_by string
+  is_deleted boolean default false
+  deleted_at timestamp null
+  deleted_by string null
+}
+
+users [icon: user, color: yellow] {
+  id string pk
+  institution_id string [ref: > institutions.id]
+  church_id string [ref: > churches.id]
+  department_id string [ref: > departments.id]
+  name string
+  email string unique
+  enum [ male, female]
+  password string
+  language_preference enum("en","nl")
+  contact_id string null [ref: > contacts.id]
+  created_at timestamp
+  updated_at timestamp
+  created_by string
+  updated_by string
+  is_deleted boolean default false
+  deleted_at timestamp null
+  deleted_by string null
+}
+
+roles [icon: shield, color: orange] {
+  id string pk
+  name string
+  description string
+  key_code string unique
+  created_at timestamp
+  updated_at timestamp
+  created_by string
+  updated_by string
+  is_deleted boolean default false
+  deleted_at timestamp null
+  deleted_by string null
+}
+
+permissions [icon: lock, color: red] {
+  id string pk
+  name string
+  description string
+  key_code string unique
+  resolver_name enum(...) unique
+  group enum(...) null
+  created_at timestamp
+  updated_at timestamp
+  created_by string
+  updated_by string
+  is_deleted boolean default false
+  deleted_at timestamp null
+  deleted_by string null
+}
+
+role_permissions [icon: key, color: lightblue] {
+  id string pk
+  role_id string [ref: > roles.id, onDelete: Cascade]
+  permission_id string [ref: > permissions.id]
+  created_at timestamp
+  updated_at timestamp
+  created_by string
+  updated_by string
+  is_deleted boolean default false
+  deleted_at timestamp null
+  deleted_by string null
+}
+
+user_roles [icon: user-check, color: lightgreen] {
+  id string pk
+  user_id string [ref: > users.id]
+  role_id string [ref: > roles.id]
+  created_at timestamp
+  updated_at timestamp
+  created_by string
+  updated_by string
+  is_deleted boolean default false
+  deleted_at timestamp null
+  deleted_by string null
+}
+
+projects [icon: globe, color: blue] {
+  id string pk
+  department_id string [ref: > departments.id]
+  institution_id string null [ref: > institutions.id]
+  owner_id string null [ref: > users.id]
+  event_id string null [ref: > events.id]
+  title string
+  description string
+  budget decimal
+  language_preference enum("en","nl")
+  type enum("MISSION","EVANGELISM","SOCIAL","OTHER")
+  created_at timestamp
+  updated_at timestamp
+  created_by string
+  updated_by string
+  is_deleted boolean default false
+  deleted_at timestamp null
+  deleted_by string null
+}
+
+special_projects [icon: globe, color: blue] {
+  id string pk
+  department_id string [ref: > departments.id]
+  institution_id string null [ref: > institutions.id]
+  project_id string null [ref: > projects.id]
+  justification_note string null 
+  budget decimal null 
+  subsidy_statuses_id string [ref: > subsidy_statuses.id]
+  type enum("MISSION","EVANGELISM","SOCIAL","CHURCH_PLANTING","OTHER")
+  location_church_plant string null 
+  created_at timestamp
+  updated_at timestamp
+  created_by string
+  updated_by string
+  is_deleted boolean default false
+  deleted_at timestamp null
+  deleted_by string null
+}
+
+
+
+events [icon: calendar, color: purple] {
+  id string pk
+  target_type enum("institution","region","department","church","user")
+  target_id string null
+  title string
+  description string
+  contact_id string [ref: > contacts.id]
+  type enum("show","evangelism")
+  language_preference enum("en","nl")
+  max_participants int
+  ticket_amount decimal null
+  is_private boolean default false
+  required_volunteers boolean default false
+  start_at timestamp null
+  end_at timestamp null
+  subscription_expires_at timestamp
+  created_at timestamp
+  updated_at timestamp
+  created_by string
+  updated_by string
+  is_deleted boolean default false
+  deleted_at timestamp null
+  deleted_by string null
+}
+
+event_recipients [icon: target, color: red] {
+  id string pk
+  event_id string [ref: > events.id]
+  target_type enum("institution","region","department","church","user")
+  target_id string
+  userId string null [ref: > users.id]
+  created_at timestamp
+  updated_at timestamp
+  created_by string
+  updated_by string
+  is_deleted boolean default false
+  deleted_at timestamp null
+  deleted_by string null
+}
+
+event_registrations [icon: edit, color: lightpurple] {
+  id string pk
+  user_id string [ref: > users.id]
+  event_id string [ref: > events.id]
+  status enum("paid","pendent","reserved","approved","canceled")
+  created_at timestamp
+  updated_at timestamp
+  created_by string
+  updated_by string
+  is_deleted boolean default false
+  deleted_at timestamp null
+  deleted_by string null
+}
+
+communications [icon: megaphone, color: orange] {
+  id string pk
+  institution_id string [ref: > institutions.id]
+  title string
+  content string
+  type string
+  priority string
+  status string
+  language_preference enum("en","nl")
+  schedule_at timestamp
+  published_at timestamp
+  author_id string [ref: > users.id]
+  created_at timestamp
+  updated_at timestamp
+  created_by string
+  updated_by string
+  is_deleted boolean default false
+  deleted_at timestamp null
+  deleted_by string null
+}
+
+communication_recipients [icon: target, color: red] {
+  id string pk
+  communication_id string [ref: > communications.id]
+  target_type enum("institution","region","department","church","user")
+  target_id string null
+  created_at timestamp
+  updated_at timestamp
+  created_by string
+  updated_by string
+  is_deleted boolean default false
+  deleted_at timestamp null
+  deleted_by string null
+}
+
+direct_messages [icon: message-circle, color: pink] {
+  id string pk
+  institution_id string [ref: > institutions.id]
+  sender_id string [ref: > users.id]
+  title string
+  content string
+  status string
+  sent_at timestamp
+  created_at timestamp
+  updated_at timestamp
+  created_by string
+  updated_by string
+  is_deleted boolean default false
+  deleted_at timestamp null
+  deleted_by string null
+}
+
+direct_message_recipients [icon: inbox, color: lightpink] {
+  id string pk
+  direct_message_id string [ref: > direct_messages.id]
+  recipient_user_id string [ref: > users.id]
+  recipient_role_id string [ref: > roles.id]
+  read_at timestamp
+  sent_at timestamp
+  created_at timestamp
+  updated_at timestamp
+  created_by string
+  updated_by string
+  is_deleted boolean default false
+  deleted_at timestamp null
+  deleted_by string null
+}
+
+// Documentos de Atividades (Comprovantes base - PDF/JPG/etc)
+activity_documents [icon: file, color: gray] {
+  id string pk
+  activity_id string [ref: > project_activities.id]
+  file_url string // S3 URL ou link externo (PDF, JPG, PNG, etc)
+  file_name string
+  file_type enum("PDF", "JPG", "PNG", "DOC", "OTHER")
+  document_type enum("INVOICE", "RECEIPT", "CONTRACT", "PROOF_OF_PAYMENT", "OTHER")
+  amount decimal null // Valor do documento quando aplicável
+  is_validated boolean default false
+  validated_by string null [ref: > users.id]
+  created_at timestamp
+  validated_at timestamp null
+}
+
+// Status do Subsídio (Escalation/Workflow)
+subsidy_statuses [icon: repeat, color: orange] {
+  id string pk
+  department_id string [ref: > departments.id]
+  name string // "PENDING", "UNDER_REVIEW", "PARTIAL_APPROVED", "APPROVED", "REJECTED"
+  description string
+  order int
+  requires_documents boolean default true
+  max_days int null // SLA para aprovação
+  created_at timestamp
+  updated_at timestamp
+  created_by string [ref: > users.id]
+  updated_by string null
+  is_deleted boolean default false
+}
+
+// Solicitações de Subsídio (Pode incluir múltiplas atividades)
+subsidy_requests [icon: dollar-sign, color: purple] {
+  id string pk
+  institution_id string [ref: > institutions.id]
+  requester_id string [ref: > users.id]
+  department_id string [ref: > departments.id]
+  church_id string [ref: > churches.id]
+  project_id string [ref: > projects.id]
+  subsidy_statuses_id string [ref: > subsidy_statuses.id]
+  requested_amount decimal
+  approved_amount decimal default 0 // Suporta aprovação parcial
+  rejection_reason text null
+  notes text null // Justificativa para aprovação parcial ou rejeição
+  created_at timestamp
+  updated_at timestamp
+  approved_at timestamp null
+  created_by string [ref: > users.id]
+  updated_by string null
+  approved_by string null [ref: > users.id]
+  is_deleted boolean default false
+  deleted_at timestamp null
+  deleted_by string null
+}
+
+// Itens de Subsídio (M-N: 1 request → múltiplas activities)
+subsidy_request_items [icon: list, color: yellow] {
+  id string pk
+  subsidy_request_id string [ref: > subsidy_requests.id]
+  project_activity_id string [ref: > project_activities.id]
+  requested_amount decimal
+  approved_amount decimal default 0 // Valor aprovado por atividade
+  activity_documents array[] [ref: < activity_documents.id] // Comprovantes específicos
+  notes text null // Observações específicas da atividade
+  created_at timestamp
+  updated_at timestamp
+}
+
+// Recebimentos de Subsídio (Escalation final)
+subsidy_payments [icon: banknote, color: lightgreen] {
+  id string pk
+  subsidy_request_id string [ref: > subsidy_requests.id]
+  subsidy_request_item_id string null [ref: > subsidy_request_items.id]
+  amount decimal
+  payment_method enum("TRANSFER", "PIX", "CHECK", "CASH")
+  payment_reference string // Comprovante bancário
+  recipient_account string
+  recipient_name string
+  paid_at timestamp
+  created_at timestamp
+  updated_at timestamp
+  created_by string [ref: > users.id]
+  updated_by string null
+  is_deleted boolean default false
+}
+
+
+activity_funding [icon: split, color: purple] {
+  id string pk
+  activity_id string [ref: > project_activities.id]
+  entity_type enum("CHURCH","INSTITUTION","DEPARTMENT","USER")
+  entity_id string  // referencia dinâmica: pode ser church_id, institution_id ou department_id
+  contribution_amount decimal
+  contribution_percent decimal
+  validated boolean default false
+  created_at timestamp
+  updated_at timestamp
+}
+
+
+activity_documents [icon: file, color: gray] {
+  id string pk
+  activity_id string [ref: > project_activities.id]
+  file_url string
+  type enum("INVOICE","RECEIPT","CONTRACT","OTHER")
+  is_validated boolean default false
+  uploaded_by string [ref: > users.id]
+  created_at timestamp
+  validated_at timestamp null
+}
+
+subsidy_receipts [icon: file-text, color: lightpurple] {
+  id string pk
+  project_activities_id string [ref: > project_activities.id]
+  file_path string
+  type enum("INVOICE","RECEIPT","CONTRACT","OTHER")
+  amount decimal
+  approved boolean
+  created_at timestamp
+  updated_at timestamp
+  created_by string
+  updated_by string
+  is_deleted boolean default false
+  deleted_at timestamp null
+  deleted_by string null
+}
+
+subsidy_statuses [icon: repeat, color: gray] {
+  id string pk
+  department_id string [ref: > departments.id]
+  assigned_to string [ref: > users.id]
+  name string
+  description string
+  order int
+  created_at timestamp
+  updated_at timestamp
+  created_by string
+  updated_by string
+  is_deleted boolean default false
+  deleted_at timestamp null
+  deleted_by string null
+}
+
+annual_reports [icon: file, color: teal] {
+  id string pk
+  department_id string [ref: > departments.id]
+  text string
+  file_path string
+  submission_date timestamp
+  created_at timestamp
+  updated_at timestamp
+  created_by string
+  updated_by string
+  is_deleted boolean default false
+  deleted_at timestamp null
+  deleted_by string null
+}
+
+notifications [icon: bell, color: yellow] {
+  id string pk
+  institution_id string [ref: > institutions.id]
+  user_id string [ref: > users.id]
+  type string
+  message string
+  read_status boolean
+  created_at timestamp
+  updated_at timestamp
+  created_by string
+  updated_by string
+  is_deleted boolean default false
+  deleted_at timestamp null
+  deleted_by string null
+}
+
+settings [icon: gear, color: darkblue] {
+  id string pk
+  institution_id string [ref: > institutions.id]
+  key string
+  value string
+  description string
+  created_at timestamp
+  updated_at timestamp
+  created_by string
+  updated_by string
+  is_deleted boolean default false
+  deleted_at timestamp null
+  deleted_by string null
+} x

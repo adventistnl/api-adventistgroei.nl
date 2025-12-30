@@ -14,16 +14,28 @@ export class SubsidyRequestMinAggregateInput {
     total_budget?: true;
 
     @Field(() => Boolean, {nullable:true})
+    approved_amount?: true;
+
+    @Field(() => Boolean, {nullable:true})
+    rejection_reason?: true;
+
+    @Field(() => Boolean, {nullable:true})
     created_at?: true;
 
     @Field(() => Boolean, {nullable:true})
     updated_at?: true;
 
     @Field(() => Boolean, {nullable:true})
+    approved_at?: true;
+
+    @Field(() => Boolean, {nullable:true})
     created_by?: true;
 
     @Field(() => Boolean, {nullable:true})
     updated_by?: true;
+
+    @Field(() => Boolean, {nullable:true})
+    approved_by?: true;
 
     @Field(() => Boolean, {nullable:true})
     is_deleted?: true;

@@ -4,20 +4,21 @@ import { SubsidyRequest } from '../@generated/subsidy-request/subsidy-request.mo
 import { SubsidyRequestCreateDto, SubsidyRequestUpdateDto } from '../dto/subsidy-request.dto';
 import { CustomGraphQLError, ErrorCode } from 'src/common/errors/custom-graphql-error';
 import { ProjectActivityRepository } from './project-activity.repository';
+import { SubsidyRequestItemRepository } from './subsidy-request-item.repository';
 
 @Injectable()
 export class SubsidyRequestRepository {
   constructor(
     private readonly prisma: PrismaService,
     private readonly projectActivityRespository: ProjectActivityRepository,
-    
+    private readonly subsidyRequestItemRepository: SubsidyRequestItemRepository,
   ) {}
 
   async create(data: SubsidyRequestCreateDto, userId: string): Promise<SubsidyRequest> {
-    const { institution_id, requester_id, department_id, church_id, project_activities, subsidy_status_id, project_id, ...rest } = data;
+    const { institution_id, requester_id, department_id, church_id, items, subsidy_status_id, project_id, notes, ...rest } = data;
 
-    if (project_activities.length === 0) {
-      throw new CustomGraphQLError('At least one ProjectActivity must be associated with the SubsidyRequest.', ErrorCode.BAD_REQUEST, 400);
+    if (!items || items.length === 0) {
+      throw new CustomGraphQLError('At least one item must be associated with the SubsidyRequest.', ErrorCode.BAD_REQUEST, 400);
     }
 
     const subsidyStatus = await this.prisma.subsidyStatus.findFirst({
@@ -28,14 +29,18 @@ export class SubsidyRequestRepository {
       throw new CustomGraphQLError(`SubsidyStatus with id ${subsidy_status_id} does not exist or has been deleted.`, ErrorCode.NOT_FOUND, 404);
     }
 
+    // Validar que todas as activities existem
+    const activityIds = items.map(item => item.project_activity_id);
     const projectActivities = await this.projectActivityRespository.findManyByFilters({
-      id: { in: project_activities },
+      id: { in: activityIds },
       is_deleted: false,
     });
-    if (projectActivities.length !== project_activities.length) {
+
+    if (projectActivities.length !== activityIds.length) {
       throw new CustomGraphQLError(`One or more ProjectActivities do not exist or have been deleted.`, ErrorCode.NOT_FOUND, 404);
     }
 
+    // Criar SubsidyRequest
     const subsidyRequest = await this.prisma.subsidyRequest.create({
       data: {
         ...rest,
@@ -43,10 +48,8 @@ export class SubsidyRequestRepository {
         institution: { connect: { id: institution_id } },
         requester: { connect: { id: requester_id } },
         department: { connect: { id: department_id } },
-        project_activities: {
-          connect: project_activities.map((id: string) => ({ id })),
-        },
-        church: { connect: { id: church_id } },
+        // Conectar church apenas se church_id existir
+        ...(church_id ? { church: { connect: { id: church_id } } } : {}),
         subsidy_status: { connect: { id: subsidy_status_id } },
         created_by: userId,
         updated_by: userId,
@@ -54,17 +57,40 @@ export class SubsidyRequestRepository {
       },
     });
 
-    return subsidyRequest;
+    // Criar items
+    await this.subsidyRequestItemRepository.createMany(subsidyRequest.id, items);
+
+    // Retornar com relacionamentos
+    const result = await this.findById(subsidyRequest.id);
+    if (!result) {
+      throw new CustomGraphQLError('Failed to retrieve created SubsidyRequest', ErrorCode.INTERNAL_SERVER_ERROR, 500);
+    }
+    return result;
   }
 
   async update(id: string, data: SubsidyRequestUpdateDto, userId: string): Promise<SubsidyRequest> {
-    return this.prisma.subsidyRequest.update({
+    const { items, ...updateData } = data;
+
+    // Atualizar SubsidyRequest
+    await this.prisma.subsidyRequest.update({
       where: { id },
       data: {
-        ...data,
+        ...updateData,
         updated_by: userId,
       },
     });
+
+    // Se items foram fornecidos, atualizar
+    if (items) {
+      await this.subsidyRequestItemRepository.deleteBySubsidyRequestId(id);
+      await this.subsidyRequestItemRepository.createMany(id, items);
+    }
+
+    const result = await this.findById(id);
+    if (!result) {
+      throw new CustomGraphQLError('Failed to retrieve updated SubsidyRequest', ErrorCode.INTERNAL_SERVER_ERROR, 500);
+    }
+    return result;
   }
 
   async softDelete(id: string, userId: string): Promise<SubsidyRequest> {
@@ -80,13 +106,49 @@ export class SubsidyRequestRepository {
   }
 
   async findById(id: string): Promise<SubsidyRequest | null> {
-    return this.prisma.subsidyRequest.findUnique({
-      where: { id, is_deleted: false },
+    // Usar findFirst com filtro de requester válido ao invés de findUnique
+    return this.prisma.subsidyRequest.findFirst({
+      where: {
+        id,
+        is_deleted: false,
+        // Garantir que apenas subsídios com requester válido sejam retornados
+        requester: {
+          is_deleted: false,
+        },
+      },
+      include: {
+        institution: true,
+        requester: true,
+        department: {
+          include: {
+            church: true, // Include church from department for CHURCH_DEPARTMENT types
+          },
+        },
+        church: true,
+        subsidy_status: true,
+        project: true,
+        items: {
+          where: { is_deleted: false },
+          include: {
+            project_activity: {
+              include: {
+                activity_documents: true,
+                assignees: {
+                  include: {
+                    user: true,
+                  },
+                },
+                activity_funding: true,
+              },
+            },
+          },
+        },
+      },
     });
   }
 
   async findManyByFilters(filters: Partial<Record<keyof SubsidyRequest, any>>): Promise<SubsidyRequest[]> {
-    const allowedKeys: (keyof SubsidyRequest)[] = ['institution_id', 'description', 'is_deleted', 'total_budget'];
+    const allowedKeys: (keyof SubsidyRequest)[] = ['institution_id', 'description', 'is_deleted', 'total_budget', 'project_id'];
 
     for (const key of Object.keys(filters)) {
       if (!allowedKeys.includes(key as keyof SubsidyRequest)) {
@@ -98,6 +160,31 @@ export class SubsidyRequestRepository {
       where: {
         ...filters,
         is_deleted: false,
+        // Garantir que apenas subsídios com requester válido sejam retornados
+        requester: {
+          is_deleted: false,
+        },
+      },
+      include: {
+        institution: true,
+        requester: true,
+        department: {
+          include: {
+            church: true, // Include church from department for CHURCH_DEPARTMENT types
+          },
+        },
+        church: true,
+        subsidy_status: true,
+        items: {
+          where: { is_deleted: false },
+          include: {
+            project_activity: {
+              include: {
+                activity_documents: true,
+              },
+            },
+          },
+        },
       },
     });
   }
@@ -115,11 +202,55 @@ export class SubsidyRequestRepository {
       where: {
         ...filters,
         is_deleted: false,
+        // Garantir que apenas subsídios com requester válido sejam retornados
+        requester: {
+          is_deleted: false,
+        },
+      },
+      include: {
+        institution: true,
+        requester: true,
+        department: {
+          include: {
+            church: true, // Include church from department for CHURCH_DEPARTMENT types
+          },
+        },
+        church: true,
+        subsidy_status: true,
       },
     });
   }
 
   async findAll(): Promise<SubsidyRequest[]> {
-    return this.prisma.subsidyRequest.findMany({ where: { is_deleted: false } });
+    return this.prisma.subsidyRequest.findMany({
+      where: {
+        is_deleted: false,
+        // Garantir que apenas subsídios com requester válido sejam retornados
+        requester: {
+          is_deleted: false,
+        },
+      },
+      include: {
+        institution: true,
+        requester: true,
+        department: {
+          include: {
+            church: true, // Include church from department for CHURCH_DEPARTMENT types
+          },
+        },
+        church: true,
+        subsidy_status: true,
+        items: {
+          where: { is_deleted: false },
+          include: {
+            project_activity: {
+              include: {
+                activity_documents: true,
+              },
+            },
+          },
+        },
+      },
+    });
   }
 }

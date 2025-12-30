@@ -66,6 +66,8 @@ export enum PermissionResolverName {
     createSubsidyRequest = "createSubsidyRequest",
     updateSubsidyRequest = "updateSubsidyRequest",
     deleteSubsidyRequest = "deleteSubsidyRequest",
+    approveSubsidyRequest = "approveSubsidyRequest",
+    rejectSubsidyRequest = "rejectSubsidyRequest",
     subsidyStatuses = "subsidyStatuses",
     subsidyStatus = "subsidyStatus",
     createSubsidyStatus = "createSubsidyStatus",

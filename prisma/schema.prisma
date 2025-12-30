@@ -111,6 +111,8 @@ enum PermissionResolverName {
   createSubsidyRequest
   updateSubsidyRequest
   deleteSubsidyRequest
+  approveSubsidyRequest
+  rejectSubsidyRequest
   subsidyStatuses
   subsidyStatus
   createSubsidyStatus
@@ -608,35 +610,58 @@ model UserRole {
 }
 
 model SubsidyRequest {
-  id                  String            @id @default(uuid())
+  id                  String                  @id @default(uuid())
   description         String
   total_budget        Decimal
-  created_at          DateTime          @default(now())
-  updated_at          DateTime          @updatedAt
+  approved_amount     Decimal                 @default(0)
+  rejection_reason    String?
+  created_at          DateTime                @default(now())
+  updated_at          DateTime                @updatedAt
+  approved_at         DateTime?
   created_by          String
   updated_by          String
-  is_deleted          Boolean           @default(false)
+  approved_by         String?
+  is_deleted          Boolean                 @default(false)
   deleted_at          DateTime?
   deleted_by          String?
   institution_id      String
-  institution         Institution       @relation(fields: [institution_id], references: [id])
+  institution         Institution             @relation(fields: [institution_id], references: [id])
   requester_id        String
-  requester           User              @relation(fields: [requester_id], references: [id])
+  requester           User                    @relation(fields: [requester_id], references: [id])
   department_id       String
-  department          Department        @relation(fields: [department_id], references: [id])
-  church_id           String
-  church              Church            @relation(fields: [church_id], references: [id])
+  department          Department              @relation(fields: [department_id], references: [id])
+  church_id           String?
+  church              Church?                 @relation(fields: [church_id], references: [id])
   subsidy_statuses_id String
-  subsidy_status      SubsidyStatus     @relation(fields: [subsidy_statuses_id], references: [id])
-  project_activities  ProjectActivity[]
+  subsidy_status      SubsidyStatus           @relation(fields: [subsidy_statuses_id], references: [id])
+  items               SubsidyRequestItem[]
   project_id          String
-  project             Project           @relation(fields: [project_id], references: [id])
+  project             Project                 @relation(fields: [project_id], references: [id])
   subsidy_receipts    SubsidyReceipt[]
 }
 
+model SubsidyRequestItem {
+  id                   String          @id @default(uuid())
+  subsidy_request_id   String
+  subsidy_request      SubsidyRequest  @relation(fields: [subsidy_request_id], references: [id], onDelete: Cascade)
+  project_activity_id  String
+  project_activity     ProjectActivity @relation(fields: [project_activity_id], references: [id])
+  requested_amount     Decimal
+  approved_amount      Decimal         @default(0)
+  notes                String?
+  created_at           DateTime        @default(now())
+  updated_at           DateTime        @updatedAt
+  is_deleted           Boolean         @default(false)
+  deleted_at           DateTime?
+  deleted_by           String?
+
+  @@index([subsidy_request_id])
+  @@index([project_activity_id])
+}
+
 model ProjectActivity {
-  id                  String                   @id @default(uuid())
-  subsidy_request     SubsidyRequest[]
+  id                    String                   @id @default(uuid())
+  subsidy_request_items SubsidyRequestItem[]
   project_id          String
   project             Project                  @relation(fields: [project_id], references: [id])
   name                String

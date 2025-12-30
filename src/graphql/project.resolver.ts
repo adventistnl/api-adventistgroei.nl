@@ -1,12 +1,17 @@
-import { Resolver, Query, Mutation, Args, Context } from '@nestjs/graphql';
+import { Resolver, Query, Mutation, Args, Context, ResolveField, Parent } from '@nestjs/graphql';
 import { ProjectService } from '../services/project.service';
 import { Project } from '../@generated/project/project.model';
+import { SubsidyRequest } from '../@generated/subsidy-request/subsidy-request.model';
 import { ProjectCreateDto, ProjectUpdateDto } from '../dto/project.dto';
 import { ProjectKPIs, ProjectsByDepartment, SubsidyStatusDistribution, ProjectsTimeline } from '../dto/project-analytics.dto';
+import { SubsidyRequestRepository } from '../repositories/subsidy-request.repository';
 
 @Resolver(() => Project)
 export class ProjectResolver {
-  constructor(private readonly projectService: ProjectService) {}
+  constructor(
+    private readonly projectService: ProjectService,
+    private readonly subsidyRequestRepository: SubsidyRequestRepository,
+  ) {}
 
   @Query(() => [Project])
   async projects(
@@ -71,5 +76,14 @@ export class ProjectResolver {
     @Args('institutionId', { nullable: true }) institutionId?: string
   ): Promise<ProjectsTimeline[]> {
     return this.projectService.getProjectsTimeline(institutionId);
+  }
+
+  // ResolveField para garantir que apenas subsídios com requester válido sejam retornados
+  @ResolveField(() => [SubsidyRequest])
+  async subsidies(@Parent() project: Project): Promise<SubsidyRequest[]> {
+    return this.subsidyRequestRepository.findManyByFilters({
+      project_id: project.id,
+      is_deleted: false,
+    });
   }
 }

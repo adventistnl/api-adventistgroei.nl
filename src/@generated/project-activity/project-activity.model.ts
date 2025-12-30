@@ -6,7 +6,7 @@ import { Decimal } from '@prisma/client/runtime/library';
 import { ActivityTags } from '../prisma/activity-tags.enum';
 import { ActivityStatus } from '../prisma/activity-status.enum';
 import { ActivityPriority } from '../prisma/activity-priority.enum';
-import { SubsidyRequest } from '../subsidy-request/subsidy-request.model';
+import { SubsidyRequestItem } from '../subsidy-request-item/subsidy-request-item.model';
 import { Project } from '../project/project.model';
 import { SubsidyReceipt } from '../subsidy-receipt/subsidy-receipt.model';
 import { ActivityDocuments } from '../activity-documents/activity-documents.model';
@@ -72,8 +72,8 @@ export class ProjectActivity {
     @Field(() => Boolean, {defaultValue:false,nullable:false})
     is_subsidized!: boolean;
 
-    @Field(() => [SubsidyRequest], {nullable:true})
-    subsidy_request?: Array<SubsidyRequest>;
+    @Field(() => [SubsidyRequestItem], {nullable:true})
+    subsidy_request_items?: Array<SubsidyRequestItem>;
 
     @Field(() => Project, {nullable:false})
     project?: Project;

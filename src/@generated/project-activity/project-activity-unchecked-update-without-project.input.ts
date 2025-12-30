@@ -11,7 +11,7 @@ import { ProjectActivityUpdatetagsInput } from './project-activity-updatetags.in
 import { ProjectActivityUpdatecustom_tagsInput } from './project-activity-updatecustom-tags.input';
 import { EnumActivityStatusFieldUpdateOperationsInput } from '../prisma/enum-activity-status-field-update-operations.input';
 import { EnumActivityPriorityFieldUpdateOperationsInput } from '../prisma/enum-activity-priority-field-update-operations.input';
-import { SubsidyRequestUncheckedUpdateManyWithoutProject_activitiesNestedInput } from '../subsidy-request/subsidy-request-unchecked-update-many-without-project-activities-nested.input';
+import { SubsidyRequestItemUncheckedUpdateManyWithoutProject_activityNestedInput } from '../subsidy-request-item/subsidy-request-item-unchecked-update-many-without-project-activity-nested.input';
 import { SubsidyReceiptUncheckedUpdateManyWithoutProject_activityNestedInput } from '../subsidy-receipt/subsidy-receipt-unchecked-update-many-without-project-activity-nested.input';
 import { ActivityDocumentsUncheckedUpdateManyWithoutProject_activityNestedInput } from '../activity-documents/activity-documents-unchecked-update-many-without-project-activity-nested.input';
 import { ActivityFundingUncheckedUpdateOneWithoutActivityNestedInput } from '../activity-funding/activity-funding-unchecked-update-one-without-activity-nested.input';
@@ -75,9 +75,9 @@ export class ProjectActivityUncheckedUpdateWithoutProjectInput {
     @Field(() => BoolFieldUpdateOperationsInput, {nullable:true})
     is_subsidized?: BoolFieldUpdateOperationsInput;
 
-    @Field(() => SubsidyRequestUncheckedUpdateManyWithoutProject_activitiesNestedInput, {nullable:true})
-    @Type(() => SubsidyRequestUncheckedUpdateManyWithoutProject_activitiesNestedInput)
-    subsidy_request?: SubsidyRequestUncheckedUpdateManyWithoutProject_activitiesNestedInput;
+    @Field(() => SubsidyRequestItemUncheckedUpdateManyWithoutProject_activityNestedInput, {nullable:true})
+    @Type(() => SubsidyRequestItemUncheckedUpdateManyWithoutProject_activityNestedInput)
+    subsidy_request_items?: SubsidyRequestItemUncheckedUpdateManyWithoutProject_activityNestedInput;
 
     @Field(() => SubsidyReceiptUncheckedUpdateManyWithoutProject_activityNestedInput, {nullable:true})
     @Type(() => SubsidyReceiptUncheckedUpdateManyWithoutProject_activityNestedInput)

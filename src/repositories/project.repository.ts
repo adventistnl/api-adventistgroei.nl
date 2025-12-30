@@ -329,10 +329,18 @@ export class ProjectRepository {
           },
         },
         subsidies: {
-          where: { is_deleted: false },
+          where: {
+            is_deleted: false,
+            requester: {
+              is_deleted: false,
+            },
+          },
           include: {
             subsidy_status: true,
             institution: true,
+            requester: true,
+            department: true,
+            church: true,
           },
         },
         special_projects: {

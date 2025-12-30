@@ -9,7 +9,7 @@ import { ProjectActivityCreatetagsInput } from './project-activity-createtags.in
 import { ProjectActivityCreatecustom_tagsInput } from './project-activity-createcustom-tags.input';
 import { ActivityStatus } from '../prisma/activity-status.enum';
 import { ActivityPriority } from '../prisma/activity-priority.enum';
-import { SubsidyRequestUncheckedCreateNestedManyWithoutProject_activitiesInput } from '../subsidy-request/subsidy-request-unchecked-create-nested-many-without-project-activities.input';
+import { SubsidyRequestItemUncheckedCreateNestedManyWithoutProject_activityInput } from '../subsidy-request-item/subsidy-request-item-unchecked-create-nested-many-without-project-activity.input';
 import { SubsidyReceiptUncheckedCreateNestedManyWithoutProject_activityInput } from '../subsidy-receipt/subsidy-receipt-unchecked-create-nested-many-without-project-activity.input';
 import { ActivityFundingUncheckedCreateNestedOneWithoutActivityInput } from '../activity-funding/activity-funding-unchecked-create-nested-one-without-activity.input';
 import { ProjectActivityLogUncheckedCreateNestedManyWithoutActivityInput } from '../project-activity-log/project-activity-log-unchecked-create-nested-many-without-activity.input';
@@ -76,9 +76,9 @@ export class ProjectActivityUncheckedCreateWithoutActivity_documentsInput {
     @Field(() => Boolean, {nullable:true})
     is_subsidized?: boolean;
 
-    @Field(() => SubsidyRequestUncheckedCreateNestedManyWithoutProject_activitiesInput, {nullable:true})
-    @Type(() => SubsidyRequestUncheckedCreateNestedManyWithoutProject_activitiesInput)
-    subsidy_request?: SubsidyRequestUncheckedCreateNestedManyWithoutProject_activitiesInput;
+    @Field(() => SubsidyRequestItemUncheckedCreateNestedManyWithoutProject_activityInput, {nullable:true})
+    @Type(() => SubsidyRequestItemUncheckedCreateNestedManyWithoutProject_activityInput)
+    subsidy_request_items?: SubsidyRequestItemUncheckedCreateNestedManyWithoutProject_activityInput;
 
     @Field(() => SubsidyReceiptUncheckedCreateNestedManyWithoutProject_activityInput, {nullable:true})
     @Type(() => SubsidyReceiptUncheckedCreateNestedManyWithoutProject_activityInput)

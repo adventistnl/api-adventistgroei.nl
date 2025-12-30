@@ -12,7 +12,7 @@ import { EnumActivityTagsNullableListFilter } from '../prisma/enum-activity-tags
 import { StringNullableListFilter } from '../prisma/string-nullable-list-filter.input';
 import { EnumActivityStatusFilter } from '../prisma/enum-activity-status-filter.input';
 import { EnumActivityPriorityFilter } from '../prisma/enum-activity-priority-filter.input';
-import { SubsidyRequestListRelationFilter } from '../subsidy-request/subsidy-request-list-relation-filter.input';
+import { SubsidyRequestItemListRelationFilter } from '../subsidy-request-item/subsidy-request-item-list-relation-filter.input';
 import { ProjectScalarRelationFilter } from '../project/project-scalar-relation-filter.input';
 import { SubsidyReceiptListRelationFilter } from '../subsidy-receipt/subsidy-receipt-list-relation-filter.input';
 import { ActivityDocumentsListRelationFilter } from '../activity-documents/activity-documents-list-relation-filter.input';
@@ -90,9 +90,9 @@ export class ProjectActivityWhereUniqueInput {
     @Field(() => BoolFilter, {nullable:true})
     is_subsidized?: BoolFilter;
 
-    @Field(() => SubsidyRequestListRelationFilter, {nullable:true})
-    @Type(() => SubsidyRequestListRelationFilter)
-    subsidy_request?: SubsidyRequestListRelationFilter;
+    @Field(() => SubsidyRequestItemListRelationFilter, {nullable:true})
+    @Type(() => SubsidyRequestItemListRelationFilter)
+    subsidy_request_items?: SubsidyRequestItemListRelationFilter;
 
     @Field(() => ProjectScalarRelationFilter, {nullable:true})
     @Type(() => ProjectScalarRelationFilter)

@@ -6,7 +6,7 @@ import { Int } from '@nestjs/graphql';
 export class ProjectActivityCount {
 
     @Field(() => Int, {nullable:false})
-    subsidy_request?: number;
+    subsidy_request_items?: number;
 
     @Field(() => Int, {nullable:false})
     subsidy_receipts?: number;

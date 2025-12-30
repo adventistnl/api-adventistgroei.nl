@@ -2,7 +2,7 @@ import { Field } from '@nestjs/graphql';
 import { InputType } from '@nestjs/graphql';
 import { SortOrder } from '../prisma/sort-order.enum';
 import { SortOrderInput } from '../prisma/sort-order.input';
-import { SubsidyRequestOrderByRelationAggregateInput } from '../subsidy-request/subsidy-request-order-by-relation-aggregate.input';
+import { SubsidyRequestItemOrderByRelationAggregateInput } from '../subsidy-request-item/subsidy-request-item-order-by-relation-aggregate.input';
 import { Type } from 'class-transformer';
 import { ProjectOrderByWithRelationInput } from '../project/project-order-by-with-relation.input';
 import { SubsidyReceiptOrderByRelationAggregateInput } from '../subsidy-receipt/subsidy-receipt-order-by-relation-aggregate.input';
@@ -68,9 +68,9 @@ export class ProjectActivityOrderByWithRelationInput {
     @Field(() => SortOrder, {nullable:true})
     is_subsidized?: `${SortOrder}`;
 
-    @Field(() => SubsidyRequestOrderByRelationAggregateInput, {nullable:true})
-    @Type(() => SubsidyRequestOrderByRelationAggregateInput)
-    subsidy_request?: SubsidyRequestOrderByRelationAggregateInput;
+    @Field(() => SubsidyRequestItemOrderByRelationAggregateInput, {nullable:true})
+    @Type(() => SubsidyRequestItemOrderByRelationAggregateInput)
+    subsidy_request_items?: SubsidyRequestItemOrderByRelationAggregateInput;
 
     @Field(() => ProjectOrderByWithRelationInput, {nullable:true})
     @Type(() => ProjectOrderByWithRelationInput)

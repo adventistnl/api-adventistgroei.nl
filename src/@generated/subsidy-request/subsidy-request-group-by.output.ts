@@ -20,17 +20,29 @@ export class SubsidyRequestGroupBy {
     @Field(() => GraphQLDecimal, {nullable:false})
     total_budget!: Decimal;
 
+    @Field(() => GraphQLDecimal, {nullable:false})
+    approved_amount!: Decimal;
+
+    @Field(() => String, {nullable:true})
+    rejection_reason?: string;
+
     @Field(() => Date, {nullable:false})
     created_at!: Date | string;
 
     @Field(() => Date, {nullable:false})
     updated_at!: Date | string;
 
+    @Field(() => Date, {nullable:true})
+    approved_at?: Date | string;
+
     @Field(() => String, {nullable:false})
     created_by!: string;
 
     @Field(() => String, {nullable:false})
     updated_by!: string;
+
+    @Field(() => String, {nullable:true})
+    approved_by?: string;
 
     @Field(() => Boolean, {nullable:false})
     is_deleted!: boolean;
@@ -50,8 +62,8 @@ export class SubsidyRequestGroupBy {
     @Field(() => String, {nullable:false})
     department_id!: string;
 
-    @Field(() => String, {nullable:false})
-    church_id!: string;
+    @Field(() => String, {nullable:true})
+    church_id?: string;
 
     @Field(() => String, {nullable:false})
     subsidy_statuses_id!: string;

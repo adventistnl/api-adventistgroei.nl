@@ -9,7 +9,7 @@ import { ProjectActivityCreatetagsInput } from './project-activity-createtags.in
 import { ProjectActivityCreatecustom_tagsInput } from './project-activity-createcustom-tags.input';
 import { ActivityStatus } from '../prisma/activity-status.enum';
 import { ActivityPriority } from '../prisma/activity-priority.enum';
-import { SubsidyRequestCreateNestedManyWithoutProject_activitiesInput } from '../subsidy-request/subsidy-request-create-nested-many-without-project-activities.input';
+import { SubsidyRequestItemCreateNestedManyWithoutProject_activityInput } from '../subsidy-request-item/subsidy-request-item-create-nested-many-without-project-activity.input';
 import { ProjectCreateNestedOneWithoutActivitiesInput } from '../project/project-create-nested-one-without-activities.input';
 import { SubsidyReceiptCreateNestedManyWithoutProject_activityInput } from '../subsidy-receipt/subsidy-receipt-create-nested-many-without-project-activity.input';
 import { ActivityDocumentsCreateNestedManyWithoutProject_activityInput } from '../activity-documents/activity-documents-create-nested-many-without-project-activity.input';
@@ -75,9 +75,9 @@ export class ProjectActivityCreateInput {
     @Field(() => Boolean, {nullable:true})
     is_subsidized?: boolean;
 
-    @Field(() => SubsidyRequestCreateNestedManyWithoutProject_activitiesInput, {nullable:true})
-    @Type(() => SubsidyRequestCreateNestedManyWithoutProject_activitiesInput)
-    subsidy_request?: SubsidyRequestCreateNestedManyWithoutProject_activitiesInput;
+    @Field(() => SubsidyRequestItemCreateNestedManyWithoutProject_activityInput, {nullable:true})
+    @Type(() => SubsidyRequestItemCreateNestedManyWithoutProject_activityInput)
+    subsidy_request_items?: SubsidyRequestItemCreateNestedManyWithoutProject_activityInput;
 
     @Field(() => ProjectCreateNestedOneWithoutActivitiesInput, {nullable:false})
     @Type(() => ProjectCreateNestedOneWithoutActivitiesInput)

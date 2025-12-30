@@ -10,6 +10,7 @@ export * from './notification.repository';
 export * from './setting.repository';
 export * from './project.repository';
 export * from './subsidy-request.repository';
+export * from './subsidy-request-item.repository';
 export * from './direct-message.repository';
 export * from './contact.repository';
 export * from './project-voluntary.repository';

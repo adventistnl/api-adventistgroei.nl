@@ -7,4 +7,7 @@ export class SubsidyRequestAvgOrderByAggregateInput {
 
     @Field(() => SortOrder, {nullable:true})
     total_budget?: `${SortOrder}`;
+
+    @Field(() => SortOrder, {nullable:true})
+    approved_amount?: `${SortOrder}`;
 }

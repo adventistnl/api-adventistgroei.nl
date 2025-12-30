@@ -11,7 +11,7 @@ import { ProjectActivityUpdatetagsInput } from './project-activity-updatetags.in
 import { ProjectActivityUpdatecustom_tagsInput } from './project-activity-updatecustom-tags.input';
 import { EnumActivityStatusFieldUpdateOperationsInput } from '../prisma/enum-activity-status-field-update-operations.input';
 import { EnumActivityPriorityFieldUpdateOperationsInput } from '../prisma/enum-activity-priority-field-update-operations.input';
-import { SubsidyRequestUpdateManyWithoutProject_activitiesNestedInput } from '../subsidy-request/subsidy-request-update-many-without-project-activities-nested.input';
+import { SubsidyRequestItemUpdateManyWithoutProject_activityNestedInput } from '../subsidy-request-item/subsidy-request-item-update-many-without-project-activity-nested.input';
 import { ProjectUpdateOneRequiredWithoutActivitiesNestedInput } from '../project/project-update-one-required-without-activities-nested.input';
 import { SubsidyReceiptUpdateManyWithoutProject_activityNestedInput } from '../subsidy-receipt/subsidy-receipt-update-many-without-project-activity-nested.input';
 import { ActivityDocumentsUpdateManyWithoutProject_activityNestedInput } from '../activity-documents/activity-documents-update-many-without-project-activity-nested.input';
@@ -76,9 +76,9 @@ export class ProjectActivityUpdateInput {
     @Field(() => BoolFieldUpdateOperationsInput, {nullable:true})
     is_subsidized?: BoolFieldUpdateOperationsInput;
 
-    @Field(() => SubsidyRequestUpdateManyWithoutProject_activitiesNestedInput, {nullable:true})
-    @Type(() => SubsidyRequestUpdateManyWithoutProject_activitiesNestedInput)
-    subsidy_request?: SubsidyRequestUpdateManyWithoutProject_activitiesNestedInput;
+    @Field(() => SubsidyRequestItemUpdateManyWithoutProject_activityNestedInput, {nullable:true})
+    @Type(() => SubsidyRequestItemUpdateManyWithoutProject_activityNestedInput)
+    subsidy_request_items?: SubsidyRequestItemUpdateManyWithoutProject_activityNestedInput;
 
     @Field(() => ProjectUpdateOneRequiredWithoutActivitiesNestedInput, {nullable:true})
     @Type(() => ProjectUpdateOneRequiredWithoutActivitiesNestedInput)

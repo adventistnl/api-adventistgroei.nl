@@ -3,10 +3,10 @@ import { InputType } from '@nestjs/graphql';
 import { Type } from 'class-transformer';
 import { StringWithAggregatesFilter } from '../prisma/string-with-aggregates-filter.input';
 import { DecimalWithAggregatesFilter } from '../prisma/decimal-with-aggregates-filter.input';
-import { DateTimeWithAggregatesFilter } from '../prisma/date-time-with-aggregates-filter.input';
-import { BoolWithAggregatesFilter } from '../prisma/bool-with-aggregates-filter.input';
-import { DateTimeNullableWithAggregatesFilter } from '../prisma/date-time-nullable-with-aggregates-filter.input';
 import { StringNullableWithAggregatesFilter } from '../prisma/string-nullable-with-aggregates-filter.input';
+import { DateTimeWithAggregatesFilter } from '../prisma/date-time-with-aggregates-filter.input';
+import { DateTimeNullableWithAggregatesFilter } from '../prisma/date-time-nullable-with-aggregates-filter.input';
+import { BoolWithAggregatesFilter } from '../prisma/bool-with-aggregates-filter.input';
 
 @InputType()
 export class SubsidyRequestScalarWhereWithAggregatesInput {
@@ -33,17 +33,30 @@ export class SubsidyRequestScalarWhereWithAggregatesInput {
     @Type(() => DecimalWithAggregatesFilter)
     total_budget?: DecimalWithAggregatesFilter;
 
+    @Field(() => DecimalWithAggregatesFilter, {nullable:true})
+    @Type(() => DecimalWithAggregatesFilter)
+    approved_amount?: DecimalWithAggregatesFilter;
+
+    @Field(() => StringNullableWithAggregatesFilter, {nullable:true})
+    rejection_reason?: StringNullableWithAggregatesFilter;
+
     @Field(() => DateTimeWithAggregatesFilter, {nullable:true})
     created_at?: DateTimeWithAggregatesFilter;
 
     @Field(() => DateTimeWithAggregatesFilter, {nullable:true})
     updated_at?: DateTimeWithAggregatesFilter;
 
+    @Field(() => DateTimeNullableWithAggregatesFilter, {nullable:true})
+    approved_at?: DateTimeNullableWithAggregatesFilter;
+
     @Field(() => StringWithAggregatesFilter, {nullable:true})
     created_by?: StringWithAggregatesFilter;
 
     @Field(() => StringWithAggregatesFilter, {nullable:true})
     updated_by?: StringWithAggregatesFilter;
+
+    @Field(() => StringNullableWithAggregatesFilter, {nullable:true})
+    approved_by?: StringNullableWithAggregatesFilter;
 
     @Field(() => BoolWithAggregatesFilter, {nullable:true})
     is_deleted?: BoolWithAggregatesFilter;
@@ -63,8 +76,8 @@ export class SubsidyRequestScalarWhereWithAggregatesInput {
     @Field(() => StringWithAggregatesFilter, {nullable:true})
     department_id?: StringWithAggregatesFilter;
 
-    @Field(() => StringWithAggregatesFilter, {nullable:true})
-    church_id?: StringWithAggregatesFilter;
+    @Field(() => StringNullableWithAggregatesFilter, {nullable:true})
+    church_id?: StringNullableWithAggregatesFilter;
 
     @Field(() => StringWithAggregatesFilter, {nullable:true})
     subsidy_statuses_id?: StringWithAggregatesFilter;

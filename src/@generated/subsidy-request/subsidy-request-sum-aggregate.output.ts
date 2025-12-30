@@ -8,4 +8,7 @@ export class SubsidyRequestSumAggregate {
 
     @Field(() => GraphQLDecimal, {nullable:true})
     total_budget?: Decimal;
+
+    @Field(() => GraphQLDecimal, {nullable:true})
+    approved_amount?: Decimal;
 }
