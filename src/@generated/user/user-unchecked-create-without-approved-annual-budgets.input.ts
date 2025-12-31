@@ -16,6 +16,7 @@ import { VoluntariesOnProjectsUncheckedCreateNestedManyWithoutUserInput } from '
 import { ProjectUncheckedCreateNestedManyWithoutOwnerInput } from '../project/project-unchecked-create-nested-many-without-owner.input';
 import { ProjectActivityLogUncheckedCreateNestedManyWithoutUserInput } from '../project-activity-log/project-activity-log-unchecked-create-nested-many-without-user.input';
 import { ProjectActivityAssigneeUncheckedCreateNestedManyWithoutUserInput } from '../project-activity-assignee/project-activity-assignee-unchecked-create-nested-many-without-user.input';
+import { SubsidyStatusHistoryUncheckedCreateNestedManyWithoutUserInput } from '../subsidy-status-history/subsidy-status-history-unchecked-create-nested-many-without-user.input';
 
 @InputType()
 export class UserUncheckedCreateWithoutApproved_annual_budgetsInput {
@@ -117,4 +118,8 @@ export class UserUncheckedCreateWithoutApproved_annual_budgetsInput {
     @Field(() => ProjectActivityAssigneeUncheckedCreateNestedManyWithoutUserInput, {nullable:true})
     @Type(() => ProjectActivityAssigneeUncheckedCreateNestedManyWithoutUserInput)
     activity_assignments?: ProjectActivityAssigneeUncheckedCreateNestedManyWithoutUserInput;
+
+    @Field(() => SubsidyStatusHistoryUncheckedCreateNestedManyWithoutUserInput, {nullable:true})
+    @Type(() => SubsidyStatusHistoryUncheckedCreateNestedManyWithoutUserInput)
+    subsidy_status_history?: SubsidyStatusHistoryUncheckedCreateNestedManyWithoutUserInput;
 }

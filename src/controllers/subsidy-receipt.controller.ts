@@ -111,6 +111,17 @@ export class SubsidyReceiptController {
     return this.subsidyReceiptService.validateReceipt(id, req.user.userId);
   }
 
+  @Post(':id/reject')
+  @Permission('validateSubsidyReceipt') // Same permission as validate
+  @HttpCode(HttpStatus.OK)
+  async rejectReceipt(
+    @Param('id') id: string,
+    @Body('reason') reason: string,
+    @Req() req: RequestWithUser,
+  ) {
+    return this.subsidyReceiptService.rejectReceipt(id, req.user.userId, reason);
+  }
+
   @Get()
   @Permission('getSubsidyReceipts')
   async getReceipts(

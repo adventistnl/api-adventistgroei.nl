@@ -9,6 +9,7 @@ import { NullableDateTimeFieldUpdateOperationsInput } from '../prisma/nullable-d
 import { BoolFieldUpdateOperationsInput } from '../prisma/bool-field-update-operations.input';
 import { SubsidyRequestItemUncheckedUpdateManyWithoutSubsidy_requestNestedInput } from '../subsidy-request-item/subsidy-request-item-unchecked-update-many-without-subsidy-request-nested.input';
 import { SubsidyReceiptUncheckedUpdateManyWithoutSubsidy_requestNestedInput } from '../subsidy-receipt/subsidy-receipt-unchecked-update-many-without-subsidy-request-nested.input';
+import { SubsidyStatusHistoryUncheckedUpdateManyWithoutSubsidy_requestNestedInput } from '../subsidy-status-history/subsidy-status-history-unchecked-update-many-without-subsidy-request-nested.input';
 
 @InputType()
 export class SubsidyRequestUncheckedUpdateWithoutInstitutionInput {
@@ -79,4 +80,8 @@ export class SubsidyRequestUncheckedUpdateWithoutInstitutionInput {
     @Field(() => SubsidyReceiptUncheckedUpdateManyWithoutSubsidy_requestNestedInput, {nullable:true})
     @Type(() => SubsidyReceiptUncheckedUpdateManyWithoutSubsidy_requestNestedInput)
     subsidy_receipts?: SubsidyReceiptUncheckedUpdateManyWithoutSubsidy_requestNestedInput;
+
+    @Field(() => SubsidyStatusHistoryUncheckedUpdateManyWithoutSubsidy_requestNestedInput, {nullable:true})
+    @Type(() => SubsidyStatusHistoryUncheckedUpdateManyWithoutSubsidy_requestNestedInput)
+    status_history?: SubsidyStatusHistoryUncheckedUpdateManyWithoutSubsidy_requestNestedInput;
 }

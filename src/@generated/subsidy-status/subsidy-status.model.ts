@@ -6,6 +6,7 @@ import { Department } from '../department/department.model';
 import { User } from '../user/user.model';
 import { SubsidyRequest } from '../subsidy-request/subsidy-request.model';
 import { SpecialProjects } from '../special-projects/special-projects.model';
+import { SubsidyStatusHistory } from '../subsidy-status-history/subsidy-status-history.model';
 import { SubsidyStatusCount } from './subsidy-status-count.output';
 
 @ObjectType()
@@ -61,6 +62,12 @@ export class SubsidyStatus {
 
     @Field(() => [SpecialProjects], {nullable:true})
     special_projects?: Array<SpecialProjects>;
+
+    @Field(() => [SubsidyStatusHistory], {nullable:true})
+    history_as_current?: Array<SubsidyStatusHistory>;
+
+    @Field(() => [SubsidyStatusHistory], {nullable:true})
+    history_as_previous?: Array<SubsidyStatusHistory>;
 
     @Field(() => SubsidyStatusCount, {nullable:false})
     _count?: SubsidyStatusCount;

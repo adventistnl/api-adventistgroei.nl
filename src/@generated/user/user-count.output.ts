@@ -46,4 +46,7 @@ export class UserCount {
 
     @Field(() => Int, {nullable:false})
     activity_assignments?: number;
+
+    @Field(() => Int, {nullable:false})
+    subsidy_status_history?: number;
 }

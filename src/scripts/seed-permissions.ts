@@ -57,6 +57,7 @@ const permissionsDisabledToClient = [
   { name: 'create subsidy status', description: 'Create a subsidy status', resolver_name: 'createSubsidyStatus' as PermissionResolverName, group: 'SUBSIDY_STATUS' as PermissionGroup, key_code: 'SUBSIDY_STATUS_CREATE', disabled_to_client: true },
   { name: 'update subsidy status', description: 'Update a subsidy status', resolver_name: 'updateSubsidyStatus' as PermissionResolverName, group: 'SUBSIDY_STATUS' as PermissionGroup, key_code: 'SUBSIDY_STATUS_UPDATE', disabled_to_client: true },
   { name: 'delete subsidy status', description: 'Delete a subsidy status', resolver_name: 'deleteSubsidyStatus' as PermissionResolverName, group: 'SUBSIDY_STATUS' as PermissionGroup, key_code: 'SUBSIDY_STATUS_DELETE', disabled_to_client: true },
+  { name: 'get subsidy status history', description: 'View subsidy status change history', resolver_name: 'getSubsidyStatusHistory' as PermissionResolverName, group: 'SUBSIDY_STATUS' as PermissionGroup, key_code: 'SUBSIDY_STATUS_HISTORY_GET', disabled_to_client: true },
   { name: 'add project voluntary', description: 'Adicionar voluntário ao projeto', resolver_name: 'addProjectVoluntary' as PermissionResolverName, group: 'PROJECT' as PermissionGroup, key_code: 'PROJECT_VOLUNTARY_ADD', disabled_to_client: true },
   { name: 'remove project voluntary', description: 'Remover voluntário do projeto', resolver_name: 'removeProjectVoluntary' as PermissionResolverName, group: 'PROJECT' as PermissionGroup, key_code: 'PROJECT_VOLUNTARY_REMOVE', disabled_to_client: true },
 ];

@@ -8,6 +8,8 @@ import { NullableDateTimeFieldUpdateOperationsInput } from '../prisma/nullable-d
 import { NullableStringFieldUpdateOperationsInput } from '../prisma/nullable-string-field-update-operations.input';
 import { SpecialProjectsUncheckedUpdateManyWithoutSubsidy_statusNestedInput } from '../special-projects/special-projects-unchecked-update-many-without-subsidy-status-nested.input';
 import { Type } from 'class-transformer';
+import { SubsidyStatusHistoryUncheckedUpdateManyWithoutStatusNestedInput } from '../subsidy-status-history/subsidy-status-history-unchecked-update-many-without-status-nested.input';
+import { SubsidyStatusHistoryUncheckedUpdateManyWithoutPrevious_statusNestedInput } from '../subsidy-status-history/subsidy-status-history-unchecked-update-many-without-previous-status-nested.input';
 
 @InputType()
 export class SubsidyStatusUncheckedUpdateWithoutSubsidy_requestsInput {
@@ -54,4 +56,12 @@ export class SubsidyStatusUncheckedUpdateWithoutSubsidy_requestsInput {
     @Field(() => SpecialProjectsUncheckedUpdateManyWithoutSubsidy_statusNestedInput, {nullable:true})
     @Type(() => SpecialProjectsUncheckedUpdateManyWithoutSubsidy_statusNestedInput)
     special_projects?: SpecialProjectsUncheckedUpdateManyWithoutSubsidy_statusNestedInput;
+
+    @Field(() => SubsidyStatusHistoryUncheckedUpdateManyWithoutStatusNestedInput, {nullable:true})
+    @Type(() => SubsidyStatusHistoryUncheckedUpdateManyWithoutStatusNestedInput)
+    history_as_current?: SubsidyStatusHistoryUncheckedUpdateManyWithoutStatusNestedInput;
+
+    @Field(() => SubsidyStatusHistoryUncheckedUpdateManyWithoutPrevious_statusNestedInput, {nullable:true})
+    @Type(() => SubsidyStatusHistoryUncheckedUpdateManyWithoutPrevious_statusNestedInput)
+    history_as_previous?: SubsidyStatusHistoryUncheckedUpdateManyWithoutPrevious_statusNestedInput;
 }

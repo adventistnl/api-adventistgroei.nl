@@ -26,6 +26,7 @@ import { ProjectListRelationFilter } from '../project/project-list-relation-filt
 import { AnnualBudgetListRelationFilter } from '../annual-budget/annual-budget-list-relation-filter.input';
 import { ProjectActivityLogListRelationFilter } from '../project-activity-log/project-activity-log-list-relation-filter.input';
 import { ProjectActivityAssigneeListRelationFilter } from '../project-activity-assignee/project-activity-assignee-list-relation-filter.input';
+import { SubsidyStatusHistoryListRelationFilter } from '../subsidy-status-history/subsidy-status-history-list-relation-filter.input';
 
 @InputType()
 export class UserWhereInput {
@@ -156,4 +157,8 @@ export class UserWhereInput {
     @Field(() => ProjectActivityAssigneeListRelationFilter, {nullable:true})
     @Type(() => ProjectActivityAssigneeListRelationFilter)
     activity_assignments?: ProjectActivityAssigneeListRelationFilter;
+
+    @Field(() => SubsidyStatusHistoryListRelationFilter, {nullable:true})
+    @Type(() => SubsidyStatusHistoryListRelationFilter)
+    subsidy_status_history?: SubsidyStatusHistoryListRelationFilter;
 }

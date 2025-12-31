@@ -3,6 +3,8 @@ import { InputType } from '@nestjs/graphql';
 import { Int } from '@nestjs/graphql';
 import { SubsidyRequestUncheckedCreateNestedManyWithoutSubsidy_statusInput } from '../subsidy-request/subsidy-request-unchecked-create-nested-many-without-subsidy-status.input';
 import { Type } from 'class-transformer';
+import { SubsidyStatusHistoryUncheckedCreateNestedManyWithoutStatusInput } from '../subsidy-status-history/subsidy-status-history-unchecked-create-nested-many-without-status.input';
+import { SubsidyStatusHistoryUncheckedCreateNestedManyWithoutPrevious_statusInput } from '../subsidy-status-history/subsidy-status-history-unchecked-create-nested-many-without-previous-status.input';
 
 @InputType()
 export class SubsidyStatusUncheckedCreateWithoutSpecial_projectsInput {
@@ -49,4 +51,12 @@ export class SubsidyStatusUncheckedCreateWithoutSpecial_projectsInput {
     @Field(() => SubsidyRequestUncheckedCreateNestedManyWithoutSubsidy_statusInput, {nullable:true})
     @Type(() => SubsidyRequestUncheckedCreateNestedManyWithoutSubsidy_statusInput)
     subsidy_requests?: SubsidyRequestUncheckedCreateNestedManyWithoutSubsidy_statusInput;
+
+    @Field(() => SubsidyStatusHistoryUncheckedCreateNestedManyWithoutStatusInput, {nullable:true})
+    @Type(() => SubsidyStatusHistoryUncheckedCreateNestedManyWithoutStatusInput)
+    history_as_current?: SubsidyStatusHistoryUncheckedCreateNestedManyWithoutStatusInput;
+
+    @Field(() => SubsidyStatusHistoryUncheckedCreateNestedManyWithoutPrevious_statusInput, {nullable:true})
+    @Type(() => SubsidyStatusHistoryUncheckedCreateNestedManyWithoutPrevious_statusInput)
+    history_as_previous?: SubsidyStatusHistoryUncheckedCreateNestedManyWithoutPrevious_statusInput;
 }

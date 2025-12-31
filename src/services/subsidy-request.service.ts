@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { SubsidyRequestRepository } from '../repositories/subsidy-request.repository';
 import { SubsidyRequestItemRepository } from '../repositories/subsidy-request-item.repository';
+import { SubsidyStatusHistoryRepository } from '../repositories/subsidy-status-history.repository';
 import { SubsidyRequest } from '../@generated/subsidy-request/subsidy-request.model';
 import { SubsidyRequestCreateDto, SubsidyRequestUpdateDto } from '../dto/subsidy-request.dto';
 import { CustomGraphQLError, ErrorCode } from '../common/errors/custom-graphql-error';
@@ -11,6 +12,7 @@ export class SubsidyRequestService {
   constructor(
     private readonly subsidyRequestRepository: SubsidyRequestRepository,
     private readonly subsidyRequestItemRepository: SubsidyRequestItemRepository,
+    private readonly historyRepository: SubsidyStatusHistoryRepository,
     private readonly prisma: PrismaService,
   ) {}
 
@@ -28,11 +30,42 @@ export class SubsidyRequestService {
       data.subsidy_status_id = pendingStatus.id;
     }
 
-    return this.subsidyRequestRepository.create(data, userId);
+    const subsidyRequest = await this.subsidyRequestRepository.create(data, userId);
+
+    // Create initial history record
+    await this.historyRepository.create({
+      subsidy_request_id: subsidyRequest.id,
+      status_id: data.subsidy_status_id,
+      previous_status_id: undefined,
+      reason: 'Solicitação criada',
+      changed_by: userId,
+    });
+
+    return subsidyRequest;
   }
 
   async update(id: string, data: SubsidyRequestUpdateDto, userId: string): Promise<SubsidyRequest> {
-    return this.subsidyRequestRepository.update(id, data, userId);
+    // Get current subsidy to check if status changed
+    const current = await this.subsidyRequestRepository.findById(id);
+    
+    if (!current) {
+      throw new CustomGraphQLError('SubsidyRequest not found', ErrorCode.NOT_FOUND, 404);
+    }
+
+    const result = await this.subsidyRequestRepository.update(id, data, userId);
+
+    // If status changed, create history record
+    if (data.subsidy_status_id && data.subsidy_status_id !== current.subsidy_statuses_id) {
+      await this.historyRepository.create({
+        subsidy_request_id: id,
+        status_id: data.subsidy_status_id,
+        previous_status_id: current.subsidy_statuses_id,
+        reason: data.notes || 'Status alterado',
+        changed_by: userId,
+      });
+    }
+
+    return result;
   }
 
   async delete(id: string, userId: string): Promise<SubsidyRequest> {
@@ -65,6 +98,13 @@ export class SubsidyRequestService {
   }
 
   async approve(id: string, approvedAmount: number, userId: string): Promise<SubsidyRequest> {
+    // Get current subsidy
+    const current = await this.subsidyRequestRepository.findById(id);
+    
+    if (!current) {
+      throw new CustomGraphQLError('SubsidyRequest not found', ErrorCode.NOT_FOUND, 404);
+    }
+
     // Buscar status "APPROVED"
     const approvedStatus = await this.prisma.subsidyStatus.findFirst({
       where: { name: 'APPROVED', is_deleted: false },
@@ -74,7 +114,7 @@ export class SubsidyRequestService {
       throw new CustomGraphQLError('Approved status not found', ErrorCode.NOT_FOUND, 404);
     }
 
-    return this.subsidyRequestRepository.update(
+    const result = await this.subsidyRequestRepository.update(
       id,
       {
         approved_amount: approvedAmount,
@@ -84,9 +124,27 @@ export class SubsidyRequestService {
       } as SubsidyRequestUpdateDto,
       userId,
     );
+
+    // Create history record
+    await this.historyRepository.create({
+      subsidy_request_id: id,
+      status_id: approvedStatus.id,
+      previous_status_id: current.subsidy_statuses_id,
+      reason: `Solicitação aprovada. Valor aprovado: ${approvedAmount}`,
+      changed_by: userId,
+    });
+
+    return result;
   }
 
   async reject(id: string, rejectionReason: string, userId: string): Promise<SubsidyRequest> {
+    // Get current subsidy
+    const current = await this.subsidyRequestRepository.findById(id);
+    
+    if (!current) {
+      throw new CustomGraphQLError('SubsidyRequest not found', ErrorCode.NOT_FOUND, 404);
+    }
+
     // Buscar status "REJECTED"
     const rejectedStatus = await this.prisma.subsidyStatus.findFirst({
       where: { name: 'REJECTED', is_deleted: false },
@@ -96,7 +154,7 @@ export class SubsidyRequestService {
       throw new CustomGraphQLError('Rejected status not found', ErrorCode.NOT_FOUND, 404);
     }
 
-    return this.subsidyRequestRepository.update(
+    const result = await this.subsidyRequestRepository.update(
       id,
       {
         rejection_reason: rejectionReason,
@@ -104,5 +162,16 @@ export class SubsidyRequestService {
       } as SubsidyRequestUpdateDto,
       userId,
     );
+
+    // Create history record
+    await this.historyRepository.create({
+      subsidy_request_id: id,
+      status_id: rejectedStatus.id,
+      previous_status_id: current.subsidy_statuses_id,
+      reason: rejectionReason || 'Solicitação rejeitada',
+      changed_by: userId,
+    });
+
+    return result;
   }
 }

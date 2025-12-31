@@ -162,6 +162,7 @@ enum PermissionResolverName {
   createSubsidyStatus
   updateSubsidyStatus
   deleteSubsidyStatus
+  getSubsidyStatusHistory
   addProjectVoluntary
   removeProjectVoluntary
   projectActivities
@@ -424,9 +425,29 @@ type SubsidyReceipt {
 """An arbitrary-precision Decimal type"""
 scalar Decimal
 
+type SubsidyStatusHistory {
+  id: ID!
+  subsidy_request_id: String!
+  status_id: String!
+  previous_status_id: String
+  reason: String
+  changed_by: String!
+  changed_at: DateTime!
+  created_at: DateTime!
+  updated_at: DateTime!
+  is_deleted: Boolean!
+  deleted_at: DateTime
+  deleted_by: String
+  subsidy_request: SubsidyRequest!
+  status: SubsidyStatus!
+  previous_status: SubsidyStatus
+  user: User!
+}
+
 type SubsidyRequestCount {
   items: Int!
   subsidy_receipts: Int!
+  status_history: Int!
 }
 
 type SubsidyRequest {
@@ -458,6 +479,7 @@ type SubsidyRequest {
   items: [SubsidyRequestItem!]
   project: Project!
   subsidy_receipts: [SubsidyReceipt!]
+  status_history: [SubsidyStatusHistory!]
   _count: SubsidyRequestCount!
 }
 
@@ -908,6 +930,7 @@ type UserCount {
   approved_annual_budgets: Int!
   project_activity_logs: Int!
   activity_assignments: Int!
+  subsidy_status_history: Int!
 }
 
 type User {
@@ -946,6 +969,7 @@ type User {
   approved_annual_budgets: [AnnualBudget!]
   project_activity_logs: [ProjectActivityLog!]
   activity_assignments: [ProjectActivityAssignee!]
+  subsidy_status_history: [SubsidyStatusHistory!]
   _count: UserCount!
 }
 
@@ -957,6 +981,8 @@ enum GenderType {
 type SubsidyStatusCount {
   subsidy_requests: Int!
   special_projects: Int!
+  history_as_current: Int!
+  history_as_previous: Int!
 }
 
 type SubsidyStatus {
@@ -977,6 +1003,8 @@ type SubsidyStatus {
   assigned_user: User!
   subsidy_requests: [SubsidyRequest!]
   special_projects: [SpecialProjects!]
+  history_as_current: [SubsidyStatusHistory!]
+  history_as_previous: [SubsidyStatusHistory!]
   _count: SubsidyStatusCount!
 }
 
@@ -1561,6 +1589,7 @@ type Query {
   getSubsidyReceipts(input: GetSubsidyReceiptsDto!): [SubsidyReceipt!]!
   getSubsidyReceiptsByRequestId(subsidyRequestId: ID!): [SubsidyReceipt!]!
   getSubsidyReceiptsByItemId(subsidyRequestItemId: ID!): [SubsidyReceipt!]!
+  getSubsidyStatusHistory(subsidyRequestId: String!): [SubsidyStatusHistory!]!
   annualBudgets(where: AnnualBudgetWhereInput, orderBy: [AnnualBudgetOrderByWithRelationInput!], cursor: AnnualBudgetWhereUniqueInput, take: Int, skip: Int, distinct: [AnnualBudgetScalarFieldEnum!]): [AnnualBudget!]!
   annualBudget(id: String!): AnnualBudget
   budgetKPIs(year: Int!, institutionId: String!): BudgetKPIs!
@@ -1920,6 +1949,7 @@ input UserWhereInput {
   approved_annual_budgets: AnnualBudgetListRelationFilter
   project_activity_logs: ProjectActivityLogListRelationFilter
   activity_assignments: ProjectActivityAssigneeListRelationFilter
+  subsidy_status_history: SubsidyStatusHistoryListRelationFilter
 }
 
 input EnumGenderTypeNullableFilter {
@@ -2163,6 +2193,8 @@ input SubsidyStatusWhereInput {
   assigned_user: UserScalarRelationFilter
   subsidy_requests: SubsidyRequestListRelationFilter
   special_projects: SpecialProjectsListRelationFilter
+  history_as_current: SubsidyStatusHistoryListRelationFilter
+  history_as_previous: SubsidyStatusHistoryListRelationFilter
 }
 
 input DepartmentScalarRelationFilter {
@@ -2213,6 +2245,7 @@ input SubsidyRequestWhereInput {
   items: SubsidyRequestItemListRelationFilter
   project: ProjectScalarRelationFilter
   subsidy_receipts: SubsidyReceiptListRelationFilter
+  status_history: SubsidyStatusHistoryListRelationFilter
 }
 
 input SubsidyStatusScalarRelationFilter {
@@ -2800,6 +2833,34 @@ input ProjectActivityAssigneeWhereInput {
   user: UserScalarRelationFilter
 }
 
+input SubsidyStatusHistoryListRelationFilter {
+  every: SubsidyStatusHistoryWhereInput
+  some: SubsidyStatusHistoryWhereInput
+  none: SubsidyStatusHistoryWhereInput
+}
+
+input SubsidyStatusHistoryWhereInput {
+  AND: [SubsidyStatusHistoryWhereInput!]
+  OR: [SubsidyStatusHistoryWhereInput!]
+  NOT: [SubsidyStatusHistoryWhereInput!]
+  id: StringFilter
+  subsidy_request_id: StringFilter
+  status_id: StringFilter
+  previous_status_id: StringNullableFilter
+  reason: StringNullableFilter
+  changed_by: StringFilter
+  changed_at: DateTimeFilter
+  created_at: DateTimeFilter
+  updated_at: DateTimeFilter
+  is_deleted: BoolFilter
+  deleted_at: DateTimeNullableFilter
+  deleted_by: StringNullableFilter
+  subsidy_request: SubsidyRequestScalarRelationFilter
+  status: SubsidyStatusScalarRelationFilter
+  previous_status: SubsidyStatusNullableScalarRelationFilter
+  user: UserScalarRelationFilter
+}
+
 input AnnualReportListRelationFilter {
   every: AnnualReportWhereInput
   some: AnnualReportWhereInput
@@ -3245,6 +3306,7 @@ input UserOrderByWithRelationInput {
   approved_annual_budgets: AnnualBudgetOrderByRelationAggregateInput
   project_activity_logs: ProjectActivityLogOrderByRelationAggregateInput
   activity_assignments: ProjectActivityAssigneeOrderByRelationAggregateInput
+  subsidy_status_history: SubsidyStatusHistoryOrderByRelationAggregateInput
 }
 
 input ContactOrderByWithRelationInput {
@@ -3444,6 +3506,10 @@ input ProjectActivityLogOrderByRelationAggregateInput {
 }
 
 input ProjectActivityAssigneeOrderByRelationAggregateInput {
+  _count: SortOrder
+}
+
+input SubsidyStatusHistoryOrderByRelationAggregateInput {
   _count: SortOrder
 }
 

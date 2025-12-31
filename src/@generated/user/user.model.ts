@@ -21,6 +21,7 @@ import { Project } from '../project/project.model';
 import { AnnualBudget } from '../annual-budget/annual-budget.model';
 import { ProjectActivityLog } from '../project-activity-log/project-activity-log.model';
 import { ProjectActivityAssignee } from '../project-activity-assignee/project-activity-assignee.model';
+import { SubsidyStatusHistory } from '../subsidy-status-history/subsidy-status-history.model';
 import { UserCount } from './user-count.output';
 
 @ObjectType()
@@ -130,6 +131,9 @@ export class User {
 
     @Field(() => [ProjectActivityAssignee], {nullable:true})
     activity_assignments?: Array<ProjectActivityAssignee>;
+
+    @Field(() => [SubsidyStatusHistory], {nullable:true})
+    subsidy_status_history?: Array<SubsidyStatusHistory>;
 
     @Field(() => UserCount, {nullable:false})
     _count?: UserCount;

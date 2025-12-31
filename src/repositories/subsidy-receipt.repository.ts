@@ -224,7 +224,7 @@ export class SubsidyReceiptRepository {
   }
 
   /**
-   * Validar recibo (atualizar is_validated para true)
+   * Validar recibo (atualizar is_validated para true E approved para true)
    */
   async validateReceipt(id: string, userId: string): Promise<SubsidyReceipt> {
     try {
@@ -232,6 +232,7 @@ export class SubsidyReceiptRepository {
         where: { id },
         data: {
           is_validated: true,
+          approved: true, // IMPORTANTE: Também marcar como aprovado
           validated_at: new Date(),
           validated_by: userId,
           updated_by: userId,
@@ -270,9 +271,41 @@ export class SubsidyReceiptRepository {
           project_activity: true,
         },
       });
-    } catch (error) {
+    } catch (_error) {
       throw new CustomGraphQLError(
         'Erro ao aprovar recibo de subsídio',
+        ErrorCode.INTERNAL_SERVER_ERROR,
+        500,
+      );
+    }
+  }
+
+  /**
+   * Rejeitar recibo
+   */
+  async rejectReceipt(id: string, userId: string, reason?: string): Promise<SubsidyReceipt> {
+    try {
+      return await this.prisma.subsidyReceipt.update({
+        where: { id },
+        data: {
+          is_validated: true,
+          approved: false,
+          validated_at: new Date(),
+          validated_by: userId,
+          // Note: rejection_reason field doesn't exist in schema yet
+          // If needed, add it to the Prisma schema
+          updated_by: userId,
+          updated_at: new Date(),
+        },
+        include: {
+          subsidy_request: true,
+          subsidy_request_item: true,
+          project_activity: true,
+        },
+      });
+    } catch (_error) {
+      throw new CustomGraphQLError(
+        'Erro ao rejeitar recibo de subsídio',
         ErrorCode.INTERNAL_SERVER_ERROR,
         500,
       );

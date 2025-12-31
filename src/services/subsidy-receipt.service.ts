@@ -87,6 +87,16 @@ export class SubsidyReceiptService {
       const institutionId = institution?.id;
       const institutionName = institution?.name;
 
+      console.log('📁 [SubsidyReceipt] Creating folder structure:', {
+        projectId: subsidyRequest.project_id,
+        projectTitle,
+        subsidyRequestId: subsidyRequest.id,
+        departmentId,
+        departmentName,
+        institutionId,
+        institutionName,
+      });
+
       // 5. Criar folder do subsídio (reutiliza folder da atividade ou cria um específico para subsídios)
       // Estrutura: Institution > Department > Project > Subsidies > SubsidyRequest
       const subsidyFolder = await this.createOrGetSubsidyFolder(
@@ -99,6 +109,8 @@ export class SubsidyReceiptService {
         institutionName,
       );
 
+      console.log('✅ [SubsidyReceipt] Folder created:', subsidyFolder);
+
       // 6. Converter stream para buffer
       const { createReadStream, filename, mimetype } = file;
       const stream = createReadStream();
@@ -107,10 +119,7 @@ export class SubsidyReceiptService {
       // 7. Upload para Google Drive
       driveFileId = await this.driveService.uploadFile(buffer, filename, mimetype, subsidyFolder);
 
-      // 8. Verificar se usuário tem permission de validação para auto-validar
-      const isAutoValidated = await this.userHasPermission(userId, 'validateSubsidyReceipt');
-
-      // 9. Criar registro no banco
+      // 8. Criar registro no banco (sempre começa como não validado)
       const receipt = await this.repository.create(
         {
           subsidy_request_id: input.subsidy_request_id,
@@ -122,8 +131,8 @@ export class SubsidyReceiptService {
           type: input.type,
           amount: input.amount,
           uploaded_by: userId,
-          is_validated: isAutoValidated,
-          validated_at: isAutoValidated ? new Date() : null,
+          is_validated: false, // Sempre começa como não validado
+          validated_at: null,
         },
         userId,
       );
@@ -236,6 +245,19 @@ export class SubsidyReceiptService {
   }
 
   /**
+   * Rejeitar recibo
+   */
+  async rejectReceipt(id: string, userId: string, reason?: string): Promise<SubsidyReceipt> {
+    const receipt = await this.repository.findById(id);
+
+    if (!receipt) {
+      throw new CustomGraphQLError('Recibo não encontrado', ErrorCode.NOT_FOUND, 404);
+    }
+
+    return this.repository.rejectReceipt(id, userId, reason);
+  }
+
+  /**
    * Listar recibos de uma solicitação de subsídio
    */
   async getReceiptsBySubsidyRequest(subsidyRequestId: string): Promise<SubsidyReceipt[]> {
@@ -268,7 +290,10 @@ export class SubsidyReceiptService {
     institutionId?: string,
     institutionName?: string,
   ): Promise<string> {
+    console.log('📁 [createOrGetSubsidyFolder] Starting folder creation...');
+    
     // Primeiro, criar/obter folder do projeto
+    console.log('📁 [createOrGetSubsidyFolder] Step 1: Creating project folder');
     const projectFolderId = await this.driveService.createOrGetProjectFolder(
       projectId,
       projectTitle,
@@ -277,20 +302,25 @@ export class SubsidyReceiptService {
       institutionId,
       institutionName,
     );
+    console.log('✅ [createOrGetSubsidyFolder] Project folder ID:', projectFolderId);
 
     // Criar subfolder "Subsidios" dentro do projeto
+    console.log('📁 [createOrGetSubsidyFolder] Step 2: Creating Subsidios folder');
     const subsidiesFolderName = 'Subsidios';
     const subsidiesFolderId = await this.driveService.findOrCreateFolder(
       subsidiesFolderName,
       projectFolderId,
     );
+    console.log('✅ [createOrGetSubsidyFolder] Subsidios folder ID:', subsidiesFolderId);
 
     // Criar subfolder específico para esta solicitação de subsídio
+    console.log('📁 [createOrGetSubsidyFolder] Step 3: Creating subsidy-specific folder');
     const subsidyFolderName = `subsidy-${subsidyRequestId.substring(0, 8)}`;
     const subsidyFolderId = await this.driveService.findOrCreateFolder(
       subsidyFolderName,
       subsidiesFolderId,
     );
+    console.log('✅ [createOrGetSubsidyFolder] Final subsidy folder ID:', subsidyFolderId);
 
     return subsidyFolderId;
   }

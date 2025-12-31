@@ -20,6 +20,7 @@ import { VoluntariesOnProjectsCreateNestedManyWithoutUserInput } from '../volunt
 import { ProjectCreateNestedManyWithoutOwnerInput } from '../project/project-create-nested-many-without-owner.input';
 import { ProjectActivityLogCreateNestedManyWithoutUserInput } from '../project-activity-log/project-activity-log-create-nested-many-without-user.input';
 import { ProjectActivityAssigneeCreateNestedManyWithoutUserInput } from '../project-activity-assignee/project-activity-assignee-create-nested-many-without-user.input';
+import { SubsidyStatusHistoryCreateNestedManyWithoutUserInput } from '../subsidy-status-history/subsidy-status-history-create-nested-many-without-user.input';
 
 @InputType()
 export class UserCreateWithoutApproved_annual_budgetsInput {
@@ -125,4 +126,8 @@ export class UserCreateWithoutApproved_annual_budgetsInput {
     @Field(() => ProjectActivityAssigneeCreateNestedManyWithoutUserInput, {nullable:true})
     @Type(() => ProjectActivityAssigneeCreateNestedManyWithoutUserInput)
     activity_assignments?: ProjectActivityAssigneeCreateNestedManyWithoutUserInput;
+
+    @Field(() => SubsidyStatusHistoryCreateNestedManyWithoutUserInput, {nullable:true})
+    @Type(() => SubsidyStatusHistoryCreateNestedManyWithoutUserInput)
+    subsidy_status_history?: SubsidyStatusHistoryCreateNestedManyWithoutUserInput;
 }

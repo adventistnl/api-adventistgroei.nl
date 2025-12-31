@@ -14,6 +14,7 @@ import { ChurchUpdateOneWithoutSubsidy_requestsNestedInput } from '../church/chu
 import { SubsidyStatusUpdateOneRequiredWithoutSubsidy_requestsNestedInput } from '../subsidy-status/subsidy-status-update-one-required-without-subsidy-requests-nested.input';
 import { SubsidyRequestItemUpdateManyWithoutSubsidy_requestNestedInput } from '../subsidy-request-item/subsidy-request-item-update-many-without-subsidy-request-nested.input';
 import { SubsidyReceiptUpdateManyWithoutSubsidy_requestNestedInput } from '../subsidy-receipt/subsidy-receipt-update-many-without-subsidy-request-nested.input';
+import { SubsidyStatusHistoryUpdateManyWithoutSubsidy_requestNestedInput } from '../subsidy-status-history/subsidy-status-history-update-many-without-subsidy-request-nested.input';
 
 @InputType()
 export class SubsidyRequestUpdateWithoutProjectInput {
@@ -89,4 +90,8 @@ export class SubsidyRequestUpdateWithoutProjectInput {
     @Field(() => SubsidyReceiptUpdateManyWithoutSubsidy_requestNestedInput, {nullable:true})
     @Type(() => SubsidyReceiptUpdateManyWithoutSubsidy_requestNestedInput)
     subsidy_receipts?: SubsidyReceiptUpdateManyWithoutSubsidy_requestNestedInput;
+
+    @Field(() => SubsidyStatusHistoryUpdateManyWithoutSubsidy_requestNestedInput, {nullable:true})
+    @Type(() => SubsidyStatusHistoryUpdateManyWithoutSubsidy_requestNestedInput)
+    status_history?: SubsidyStatusHistoryUpdateManyWithoutSubsidy_requestNestedInput;
 }

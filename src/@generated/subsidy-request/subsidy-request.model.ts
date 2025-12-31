@@ -11,6 +11,7 @@ import { SubsidyStatus } from '../subsidy-status/subsidy-status.model';
 import { SubsidyRequestItem } from '../subsidy-request-item/subsidy-request-item.model';
 import { Project } from '../project/project.model';
 import { SubsidyReceipt } from '../subsidy-receipt/subsidy-receipt.model';
+import { SubsidyStatusHistory } from '../subsidy-status-history/subsidy-status-history.model';
 import { SubsidyRequestCount } from './subsidy-request-count.output';
 
 @ObjectType()
@@ -99,6 +100,9 @@ export class SubsidyRequest {
 
     @Field(() => [SubsidyReceipt], {nullable:true})
     subsidy_receipts?: Array<SubsidyReceipt>;
+
+    @Field(() => [SubsidyStatusHistory], {nullable:true})
+    status_history?: Array<SubsidyStatusHistory>;
 
     @Field(() => SubsidyRequestCount, {nullable:false})
     _count?: SubsidyRequestCount;

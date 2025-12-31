@@ -7,6 +7,7 @@ import { Transform } from 'class-transformer';
 import { Type } from 'class-transformer';
 import { SubsidyRequestItemUncheckedCreateNestedManyWithoutSubsidy_requestInput } from '../subsidy-request-item/subsidy-request-item-unchecked-create-nested-many-without-subsidy-request.input';
 import { SubsidyReceiptUncheckedCreateNestedManyWithoutSubsidy_requestInput } from '../subsidy-receipt/subsidy-receipt-unchecked-create-nested-many-without-subsidy-request.input';
+import { SubsidyStatusHistoryUncheckedCreateNestedManyWithoutSubsidy_requestInput } from '../subsidy-status-history/subsidy-status-history-unchecked-create-nested-many-without-subsidy-request.input';
 
 @InputType()
 export class SubsidyRequestUncheckedCreateInput {
@@ -82,4 +83,8 @@ export class SubsidyRequestUncheckedCreateInput {
     @Field(() => SubsidyReceiptUncheckedCreateNestedManyWithoutSubsidy_requestInput, {nullable:true})
     @Type(() => SubsidyReceiptUncheckedCreateNestedManyWithoutSubsidy_requestInput)
     subsidy_receipts?: SubsidyReceiptUncheckedCreateNestedManyWithoutSubsidy_requestInput;
+
+    @Field(() => SubsidyStatusHistoryUncheckedCreateNestedManyWithoutSubsidy_requestInput, {nullable:true})
+    @Type(() => SubsidyStatusHistoryUncheckedCreateNestedManyWithoutSubsidy_requestInput)
+    status_history?: SubsidyStatusHistoryUncheckedCreateNestedManyWithoutSubsidy_requestInput;
 }

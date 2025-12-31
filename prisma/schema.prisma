@@ -118,6 +118,7 @@ enum PermissionResolverName {
   createSubsidyStatus
   updateSubsidyStatus
   deleteSubsidyStatus
+  getSubsidyStatusHistory
   addProjectVoluntary
   removeProjectVoluntary
   projectActivities
@@ -496,6 +497,7 @@ model User {
   approved_annual_budgets   AnnualBudget[]           @relation("ApprovedAnnualBudgets")
   project_activity_logs     ProjectActivityLog[]
   activity_assignments      ProjectActivityAssignee[] @relation("ActivityAssignees")
+  subsidy_status_history    SubsidyStatusHistory[]
 }
 
 model Project {
@@ -644,6 +646,7 @@ model SubsidyRequest {
   project_id          String
   project             Project                 @relation(fields: [project_id], references: [id])
   subsidy_receipts    SubsidyReceipt[]
+  status_history      SubsidyStatusHistory[]
 }
 
 model SubsidyRequestItem {
@@ -770,23 +773,51 @@ model SubsidyReceipt {
 }
 
 model SubsidyStatus {
-  id               String            @id @default(uuid())
-  department_id    String
-  department       Department        @relation(fields: [department_id], references: [id])
-  assigned_to      String
-  assigned_user    User              @relation(fields: [assigned_to], references: [id])
-  name             String
-  description      String
-  order            Int
-  created_at       DateTime          @default(now())
-  updated_at       DateTime          @updatedAt
-  created_by       String
-  updated_by       String
-  is_deleted       Boolean           @default(false)
-  deleted_at       DateTime?
-  deleted_by       String?
-  subsidy_requests SubsidyRequest[]
-  special_projects SpecialProjects[]
+  id                  String                   @id @default(uuid())
+  department_id       String
+  department          Department               @relation(fields: [department_id], references: [id])
+  assigned_to         String
+  assigned_user       User                     @relation(fields: [assigned_to], references: [id])
+  name                String
+  description         String
+  order               Int
+  created_at          DateTime                 @default(now())
+  updated_at          DateTime                 @updatedAt
+  created_by          String
+  updated_by          String
+  is_deleted          Boolean                  @default(false)
+  deleted_at          DateTime?
+  deleted_by          String?
+  subsidy_requests    SubsidyRequest[]
+  special_projects    SpecialProjects[]
+  history_as_current  SubsidyStatusHistory[]   @relation("CurrentStatus")
+  history_as_previous SubsidyStatusHistory[]   @relation("PreviousStatus")
+}
+
+model SubsidyStatusHistory {
+  id                  String         @id @default(uuid())
+  subsidy_request_id  String
+  status_id           String
+  previous_status_id  String?
+  reason              String?
+  changed_by          String
+  changed_at          DateTime       @default(now())
+  created_at          DateTime       @default(now())
+  updated_at          DateTime       @updatedAt
+  is_deleted          Boolean        @default(false)
+  deleted_at          DateTime?
+  deleted_by          String?
+
+  subsidy_request     SubsidyRequest @relation(fields: [subsidy_request_id], references: [id])
+  status              SubsidyStatus  @relation("CurrentStatus", fields: [status_id], references: [id])
+  previous_status     SubsidyStatus? @relation("PreviousStatus", fields: [previous_status_id], references: [id])
+  user                User           @relation(fields: [changed_by], references: [id])
+
+  @@index([subsidy_request_id])
+  @@index([status_id])
+  @@index([changed_by])
+  @@index([changed_at])
+  @@map("SubsidyStatusHistory")
 }
 
 model AnnualReport {

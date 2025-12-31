@@ -11,6 +11,7 @@ import { SubsidyStatusOrderByWithRelationInput } from '../subsidy-status/subsidy
 import { SubsidyRequestItemOrderByRelationAggregateInput } from '../subsidy-request-item/subsidy-request-item-order-by-relation-aggregate.input';
 import { ProjectOrderByWithRelationInput } from '../project/project-order-by-with-relation.input';
 import { SubsidyReceiptOrderByRelationAggregateInput } from '../subsidy-receipt/subsidy-receipt-order-by-relation-aggregate.input';
+import { SubsidyStatusHistoryOrderByRelationAggregateInput } from '../subsidy-status-history/subsidy-status-history-order-by-relation-aggregate.input';
 
 @InputType()
 export class SubsidyRequestOrderByWithRelationInput {
@@ -106,4 +107,8 @@ export class SubsidyRequestOrderByWithRelationInput {
     @Field(() => SubsidyReceiptOrderByRelationAggregateInput, {nullable:true})
     @Type(() => SubsidyReceiptOrderByRelationAggregateInput)
     subsidy_receipts?: SubsidyReceiptOrderByRelationAggregateInput;
+
+    @Field(() => SubsidyStatusHistoryOrderByRelationAggregateInput, {nullable:true})
+    @Type(() => SubsidyStatusHistoryOrderByRelationAggregateInput)
+    status_history?: SubsidyStatusHistoryOrderByRelationAggregateInput;
 }

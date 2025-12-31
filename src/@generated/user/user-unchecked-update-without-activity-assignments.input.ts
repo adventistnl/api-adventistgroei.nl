@@ -21,6 +21,7 @@ import { VoluntariesOnProjectsUncheckedUpdateManyWithoutUserNestedInput } from '
 import { ProjectUncheckedUpdateManyWithoutOwnerNestedInput } from '../project/project-unchecked-update-many-without-owner-nested.input';
 import { AnnualBudgetUncheckedUpdateManyWithoutApproved_userNestedInput } from '../annual-budget/annual-budget-unchecked-update-many-without-approved-user-nested.input';
 import { ProjectActivityLogUncheckedUpdateManyWithoutUserNestedInput } from '../project-activity-log/project-activity-log-unchecked-update-many-without-user-nested.input';
+import { SubsidyStatusHistoryUncheckedUpdateManyWithoutUserNestedInput } from '../subsidy-status-history/subsidy-status-history-unchecked-update-many-without-user-nested.input';
 
 @InputType()
 export class UserUncheckedUpdateWithoutActivity_assignmentsInput {
@@ -122,4 +123,8 @@ export class UserUncheckedUpdateWithoutActivity_assignmentsInput {
     @Field(() => ProjectActivityLogUncheckedUpdateManyWithoutUserNestedInput, {nullable:true})
     @Type(() => ProjectActivityLogUncheckedUpdateManyWithoutUserNestedInput)
     project_activity_logs?: ProjectActivityLogUncheckedUpdateManyWithoutUserNestedInput;
+
+    @Field(() => SubsidyStatusHistoryUncheckedUpdateManyWithoutUserNestedInput, {nullable:true})
+    @Type(() => SubsidyStatusHistoryUncheckedUpdateManyWithoutUserNestedInput)
+    subsidy_status_history?: SubsidyStatusHistoryUncheckedUpdateManyWithoutUserNestedInput;
 }

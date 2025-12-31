@@ -10,6 +10,8 @@ import { DepartmentUpdateOneRequiredWithoutSubsidy_statusesNestedInput } from '.
 import { Type } from 'class-transformer';
 import { SubsidyRequestUpdateManyWithoutSubsidy_statusNestedInput } from '../subsidy-request/subsidy-request-update-many-without-subsidy-status-nested.input';
 import { SpecialProjectsUpdateManyWithoutSubsidy_statusNestedInput } from '../special-projects/special-projects-update-many-without-subsidy-status-nested.input';
+import { SubsidyStatusHistoryUpdateManyWithoutStatusNestedInput } from '../subsidy-status-history/subsidy-status-history-update-many-without-status-nested.input';
+import { SubsidyStatusHistoryUpdateManyWithoutPrevious_statusNestedInput } from '../subsidy-status-history/subsidy-status-history-update-many-without-previous-status-nested.input';
 
 @InputType()
 export class SubsidyStatusUpdateWithoutAssigned_userInput {
@@ -58,4 +60,12 @@ export class SubsidyStatusUpdateWithoutAssigned_userInput {
     @Field(() => SpecialProjectsUpdateManyWithoutSubsidy_statusNestedInput, {nullable:true})
     @Type(() => SpecialProjectsUpdateManyWithoutSubsidy_statusNestedInput)
     special_projects?: SpecialProjectsUpdateManyWithoutSubsidy_statusNestedInput;
+
+    @Field(() => SubsidyStatusHistoryUpdateManyWithoutStatusNestedInput, {nullable:true})
+    @Type(() => SubsidyStatusHistoryUpdateManyWithoutStatusNestedInput)
+    history_as_current?: SubsidyStatusHistoryUpdateManyWithoutStatusNestedInput;
+
+    @Field(() => SubsidyStatusHistoryUpdateManyWithoutPrevious_statusNestedInput, {nullable:true})
+    @Type(() => SubsidyStatusHistoryUpdateManyWithoutPrevious_statusNestedInput)
+    history_as_previous?: SubsidyStatusHistoryUpdateManyWithoutPrevious_statusNestedInput;
 }

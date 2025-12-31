@@ -12,6 +12,7 @@ import { Type } from 'class-transformer';
 import { UserScalarRelationFilter } from '../user/user-scalar-relation-filter.input';
 import { SubsidyRequestListRelationFilter } from '../subsidy-request/subsidy-request-list-relation-filter.input';
 import { SpecialProjectsListRelationFilter } from '../special-projects/special-projects-list-relation-filter.input';
+import { SubsidyStatusHistoryListRelationFilter } from '../subsidy-status-history/subsidy-status-history-list-relation-filter.input';
 
 @InputType()
 export class SubsidyStatusWhereUniqueInput {
@@ -79,4 +80,12 @@ export class SubsidyStatusWhereUniqueInput {
     @Field(() => SpecialProjectsListRelationFilter, {nullable:true})
     @Type(() => SpecialProjectsListRelationFilter)
     special_projects?: SpecialProjectsListRelationFilter;
+
+    @Field(() => SubsidyStatusHistoryListRelationFilter, {nullable:true})
+    @Type(() => SubsidyStatusHistoryListRelationFilter)
+    history_as_current?: SubsidyStatusHistoryListRelationFilter;
+
+    @Field(() => SubsidyStatusHistoryListRelationFilter, {nullable:true})
+    @Type(() => SubsidyStatusHistoryListRelationFilter)
+    history_as_previous?: SubsidyStatusHistoryListRelationFilter;
 }

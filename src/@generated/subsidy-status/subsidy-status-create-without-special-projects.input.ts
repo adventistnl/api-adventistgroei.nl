@@ -5,6 +5,8 @@ import { DepartmentCreateNestedOneWithoutSubsidy_statusesInput } from '../depart
 import { Type } from 'class-transformer';
 import { UserCreateNestedOneWithoutSubsidyStatusInput } from '../user/user-create-nested-one-without-subsidy-status.input';
 import { SubsidyRequestCreateNestedManyWithoutSubsidy_statusInput } from '../subsidy-request/subsidy-request-create-nested-many-without-subsidy-status.input';
+import { SubsidyStatusHistoryCreateNestedManyWithoutStatusInput } from '../subsidy-status-history/subsidy-status-history-create-nested-many-without-status.input';
+import { SubsidyStatusHistoryCreateNestedManyWithoutPrevious_statusInput } from '../subsidy-status-history/subsidy-status-history-create-nested-many-without-previous-status.input';
 
 @InputType()
 export class SubsidyStatusCreateWithoutSpecial_projectsInput {
@@ -53,4 +55,12 @@ export class SubsidyStatusCreateWithoutSpecial_projectsInput {
     @Field(() => SubsidyRequestCreateNestedManyWithoutSubsidy_statusInput, {nullable:true})
     @Type(() => SubsidyRequestCreateNestedManyWithoutSubsidy_statusInput)
     subsidy_requests?: SubsidyRequestCreateNestedManyWithoutSubsidy_statusInput;
+
+    @Field(() => SubsidyStatusHistoryCreateNestedManyWithoutStatusInput, {nullable:true})
+    @Type(() => SubsidyStatusHistoryCreateNestedManyWithoutStatusInput)
+    history_as_current?: SubsidyStatusHistoryCreateNestedManyWithoutStatusInput;
+
+    @Field(() => SubsidyStatusHistoryCreateNestedManyWithoutPrevious_statusInput, {nullable:true})
+    @Type(() => SubsidyStatusHistoryCreateNestedManyWithoutPrevious_statusInput)
+    history_as_previous?: SubsidyStatusHistoryCreateNestedManyWithoutPrevious_statusInput;
 }

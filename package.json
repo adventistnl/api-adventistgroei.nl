@@ -28,7 +28,8 @@
     "seed:permissions": "ts-node -r tsconfig-paths/register src/scripts/seed-permissions.ts",
     "seed:roles": "ts-node -r tsconfig-paths/register src/scripts/seed-roles.ts",
     "seed:users": "ts-node -r tsconfig-paths/register src/scripts/seed-users.ts",
-    "seed:all": "pnpm run seed:permissions && pnpm run seed:roles && pnpm run seed:users"
+    "seed:subsidy-status": "ts-node -r tsconfig-paths/register src/scripts/seed-subsidy-status.ts",
+    "seed:all": "pnpm run seed:permissions && pnpm run seed:roles && pnpm run seed:users && pnpm run seed:subsidy-status"
   },
   "dependencies": {
     "@nestjs/apollo": "^13.1.0",

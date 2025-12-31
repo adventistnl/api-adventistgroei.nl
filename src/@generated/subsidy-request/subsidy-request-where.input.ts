@@ -15,6 +15,7 @@ import { SubsidyStatusScalarRelationFilter } from '../subsidy-status/subsidy-sta
 import { SubsidyRequestItemListRelationFilter } from '../subsidy-request-item/subsidy-request-item-list-relation-filter.input';
 import { ProjectScalarRelationFilter } from '../project/project-scalar-relation-filter.input';
 import { SubsidyReceiptListRelationFilter } from '../subsidy-receipt/subsidy-receipt-list-relation-filter.input';
+import { SubsidyStatusHistoryListRelationFilter } from '../subsidy-status-history/subsidy-status-history-list-relation-filter.input';
 
 @InputType()
 export class SubsidyRequestWhereInput {
@@ -124,4 +125,8 @@ export class SubsidyRequestWhereInput {
     @Field(() => SubsidyReceiptListRelationFilter, {nullable:true})
     @Type(() => SubsidyReceiptListRelationFilter)
     subsidy_receipts?: SubsidyReceiptListRelationFilter;
+
+    @Field(() => SubsidyStatusHistoryListRelationFilter, {nullable:true})
+    @Type(() => SubsidyStatusHistoryListRelationFilter)
+    status_history?: SubsidyStatusHistoryListRelationFilter;
 }
