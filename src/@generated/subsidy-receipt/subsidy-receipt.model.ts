@@ -5,6 +5,7 @@ import { GraphQLDecimal } from 'prisma-graphql-type-decimal';
 import { Decimal } from '@prisma/client/runtime/library';
 import { ProjectActivity } from '../project-activity/project-activity.model';
 import { SubsidyRequest } from '../subsidy-request/subsidy-request.model';
+import { SubsidyRequestItem } from '../subsidy-request-item/subsidy-request-item.model';
 
 @ObjectType()
 export class SubsidyReceipt {
@@ -16,13 +17,34 @@ export class SubsidyReceipt {
     project_activities_id!: string;
 
     @Field(() => String, {nullable:false})
-    file_path!: string;
+    file_url!: string;
 
-    @Field(() => GraphQLDecimal, {nullable:false})
-    amount!: Decimal;
+    @Field(() => String, {nullable:true})
+    drive_file_id!: string | null;
 
-    @Field(() => Boolean, {nullable:false})
+    @Field(() => String, {nullable:false})
+    filename!: string;
+
+    @Field(() => String, {nullable:false})
+    type!: string;
+
+    @Field(() => GraphQLDecimal, {nullable:true})
+    amount!: Decimal | null;
+
+    @Field(() => Boolean, {defaultValue:false,nullable:false})
     approved!: boolean;
+
+    @Field(() => Boolean, {defaultValue:false,nullable:false})
+    is_validated!: boolean;
+
+    @Field(() => Date, {nullable:true})
+    validated_at!: Date | null;
+
+    @Field(() => String, {nullable:true})
+    validated_by!: string | null;
+
+    @Field(() => String, {nullable:false})
+    uploaded_by!: string;
 
     @Field(() => Date, {nullable:false})
     created_at!: Date;
@@ -48,9 +70,15 @@ export class SubsidyReceipt {
     @Field(() => String, {nullable:true})
     subsidy_request_id!: string | null;
 
+    @Field(() => String, {nullable:true})
+    subsidy_request_item_id!: string | null;
+
     @Field(() => ProjectActivity, {nullable:false})
     project_activity?: ProjectActivity;
 
     @Field(() => SubsidyRequest, {nullable:true})
     subsidy_request?: SubsidyRequest | null;
+
+    @Field(() => SubsidyRequestItem, {nullable:true})
+    subsidy_request_item?: SubsidyRequestItem | null;
 }

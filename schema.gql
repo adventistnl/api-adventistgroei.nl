@@ -205,6 +205,11 @@ enum PermissionResolverName {
   deleteActivityDocument
   validateActivityDocument
   getActivityDocuments
+  uploadSubsidyReceipt
+  downloadSubsidyReceipt
+  deleteSubsidyReceipt
+  validateSubsidyReceipt
+  getSubsidyReceipts
 }
 
 enum PermissionGroup {
@@ -225,6 +230,7 @@ enum PermissionGroup {
   SETTING
   SUBSIDY_REQUEST
   SUBSIDY_STATUS
+  SUBSIDY_RECEIPT
   EMAIL_SEND
   INVITE
   ANNUAL_BUDGET
@@ -391,9 +397,16 @@ type VoluntariesOnProjects {
 type SubsidyReceipt {
   id: ID!
   project_activities_id: String!
-  file_path: String!
-  amount: Decimal!
+  file_url: String!
+  drive_file_id: String
+  filename: String!
+  type: String!
+  amount: Decimal
   approved: Boolean!
+  is_validated: Boolean!
+  validated_at: DateTime
+  validated_by: String
+  uploaded_by: String!
   created_at: DateTime!
   updated_at: DateTime!
   created_by: String!
@@ -402,8 +415,10 @@ type SubsidyReceipt {
   deleted_at: DateTime
   deleted_by: String
   subsidy_request_id: String
+  subsidy_request_item_id: String
   project_activity: ProjectActivity!
   subsidy_request: SubsidyRequest
+  subsidy_request_item: SubsidyRequestItem
 }
 
 """An arbitrary-precision Decimal type"""
@@ -446,6 +461,10 @@ type SubsidyRequest {
   _count: SubsidyRequestCount!
 }
 
+type SubsidyRequestItemCount {
+  subsidy_receipts: Int!
+}
+
 type SubsidyRequestItem {
   id: ID!
   subsidy_request_id: String!
@@ -460,6 +479,8 @@ type SubsidyRequestItem {
   deleted_by: String
   subsidy_request: SubsidyRequest!
   project_activity: ProjectActivity!
+  subsidy_receipts: [SubsidyReceipt!]
+  _count: SubsidyRequestItemCount!
 }
 
 type ActivityDocuments {
@@ -1536,6 +1557,10 @@ type Query {
   projectActivityLogs(activityId: ID!): [ProjectActivityLog!]!
   downloadActivityDocument(id: ID!): String!
   getActivityDocuments(activityId: ID!): [ActivityDocuments!]!
+  downloadSubsidyReceipt(id: ID!): String!
+  getSubsidyReceipts(input: GetSubsidyReceiptsDto!): [SubsidyReceipt!]!
+  getSubsidyReceiptsByRequestId(subsidyRequestId: ID!): [SubsidyReceipt!]!
+  getSubsidyReceiptsByItemId(subsidyRequestItemId: ID!): [SubsidyReceipt!]!
   annualBudgets(where: AnnualBudgetWhereInput, orderBy: [AnnualBudgetOrderByWithRelationInput!], cursor: AnnualBudgetWhereUniqueInput, take: Int, skip: Int, distinct: [AnnualBudgetScalarFieldEnum!]): [AnnualBudget!]!
   annualBudget(id: String!): AnnualBudget
   budgetKPIs(year: Int!, institutionId: String!): BudgetKPIs!
@@ -1544,6 +1569,12 @@ type Query {
   entityDistribution(year: Int!): [EntityDistribution!]!
   budgetDistribution(year: Int!, institutionId: String!): BudgetDistribution!
   institutionalDepartmentsKPIs(year: Int!, institutionId: String!): InstitutionalDepartmentsKPIs!
+}
+
+input GetSubsidyReceiptsDto {
+  subsidy_request_id: String
+  subsidy_request_item_id: String
+  project_activity_id: String
 }
 
 input AnnualBudgetWhereInput {
@@ -2212,6 +2243,7 @@ input SubsidyRequestItemWhereInput {
   deleted_by: StringNullableFilter
   subsidy_request: SubsidyRequestScalarRelationFilter
   project_activity: ProjectActivityScalarRelationFilter
+  subsidy_receipts: SubsidyReceiptListRelationFilter
 }
 
 input SubsidyRequestScalarRelationFilter {
@@ -2582,9 +2614,16 @@ input SubsidyReceiptWhereInput {
   NOT: [SubsidyReceiptWhereInput!]
   id: StringFilter
   project_activities_id: StringFilter
-  file_path: StringFilter
-  amount: DecimalFilter
+  file_url: StringFilter
+  drive_file_id: StringNullableFilter
+  filename: StringFilter
+  type: StringFilter
+  amount: DecimalNullableFilter
   approved: BoolFilter
+  is_validated: BoolFilter
+  validated_at: DateTimeNullableFilter
+  validated_by: StringNullableFilter
+  uploaded_by: StringFilter
   created_at: DateTimeFilter
   updated_at: DateTimeFilter
   created_by: StringFilter
@@ -2593,13 +2632,20 @@ input SubsidyReceiptWhereInput {
   deleted_at: DateTimeNullableFilter
   deleted_by: StringNullableFilter
   subsidy_request_id: StringNullableFilter
+  subsidy_request_item_id: StringNullableFilter
   project_activity: ProjectActivityScalarRelationFilter
   subsidy_request: SubsidyRequestNullableScalarRelationFilter
+  subsidy_request_item: SubsidyRequestItemNullableScalarRelationFilter
 }
 
 input SubsidyRequestNullableScalarRelationFilter {
   is: SubsidyRequestWhereInput
   isNot: SubsidyRequestWhereInput
+}
+
+input SubsidyRequestItemNullableScalarRelationFilter {
+  is: SubsidyRequestItemWhereInput
+  isNot: SubsidyRequestItemWhereInput
 }
 
 input ActivityDocumentsListRelationFilter {
@@ -3538,6 +3584,9 @@ type Mutation {
   uploadActivityDocument(input: UploadActivityDocumentDto!, file: Upload!): ActivityDocuments!
   deleteActivityDocument(id: ID!): ActivityDocuments!
   validateActivityDocument(id: ID!): ActivityDocuments!
+  uploadSubsidyReceipt(input: UploadSubsidyReceiptDto!, file: Upload!): SubsidyReceipt!
+  deleteSubsidyReceipt(id: ID!): SubsidyReceipt!
+  validateSubsidyReceipt(id: ID!): SubsidyReceipt!
   inviteUser(data: InviteUserDto!): InviteModel!
   validateInviteToken(token: String!): ValidateOutputModel!
 
@@ -3963,6 +4012,14 @@ input UploadActivityDocumentDto {
 
 """The `Upload` scalar type represents a file upload."""
 scalar Upload
+
+input UploadSubsidyReceiptDto {
+  subsidy_request_id: String!
+  subsidy_request_item_id: String
+  project_activity_id: String!
+  type: String!
+  amount: Float
+}
 
 input InviteUserDto {
   role_ids: [String!]!

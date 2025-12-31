@@ -305,8 +305,9 @@ export class GoogleDriveService {
 
   /**
    * Busca uma pasta existente ou cria uma nova
+   * Método público para permitir criação de pastas customizadas
    */
-  private async findOrCreateFolder(name: string, parentId?: string): Promise<string> {
+  async findOrCreateFolder(name: string, parentId?: string): Promise<string> {
     try {
       // Buscar pasta existente
       const query = parentId

@@ -2,11 +2,11 @@ import { Field } from '@nestjs/graphql';
 import { InputType } from '@nestjs/graphql';
 import { Type } from 'class-transformer';
 import { StringWithAggregatesFilter } from '../prisma/string-with-aggregates-filter.input';
-import { DecimalWithAggregatesFilter } from '../prisma/decimal-with-aggregates-filter.input';
-import { BoolWithAggregatesFilter } from '../prisma/bool-with-aggregates-filter.input';
-import { DateTimeWithAggregatesFilter } from '../prisma/date-time-with-aggregates-filter.input';
-import { DateTimeNullableWithAggregatesFilter } from '../prisma/date-time-nullable-with-aggregates-filter.input';
 import { StringNullableWithAggregatesFilter } from '../prisma/string-nullable-with-aggregates-filter.input';
+import { DecimalNullableWithAggregatesFilter } from '../prisma/decimal-nullable-with-aggregates-filter.input';
+import { BoolWithAggregatesFilter } from '../prisma/bool-with-aggregates-filter.input';
+import { DateTimeNullableWithAggregatesFilter } from '../prisma/date-time-nullable-with-aggregates-filter.input';
+import { DateTimeWithAggregatesFilter } from '../prisma/date-time-with-aggregates-filter.input';
 
 @InputType()
 export class SubsidyReceiptScalarWhereWithAggregatesInput {
@@ -30,14 +30,35 @@ export class SubsidyReceiptScalarWhereWithAggregatesInput {
     project_activities_id?: StringWithAggregatesFilter;
 
     @Field(() => StringWithAggregatesFilter, {nullable:true})
-    file_path?: StringWithAggregatesFilter;
+    file_url?: StringWithAggregatesFilter;
 
-    @Field(() => DecimalWithAggregatesFilter, {nullable:true})
-    @Type(() => DecimalWithAggregatesFilter)
-    amount?: DecimalWithAggregatesFilter;
+    @Field(() => StringNullableWithAggregatesFilter, {nullable:true})
+    drive_file_id?: StringNullableWithAggregatesFilter;
+
+    @Field(() => StringWithAggregatesFilter, {nullable:true})
+    filename?: StringWithAggregatesFilter;
+
+    @Field(() => StringWithAggregatesFilter, {nullable:true})
+    type?: StringWithAggregatesFilter;
+
+    @Field(() => DecimalNullableWithAggregatesFilter, {nullable:true})
+    @Type(() => DecimalNullableWithAggregatesFilter)
+    amount?: DecimalNullableWithAggregatesFilter;
 
     @Field(() => BoolWithAggregatesFilter, {nullable:true})
     approved?: BoolWithAggregatesFilter;
+
+    @Field(() => BoolWithAggregatesFilter, {nullable:true})
+    is_validated?: BoolWithAggregatesFilter;
+
+    @Field(() => DateTimeNullableWithAggregatesFilter, {nullable:true})
+    validated_at?: DateTimeNullableWithAggregatesFilter;
+
+    @Field(() => StringNullableWithAggregatesFilter, {nullable:true})
+    validated_by?: StringNullableWithAggregatesFilter;
+
+    @Field(() => StringWithAggregatesFilter, {nullable:true})
+    uploaded_by?: StringWithAggregatesFilter;
 
     @Field(() => DateTimeWithAggregatesFilter, {nullable:true})
     created_at?: DateTimeWithAggregatesFilter;
@@ -62,4 +83,7 @@ export class SubsidyReceiptScalarWhereWithAggregatesInput {
 
     @Field(() => StringNullableWithAggregatesFilter, {nullable:true})
     subsidy_request_id?: StringNullableWithAggregatesFilter;
+
+    @Field(() => StringNullableWithAggregatesFilter, {nullable:true})
+    subsidy_request_item_id?: StringNullableWithAggregatesFilter;
 }

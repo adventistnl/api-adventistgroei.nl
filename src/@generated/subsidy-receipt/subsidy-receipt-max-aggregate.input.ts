@@ -11,13 +11,34 @@ export class SubsidyReceiptMaxAggregateInput {
     project_activities_id?: true;
 
     @Field(() => Boolean, {nullable:true})
-    file_path?: true;
+    file_url?: true;
+
+    @Field(() => Boolean, {nullable:true})
+    drive_file_id?: true;
+
+    @Field(() => Boolean, {nullable:true})
+    filename?: true;
+
+    @Field(() => Boolean, {nullable:true})
+    type?: true;
 
     @Field(() => Boolean, {nullable:true})
     amount?: true;
 
     @Field(() => Boolean, {nullable:true})
     approved?: true;
+
+    @Field(() => Boolean, {nullable:true})
+    is_validated?: true;
+
+    @Field(() => Boolean, {nullable:true})
+    validated_at?: true;
+
+    @Field(() => Boolean, {nullable:true})
+    validated_by?: true;
+
+    @Field(() => Boolean, {nullable:true})
+    uploaded_by?: true;
 
     @Field(() => Boolean, {nullable:true})
     created_at?: true;
@@ -42,4 +63,7 @@ export class SubsidyReceiptMaxAggregateInput {
 
     @Field(() => Boolean, {nullable:true})
     subsidy_request_id?: true;
+
+    @Field(() => Boolean, {nullable:true})
+    subsidy_request_item_id?: true;
 }

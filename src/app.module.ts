@@ -18,6 +18,7 @@ import { LoggerService } from './services/logger.service';
 import { LoggingInterceptor } from './interceptors/logging.interceptor';
 import { GlobalExceptionFilter } from './filters/global-exception.filter';
 import { ActivityDocumentsController } from './controllers/activity-documents.controller';
+import { SubsidyReceiptController } from './controllers/subsidy-receipt.controller';
 
 const JWT_SECRET = process.env.JWT_SECRET;
 
@@ -45,7 +46,7 @@ const JWT_SECRET = process.env.JWT_SECRET;
       signOptions: { expiresIn: '30d' },
     }),
   ],
-  controllers: [ActivityDocumentsController],
+  controllers: [ActivityDocumentsController, SubsidyReceiptController],
   providers: [
     // Logging system
     LoggerService,

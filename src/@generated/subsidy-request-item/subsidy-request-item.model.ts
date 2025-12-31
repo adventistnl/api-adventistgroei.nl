@@ -5,6 +5,8 @@ import { GraphQLDecimal } from 'prisma-graphql-type-decimal';
 import { Decimal } from '@prisma/client/runtime/library';
 import { SubsidyRequest } from '../subsidy-request/subsidy-request.model';
 import { ProjectActivity } from '../project-activity/project-activity.model';
+import { SubsidyReceipt } from '../subsidy-receipt/subsidy-receipt.model';
+import { SubsidyRequestItemCount } from './subsidy-request-item-count.output';
 
 @ObjectType()
 export class SubsidyRequestItem {
@@ -47,4 +49,10 @@ export class SubsidyRequestItem {
 
     @Field(() => ProjectActivity, {nullable:false})
     project_activity?: ProjectActivity;
+
+    @Field(() => [SubsidyReceipt], {nullable:true})
+    subsidy_receipts?: Array<SubsidyReceipt>;
+
+    @Field(() => SubsidyRequestItemCount, {nullable:false})
+    _count?: SubsidyRequestItemCount;
 }

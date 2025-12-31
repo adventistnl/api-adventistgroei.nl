@@ -17,6 +17,7 @@ export * from './project-voluntary.repository';
 export * from './project-activity.repository';
 export * from './project-activity-log.repository';
 export * from './activity-documents.repository';
+export * from './subsidy-receipt.repository';
 export * from './invite.repository';
 export * from './subsidy-status.repository';
 export * from './annual-budget.repository';

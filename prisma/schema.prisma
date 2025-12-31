@@ -161,6 +161,11 @@ enum PermissionResolverName {
   deleteActivityDocument
   validateActivityDocument
   getActivityDocuments
+  uploadSubsidyReceipt
+  downloadSubsidyReceipt
+  deleteSubsidyReceipt
+  validateSubsidyReceipt
+  getSubsidyReceipts
 }
 
 enum PermissionGroup {
@@ -181,6 +186,7 @@ enum PermissionGroup {
   SETTING
   SUBSIDY_REQUEST
   SUBSIDY_STATUS
+  SUBSIDY_RECEIPT
   EMAIL_SEND
   INVITE
   ANNUAL_BUDGET
@@ -654,6 +660,7 @@ model SubsidyRequestItem {
   is_deleted           Boolean         @default(false)
   deleted_at           DateTime?
   deleted_by           String?
+  subsidy_receipts     SubsidyReceipt[]
 
   @@index([subsidy_request_id])
   @@index([project_activity_id])
@@ -739,9 +746,16 @@ model SubsidyReceipt {
   id                    String          @id @default(uuid())
   project_activities_id String
   project_activity      ProjectActivity @relation(fields: [project_activities_id], references: [id])
-  file_path             String
-  amount                Decimal
-  approved              Boolean
+  file_url              String          // Google Drive public URL
+  drive_file_id         String?         // Google Drive file ID
+  filename              String          // Original filename
+  type                  String          // image or pdf
+  amount                Decimal?
+  approved              Boolean         @default(false)
+  is_validated          Boolean         @default(false)
+  validated_at          DateTime?
+  validated_by          String?
+  uploaded_by           String
   created_at            DateTime        @default(now())
   updated_at            DateTime        @updatedAt
   created_by            String
@@ -751,6 +765,8 @@ model SubsidyReceipt {
   deleted_by            String?
   subsidy_request_id    String?
   subsidy_request       SubsidyRequest? @relation(fields: [subsidy_request_id], references: [id])
+  subsidy_request_item_id String?
+  subsidy_request_item    SubsidyRequestItem? @relation(fields: [subsidy_request_item_id], references: [id])
 }
 
 model SubsidyStatus {

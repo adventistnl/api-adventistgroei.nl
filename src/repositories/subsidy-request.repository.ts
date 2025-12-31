@@ -69,7 +69,16 @@ export class SubsidyRequestRepository {
   }
 
   async update(id: string, data: SubsidyRequestUpdateDto, userId: string): Promise<SubsidyRequest> {
-    const { items, ...updateData } = data;
+    const {
+      items,
+      institution_id,
+      department_id,
+      church_id,
+      subsidy_status_id,
+      requester_id,
+      notes, // notes is in DTO but not in Prisma model - extract to avoid error
+      ...updateData
+    } = data;
 
     // Atualizar SubsidyRequest
     await this.prisma.subsidyRequest.update({
@@ -77,6 +86,12 @@ export class SubsidyRequestRepository {
       data: {
         ...updateData,
         updated_by: userId,
+        // Use Prisma connect syntax for relations
+        ...(institution_id && { institution: { connect: { id: institution_id } } }),
+        ...(department_id && { department: { connect: { id: department_id } } }),
+        ...(church_id && { church: { connect: { id: church_id } } }),
+        ...(subsidy_status_id && { subsidy_status: { connect: { id: subsidy_status_id } } }),
+        ...(requester_id && { requester: { connect: { id: requester_id } } }),
       },
     });
 

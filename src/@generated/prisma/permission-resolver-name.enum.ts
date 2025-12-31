@@ -115,7 +115,12 @@ export enum PermissionResolverName {
     downloadActivityDocument = "downloadActivityDocument",
     deleteActivityDocument = "deleteActivityDocument",
     validateActivityDocument = "validateActivityDocument",
-    getActivityDocuments = "getActivityDocuments"
+    getActivityDocuments = "getActivityDocuments",
+    uploadSubsidyReceipt = "uploadSubsidyReceipt",
+    downloadSubsidyReceipt = "downloadSubsidyReceipt",
+    deleteSubsidyReceipt = "deleteSubsidyReceipt",
+    validateSubsidyReceipt = "validateSubsidyReceipt",
+    getSubsidyReceipts = "getSubsidyReceipts"
 }
 
 
