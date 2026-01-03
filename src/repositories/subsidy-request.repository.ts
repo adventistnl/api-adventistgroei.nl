@@ -40,6 +40,51 @@ export class SubsidyRequestRepository {
       throw new CustomGraphQLError(`One or more ProjectActivities do not exist or have been deleted.`, ErrorCode.NOT_FOUND, 404);
     }
 
+    // Check for duplicate subsidy requests
+    const existingSubsidies = await this.prisma.subsidyRequest.findMany({
+      where: {
+        is_deleted: false,
+        items: {
+          some: {
+            project_activity_id: { in: activityIds },
+            is_deleted: false
+          }
+        }
+      },
+      include: {
+        items: {
+          where: {
+            project_activity_id: { in: activityIds },
+            is_deleted: false
+          },
+          include: {
+            project_activity: true
+          }
+        }
+      }
+    });
+
+    if (existingSubsidies.length > 0) {
+      const duplicateActivities = existingSubsidies
+        .flatMap(s => s.items)
+        .map(item => item.project_activity.name);
+      
+      throw new CustomGraphQLError(
+        `As seguintes atividades já possuem pedido de subsídio: ${duplicateActivities.join(', ')}`,
+        ErrorCode.BAD_REQUEST,
+        400
+      );
+    }
+
+
+    console.log('🔍 [SubsidyRequestRepository] Creating subsidy with:', {
+      institution_id,
+      department_id,
+      church_id,
+      project_id,
+      requester_id
+    });
+
     // Criar SubsidyRequest
     const subsidyRequest = await this.prisma.subsidyRequest.create({
       data: {

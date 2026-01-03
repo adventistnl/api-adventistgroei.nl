@@ -15,6 +15,8 @@ export class ProjectActivityRepository {
 
   async create(data: ProjectActivityCreateDto, userId: string): Promise<ProjectActivity> {
     try {
+      console.log('🔍 [ActivityRepository] Creating activity with is_subsidized:', data.is_subsidized);
+      
       // Ensure current user is in assignee_ids if not already present
       let assigneeIds = data.assignee_ids || [];
       if (!assigneeIds.includes(userId)) {

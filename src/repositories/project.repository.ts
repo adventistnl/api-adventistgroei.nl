@@ -109,6 +109,10 @@ export class ProjectRepository {
             budget_amount: new Decimal(activity.budget_amount),
             deadline: new Date(activity.deadline),
             tags: activity.tags,
+            custom_tags: activity.custom_tags || [],
+            status: activity.status,
+            priority: activity.priority,
+            is_subsidized: activity.is_subsidized ?? false,
             created_by: userId,
             updated_by: userId,
             // Create assignees (current user + any additional assignees)
