@@ -97,9 +97,17 @@ export class ProjectRepository {
       for (const activity of data.activities) {
         // Ensure current user is in assignee_ids if not already present
         let assigneeIds = activity.assignee_ids || [];
+        
+        console.log('📊 Activity received:', activity.name);
+        console.log('📊 assignee_ids from frontend:', activity.assignee_ids);
+        console.log('📊 userId (creator):', userId);
+        
+        // Always ensure creator is included
         if (!assigneeIds.includes(userId)) {
           assigneeIds = [userId, ...assigneeIds];
         }
+        
+        console.log('📊 Final assigneeIds to create:', assigneeIds);
 
         const createdActivity = await this.prisma.projectActivity.create({
           data: {
