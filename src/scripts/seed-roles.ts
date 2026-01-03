@@ -71,6 +71,7 @@ const roles = [
       { key_code: 'SUBSIDY_REQUEST_DELETE', is_essential: true },
       { key_code: 'SUBSIDY_REQUEST_APPROVE', is_essential: true },
       { key_code: 'SUBSIDY_REQUEST_REJECT', is_essential: true },
+      { key_code: 'SPECIFIC_PROJECT_KPIS_ACCESS', is_essential: true },
     ],
   },
   {

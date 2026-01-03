@@ -154,6 +154,7 @@ enum PermissionResolverName {
   projectsByDepartment
   subsidyStatusDistribution
   projectsTimeline
+  getSpecificProjectKPIs
   departmentKPIs
   departmentActivityData
   departmentBudgetTimeline

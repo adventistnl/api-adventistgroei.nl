@@ -198,6 +198,7 @@ enum PermissionResolverName {
   projectsByDepartment
   subsidyStatusDistribution
   projectsTimeline
+  getSpecificProjectKPIs
   departmentKPIs
   departmentActivityData
   departmentBudgetTimeline
@@ -716,6 +717,7 @@ type Project {
   subsidies: [SubsidyRequest!]
   special_projects: [SpecialProjects!]
   _count: ProjectCount!
+  kpis: ProjectKPIsDto!
 }
 
 """Idioma preferencial da instituição"""
@@ -1431,6 +1433,22 @@ type ProjectsTimeline {
   created: Int!
   completed: Int!
   budget: Float!
+}
+
+type ProjectKPIsDto {
+  totalActivities: Int!
+  completedActivities: Int!
+  inProgressActivities: Int!
+  completionRate: Int!
+  projectBudget: Float!
+  allocatedBudget: Float!
+  budgetUtilization: Int!
+  subsidizedActivities: Int!
+  subsidyRate: Int!
+  subsidyRequestsCount: Int!
+  daysRemaining: Int!
+  endDate: DateTime!
+  projectStatus: String!
 }
 
 type DeleteBudgetResponse {

@@ -109,6 +109,7 @@ export enum PermissionResolverName {
     projectsByDepartment = "projectsByDepartment",
     subsidyStatusDistribution = "subsidyStatusDistribution",
     projectsTimeline = "projectsTimeline",
+    getSpecificProjectKPIs = "getSpecificProjectKPIs",
     departmentKPIs = "departmentKPIs",
     departmentActivityData = "departmentActivityData",
     departmentBudgetTimeline = "departmentBudgetTimeline",
