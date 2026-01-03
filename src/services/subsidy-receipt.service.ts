@@ -6,6 +6,7 @@ import { GoogleDriveService } from './google-drive.service';
 import { PrismaService } from './prisma.service';
 import { FileUpload, DownloadResult } from './activity-documents.service';
 import { Readable } from 'stream';
+import { SubsidyRequestService } from './subsidy-request.service';
 
 export interface UploadSubsidyReceiptInput {
   subsidy_request_id: string;
@@ -21,6 +22,7 @@ export class SubsidyReceiptService {
     private readonly repository: SubsidyReceiptRepository,
     private readonly driveService: GoogleDriveService,
     private readonly prisma: PrismaService,
+    private readonly subsidyRequestService: SubsidyRequestService,
   ) {}
 
   /**
@@ -75,7 +77,6 @@ export class SubsidyReceiptService {
 
       // 4. Extrair dados da hierarquia
       const projectTitle = subsidyRequest.project.title;
-      const activityName = activity.name;
 
       // Department pode vir da relação direta do projeto ou do subsidy request
       const department = subsidyRequest.department || subsidyRequest.project.department;
@@ -241,7 +242,13 @@ export class SubsidyReceiptService {
       throw new CustomGraphQLError('Recibo não encontrado', ErrorCode.NOT_FOUND, 404);
     }
 
-    return this.repository.validateReceipt(id, userId);
+    const updatedReceipt = await this.repository.validateReceipt(id, userId);
+
+    if (updatedReceipt.subsidy_request_id) {
+      await this.subsidyRequestService.recalculateStatus(updatedReceipt.subsidy_request_id, userId);
+    }
+
+    return updatedReceipt;
   }
 
   /**
@@ -254,7 +261,13 @@ export class SubsidyReceiptService {
       throw new CustomGraphQLError('Recibo não encontrado', ErrorCode.NOT_FOUND, 404);
     }
 
-    return this.repository.rejectReceipt(id, userId, reason);
+    const updatedReceipt = await this.repository.rejectReceipt(id, userId, reason);
+
+    if (updatedReceipt.subsidy_request_id) {
+      await this.subsidyRequestService.recalculateStatus(updatedReceipt.subsidy_request_id, userId);
+    }
+
+    return updatedReceipt;
   }
 
   /**

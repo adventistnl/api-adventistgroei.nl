@@ -174,4 +174,69 @@ export class SubsidyRequestService {
 
     return result;
   }
+
+  async recalculateStatus(id: string, userId: string): Promise<void> {
+    const subsidyRequest = await this.subsidyRequestRepository.findById(id);
+    if (!subsidyRequest) return;
+
+    // Fetch all receipts
+    const receipts = await this.prisma.subsidyReceipt.findMany({
+      where: { 
+        subsidy_request_id: id,
+        is_deleted: false 
+      }
+    });
+
+    const totalDocs = receipts.length;
+    if (totalDocs === 0) return; // No documents, do nothing
+
+    const approvedDocs = receipts.filter(r => r.is_validated && r.approved).length;
+    const rejectedDocs = receipts.filter(r => r.is_validated && !r.approved).length;
+    const pendingDocs = receipts.filter(r => !r.is_validated).length;
+
+    let targetStatusName = 'PENDING';
+
+    if (approvedDocs === totalDocs) {
+      targetStatusName = 'APPROVED';
+    } else if (rejectedDocs === totalDocs) {
+      targetStatusName = 'REJECTED';
+    } else if (pendingDocs < totalDocs) {
+      // Partial validation or mixed results (e.g. some approved, some rejected)
+      // "In Review": If not 100% approved and not 100% rejected, and at least some processing started
+      targetStatusName = 'IN_REVIEW';
+    } else {
+      // All pending
+      targetStatusName = 'PENDING';
+    }
+
+    // Fetch Status ID
+    const status = await this.prisma.subsidyStatus.findFirst({
+      where: { name: targetStatusName, is_deleted: false }
+    });
+
+    if (!status) {
+      console.warn(`[recalculateStatus] Status ${targetStatusName} not found`);
+      return;
+    }
+
+    // Check if update is needed
+    if (subsidyRequest.subsidy_statuses_id !== status.id) {
+       console.log(`🤖 Auto-updating subsidy ${id} status to ${targetStatusName}`);
+
+       // Special method for APPROVE vs UPDATE?
+       // If APPROVED, use approve method? 
+       // approve method sets approved_amount. If we auto-approve, maybe we should set it.
+       // However, to keep it simple and safe, we use update method first.
+       
+       const updateData: SubsidyRequestUpdateDto = {
+         subsidy_status_id: status.id,
+         notes: `Status atualizado automaticamente para ${targetStatusName} baseado na validação de documentos.`
+       };
+
+       // If APPROVED, we might might want to auto-set approved amount if it's not set?
+       // For now, let's strictly follow status update logic.
+
+       await this.update(id, updateData, userId);
+    }
+  }
 }
