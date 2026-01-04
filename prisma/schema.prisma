@@ -168,6 +168,10 @@ enum PermissionResolverName {
   deleteSubsidyReceipt
   validateSubsidyReceipt
   getSubsidyReceipts
+  subsidyKPIs
+  subsidyByDepartment
+  subsidyByMonth
+  subsidyByStatus
 }
 
 enum PermissionGroup {

@@ -72,6 +72,10 @@ const roles = [
       { key_code: 'SUBSIDY_REQUEST_APPROVE', is_essential: true },
       { key_code: 'SUBSIDY_REQUEST_REJECT', is_essential: true },
       { key_code: 'SPECIFIC_PROJECT_KPIS_ACCESS', is_essential: true },
+      { key_code: 'SUBSIDY_KPIS_ACCESS', is_essential: true },
+      { key_code: 'SUBSIDY_BY_DEPARTMENT_ACCESS', is_essential: true },
+      { key_code: 'SUBSIDY_BY_MONTH_ACCESS', is_essential: true },
+      { key_code: 'SUBSIDY_BY_STATUS_ACCESS', is_essential: true },
     ],
   },
   {
@@ -151,6 +155,10 @@ const roles = [
       { key_code: 'SUBSIDY_REQUEST_DELETE', is_essential: true },
       { key_code: 'SUBSIDY_REQUEST_APPROVE', is_essential: true },
       { key_code: 'SUBSIDY_REQUEST_REJECT', is_essential: true },
+      { key_code: 'SUBSIDY_KPIS_ACCESS', is_essential: true },
+      { key_code: 'SUBSIDY_BY_DEPARTMENT_ACCESS', is_essential: true },
+      { key_code: 'SUBSIDY_BY_MONTH_ACCESS', is_essential: true },
+      { key_code: 'SUBSIDY_BY_STATUS_ACCESS', is_essential: true },
     ],
   },
   {
@@ -211,6 +219,10 @@ const roles = [
       { key_code: 'SUBSIDY_REQUEST_DELETE', is_essential: true },
       { key_code: 'SUBSIDY_REQUEST_APPROVE', is_essential: true },
       { key_code: 'SUBSIDY_REQUEST_REJECT', is_essential: true },
+      { key_code: 'SUBSIDY_KPIS_ACCESS', is_essential: true },
+      { key_code: 'SUBSIDY_BY_DEPARTMENT_ACCESS', is_essential: true },
+      { key_code: 'SUBSIDY_BY_MONTH_ACCESS', is_essential: true },
+      { key_code: 'SUBSIDY_BY_STATUS_ACCESS', is_essential: true },
     ],
   },
   {

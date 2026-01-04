@@ -127,6 +127,10 @@ const permissionsEnabledToClient = [
   { name: 'read department KPIs', description: 'Access to department KPIs', resolver_name: 'departmentKPIs' as PermissionResolverName, group: 'DEPARTMENT' as PermissionGroup, key_code: 'DEPARTMENT_KPIS_ACCESS', disabled_to_client: false },
   { name: 'read department activity data', description: 'Access to department activity data', resolver_name: 'departmentActivityData' as PermissionResolverName, group: 'DEPARTMENT' as PermissionGroup, key_code: 'DEPARTMENT_ACTIVITY_DATA_ACCESS', disabled_to_client: false },
   { name: 'read department budget timeline', description: 'Access to department budget timeline', resolver_name: 'departmentBudgetTimeline' as PermissionResolverName, group: 'DEPARTMENT' as PermissionGroup, key_code: 'DEPARTMENT_BUDGET_TIMELINE_ACCESS', disabled_to_client: false },
+  { name: 'read subsidy KPIs', description: 'Access to subsidy KPIs', resolver_name: 'subsidyKPIs' as PermissionResolverName, group: 'SUBSIDY_REQUEST' as PermissionGroup, key_code: 'SUBSIDY_KPIS_ACCESS', disabled_to_client: false },
+  { name: 'read subsidy by department', description: 'Access to subsidy by department data', resolver_name: 'subsidyByDepartment' as PermissionResolverName, group: 'SUBSIDY_REQUEST' as PermissionGroup, key_code: 'SUBSIDY_BY_DEPARTMENT_ACCESS', disabled_to_client: false },
+  { name: 'read subsidy by month', description: 'Access to subsidy by month data', resolver_name: 'subsidyByMonth' as PermissionResolverName, group: 'SUBSIDY_REQUEST' as PermissionGroup, key_code: 'SUBSIDY_BY_MONTH_ACCESS', disabled_to_client: false },
+  { name: 'read subsidy by status', description: 'Access to subsidy by status data', resolver_name: 'subsidyByStatus' as PermissionResolverName, group: 'SUBSIDY_REQUEST' as PermissionGroup, key_code: 'SUBSIDY_BY_STATUS_ACCESS', disabled_to_client: false },
 ];
 
 async function main() {

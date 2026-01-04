@@ -4,8 +4,10 @@ import { SubsidyRequestItemRepository } from '../repositories/subsidy-request-it
 import { SubsidyStatusHistoryRepository } from '../repositories/subsidy-status-history.repository';
 import { SubsidyRequest } from '../@generated/subsidy-request/subsidy-request.model';
 import { SubsidyRequestCreateDto, SubsidyRequestUpdateDto } from '../dto/subsidy-request.dto';
+import { SubsidyKPIs, SubsidyByDepartment, SubsidyByMonth } from '../dto/subsidy-analytics.dto';
 import { CustomGraphQLError, ErrorCode } from '../common/errors/custom-graphql-error';
 import { PrismaService } from './prisma.service';
+import { format } from 'date-fns';
 
 @Injectable()
 export class SubsidyRequestService {
@@ -238,5 +240,101 @@ export class SubsidyRequestService {
 
        await this.update(id, updateData, userId);
     }
+  }
+
+  // Analytics methods
+  async getSubsidyKPIs(institutionId?: string): Promise<SubsidyKPIs> {
+    const where = institutionId ? { institution_id: institutionId, is_deleted: false } : { is_deleted: false };
+    
+    const requests = await this.prisma.subsidyRequest.findMany({
+      where,
+      include: { subsidy_status: true }
+    });
+    
+    const totalRequests = requests.length;
+    const pendingRequests = requests.filter(r => r.subsidy_status?.name === 'PENDING').length;
+    const inReviewRequests = requests.filter(r => r.subsidy_status?.name === 'IN_REVIEW').length;
+    const approvedRequests = requests.filter(r => r.subsidy_status?.name === 'APPROVED').length;
+    const rejectedRequests = requests.filter(r => r.subsidy_status?.name === 'REJECTED').length;
+    
+    const totalRequested = requests.reduce((sum, r) => sum + parseFloat(r.total_budget.toString() || '0'), 0);
+    const totalApproved = requests
+      .filter(r => r.subsidy_status?.name === 'APPROVED')
+      .reduce((sum, r) => sum + parseFloat(r.approved_amount.toString() || '0'), 0);
+    
+    const approvalRate = totalRequests > 0 ? Math.round((approvedRequests / totalRequests) * 100) : 0;
+    
+    return {
+      totalRequests,
+      pendingRequests,
+      inReviewRequests,
+      approvedRequests,
+      rejectedRequests,
+      totalRequested,
+      totalApproved,
+      approvalRate
+    };
+  }
+
+  async getSubsidyByDepartment(institutionId?: string): Promise<SubsidyByDepartment[]> {
+    const requests = await this.prisma.subsidyRequest.findMany({
+      where: institutionId ? { institution_id: institutionId, is_deleted: false } : { is_deleted: false },
+      include: { department: true }
+    });
+    
+    const grouped: Record<string, Record<string, number>> = {};
+    
+    requests.forEach(request => {
+      const dept = request.department?.name || 'Other';
+      const month = format(new Date(request.created_at), 'MMM');
+      
+      if (!grouped[dept]) grouped[dept] = {};
+      if (!grouped[dept][month]) grouped[dept][month] = 0;
+      
+      grouped[dept][month] += parseFloat(request.total_budget.toString() || '0');
+    });
+    
+    const result: SubsidyByDepartment[] = [];
+    Object.entries(grouped).forEach(([dept, months]) => {
+      Object.entries(months).forEach(([month, amount]) => {
+        result.push({ department: dept, month, amount });
+      });
+    });
+    
+    return result;
+  }
+
+  async getSubsidyByMonth(institutionId?: string): Promise<SubsidyByMonth[]> {
+    const requests = await this.prisma.subsidyRequest.findMany({
+      where: institutionId ? { institution_id: institutionId, is_deleted: false } : { is_deleted: false },
+      include: { subsidy_status: true }
+    });
+    
+    const monthlyData: Record<string, { approved: number, pending: number, rejected: number }> = {};
+    
+    requests.forEach(request => {
+      const monthName = format(new Date(request.created_at), 'MMMM');
+      
+      if (!monthlyData[monthName]) {
+        monthlyData[monthName] = { approved: 0, pending: 0, rejected: 0 };
+      }
+      
+      const status = request.subsidy_status?.name;
+      if (status === 'APPROVED') monthlyData[monthName].approved++;
+      else if (status === 'PENDING') monthlyData[monthName].pending++;
+      else if (status === 'REJECTED') monthlyData[monthName].rejected++;
+    });
+    
+    const months = ['January', 'February', 'March', 'April', 'May', 'June', 
+                    'July', 'August', 'September', 'October', 'November', 'December'];
+    const currentMonth = new Date().getMonth();
+    
+    return months.slice(0, currentMonth + 1).map((month, index) => ({
+      month,
+      approved: monthlyData[month]?.approved || 0,
+      pending: monthlyData[month]?.pending || 0,
+      rejected: monthlyData[month]?.rejected || 0,
+      quarter: Math.floor(index / 3) + 1
+    }));
   }
 }

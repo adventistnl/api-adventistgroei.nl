@@ -1,6 +1,7 @@
 import { InputType, Field } from '@nestjs/graphql';
 import { IsOptional, IsString, IsEnum } from 'class-validator';
 import { ProjectActivityLogAction } from 'src/@generated/prisma/project-activity-log-action.enum';
+import { GraphQLJSON } from 'graphql-type-json';
 
 @InputType()
 export class ProjectActivityLogCreateDto {
@@ -31,7 +32,7 @@ export class ProjectActivityLogCreateDto {
   @IsString()
   new_value?: string;
 
-  @Field({ nullable: true })
+  @Field(() => GraphQLJSON, { nullable: true })
   @IsOptional()
   metadata?: any;
 }

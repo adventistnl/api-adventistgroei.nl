@@ -212,6 +212,10 @@ enum PermissionResolverName {
   deleteSubsidyReceipt
   validateSubsidyReceipt
   getSubsidyReceipts
+  subsidyKPIs
+  subsidyByDepartment
+  subsidyByMonth
+  subsidyByStatus
 }
 
 enum PermissionGroup {
@@ -1368,89 +1372,6 @@ type LinkContactResult {
   message: String
 }
 
-type DepartmentKPIs {
-  totalDepartments: Int!
-  activeDepartments: Int!
-  departmentsWithBudget: Int!
-  totalUsers: Int!
-  totalAllocatedBudget: Float!
-  totalSpentBudget: Float!
-  averageBudgetPerDepartment: Float!
-  averageUsersPerDepartment: Float!
-  totalProjects: Int!
-  openProjects: Int!
-  completedProjects: Int!
-}
-
-type DepartmentActivityData {
-  department_id: String!
-  department_name: String!
-  user_count: Int!
-  allocated_amount: Float!
-  spent_amount: Float!
-  project_count: Int!
-  open_projects: Int!
-  completed_projects: Int!
-  activity_count: Int!
-}
-
-type DepartmentBudgetTimeline {
-  month: String!
-  department_id: String!
-  department_name: String!
-  allocated: Float!
-  spent: Float!
-}
-
-type ProjectKPIs {
-  totalProjects: Int!
-  activeProjects: Int!
-  completedProjects: Int!
-  upcomingProjects: Int!
-  totalBudget: Float!
-  totalSubsidyRequests: Int!
-  totalSubsidyAmount: Float!
-  projectsWithVolunteers: Int!
-  averageBudgetPerProject: Float!
-}
-
-type ProjectsByDepartment {
-  department: String!
-  projects: Int!
-  budget_used: Float!
-  remaining_budget: Float!
-  annual_budget: Float
-}
-
-type SubsidyStatusDistribution {
-  status: String!
-  count: Int!
-  color: String!
-}
-
-type ProjectsTimeline {
-  month: String!
-  created: Int!
-  completed: Int!
-  budget: Float!
-}
-
-type ProjectKPIsDto {
-  totalActivities: Int!
-  completedActivities: Int!
-  inProgressActivities: Int!
-  completionRate: Int!
-  projectBudget: Float!
-  allocatedBudget: Float!
-  budgetUtilization: Int!
-  subsidizedActivities: Int!
-  subsidyRate: Int!
-  subsidyRequestsCount: Int!
-  daysRemaining: Int!
-  endDate: DateTime!
-  projectStatus: String!
-}
-
 type DeleteBudgetResponse {
   success: Boolean!
   message: String!
@@ -1552,6 +1473,120 @@ type InstitutionalDepartmentsKPIs {
   departmentsWithBudget: Int!
 }
 
+type DepartmentKPIs {
+  totalDepartments: Int!
+  activeDepartments: Int!
+  departmentsWithBudget: Int!
+  totalUsers: Int!
+  totalAllocatedBudget: Float!
+  totalSpentBudget: Float!
+  averageBudgetPerDepartment: Float!
+  averageUsersPerDepartment: Float!
+  totalProjects: Int!
+  openProjects: Int!
+  completedProjects: Int!
+}
+
+type DepartmentActivityData {
+  department_id: String!
+  department_name: String!
+  user_count: Int!
+  allocated_amount: Float!
+  spent_amount: Float!
+  project_count: Int!
+  open_projects: Int!
+  completed_projects: Int!
+  activity_count: Int!
+}
+
+type DepartmentBudgetTimeline {
+  month: String!
+  department_id: String!
+  department_name: String!
+  allocated: Float!
+  spent: Float!
+}
+
+type ProjectKPIs {
+  totalProjects: Int!
+  activeProjects: Int!
+  completedProjects: Int!
+  upcomingProjects: Int!
+  totalBudget: Float!
+  totalSubsidyRequests: Int!
+  totalSubsidyAmount: Float!
+  projectsWithVolunteers: Int!
+  averageBudgetPerProject: Float!
+}
+
+type ProjectsByDepartment {
+  department: String!
+  projects: Int!
+  budget_used: Float!
+  remaining_budget: Float!
+  annual_budget: Float
+}
+
+type SubsidyStatusDistribution {
+  status: String!
+  count: Int!
+  color: String!
+}
+
+type ProjectsTimeline {
+  month: String!
+  created: Int!
+  completed: Int!
+  budget: Float!
+}
+
+type ProjectKPIsDto {
+  totalActivities: Int!
+  completedActivities: Int!
+  inProgressActivities: Int!
+  completionRate: Int!
+  projectBudget: Float!
+  allocatedBudget: Float!
+  budgetUtilization: Int!
+  subsidizedActivities: Int!
+  subsidyRate: Int!
+  subsidyRequestsCount: Int!
+  daysRemaining: Int!
+  endDate: DateTime!
+  projectStatus: String!
+}
+
+type SubsidyKPIs {
+  totalRequests: Int!
+  pendingRequests: Int!
+  inReviewRequests: Int!
+  approvedRequests: Int!
+  rejectedRequests: Int!
+  totalRequested: Float!
+  totalApproved: Float!
+  approvalRate: Int!
+}
+
+type SubsidyByDepartment {
+  month: String!
+  department: String!
+  amount: Float!
+}
+
+type SubsidyByMonth {
+  month: String!
+  approved: Int!
+  pending: Int!
+  rejected: Int!
+  quarter: Int!
+}
+
+type SubsidyByStatus {
+  status: String!
+  count: Int!
+  fill: String!
+}
+
 type ForgotPasswordResponse {
   success: Boolean!
   message: String
@@ -1594,6 +1629,10 @@ type Query {
   setting(id: String!): Setting
   subsidyRequests(project_id: String): [SubsidyRequest!]!
   subsidyRequest(id: String!): SubsidyRequest
+  subsidyKPIs(institutionId: String): SubsidyKPIs!
+  subsidyByDepartment(institutionId: String): [SubsidyByDepartment!]!
+  subsidyByMonth(institutionId: String): [SubsidyByMonth!]!
+  subsidyByStatus(institutionId: String): [SubsidyByStatus!]!
   contacts: [Contact!]!
   contact(id: String!): Contact
   subsidyStatuses(filters: String): [SubsidyStatus!]!

@@ -122,7 +122,11 @@ export enum PermissionResolverName {
     downloadSubsidyReceipt = "downloadSubsidyReceipt",
     deleteSubsidyReceipt = "deleteSubsidyReceipt",
     validateSubsidyReceipt = "validateSubsidyReceipt",
-    getSubsidyReceipts = "getSubsidyReceipts"
+    getSubsidyReceipts = "getSubsidyReceipts",
+    subsidyKPIs = "subsidyKPIs",
+    subsidyByDepartment = "subsidyByDepartment",
+    subsidyByMonth = "subsidyByMonth",
+    subsidyByStatus = "subsidyByStatus"
 }
 
 

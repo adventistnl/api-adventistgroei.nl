@@ -3,6 +3,7 @@ import { UseGuards } from '@nestjs/common';
 import { SubsidyRequestService } from '../services/subsidy-request.service';
 import { SubsidyRequest } from '../@generated/subsidy-request/subsidy-request.model';
 import { SubsidyRequestCreateDto, SubsidyRequestUpdateDto } from '../dto/subsidy-request.dto';
+import { SubsidyKPIs, SubsidyByDepartment, SubsidyByMonth, SubsidyByStatus } from '../dto/subsidy-analytics.dto';
 import { Permission } from '../middlewares';
 import { PermissionsGuard } from '../middlewares/permissions.guard';
 
@@ -80,5 +81,49 @@ export class SubsidyRequestResolver {
     @Context() context: { userId: string },
   ): Promise<SubsidyRequest> {
     return this.subsidyRequestService.reject(id, rejectionReason, context.userId);
+  }
+
+  // Analytics queries
+  @Query(() => SubsidyKPIs)
+  @UseGuards(PermissionsGuard)
+  @Permission()
+  async subsidyKPIs(
+    @Args('institutionId', { type: () => String, nullable: true }) institutionId?: string,
+  ): Promise<SubsidyKPIs> {
+    return this.subsidyRequestService.getSubsidyKPIs(institutionId);
+  }
+
+  @Query(() => [SubsidyByDepartment])
+  @UseGuards(PermissionsGuard)
+  @Permission()
+  async subsidyByDepartment(
+    @Args('institutionId', { type: () => String, nullable: true }) institutionId?: string,
+  ): Promise<SubsidyByDepartment[]> {
+    return this.subsidyRequestService.getSubsidyByDepartment(institutionId);
+  }
+
+  @Query(() => [SubsidyByMonth])
+  @UseGuards(PermissionsGuard)
+  @Permission()
+  async subsidyByMonth(
+    @Args('institutionId', { type: () => String, nullable: true }) institutionId?: string,
+  ): Promise<SubsidyByMonth[]> {
+    return this.subsidyRequestService.getSubsidyByMonth(institutionId);
+  }
+
+  @Query(() => [SubsidyByStatus])
+  @UseGuards(PermissionsGuard)
+  @Permission()
+  async subsidyByStatus(
+    @Args('institutionId', { type: () => String, nullable: true }) institutionId?: string,
+  ): Promise<SubsidyByStatus[]> {
+    const kpis = await this.subsidyRequestService.getSubsidyKPIs(institutionId);
+    
+    return [
+      { status: 'Pending', count: kpis.pendingRequests, fill: '#f59e0b' },
+      { status: 'In Review', count: kpis.inReviewRequests, fill: '#3b82f6' },
+      { status: 'Approved', count: kpis.approvedRequests, fill: '#10b981' },
+      { status: 'Rejected', count: kpis.rejectedRequests, fill: '#ef4444' }
+    ];
   }
 }
