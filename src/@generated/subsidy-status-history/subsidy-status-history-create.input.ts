@@ -1,5 +1,6 @@
 import { Field } from '@nestjs/graphql';
 import { InputType } from '@nestjs/graphql';
+import { SubsidyHistoryType } from '../prisma/subsidy-history-type.enum';
 import { SubsidyRequestCreateNestedOneWithoutStatus_historyInput } from '../subsidy-request/subsidy-request-create-nested-one-without-status-history.input';
 import { Type } from 'class-transformer';
 import { SubsidyStatusCreateNestedOneWithoutHistory_as_currentInput } from '../subsidy-status/subsidy-status-create-nested-one-without-history-as-current.input';
@@ -11,6 +12,9 @@ export class SubsidyStatusHistoryCreateInput {
 
     @Field(() => String, {nullable:true})
     id?: string;
+
+    @Field(() => SubsidyHistoryType, {nullable:true})
+    type?: `${SubsidyHistoryType}`;
 
     @Field(() => String, {nullable:true})
     reason?: string;

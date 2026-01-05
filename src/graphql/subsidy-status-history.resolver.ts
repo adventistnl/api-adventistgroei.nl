@@ -1,4 +1,4 @@
-import { Resolver, Query, Args } from '@nestjs/graphql';
+import { Resolver, Query, Args, Mutation, Context } from '@nestjs/graphql';
 import { UseGuards } from '@nestjs/common';
 import { SubsidyStatusHistory } from 'src/@generated/subsidy-status-history/subsidy-status-history.model';
 import { SubsidyStatusHistoryService } from 'src/services/subsidy-status-history.service';
@@ -18,5 +18,22 @@ export class SubsidyStatusHistoryResolver {
     @Args('subsidyRequestId') subsidyRequestId: string,
   ): Promise<SubsidyStatusHistory[]> {
     return this.subsidyStatusHistoryService.getHistoryBySubsidyRequest(subsidyRequestId);
+  }
+
+  @Mutation(() => SubsidyStatusHistory)
+  async updateSubsidyRequestMessage(
+    @Args('id') id: string,
+    @Args('message') message: string,
+    @Context() context: { userId: string },
+  ): Promise<SubsidyStatusHistory> {
+    return this.subsidyStatusHistoryService.updateMessage(id, message, context.userId);
+  }
+
+  @Mutation(() => SubsidyStatusHistory)
+  async deleteSubsidyRequestMessage(
+    @Args('id') id: string,
+    @Context() context: { userId: string },
+  ): Promise<SubsidyStatusHistory> {
+    return this.subsidyStatusHistoryService.deleteMessage(id, context.userId);
   }
 }

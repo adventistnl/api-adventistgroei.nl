@@ -10,6 +10,8 @@ import { PrismaService } from './prisma.service';
 import { GoogleDriveService } from './google-drive.service';
 import { format } from 'date-fns';
 
+import { SubsidyHistoryType } from '../@generated/prisma/subsidy-history-type.enum';
+
 @Injectable()
 export class SubsidyRequestService {
   constructor(
@@ -41,6 +43,7 @@ export class SubsidyRequestService {
       subsidy_request_id: subsidyRequest.id,
       status_id: data.subsidy_status_id,
       previous_status_id: undefined,
+      type: SubsidyHistoryType.STATUS_CHANGE,
       reason: 'Solicitação criada',
       changed_by: userId,
     });
@@ -64,12 +67,40 @@ export class SubsidyRequestService {
         subsidy_request_id: id,
         status_id: data.subsidy_status_id,
         previous_status_id: current.subsidy_statuses_id,
+        type: SubsidyHistoryType.STATUS_CHANGE,
         reason: data.notes || 'Status alterado',
         changed_by: userId,
       });
     }
 
+    // If priority changed, create history record
+    if (data.priority && data.priority !== current.priority) {
+      await this.historyRepository.create({
+        subsidy_request_id: id,
+        status_id: current.subsidy_statuses_id, // Keep current status context
+        type: SubsidyHistoryType.PRIORITY_CHANGE,
+        reason: `Prioridade alterada de ${current.priority} para ${data.priority}`,
+        changed_by: userId,
+      });
+    }
+
     return result;
+  }
+
+  async addMessage(subsidyRequestId: string, message: string, userId: string): Promise<any> {
+    const subsidyRequest = await this.subsidyRequestRepository.findById(subsidyRequestId);
+    if (!subsidyRequest) {
+      throw new CustomGraphQLError('SubsidyRequest not found', ErrorCode.NOT_FOUND, 404);
+    }
+
+    return this.historyRepository.create({
+      subsidy_request_id: subsidyRequestId,
+      status_id: subsidyRequest.subsidy_statuses_id,
+      previous_status_id: undefined,
+      type: SubsidyHistoryType.COMMENT,
+      reason: message,
+      changed_by: userId,
+    });
   }
 
   async delete(id: string, userId: string): Promise<SubsidyRequest> {

@@ -54,4 +54,32 @@ export class SubsidyStatusHistoryService {
 
     return history;
   }
+
+  /**
+   * Update a history message
+   */
+  async updateMessage(id: string, message: string, userId: string): Promise<SubsidyStatusHistory> {
+    const history = await this.getHistoryById(id);
+    
+    // Validate if user is owner
+    if (history.changed_by !== userId) {
+      throw new CustomGraphQLError('Você só pode editar suas próprias mensagens', ErrorCode.FORBIDDEN, 403);
+    }
+
+    return this.repository.update(id, message);
+  }
+
+  /**
+   * Delete a history message (soft delete)
+   */
+  async deleteMessage(id: string, userId: string): Promise<SubsidyStatusHistory> {
+    const history = await this.getHistoryById(id);
+    
+    // Validate if user is owner
+    if (history.changed_by !== userId) {
+      throw new CustomGraphQLError('Você só pode deletar suas próprias mensagens', ErrorCode.FORBIDDEN, 403);
+    }
+
+    return this.repository.softDelete(id, userId);
+  }
 }

@@ -645,6 +645,7 @@ model SubsidyRequest {
   department          Department              @relation(fields: [department_id], references: [id])
   church_id           String?
   church              Church?                 @relation(fields: [church_id], references: [id])
+  priority            SubsidyRequestPriority  @default(MEDIUM)
   subsidy_statuses_id String
   subsidy_status      SubsidyStatus           @relation(fields: [subsidy_statuses_id], references: [id])
   items               SubsidyRequestItem[]
@@ -652,6 +653,19 @@ model SubsidyRequest {
   project             Project                 @relation(fields: [project_id], references: [id])
   subsidy_receipts    SubsidyReceipt[]
   status_history      SubsidyStatusHistory[]
+}
+
+enum SubsidyRequestPriority {
+  LOW
+  MEDIUM
+  HIGH
+}
+
+enum SubsidyHistoryType {
+  STATUS_CHANGE
+  PRIORITY_CHANGE
+  COMMENT
+  DOCUMENT_ACTION
 }
 
 model SubsidyRequestItem {
@@ -804,6 +818,7 @@ model SubsidyStatusHistory {
   subsidy_request_id  String
   status_id           String
   previous_status_id  String?
+  type                SubsidyHistoryType @default(STATUS_CHANGE)
   reason              String?
   changed_by          String
   changed_at          DateTime       @default(now())

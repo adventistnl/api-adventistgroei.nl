@@ -19,6 +19,7 @@ export enum SubsidyRequestScalarFieldEnum {
     requester_id = "requester_id",
     department_id = "department_id",
     church_id = "church_id",
+    priority = "priority",
     subsidy_statuses_id = "subsidy_statuses_id",
     project_id = "project_id"
 }

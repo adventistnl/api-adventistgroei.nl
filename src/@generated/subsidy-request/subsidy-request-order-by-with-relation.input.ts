@@ -71,6 +71,9 @@ export class SubsidyRequestOrderByWithRelationInput {
     church_id?: SortOrderInput;
 
     @Field(() => SortOrder, {nullable:true})
+    priority?: `${SortOrder}`;
+
+    @Field(() => SortOrder, {nullable:true})
     subsidy_statuses_id?: `${SortOrder}`;
 
     @Field(() => SortOrder, {nullable:true})

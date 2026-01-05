@@ -2,6 +2,7 @@ import { Resolver, Query, Mutation, Args, Context, Float } from '@nestjs/graphql
 import { UseGuards } from '@nestjs/common';
 import { SubsidyRequestService } from '../services/subsidy-request.service';
 import { SubsidyRequest } from '../@generated/subsidy-request/subsidy-request.model';
+import { SubsidyStatusHistory } from 'src/@generated/subsidy-status-history/subsidy-status-history.model';
 import { SubsidyRequestCreateDto, SubsidyRequestUpdateDto } from '../dto/subsidy-request.dto';
 import { SubsidyKPIs, SubsidyByDepartment, SubsidyByMonth, SubsidyByStatus } from '../dto/subsidy-analytics.dto';
 import { Permission } from '../middlewares';
@@ -81,6 +82,15 @@ export class SubsidyRequestResolver {
     @Context() context: { userId: string },
   ): Promise<SubsidyRequest> {
     return this.subsidyRequestService.reject(id, rejectionReason, context.userId);
+  }
+
+  @Mutation(() => SubsidyStatusHistory)
+  async addSubsidyRequestMessage(
+    @Args('id') id: string,
+    @Args('message') message: string,
+    @Context() context: { userId: string },
+  ): Promise<SubsidyStatusHistory> {
+    return this.subsidyRequestService.addMessage(id, message, context.userId);
   }
 
   // Analytics queries

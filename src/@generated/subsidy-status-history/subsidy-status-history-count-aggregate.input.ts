@@ -17,6 +17,9 @@ export class SubsidyStatusHistoryCountAggregateInput {
     previous_status_id?: true;
 
     @Field(() => Boolean, {nullable:true})
+    type?: true;
+
+    @Field(() => Boolean, {nullable:true})
     reason?: true;
 
     @Field(() => Boolean, {nullable:true})

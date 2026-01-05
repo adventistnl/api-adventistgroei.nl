@@ -7,6 +7,7 @@ import { NullableStringFieldUpdateOperationsInput } from '../prisma/nullable-str
 import { DateTimeFieldUpdateOperationsInput } from '../prisma/date-time-field-update-operations.input';
 import { NullableDateTimeFieldUpdateOperationsInput } from '../prisma/nullable-date-time-field-update-operations.input';
 import { BoolFieldUpdateOperationsInput } from '../prisma/bool-field-update-operations.input';
+import { EnumSubsidyRequestPriorityFieldUpdateOperationsInput } from '../prisma/enum-subsidy-request-priority-field-update-operations.input';
 
 @InputType()
 export class SubsidyRequestUncheckedUpdateManyWithoutSubsidy_statusInput {
@@ -66,6 +67,9 @@ export class SubsidyRequestUncheckedUpdateManyWithoutSubsidy_statusInput {
 
     @Field(() => NullableStringFieldUpdateOperationsInput, {nullable:true})
     church_id?: NullableStringFieldUpdateOperationsInput;
+
+    @Field(() => EnumSubsidyRequestPriorityFieldUpdateOperationsInput, {nullable:true})
+    priority?: EnumSubsidyRequestPriorityFieldUpdateOperationsInput;
 
     @Field(() => StringFieldUpdateOperationsInput, {nullable:true})
     project_id?: StringFieldUpdateOperationsInput;

@@ -7,6 +7,7 @@ import { StringNullableWithAggregatesFilter } from '../prisma/string-nullable-wi
 import { DateTimeWithAggregatesFilter } from '../prisma/date-time-with-aggregates-filter.input';
 import { DateTimeNullableWithAggregatesFilter } from '../prisma/date-time-nullable-with-aggregates-filter.input';
 import { BoolWithAggregatesFilter } from '../prisma/bool-with-aggregates-filter.input';
+import { EnumSubsidyRequestPriorityWithAggregatesFilter } from '../prisma/enum-subsidy-request-priority-with-aggregates-filter.input';
 
 @InputType()
 export class SubsidyRequestScalarWhereWithAggregatesInput {
@@ -78,6 +79,9 @@ export class SubsidyRequestScalarWhereWithAggregatesInput {
 
     @Field(() => StringNullableWithAggregatesFilter, {nullable:true})
     church_id?: StringNullableWithAggregatesFilter;
+
+    @Field(() => EnumSubsidyRequestPriorityWithAggregatesFilter, {nullable:true})
+    priority?: EnumSubsidyRequestPriorityWithAggregatesFilter;
 
     @Field(() => StringWithAggregatesFilter, {nullable:true})
     subsidy_statuses_id?: StringWithAggregatesFilter;

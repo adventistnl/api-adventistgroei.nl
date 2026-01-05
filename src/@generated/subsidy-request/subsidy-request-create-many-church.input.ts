@@ -5,6 +5,7 @@ import { GraphQLDecimal } from 'prisma-graphql-type-decimal';
 import { transformToDecimal } from 'prisma-graphql-type-decimal';
 import { Transform } from 'class-transformer';
 import { Type } from 'class-transformer';
+import { SubsidyRequestPriority } from '../prisma/subsidy-request-priority.enum';
 
 @InputType()
 export class SubsidyRequestCreateManyChurchInput {
@@ -63,6 +64,9 @@ export class SubsidyRequestCreateManyChurchInput {
 
     @Field(() => String, {nullable:false})
     department_id!: string;
+
+    @Field(() => SubsidyRequestPriority, {nullable:true})
+    priority?: `${SubsidyRequestPriority}`;
 
     @Field(() => String, {nullable:false})
     subsidy_statuses_id!: string;

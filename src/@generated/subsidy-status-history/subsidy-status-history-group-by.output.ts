@@ -1,5 +1,6 @@
 import { Field } from '@nestjs/graphql';
 import { ObjectType } from '@nestjs/graphql';
+import { SubsidyHistoryType } from '../prisma/subsidy-history-type.enum';
 import { SubsidyStatusHistoryCountAggregate } from './subsidy-status-history-count-aggregate.output';
 import { SubsidyStatusHistoryMinAggregate } from './subsidy-status-history-min-aggregate.output';
 import { SubsidyStatusHistoryMaxAggregate } from './subsidy-status-history-max-aggregate.output';
@@ -18,6 +19,9 @@ export class SubsidyStatusHistoryGroupBy {
 
     @Field(() => String, {nullable:true})
     previous_status_id?: string;
+
+    @Field(() => SubsidyHistoryType, {nullable:false})
+    type!: `${SubsidyHistoryType}`;
 
     @Field(() => String, {nullable:true})
     reason?: string;

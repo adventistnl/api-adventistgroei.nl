@@ -18,6 +18,9 @@ export class SubsidyStatusHistoryCountAggregate {
     previous_status_id!: number;
 
     @Field(() => Int, {nullable:false})
+    type!: number;
+
+    @Field(() => Int, {nullable:false})
     reason!: number;
 
     @Field(() => Int, {nullable:false})

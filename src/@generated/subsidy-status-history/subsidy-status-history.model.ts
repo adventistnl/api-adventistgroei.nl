@@ -1,6 +1,7 @@
 import { Field } from '@nestjs/graphql';
 import { ObjectType } from '@nestjs/graphql';
 import { ID } from '@nestjs/graphql';
+import { SubsidyHistoryType } from '../prisma/subsidy-history-type.enum';
 import { SubsidyRequest } from '../subsidy-request/subsidy-request.model';
 import { SubsidyStatus } from '../subsidy-status/subsidy-status.model';
 import { User } from '../user/user.model';
@@ -19,6 +20,9 @@ export class SubsidyStatusHistory {
 
     @Field(() => String, {nullable:true})
     previous_status_id!: string | null;
+
+    @Field(() => SubsidyHistoryType, {defaultValue:'STATUS_CHANGE',nullable:false})
+    type!: `${SubsidyHistoryType}`;
 
     @Field(() => String, {nullable:true})
     reason!: string | null;

@@ -59,6 +59,9 @@ export class SubsidyRequestMaxAggregateInput {
     church_id?: true;
 
     @Field(() => Boolean, {nullable:true})
+    priority?: true;
+
+    @Field(() => Boolean, {nullable:true})
     subsidy_statuses_id?: true;
 
     @Field(() => Boolean, {nullable:true})

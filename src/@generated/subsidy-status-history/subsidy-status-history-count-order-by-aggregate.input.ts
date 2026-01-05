@@ -18,6 +18,9 @@ export class SubsidyStatusHistoryCountOrderByAggregateInput {
     previous_status_id?: `${SortOrder}`;
 
     @Field(() => SortOrder, {nullable:true})
+    type?: `${SortOrder}`;
+
+    @Field(() => SortOrder, {nullable:true})
     reason?: `${SortOrder}`;
 
     @Field(() => SortOrder, {nullable:true})

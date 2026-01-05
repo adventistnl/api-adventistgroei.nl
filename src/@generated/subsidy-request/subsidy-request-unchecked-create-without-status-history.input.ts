@@ -5,6 +5,7 @@ import { GraphQLDecimal } from 'prisma-graphql-type-decimal';
 import { transformToDecimal } from 'prisma-graphql-type-decimal';
 import { Transform } from 'class-transformer';
 import { Type } from 'class-transformer';
+import { SubsidyRequestPriority } from '../prisma/subsidy-request-priority.enum';
 import { SubsidyRequestItemUncheckedCreateNestedManyWithoutSubsidy_requestInput } from '../subsidy-request-item/subsidy-request-item-unchecked-create-nested-many-without-subsidy-request.input';
 import { SubsidyReceiptUncheckedCreateNestedManyWithoutSubsidy_requestInput } from '../subsidy-receipt/subsidy-receipt-unchecked-create-nested-many-without-subsidy-request.input';
 
@@ -68,6 +69,9 @@ export class SubsidyRequestUncheckedCreateWithoutStatus_historyInput {
 
     @Field(() => String, {nullable:true})
     church_id?: string;
+
+    @Field(() => SubsidyRequestPriority, {nullable:true})
+    priority?: `${SubsidyRequestPriority}`;
 
     @Field(() => String, {nullable:false})
     subsidy_statuses_id!: string;

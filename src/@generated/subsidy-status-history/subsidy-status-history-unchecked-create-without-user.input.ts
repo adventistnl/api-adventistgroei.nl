@@ -1,5 +1,6 @@
 import { Field } from '@nestjs/graphql';
 import { InputType } from '@nestjs/graphql';
+import { SubsidyHistoryType } from '../prisma/subsidy-history-type.enum';
 
 @InputType()
 export class SubsidyStatusHistoryUncheckedCreateWithoutUserInput {
@@ -15,6 +16,9 @@ export class SubsidyStatusHistoryUncheckedCreateWithoutUserInput {
 
     @Field(() => String, {nullable:true})
     previous_status_id?: string;
+
+    @Field(() => SubsidyHistoryType, {nullable:true})
+    type?: `${SubsidyHistoryType}`;
 
     @Field(() => String, {nullable:true})
     reason?: string;

@@ -22,6 +22,9 @@ export class SubsidyStatusHistoryOrderByWithRelationInput {
     @Field(() => SortOrderInput, {nullable:true})
     previous_status_id?: SortOrderInput;
 
+    @Field(() => SortOrder, {nullable:true})
+    type?: `${SortOrder}`;
+
     @Field(() => SortOrderInput, {nullable:true})
     reason?: SortOrderInput;
 

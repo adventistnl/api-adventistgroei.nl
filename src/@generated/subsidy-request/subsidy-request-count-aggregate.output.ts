@@ -60,6 +60,9 @@ export class SubsidyRequestCountAggregate {
     church_id!: number;
 
     @Field(() => Int, {nullable:false})
+    priority!: number;
+
+    @Field(() => Int, {nullable:false})
     subsidy_statuses_id!: number;
 
     @Field(() => Int, {nullable:false})

@@ -3,6 +3,7 @@ import { ObjectType } from '@nestjs/graphql';
 import { ID } from '@nestjs/graphql';
 import { GraphQLDecimal } from 'prisma-graphql-type-decimal';
 import { Decimal } from '@prisma/client/runtime/library';
+import { SubsidyRequestPriority } from '../prisma/subsidy-request-priority.enum';
 import { Institution } from '../institution/institution.model';
 import { User } from '../user/user.model';
 import { Department } from '../department/department.model';
@@ -70,6 +71,9 @@ export class SubsidyRequest {
 
     @Field(() => String, {nullable:true})
     church_id!: string | null;
+
+    @Field(() => SubsidyRequestPriority, {defaultValue:'MEDIUM',nullable:false})
+    priority!: `${SubsidyRequestPriority}`;
 
     @Field(() => String, {nullable:false})
     subsidy_statuses_id!: string;

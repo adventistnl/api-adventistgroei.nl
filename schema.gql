@@ -435,6 +435,7 @@ type SubsidyStatusHistory {
   subsidy_request_id: String!
   status_id: String!
   previous_status_id: String
+  type: SubsidyHistoryType!
   reason: String
   changed_by: String!
   changed_at: DateTime!
@@ -447,6 +448,13 @@ type SubsidyStatusHistory {
   status: SubsidyStatus!
   previous_status: SubsidyStatus
   user: User!
+}
+
+enum SubsidyHistoryType {
+  STATUS_CHANGE
+  PRIORITY_CHANGE
+  COMMENT
+  DOCUMENT_ACTION
 }
 
 type SubsidyRequestCount {
@@ -474,6 +482,7 @@ type SubsidyRequest {
   requester_id: String!
   department_id: String!
   church_id: String
+  priority: SubsidyRequestPriority!
   subsidy_statuses_id: String!
   project_id: String!
   institution: Institution!
@@ -486,6 +495,12 @@ type SubsidyRequest {
   subsidy_receipts: [SubsidyReceipt!]
   status_history: [SubsidyStatusHistory!]
   _count: SubsidyRequestCount!
+}
+
+enum SubsidyRequestPriority {
+  LOW
+  MEDIUM
+  HIGH
 }
 
 type SubsidyRequestItemCount {
@@ -2292,6 +2307,7 @@ input SubsidyRequestWhereInput {
   requester_id: StringFilter
   department_id: StringFilter
   church_id: StringNullableFilter
+  priority: EnumSubsidyRequestPriorityFilter
   subsidy_statuses_id: StringFilter
   project_id: StringFilter
   institution: InstitutionScalarRelationFilter
@@ -2303,6 +2319,20 @@ input SubsidyRequestWhereInput {
   project: ProjectScalarRelationFilter
   subsidy_receipts: SubsidyReceiptListRelationFilter
   status_history: SubsidyStatusHistoryListRelationFilter
+}
+
+input EnumSubsidyRequestPriorityFilter {
+  equals: SubsidyRequestPriority
+  in: [SubsidyRequestPriority!]
+  notIn: [SubsidyRequestPriority!]
+  not: NestedEnumSubsidyRequestPriorityFilter
+}
+
+input NestedEnumSubsidyRequestPriorityFilter {
+  equals: SubsidyRequestPriority
+  in: [SubsidyRequestPriority!]
+  notIn: [SubsidyRequestPriority!]
+  not: NestedEnumSubsidyRequestPriorityFilter
 }
 
 input SubsidyStatusScalarRelationFilter {
@@ -2904,6 +2934,7 @@ input SubsidyStatusHistoryWhereInput {
   subsidy_request_id: StringFilter
   status_id: StringFilter
   previous_status_id: StringNullableFilter
+  type: EnumSubsidyHistoryTypeFilter
   reason: StringNullableFilter
   changed_by: StringFilter
   changed_at: DateTimeFilter
@@ -2916,6 +2947,20 @@ input SubsidyStatusHistoryWhereInput {
   status: SubsidyStatusScalarRelationFilter
   previous_status: SubsidyStatusNullableScalarRelationFilter
   user: UserScalarRelationFilter
+}
+
+input EnumSubsidyHistoryTypeFilter {
+  equals: SubsidyHistoryType
+  in: [SubsidyHistoryType!]
+  notIn: [SubsidyHistoryType!]
+  not: NestedEnumSubsidyHistoryTypeFilter
+}
+
+input NestedEnumSubsidyHistoryTypeFilter {
+  equals: SubsidyHistoryType
+  in: [SubsidyHistoryType!]
+  notIn: [SubsidyHistoryType!]
+  not: NestedEnumSubsidyHistoryTypeFilter
 }
 
 input AnnualReportListRelationFilter {
@@ -3691,6 +3736,7 @@ type Mutation {
   deleteSubsidyRequest(id: String!): SubsidyRequest!
   approveSubsidyRequest(id: String!, approved_amount: Float!): SubsidyRequest!
   rejectSubsidyRequest(id: String!, rejection_reason: String!): SubsidyRequest!
+  addSubsidyRequestMessage(id: String!, message: String!): SubsidyStatusHistory!
   createContact(data: ContactCreateDto!, userId: String!): Contact!
   updateContact(data: ContactUpdateDto!): Contact!
   deleteContact(id: String!, userId: String!): Contact!
@@ -3710,6 +3756,8 @@ type Mutation {
   uploadSubsidyReceipt(input: UploadSubsidyReceiptDto!, file: Upload!): SubsidyReceipt!
   deleteSubsidyReceipt(id: ID!): SubsidyReceipt!
   validateSubsidyReceipt(id: ID!): SubsidyReceipt!
+  updateSubsidyRequestMessage(id: String!, message: String!): SubsidyStatusHistory!
+  deleteSubsidyRequestMessage(id: String!): SubsidyStatusHistory!
   inviteUser(data: InviteUserDto!): InviteModel!
   validateInviteToken(token: String!): ValidateOutputModel!
 
@@ -4070,6 +4118,7 @@ input SubsidyRequestUpdateDto {
   approved_amount: Float
   rejection_reason: String
   notes: String
+  priority: SubsidyRequestPriority
 }
 
 input LinkContactDto {

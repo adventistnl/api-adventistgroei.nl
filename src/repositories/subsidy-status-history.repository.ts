@@ -1,11 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { CustomGraphQLError, ErrorCode } from 'src/common/errors/custom-graphql-error';
 import { PrismaService } from 'src/services';
+import { SubsidyHistoryType } from 'src/@generated/prisma/subsidy-history-type.enum';
 
 export interface CreateSubsidyStatusHistoryData {
   subsidy_request_id: string;
   status_id: string;
   previous_status_id?: string;
+  type?: SubsidyHistoryType;
   reason?: string;
   changed_by: string;
 }
@@ -24,6 +26,7 @@ export class SubsidyStatusHistoryRepository {
           subsidy_request_id: data.subsidy_request_id,
           status_id: data.status_id,
           previous_status_id: data.previous_status_id,
+          type: data.type || SubsidyHistoryType.STATUS_CHANGE,
           reason: data.reason,
           changed_by: data.changed_by,
           changed_at: new Date(),
@@ -135,5 +138,71 @@ export class SubsidyStatusHistoryRepository {
     });
 
     return result.count;
+  }
+
+  /**
+   * Update a history record (specifically reason)
+   */
+  async update(id: string, reason: string): Promise<any> {
+    try {
+      return await this.prisma.subsidyStatusHistory.update({
+        where: { id },
+        data: {
+          reason,
+        },
+        include: {
+          status: true,
+          previous_status: true,
+          user: {
+            select: {
+              id: true,
+              name: true,
+              email: true,
+            },
+          },
+        },
+      });
+    } catch (error) {
+      console.error('Error updating subsidy status history:', error);
+      throw new CustomGraphQLError(
+        'Erro ao atualizar histórico',
+        ErrorCode.INTERNAL_SERVER_ERROR,
+        500,
+      );
+    }
+  }
+
+  /**
+   * Soft delete a single history record
+   */
+  async softDelete(id: string, userId: string): Promise<any> {
+    try {
+      return await this.prisma.subsidyStatusHistory.update({
+        where: { id },
+        data: {
+          is_deleted: true,
+          deleted_at: new Date(),
+          deleted_by: userId,
+        },
+        include: {
+          status: true,
+          previous_status: true,
+          user: {
+            select: {
+              id: true,
+              name: true,
+              email: true,
+            },
+          },
+        },
+      });
+    } catch (error) {
+      console.error('Error deleting subsidy status history:', error);
+      throw new CustomGraphQLError(
+        'Erro ao excluir histórico',
+        ErrorCode.INTERNAL_SERVER_ERROR,
+        500,
+      );
+    }
   }
 }

@@ -7,6 +7,7 @@ import { NullableStringFieldUpdateOperationsInput } from '../prisma/nullable-str
 import { DateTimeFieldUpdateOperationsInput } from '../prisma/date-time-field-update-operations.input';
 import { NullableDateTimeFieldUpdateOperationsInput } from '../prisma/nullable-date-time-field-update-operations.input';
 import { BoolFieldUpdateOperationsInput } from '../prisma/bool-field-update-operations.input';
+import { EnumSubsidyRequestPriorityFieldUpdateOperationsInput } from '../prisma/enum-subsidy-request-priority-field-update-operations.input';
 import { InstitutionUpdateOneRequiredWithoutSubsidy_requestsNestedInput } from '../institution/institution-update-one-required-without-subsidy-requests-nested.input';
 import { UserUpdateOneRequiredWithoutSubsidyRequestNestedInput } from '../user/user-update-one-required-without-subsidy-request-nested.input';
 import { DepartmentUpdateOneRequiredWithoutSubsidy_requestsNestedInput } from '../department/department-update-one-required-without-subsidy-requests-nested.input';
@@ -62,6 +63,9 @@ export class SubsidyRequestUpdateWithoutChurchInput {
 
     @Field(() => NullableStringFieldUpdateOperationsInput, {nullable:true})
     deleted_by?: NullableStringFieldUpdateOperationsInput;
+
+    @Field(() => EnumSubsidyRequestPriorityFieldUpdateOperationsInput, {nullable:true})
+    priority?: EnumSubsidyRequestPriorityFieldUpdateOperationsInput;
 
     @Field(() => InstitutionUpdateOneRequiredWithoutSubsidy_requestsNestedInput, {nullable:true})
     @Type(() => InstitutionUpdateOneRequiredWithoutSubsidy_requestsNestedInput)

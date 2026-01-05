@@ -2,6 +2,7 @@ import { InputType, Field, Float } from '@nestjs/graphql';
 import { IsOptional, IsString, IsNumber, IsArray, ValidateNested } from 'class-validator';
 import { Type } from 'class-transformer';
 import { SubsidyRequestItemInput } from './subsidy-request-item.dto';
+import { SubsidyRequestPriority } from 'src/@generated/prisma/subsidy-request-priority.enum';
 
 @InputType()
 export class SubsidyRequestCreateDto {
@@ -108,5 +109,9 @@ export class SubsidyRequestUpdateDto {
   @IsOptional()
   @IsString()
   notes?: string;
+
+  @Field(() => SubsidyRequestPriority, { nullable: true })
+  @IsOptional()
+  priority?: SubsidyRequestPriority;
 }
 

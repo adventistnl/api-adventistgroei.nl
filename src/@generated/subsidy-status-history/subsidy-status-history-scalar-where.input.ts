@@ -2,6 +2,7 @@ import { Field } from '@nestjs/graphql';
 import { InputType } from '@nestjs/graphql';
 import { StringFilter } from '../prisma/string-filter.input';
 import { StringNullableFilter } from '../prisma/string-nullable-filter.input';
+import { EnumSubsidyHistoryTypeFilter } from '../prisma/enum-subsidy-history-type-filter.input';
 import { DateTimeFilter } from '../prisma/date-time-filter.input';
 import { BoolFilter } from '../prisma/bool-filter.input';
 import { DateTimeNullableFilter } from '../prisma/date-time-nullable-filter.input';
@@ -29,6 +30,9 @@ export class SubsidyStatusHistoryScalarWhereInput {
 
     @Field(() => StringNullableFilter, {nullable:true})
     previous_status_id?: StringNullableFilter;
+
+    @Field(() => EnumSubsidyHistoryTypeFilter, {nullable:true})
+    type?: EnumSubsidyHistoryTypeFilter;
 
     @Field(() => StringNullableFilter, {nullable:true})
     reason?: StringNullableFilter;

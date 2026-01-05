@@ -5,6 +5,7 @@ import { GraphQLDecimal } from 'prisma-graphql-type-decimal';
 import { transformToDecimal } from 'prisma-graphql-type-decimal';
 import { Transform } from 'class-transformer';
 import { Type } from 'class-transformer';
+import { SubsidyRequestPriority } from '../prisma/subsidy-request-priority.enum';
 import { InstitutionCreateNestedOneWithoutSubsidy_requestsInput } from '../institution/institution-create-nested-one-without-subsidy-requests.input';
 import { UserCreateNestedOneWithoutSubsidyRequestInput } from '../user/user-create-nested-one-without-subsidy-request.input';
 import { DepartmentCreateNestedOneWithoutSubsidy_requestsInput } from '../department/department-create-nested-one-without-subsidy-requests.input';
@@ -62,6 +63,9 @@ export class SubsidyRequestCreateWithoutChurchInput {
 
     @Field(() => String, {nullable:true})
     deleted_by?: string;
+
+    @Field(() => SubsidyRequestPriority, {nullable:true})
+    priority?: `${SubsidyRequestPriority}`;
 
     @Field(() => InstitutionCreateNestedOneWithoutSubsidy_requestsInput, {nullable:false})
     @Type(() => InstitutionCreateNestedOneWithoutSubsidy_requestsInput)

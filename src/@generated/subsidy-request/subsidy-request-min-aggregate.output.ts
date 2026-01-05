@@ -2,6 +2,7 @@ import { Field } from '@nestjs/graphql';
 import { ObjectType } from '@nestjs/graphql';
 import { Decimal } from '@prisma/client/runtime/library';
 import { GraphQLDecimal } from 'prisma-graphql-type-decimal';
+import { SubsidyRequestPriority } from '../prisma/subsidy-request-priority.enum';
 
 @ObjectType()
 export class SubsidyRequestMinAggregate {
@@ -59,6 +60,9 @@ export class SubsidyRequestMinAggregate {
 
     @Field(() => String, {nullable:true})
     church_id?: string;
+
+    @Field(() => SubsidyRequestPriority, {nullable:true})
+    priority?: `${SubsidyRequestPriority}`;
 
     @Field(() => String, {nullable:true})
     subsidy_statuses_id?: string;

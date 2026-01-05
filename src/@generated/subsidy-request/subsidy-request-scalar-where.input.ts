@@ -7,6 +7,7 @@ import { StringNullableFilter } from '../prisma/string-nullable-filter.input';
 import { DateTimeFilter } from '../prisma/date-time-filter.input';
 import { DateTimeNullableFilter } from '../prisma/date-time-nullable-filter.input';
 import { BoolFilter } from '../prisma/bool-filter.input';
+import { EnumSubsidyRequestPriorityFilter } from '../prisma/enum-subsidy-request-priority-filter.input';
 
 @InputType()
 export class SubsidyRequestScalarWhereInput {
@@ -78,6 +79,9 @@ export class SubsidyRequestScalarWhereInput {
 
     @Field(() => StringNullableFilter, {nullable:true})
     church_id?: StringNullableFilter;
+
+    @Field(() => EnumSubsidyRequestPriorityFilter, {nullable:true})
+    priority?: EnumSubsidyRequestPriorityFilter;
 
     @Field(() => StringFilter, {nullable:true})
     subsidy_statuses_id?: StringFilter;

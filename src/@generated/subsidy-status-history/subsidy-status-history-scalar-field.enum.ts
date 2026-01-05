@@ -5,6 +5,7 @@ export enum SubsidyStatusHistoryScalarFieldEnum {
     subsidy_request_id = "subsidy_request_id",
     status_id = "status_id",
     previous_status_id = "previous_status_id",
+    type = "type",
     reason = "reason",
     changed_by = "changed_by",
     changed_at = "changed_at",

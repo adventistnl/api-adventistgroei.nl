@@ -7,6 +7,8 @@ import { PrismaService } from './prisma.service';
 import { FileUpload, DownloadResult } from './activity-documents.service';
 import { Readable } from 'stream';
 import { SubsidyRequestService } from './subsidy-request.service';
+import { SubsidyStatusHistoryRepository } from 'src/repositories/subsidy-status-history.repository';
+import { SubsidyHistoryType } from 'src/@generated/prisma/subsidy-history-type.enum';
 
 export interface UploadSubsidyReceiptInput {
   subsidy_request_id: string;
@@ -23,6 +25,7 @@ export class SubsidyReceiptService {
     private readonly driveService: GoogleDriveService,
     private readonly prisma: PrismaService,
     private readonly subsidyRequestService: SubsidyRequestService,
+    private readonly historyRepository: SubsidyStatusHistoryRepository,
   ) {}
 
   /**
@@ -244,8 +247,29 @@ export class SubsidyReceiptService {
 
     const updatedReceipt = await this.repository.validateReceipt(id, userId);
 
-    if (updatedReceipt.subsidy_request_id) {
-      await this.subsidyRequestService.recalculateStatus(updatedReceipt.subsidy_request_id, userId);
+    // Check for subsidy_request_id
+    if (!updatedReceipt.subsidy_request_id) {
+      console.warn(`Receipt ${id} has no subsidy_request_id. Skipping history log.`);
+      return updatedReceipt;
+    }
+
+    // Fetch parent request to ensure data for history
+    const subsidyRequest = await this.prisma.subsidyRequest.findUnique({
+      where: { id: updatedReceipt.subsidy_request_id }
+    });
+
+    if (subsidyRequest && subsidyRequest.subsidy_statuses_id) {
+      // Create history log for validation
+      await this.historyRepository.create({
+        subsidy_request_id: subsidyRequest.id,
+        status_id: subsidyRequest.subsidy_statuses_id,
+        previous_status_id: undefined,
+        type: SubsidyHistoryType.DOCUMENT_ACTION,
+        reason: `Documento "${receipt.filename}" validado`,
+        changed_by: userId,
+      });
+
+      await this.subsidyRequestService.recalculateStatus(subsidyRequest.id, userId);
     }
 
     return updatedReceipt;
@@ -263,8 +287,29 @@ export class SubsidyReceiptService {
 
     const updatedReceipt = await this.repository.rejectReceipt(id, userId, reason);
 
-    if (updatedReceipt.subsidy_request_id) {
-      await this.subsidyRequestService.recalculateStatus(updatedReceipt.subsidy_request_id, userId);
+    // Check for subsidy_request_id
+    if (!updatedReceipt.subsidy_request_id) {
+      console.warn(`Receipt ${id} has no subsidy_request_id. Skipping history log.`);
+      return updatedReceipt;
+    }
+
+    // Fetch parent request to ensure data for history
+    const subsidyRequest = await this.prisma.subsidyRequest.findUnique({
+      where: { id: updatedReceipt.subsidy_request_id }
+    });
+
+    if (subsidyRequest && subsidyRequest.subsidy_statuses_id) {
+      // Create history log for rejection
+      await this.historyRepository.create({
+        subsidy_request_id: subsidyRequest.id,
+        status_id: subsidyRequest.subsidy_statuses_id,
+        previous_status_id: undefined,
+        type: SubsidyHistoryType.DOCUMENT_ACTION,
+        reason: `Documento "${receipt.filename}" rejeitado. Motivo: ${reason || 'Sem motivo especificado'}`,
+        changed_by: userId,
+      });
+
+      await this.subsidyRequestService.recalculateStatus(subsidyRequest.id, userId);
     }
 
     return updatedReceipt;
