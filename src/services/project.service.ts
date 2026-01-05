@@ -4,12 +4,17 @@ import { Project } from '../@generated/project/project.model';
 import { ProjectCreateDto, ProjectUpdateDto } from '../dto/project.dto';
 import { PrismaService } from './prisma.service';
 import { ProjectKPIs, ProjectsByDepartment, SubsidyStatusDistribution, ProjectsTimeline } from '../dto/project-analytics.dto';
+import { SubsidyRequestService } from './subsidy-request.service';
+import { ProjectActivityService } from './project-activity.service';
+import { CustomGraphQLError, ErrorCode } from '../common/errors/custom-graphql-error';
 
 @Injectable()
 export class ProjectService {
   constructor(
     private readonly projectRepository: ProjectRepository,
-    private readonly prisma: PrismaService
+    private readonly prisma: PrismaService,
+    private readonly subsidyRequestService: SubsidyRequestService,
+    private readonly projectActivityService: ProjectActivityService,
   ) {}
 
   async create(data: ProjectCreateDto, userId: string): Promise<Project> {
@@ -21,7 +26,84 @@ export class ProjectService {
   }
 
   async delete(id: string, userId: string): Promise<Project> {
-    return this.projectRepository.softDelete(id, userId);
+    console.log(`🗑️  Starting soft delete for project ${id}`);
+
+    // 1. Find all subsidies for this project
+    const subsidies = await this.prisma.subsidyRequest.findMany({
+      where: {
+        project_id: id,
+        is_deleted: false,
+      },
+      include: {
+        subsidy_status: true,
+      },
+    });
+
+    console.log(`📋 Found ${subsidies.length} subsidy requests for project`);
+
+    // 2. Validate: Block if any subsidy is APPROVED or CLOSED
+    if (subsidies.length > 0) {
+      const blockedStatuses = ['APPROVED', 'CLOSED'];
+      const blockedSubsidies = subsidies.filter(
+        (s) => s.subsidy_status?.name && blockedStatuses.includes(s.subsidy_status.name)
+      );
+
+      if (blockedSubsidies.length > 0) {
+        const statusNames = blockedSubsidies.map((s) => s.subsidy_status?.name).join(', ');
+        throw new CustomGraphQLError(
+          `Cannot delete project with ${statusNames.toLowerCase()} subsidy requests. Please remove or change the status of associated subsidies first.`,
+          ErrorCode.BAD_REQUEST,
+          400,
+          { additional: { errorCode: 'PROJECT_HAS_APPROVED_SUBSIDIES' } }
+        );
+      }
+    }
+
+    // 3. Delete all subsidies (uses existing service with validation)
+    console.log(`🔄 Deleting ${subsidies.length} subsidy requests...`);
+    for (const subsidy of subsidies) {
+      await this.subsidyRequestService.delete(subsidy.id, userId);
+    }
+
+    // 4. Delete all activities (uses existing service with validation)
+    const activities = await this.prisma.projectActivity.findMany({
+      where: {
+        project_id: id,
+        is_deleted: false,
+      },
+    });
+
+    console.log(`🔄 Deleting ${activities.length} activities...`);
+    for (const activity of activities) {
+      await this.projectActivityService.softDelete(activity.id, userId);
+    }
+
+    // 5. Soft delete special projects
+    console.log(`📄 Soft deleting special projects...`);
+    await this.prisma.specialProjects.updateMany({
+      where: {
+        project_id: id,
+        is_deleted: false,
+      },
+      data: {
+        is_deleted: true,
+        deleted_at: new Date(),
+        deleted_by: userId,
+      },
+    });
+
+    // 6. Delete voluntary users (hard delete - join table)
+    console.log(`👥 Deleting voluntary users...`);
+    await this.prisma.voluntariesOnProjects.deleteMany({
+      where: { project_id: id },
+    });
+
+    // 7. Soft delete the project
+    console.log(`🎯 Soft deleting project...`);
+    const deletedProject = await this.projectRepository.softDelete(id, userId);
+
+    console.log(`✅ Project ${id} soft deleted successfully`);
+    return deletedProject;
   }
 
   async findById(id: string): Promise<Project | null> {

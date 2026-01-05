@@ -92,6 +92,7 @@ export class SubsidyRequestService {
         `Cannot delete ${subsidyRequest.subsidy_status.name.toLowerCase()} subsidy requests`,
         ErrorCode.BAD_REQUEST,
         400,
+        { additional: { errorCode: 'SUBSIDY_IS_APPROVED_OR_CLOSED' } }
       );
     }
 

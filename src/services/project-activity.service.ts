@@ -98,6 +98,7 @@ export class ProjectActivityService {
           `Cannot delete activity with ${statusNames.toLowerCase()} subsidy requests. Please remove or change the status of associated subsidies first.`,
           ErrorCode.BAD_REQUEST,
           400,
+          { additional: { errorCode: 'ACTIVITY_HAS_APPROVED_SUBSIDIES' } }
         );
       }
     }
