@@ -55,4 +55,22 @@ export class SubsidyRequestItemRepository {
       },
     });
   }
+
+  /**
+   * Find all subsidy requests that have items linked to a specific activity
+   */
+  async findSubsidyRequestsByActivityId(activityId: string): Promise<string[]> {
+    const items = await this.prisma.subsidyRequestItem.findMany({
+      where: {
+        project_activity_id: activityId,
+        is_deleted: false,
+      },
+      select: {
+        subsidy_request_id: true,
+      },
+      distinct: ['subsidy_request_id'],
+    });
+
+    return items.map(item => item.subsidy_request_id);
+  }
 }

@@ -213,4 +213,33 @@ export class ActivityDocumentsRepository {
       );
     }
   }
+
+  /**
+   * Soft delete all documents of an activity
+   */
+  async softDeleteByActivityId(activityId: string, userId: string): Promise<number> {
+    try {
+      const deletionDate = new Date();
+
+      const result = await this.prisma.activityDocuments.updateMany({
+        where: {
+          project_activity_id: activityId,
+          is_deleted: false,
+        },
+        data: {
+          is_deleted: true,
+          deleted_at: deletionDate,
+          deleted_by: userId,
+        },
+      });
+
+      return result.count;
+    } catch (error) {
+      throw new CustomGraphQLError(
+        'Erro ao deletar documentos da atividade',
+        ErrorCode.INTERNAL_SERVER_ERROR,
+        500,
+      );
+    }
+  }
 }

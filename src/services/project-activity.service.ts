@@ -4,12 +4,22 @@ import { ProjectActivity } from 'src/@generated/project-activity/project-activit
 import { ProjectActivityBatchUpdateDto, ProjectActivityCreateDto, ProjectActivityUpdateDto } from '../dto/project-activity.dto';
 import { CustomGraphQLError, ErrorCode } from 'src/common/errors/custom-graphql-error';
 import { ProjectActivityLogService } from './project-activity-log.service';
+import { SubsidyRequestItemRepository } from '../repositories/subsidy-request-item.repository';
+import { SubsidyRequestService } from './subsidy-request.service';
+import { ActivityDocumentsRepository } from '../repositories/activity-documents.repository';
+import { GoogleDriveService } from './google-drive.service';
+import { PrismaService } from './prisma.service';
 
 @Injectable()
 export class ProjectActivityService {
   constructor(
     private readonly repository: ProjectActivityRepository,
     private readonly logService: ProjectActivityLogService,
+    private readonly subsidyRequestItemRepository: SubsidyRequestItemRepository,
+    private readonly subsidyRequestService: SubsidyRequestService,
+    private readonly activityDocumentsRepository: ActivityDocumentsRepository,
+    private readonly driveService: GoogleDriveService,
+    private readonly prisma: PrismaService,
   ) {}
 
   async create(input: ProjectActivityCreateDto, userId: string): Promise<ProjectActivity> {
@@ -58,12 +68,87 @@ export class ProjectActivityService {
   }
 
   async softDelete(id: string, userId: string): Promise<ProjectActivity> {
-    const activity = await this.repository.softDelete(id, userId);
+    console.log(`🗑️  Starting soft delete for activity ${id}`);
+
+    // 1. Find all subsidy requests linked to this activity
+    const subsidyRequestIds = await this.subsidyRequestItemRepository.findSubsidyRequestsByActivityId(id);
+    
+    console.log(`📋 Found ${subsidyRequestIds.length} subsidy requests linked to activity`);
+
+    // 2. Validate: Check if any subsidy has APPROVED or CLOSED status
+    if (subsidyRequestIds.length > 0) {
+      const subsidyRequests = await this.prisma.subsidyRequest.findMany({
+        where: {
+          id: { in: subsidyRequestIds },
+          is_deleted: false,
+        },
+        include: {
+          subsidy_status: true,
+        },
+      });
+
+      const blockedStatuses = ['APPROVED', 'CLOSED'];
+      const blockedSubsidies = subsidyRequests.filter(
+        (sr) => sr.subsidy_status?.name && blockedStatuses.includes(sr.subsidy_status.name)
+      );
+
+      if (blockedSubsidies.length > 0) {
+        const statusNames = blockedSubsidies.map((sr) => sr.subsidy_status?.name).join(', ');
+        throw new CustomGraphQLError(
+          `Cannot delete activity with ${statusNames.toLowerCase()} subsidy requests. Please remove or change the status of associated subsidies first.`,
+          ErrorCode.BAD_REQUEST,
+          400,
+        );
+      }
+    }
+
+    // 3. Delete all subsidy requests (uses existing service with validation)
+    console.log(`🔄 Deleting ${subsidyRequestIds.length} subsidy requests...`);
+    for (const subsidyRequestId of subsidyRequestIds) {
+      await this.subsidyRequestService.delete(subsidyRequestId, userId);
+    }
+
+    // 4. Soft delete activity documents
+    console.log(`📄 Soft deleting activity documents...`);
+    await this.activityDocumentsRepository.softDeleteByActivityId(id, userId);
+
+    // 5. Soft delete the activity (repository handles funding, logs, assignees)
+    console.log(`🎯 Soft deleting activity...`);
+    const deletedActivity = await this.repository.softDelete(id, userId);
+
+    // 6. Rename Google Drive folder (outside critical path)
+    try {
+      console.log(`📁 Attempting to rename Google Drive folder...`);
+      
+      const document = await this.prisma.activityDocuments.findFirst({
+        where: {
+          project_activity_id: id,
+          drive_file_id: { not: null },
+        },
+      });
+
+      if (document?.drive_file_id) {
+        const fileMetadata = await this.driveService.getFileMetadata(document.drive_file_id);
+        
+        if (fileMetadata.parents && fileMetadata.parents.length > 0) {
+          const folderId = fileMetadata.parents[0];
+          await this.driveService.renameFolderWithPrefix(folderId, '[DELETED] ');
+          console.log(`✅ Renamed Google Drive folder for activity ${id}`);
+        } else {
+          console.log(`⚠️  No parent folder found for activity ${id}`);
+        }
+      } else {
+        console.log(`⚠️  No documents with drive_file_id found for activity ${id}`);
+      }
+    } catch (error) {
+      console.error(`❌ Error renaming Google Drive folder for activity ${id}:`, error);
+    }
 
     // Log deletion
     await this.logService.logDeletion(id, userId);
 
-    return activity;
+    console.log(`✅ Activity ${id} soft deleted successfully`);
+    return deletedActivity;
   }
 
   async batchUpdate(data: ProjectActivityBatchUpdateDto, userId: string): Promise<ProjectActivity[]> {
