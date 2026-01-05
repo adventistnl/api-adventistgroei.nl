@@ -293,13 +293,55 @@ export class GoogleDriveService {
     try {
       const response = await this.drive.files.get({
         fileId,
-        fields: 'id, name, mimeType, size, createdTime, modifiedTime',
+        fields: 'id, name, mimeType, size, createdTime, modifiedTime, parents',
         supportsAllDrives: true,
       });
 
       return response.data;
     } catch (error) {
       throw new Error(`Failed to get file metadata: ${error.message}`);
+    }
+  }
+
+  /**
+   * Renomeia uma pasta adicionando um prefixo ao nome atual
+   * Útil para marcar pastas como deletadas sem removê-las do Drive
+   */
+  async renameFolderWithPrefix(folderId: string, prefix: string): Promise<void> {
+    try {
+      // Primeiro, obter o nome atual da pasta
+      const response = await this.drive.files.get({
+        fileId: folderId,
+        fields: 'name',
+        supportsAllDrives: true,
+      });
+
+      const currentName = response.data.name;
+      
+      if (!currentName) {
+        throw new Error('Folder name not found');
+      }
+
+      // Verificar se o prefixo já existe no nome
+      if (currentName.startsWith(prefix)) {
+        console.log(`Folder already has prefix ${prefix}, skipping rename`);
+        return;
+      }
+
+      // Renomear a pasta com o prefixo
+      const newName = `${prefix}${currentName}`;
+      
+      await this.drive.files.update({
+        fileId: folderId,
+        requestBody: {
+          name: newName,
+        },
+        supportsAllDrives: true,
+      });
+
+      console.log(`Folder renamed from "${currentName}" to "${newName}"`);
+    } catch (error) {
+      throw new Error(`Failed to rename folder: ${error.message}`);
     }
   }
 

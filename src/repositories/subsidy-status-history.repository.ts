@@ -116,4 +116,24 @@ export class SubsidyStatusHistoryRepository {
       );
     }
   }
+
+  /**
+   * Soft delete de todos os registros de histórico de uma solicitação de subsídio
+   * Usado para cascata quando deletar o subsidy request
+   */
+  async softDeleteBySubsidyRequestId(subsidyRequestId: string, userId: string): Promise<number> {
+    const result = await this.prisma.subsidyStatusHistory.updateMany({
+      where: {
+        subsidy_request_id: subsidyRequestId,
+        is_deleted: false,
+      },
+      data: {
+        is_deleted: true,
+        deleted_at: new Date(),
+        deleted_by: userId,
+      },
+    });
+
+    return result.count;
+  }
 }

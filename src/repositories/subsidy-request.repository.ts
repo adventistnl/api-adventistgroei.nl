@@ -162,6 +162,18 @@ export class SubsidyRequestRepository {
         deleted_by: userId,
         updated_by: userId,
       },
+      include: {
+        subsidy_status: true,
+        institution: true,
+        requester: true,
+        department: {
+          include: {
+            church: true,
+          },
+        },
+        church: true,
+        project: true,
+      },
     });
   }
 

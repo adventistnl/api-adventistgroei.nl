@@ -198,29 +198,46 @@ export class SubsidyReceiptRepository {
    * Soft delete de recibo
    */
   async softDelete(id: string, userId: string): Promise<SubsidyReceipt> {
-    try {
-      const deletionDate = new Date();
+    const receipt = await this.findById(id);
 
-      return await this.prisma.subsidyReceipt.update({
-        where: { id },
-        data: {
-          is_deleted: true,
-          deleted_at: deletionDate,
-          deleted_by: userId,
-        },
-        include: {
-          subsidy_request: true,
-          subsidy_request_item: true,
-          project_activity: true,
-        },
-      });
-    } catch (error) {
-      throw new CustomGraphQLError(
-        'Erro ao deletar recibo de subsídio',
-        ErrorCode.INTERNAL_SERVER_ERROR,
-        500,
-      );
+    if (!receipt) {
+      throw new CustomGraphQLError('Recibo não encontrado', ErrorCode.NOT_FOUND, 404);
     }
+
+    if (receipt.is_deleted) {
+      throw new CustomGraphQLError('Recibo já foi deletado', ErrorCode.BAD_REQUEST, 400);
+    }
+
+    return this.prisma.subsidyReceipt.update({
+      where: { id },
+      data: {
+        is_deleted: true,
+        deleted_at: new Date(),
+        deleted_by: userId,
+        updated_by: userId,
+      },
+    });
+  }
+
+  /**
+   * Soft delete de todos os recibos de uma solicitação de subsídio
+   * Usado para cascata quando deletar o subsidy request
+   */
+  async softDeleteBySubsidyRequestId(subsidyRequestId: string, userId: string): Promise<number> {
+    const result = await this.prisma.subsidyReceipt.updateMany({
+      where: {
+        subsidy_request_id: subsidyRequestId,
+        is_deleted: false,
+      },
+      data: {
+        is_deleted: true,
+        deleted_at: new Date(),
+        deleted_by: userId,
+        updated_by: userId,
+      },
+    });
+
+    return result.count;
   }
 
   /**

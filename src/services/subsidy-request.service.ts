@@ -7,6 +7,7 @@ import { SubsidyRequestCreateDto, SubsidyRequestUpdateDto } from '../dto/subsidy
 import { SubsidyKPIs, SubsidyByDepartment, SubsidyByMonth } from '../dto/subsidy-analytics.dto';
 import { CustomGraphQLError, ErrorCode } from '../common/errors/custom-graphql-error';
 import { PrismaService } from './prisma.service';
+import { GoogleDriveService } from './google-drive.service';
 import { format } from 'date-fns';
 
 @Injectable()
@@ -16,6 +17,7 @@ export class SubsidyRequestService {
     private readonly subsidyRequestItemRepository: SubsidyRequestItemRepository,
     private readonly historyRepository: SubsidyStatusHistoryRepository,
     private readonly prisma: PrismaService,
+    private readonly driveService: GoogleDriveService,
   ) {}
 
   async create(data: SubsidyRequestCreateDto, userId: string): Promise<SubsidyRequest> {
@@ -71,20 +73,104 @@ export class SubsidyRequestService {
   }
 
   async delete(id: string, userId: string): Promise<SubsidyRequest> {
-    // SOFT DELETE em cascata: SubsidyRequest E SubsidyRequestItems
-    const subsidyRequest = await this.subsidyRequestRepository.findById(id);
+    // Buscar subsidy request com status
+    const subsidyRequest = await this.prisma.subsidyRequest.findUnique({
+      where: { id, is_deleted: false },
+      include: {
+        subsidy_status: true,
+      },
+    });
 
     if (!subsidyRequest) {
       throw new CustomGraphQLError('SubsidyRequest not found', ErrorCode.NOT_FOUND, 404);
     }
 
-    // 1. Soft delete todos os items primeiro
-    await this.subsidyRequestItemRepository.softDeleteBySubsidyRequestId(id, userId);
+    // Validação: Não permitir deletar se status for APPROVED ou CLOSED
+    const blockedStatuses = ['APPROVED', 'CLOSED'];
+    if (subsidyRequest.subsidy_status?.name && blockedStatuses.includes(subsidyRequest.subsidy_status.name)) {
+      throw new CustomGraphQLError(
+        `Cannot delete ${subsidyRequest.subsidy_status.name.toLowerCase()} subsidy requests`,
+        ErrorCode.BAD_REQUEST,
+        400,
+      );
+    }
 
-    // 2. Soft delete o SubsidyRequest
-    return this.subsidyRequestRepository.softDelete(id, userId);
+    // Executar soft delete em cascata dentro de uma transação
+    const result = await this.prisma.$transaction(async (_tx) => {
+      // 1. Soft delete todos os receipts
+      await this.prisma.subsidyReceipt.updateMany({
+        where: {
+          subsidy_request_id: id,
+          is_deleted: false,
+        },
+        data: {
+          is_deleted: true,
+          deleted_at: new Date(),
+          deleted_by: userId,
+          updated_by: userId,
+        },
+      });
 
-    // NOTA: Arquivos do Google Drive NÃO são deletados (ActivityDocuments permanecem)
+      // 2. Soft delete todos os items
+      await this.subsidyRequestItemRepository.softDeleteBySubsidyRequestId(id, userId);
+
+      // 3. Soft delete todo o histórico de status
+      await this.historyRepository.softDeleteBySubsidyRequestId(id, userId);
+
+      // 4. Soft delete o SubsidyRequest
+      const deletedSubsidy = await this.subsidyRequestRepository.softDelete(id, userId);
+
+      return deletedSubsidy;
+    });
+
+    // 5. Renomear pasta no Google Drive (fora da transação, não crítico se falhar)
+    try {
+      console.log(`🔍 Searching for Google Drive folder for subsidy ${id}`);
+      
+      // Buscar um receipt deste subsidy request que tenha drive_file_id
+      const receipt = await this.prisma.subsidyReceipt.findFirst({
+        where: {
+          subsidy_request_id: id,
+          drive_file_id: { not: null },
+        },
+      });
+
+      console.log(`📄 Found receipt:`, receipt ? { id: receipt.id, drive_file_id: receipt.drive_file_id } : 'No receipt found');
+
+      if (receipt?.drive_file_id) {
+        // Obter metadados do arquivo para encontrar o parent folder
+        console.log(`📂 Getting file metadata for drive_file_id: ${receipt.drive_file_id}`);
+        const fileMetadata = await this.driveService.getFileMetadata(receipt.drive_file_id);
+        
+        console.log(`📊 File metadata:`, {
+          id: fileMetadata.id,
+          name: fileMetadata.name,
+          parents: fileMetadata.parents,
+        });
+        
+        // O parent do arquivo é a pasta do subsídio
+        if (fileMetadata.parents && fileMetadata.parents.length > 0) {
+          const folderId = fileMetadata.parents[0];
+          console.log(`📁 Found parent folder ID: ${folderId}`);
+          await this.driveService.renameFolderWithPrefix(folderId, '[DELETED] ');
+          console.log(`✅ Renamed Google Drive folder for subsidy ${id}`);
+        } else {
+          console.log(`⚠️  No parent folder found for subsidy ${id}`);
+          console.log(`⚠️  File metadata parents:`, fileMetadata.parents);
+        }
+      } else {
+        console.log(`⚠️  No receipts with drive_file_id found for subsidy ${id}`);
+      }
+    } catch (error) {
+      // Log error but don't fail the deletion
+      console.error(`❌ Error renaming Google Drive folder for subsidy ${id}:`, error);
+      console.error(`❌ Error details:`, {
+        message: error.message,
+        stack: error.stack,
+      });
+    }
+
+    return result;
   }
 
   async findById(id: string): Promise<SubsidyRequest | null> {

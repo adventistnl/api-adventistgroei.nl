@@ -453,4 +453,40 @@ export class SubsidyReceiptService {
 
     return false;
   }
+
+  /**
+   * Obter o folder ID do Google Drive para uma solicitação de subsídio
+   * Busca através dos receipts existentes
+   */
+  async getSubsidyFolderId(subsidyRequestId: string): Promise<string | null> {
+    try {
+      // Buscar um receipt deste subsidy request que tenha drive_file_id
+      const receipt = await this.prisma.subsidyReceipt.findFirst({
+        where: {
+          subsidy_request_id: subsidyRequestId,
+          is_deleted: false,
+          drive_file_id: { not: null },
+        },
+      });
+
+      if (!receipt || !receipt.drive_file_id) {
+        console.log(`No receipts with drive_file_id found for subsidy ${subsidyRequestId}`);
+        return null;
+      }
+
+      // Obter metadados do arquivo para encontrar o parent folder
+      const fileMetadata = await this.driveService.getFileMetadata(receipt.drive_file_id);
+      
+      // O parent do arquivo é a pasta do subsídio
+      if (fileMetadata.parents && fileMetadata.parents.length > 0) {
+        return fileMetadata.parents[0];
+      }
+
+      console.log(`No parent folder found for file ${receipt.drive_file_id}`);
+      return null;
+    } catch (error) {
+      console.error(`Error getting subsidy folder ID: ${error.message}`);
+      return null;
+    }
+  }
 }
