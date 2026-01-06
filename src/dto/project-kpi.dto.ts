@@ -41,8 +41,14 @@ export class ProjectKPIsDto {
   @Field(() => Int)
   subsidyRate: number
 
+  @Field(() => Float)
+  totalSubsidyAmount: number
+
   @Field(() => Int)
   subsidyRequestsCount: number
+
+  @Field(() => Int)
+  approvedSubsidyRequestsCount: number
 
   // Timeline KPIs
   @Field(() => Int)

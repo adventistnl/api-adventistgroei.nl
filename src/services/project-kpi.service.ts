@@ -18,6 +18,7 @@ export class ProjectKPIService {
         },
         subsidies: {
           where: { is_deleted: false },
+          include: { subsidy_status: true },
         },
       },
     });
@@ -69,7 +70,23 @@ export class ProjectKPIService {
       totalActivities > 0
         ? Math.round((subsidizedActivities / totalActivities) * 100)
         : 0;
-    const subsidyRequestsCount = project.subsidies.length;
+    
+    // Filter out rejected subsidies for both count and amount
+    const activeSubsidyRequests = project.subsidies.filter(
+      (s) => s.subsidy_status?.name?.toLowerCase() !== 'rejected'
+    );
+
+    const subsidyRequestsCount = activeSubsidyRequests.length;
+    const approvedSubsidyRequestsCount = activeSubsidyRequests.filter(
+      (s) => s.subsidy_status?.name?.toLowerCase() === 'approved'
+    ).length;
+    const rejectedSubsidyRequestsCount = project.subsidies.filter(
+      (s) => s.subsidy_status?.name?.toLowerCase() === 'rejected'
+    ).length;
+    
+    const totalSubsidyAmount = DecimalHelper.sum(
+      activeSubsidyRequests.map((s) => s.total_budget || 0)
+    ).toNumber();
 
     // Calculate Timeline KPIs
     const now = new Date();
@@ -101,6 +118,8 @@ export class ProjectKPIService {
       subsidizedActivities,
       subsidyRate,
       subsidyRequestsCount,
+      approvedSubsidyRequestsCount,
+      totalSubsidyAmount,
       daysRemaining,
       endDate,
       projectStatus,

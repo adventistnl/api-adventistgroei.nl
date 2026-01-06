@@ -186,6 +186,11 @@ export class ProjectService {
         ...(institutionId && {
           institution_id: institutionId,
         }),
+        subsidy_status: {
+          name: {
+            not: 'rejected',
+          },
+        },
       },
     });
 

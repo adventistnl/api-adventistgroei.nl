@@ -1571,7 +1571,9 @@ type ProjectKPIsDto {
   budgetUtilization: Int!
   subsidizedActivities: Int!
   subsidyRate: Int!
+  totalSubsidyAmount: Float!
   subsidyRequestsCount: Int!
+  approvedSubsidyRequestsCount: Int!
   daysRemaining: Int!
   endDate: DateTime!
   projectStatus: String!
