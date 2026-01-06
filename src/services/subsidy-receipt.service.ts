@@ -141,6 +141,16 @@ export class SubsidyReceiptService {
         userId,
       );
 
+      // 9. Create history record for document upload
+      await this.historyRepository.create({
+        subsidy_request_id: input.subsidy_request_id,
+        status_id: subsidyRequest.subsidy_statuses_id,
+        previous_status_id: undefined,
+        type: SubsidyHistoryType.DOCUMENT_ACTION,
+        reason: `Documento "${filename}" enviado`,
+        changed_by: userId,
+      });
+
       return receipt;
     } catch (error) {
       console.error('Upload subsidy receipt error:', error);
@@ -215,6 +225,24 @@ export class SubsidyReceiptService {
     }
 
     try {
+      // Create history record BEFORE deletion (if subsidy_request_id exists)
+      if (receipt.subsidy_request_id) {
+        const subsidyRequest = await this.prisma.subsidyRequest.findUnique({
+          where: { id: receipt.subsidy_request_id }
+        });
+        
+        if (subsidyRequest?.subsidy_statuses_id) {
+          await this.historyRepository.create({
+            subsidy_request_id: receipt.subsidy_request_id,
+            status_id: subsidyRequest.subsidy_statuses_id,
+            previous_status_id: undefined,
+            type: SubsidyHistoryType.DOCUMENT_ACTION,
+            reason: `Documento "${receipt.filename}" removido`,
+            changed_by: userId,
+          });
+        }
+      }
+
       // Soft delete no banco
       const deletedReceipt = await this.repository.softDelete(id, userId);
 

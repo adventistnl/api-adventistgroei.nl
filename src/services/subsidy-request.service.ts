@@ -133,6 +133,16 @@ export class SubsidyRequestService {
 
     // Executar soft delete em cascata dentro de uma transação
     const result = await this.prisma.$transaction(async (_tx) => {
+      // 0. Create history record BEFORE deletion (para manter auditoria)
+      await this.historyRepository.create({
+        subsidy_request_id: id,
+        status_id: subsidyRequest.subsidy_statuses_id,
+        previous_status_id: undefined,
+        type: SubsidyHistoryType.STATUS_CHANGE,
+        reason: 'Solicitação de subsídio deletada',
+        changed_by: userId,
+      });
+
       // 1. Soft delete todos os receipts
       await this.prisma.subsidyReceipt.updateMany({
         where: {
