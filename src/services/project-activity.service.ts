@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { ProjectActivityRepository } from '../repositories/project-activity.repository';
+import { ProjectRepository } from '../repositories/project.repository';
+import { DecimalHelper } from '../common/helpers/decimal.helper';
 import { ProjectActivity } from 'src/@generated/project-activity/project-activity.model';
 import { ProjectActivityBatchUpdateDto, ProjectActivityCreateDto, ProjectActivityUpdateDto } from '../dto/project-activity.dto';
 import { CustomGraphQLError, ErrorCode } from 'src/common/errors/custom-graphql-error';
@@ -14,6 +16,7 @@ import { PrismaService } from './prisma.service';
 export class ProjectActivityService {
   constructor(
     private readonly repository: ProjectActivityRepository,
+    private readonly projectRepository: ProjectRepository,
     private readonly logService: ProjectActivityLogService,
     private readonly subsidyRequestItemRepository: SubsidyRequestItemRepository,
     private readonly subsidyRequestService: SubsidyRequestService,
@@ -22,12 +25,31 @@ export class ProjectActivityService {
     private readonly prisma: PrismaService,
   ) {}
 
+  private async recalculateProjectBudget(projectId: string, userId: string): Promise<void> {
+    try {
+      console.log(`💰 Recalculating budget for project ${projectId}...`);
+      
+      const activities = await this.repository.findManyByFilters({ project_id: projectId });
+      const totalBudget = DecimalHelper.sum(activities.map(a => a.budget_amount));
+
+      await this.projectRepository.update(projectId, { budget: totalBudget.toNumber() }, userId);
+      
+      console.log(`✅ Project ${projectId} budget updated to ${totalBudget.toNumber()}`);
+    } catch (error) {
+      console.error(`❌ Error recalculating project budget:`, error);
+      // We don't throw here to avoid blocking the main operation if budget update fails
+    }
+  }
+
   async create(input: ProjectActivityCreateDto, userId: string): Promise<ProjectActivity> {
     try {
       const activity = await this.repository.create(input, userId);
 
       // Log creation
       await this.logService.logCreation(activity.id, userId);
+
+      // Recalculate project budget
+      await this.recalculateProjectBudget(activity.project_id, userId);
 
       return activity;
     } catch (error) {
@@ -53,6 +75,11 @@ export class ProjectActivityService {
       // Log changes
       await this.logService.logChanges(input.id, userId, oldActivity, input);
 
+      // Recalculate project budget if cost changed
+      if (oldActivity.budget_amount.toNumber() !== updatedActivity.budget_amount.toNumber()) {
+        await this.recalculateProjectBudget(updatedActivity.project_id, userId);
+      }
+
       return updatedActivity;
     } catch (error) {
       throw new CustomGraphQLError('Erro ao atualizar atividade do projeto', ErrorCode.INTERNAL_SERVER_ERROR, error);
@@ -69,6 +96,12 @@ export class ProjectActivityService {
 
   async softDelete(id: string, userId: string): Promise<ProjectActivity> {
     console.log(`🗑️  Starting soft delete for activity ${id}`);
+
+    // Get activity first to know projectId
+    const activity = await this.repository.findById(id);
+    if (!activity) {
+      throw new CustomGraphQLError('Activity not found', ErrorCode.NOT_FOUND, 404);
+    }
 
     // 1. Find all subsidy requests linked to this activity
     const subsidyRequestIds = await this.subsidyRequestItemRepository.findSubsidyRequestsByActivityId(id);
@@ -148,6 +181,9 @@ export class ProjectActivityService {
     // Log deletion
     await this.logService.logDeletion(id, userId);
 
+    // Recalculate project budget
+    await this.recalculateProjectBudget(activity.project_id, userId);
+
     console.log(`✅ Activity ${id} soft deleted successfully`);
     return deletedActivity;
   }
@@ -155,10 +191,13 @@ export class ProjectActivityService {
   async batchUpdate(data: ProjectActivityBatchUpdateDto, userId: string): Promise<ProjectActivity[]> {
     // Get old data for all activities before update
     const oldActivitiesMap = new Map<string, ProjectActivity>();
+    const projectIdsToUpdate = new Set<string>();
+
     for (const activityId of data.ids) {
       const oldActivity = await this.repository.findById(activityId);
       if (oldActivity) {
         oldActivitiesMap.set(activityId, oldActivity);
+        projectIdsToUpdate.add(oldActivity.project_id);
       }
     }
 
@@ -171,6 +210,11 @@ export class ProjectActivityService {
       if (oldActivity) {
         await this.logService.logChanges(activityId, userId, oldActivity, data);
       }
+    }
+
+    // Recalculate budget for all affected projects
+    for (const projectId of projectIdsToUpdate) {
+      await this.recalculateProjectBudget(projectId, userId);
     }
 
     return updatedActivities;

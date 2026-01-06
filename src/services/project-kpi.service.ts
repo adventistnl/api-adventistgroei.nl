@@ -15,6 +15,9 @@ export class ProjectKPIService {
       include: {
         activities: {
           where: { is_deleted: false },
+          include: {
+            activity_funding: true, // Include funding to calculate local contribution
+          },
         },
         subsidies: {
           where: { is_deleted: false },
@@ -41,23 +44,52 @@ export class ProjectKPIService {
         : 0;
 
     // Calculate Budget KPIs
-    const projectBudget = DecimalHelper.toDecimal(project.budget);
-    const subsidizedBudget = DecimalHelper.toDecimal(project.subsidized_budget);
-    const balance = DecimalHelper.toDecimal(project.balance);
-    
-    // Sum allocated budget from activities
+    // allocatedBudget is the sum of all activity budgets
     const allocatedBudget = project.activities.reduce<Decimal>(
       (sum, activity) => sum.plus(DecimalHelper.toDecimal(activity.budget_amount)),
       new Decimal(0),
     );
 
+    // projectBudget should be the same as allocatedBudget based on our previous fix (ProjectServiceSync)
+    // But for KPIs, relying on the sum of activities is safer/more accurate dynamically
+    const projectBudget = allocatedBudget; 
+
+    // Filter out rejected subsidies for both count and amount
+    const activeSubsidyRequests = project.subsidies.filter(
+      (s) => s.subsidy_status?.name?.toLowerCase() !== 'rejected'
+    );
+
+    const subsidyRequestsCount = activeSubsidyRequests.length;
+    const approvedSubsidyRequestsCount = activeSubsidyRequests.filter(
+      (s) => s.subsidy_status?.name?.toLowerCase() === 'approved'
+    ).length;
+    
+    // totalSubsidyAmount is the sum of relevant subsidy requests
+    const totalSubsidyAmount = DecimalHelper.sum(
+      activeSubsidyRequests.map((s) => s.total_budget || 0)
+    ).toNumber();
+
+    // KPI: Subsidized Budget
+    // User expectation: This equals the "Total Subsidy Amount" (Requested/Approved Subsidies)
+    const subsidizedBudget = new Decimal(totalSubsidyAmount);
+
+    // KPI: Local Contribution (mapped to 'balance')
+    // User expectation: Total Budget - Subsidized Budget = What local entity pays
+    // This assumes that anything NOT covered by subsidy is paid locally
+    const localContribution = projectBudget.minus(subsidizedBudget);
+
+    // Balance field in DTO is used for "Local Contribution" in frontend card
+    const balance = localContribution;
+    
     // Calculate Percentages (safe division)
-    // budgetUtilization = (allocatedBudget / projectBudget) * 100
+    // budgetUtilization = (allocatedBudget / projectBudget) * 100 
+    // Since allocated == projectBudget now, this is always 100% if > 0.
     const budgetUtilization = projectBudget.isPositive() 
       ? allocatedBudget.dividedBy(projectBudget).times(100).toNumber() 
       : 0;
       
     // subsidizedBudgetPercentage = (subsidizedBudget / projectBudget) * 100
+    // Shows how much of the project relies on subsidies
     const subsidizedBudgetPercentage = projectBudget.isPositive()
       ? subsidizedBudget.dividedBy(projectBudget).times(100).toNumber()
       : 0;
@@ -70,23 +102,6 @@ export class ProjectKPIService {
       totalActivities > 0
         ? Math.round((subsidizedActivities / totalActivities) * 100)
         : 0;
-    
-    // Filter out rejected subsidies for both count and amount
-    const activeSubsidyRequests = project.subsidies.filter(
-      (s) => s.subsidy_status?.name?.toLowerCase() !== 'rejected'
-    );
-
-    const subsidyRequestsCount = activeSubsidyRequests.length;
-    const approvedSubsidyRequestsCount = activeSubsidyRequests.filter(
-      (s) => s.subsidy_status?.name?.toLowerCase() === 'approved'
-    ).length;
-    const rejectedSubsidyRequestsCount = project.subsidies.filter(
-      (s) => s.subsidy_status?.name?.toLowerCase() === 'rejected'
-    ).length;
-    
-    const totalSubsidyAmount = DecimalHelper.sum(
-      activeSubsidyRequests.map((s) => s.total_budget || 0)
-    ).toNumber();
 
     // Calculate Timeline KPIs
     const now = new Date();
@@ -112,7 +127,7 @@ export class ProjectKPIService {
       projectBudget: projectBudget.toNumber(),
       allocatedBudget: allocatedBudget.toNumber(),
       subsidizedBudget: subsidizedBudget.toNumber(),
-      balance: balance.toNumber(),
+      balance: balance.toNumber(), // Mapped to Local Contribution
       budgetUtilization: Math.round(budgetUtilization),
       subsidizedBudgetPercentage: Math.round(subsidizedBudgetPercentage),
       subsidizedActivities,
