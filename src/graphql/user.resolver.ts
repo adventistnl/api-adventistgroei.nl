@@ -48,7 +48,6 @@ export class UserResolver {
     return await this.userService.getUserById(id);
   }
 
-  @Permission()
   @Query(() => UserWithRoles, { nullable: true })
   async userWithRoles(@Args('id') id: string): Promise<UserWithRoles | null> {
     return await this.userService.getUserByIdWithRoles(id);

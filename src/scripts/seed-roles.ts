@@ -111,6 +111,14 @@ const roles = [
     description: 'Church leader with expanded access',
     is_fixed: true,
     permissions: [
+      { key_code: 'PROJECTS_ACCESS', is_essential: true },
+{ key_code: 'PROJECT_ACCESS', is_essential: true },
+      { key_code: 'ANNUAL_BUDGETS_ACCESS', is_essential: true },
+      { key_code: 'ANNUAL_BUDGET_ACCESS', is_essential: true },
+      { key_code: 'BUDGET_KPIS_ACCESS', is_essential: true },
+      { key_code: 'DEPARTMENT_SPENDING_ACCESS', is_essential: true },
+      { key_code: 'PROJECT_ACTIVITIES_ACCESS', is_essential: true },
+      { key_code: 'ACTIVITY_ACCESS', is_essential: true },
       { key_code: 'USERS_ACCESS', is_essential: true },
       { key_code: 'USER_ACCESS', is_essential: true },
       { key_code: 'CHURCHES_ACCESS', is_essential: true },
@@ -195,6 +203,12 @@ const roles = [
     is_fixed: true,
     permissions: [
       // Activity Permissions
+      { key_code: 'PROJECTS_ACCESS', is_essential: true },
+{ key_code: 'PROJECT_ACCESS', is_essential: true },
+      { key_code: 'ANNUAL_BUDGETS_ACCESS', is_essential: true },
+      { key_code: 'ANNUAL_BUDGET_ACCESS', is_essential: true },
+      { key_code: 'BUDGET_KPIS_ACCESS', is_essential: true },
+      { key_code: 'DEPARTMENT_SPENDING_ACCESS', is_essential: true },
       { key_code: 'PROJECT_ACTIVITIES_ACCESS', is_essential: true },
       { key_code: 'ACTIVITY_ACCESS', is_essential: true },
       { key_code: 'PROJECT_ACTIVITY_CREATE', is_essential: true },
@@ -346,16 +360,23 @@ async function main() {
           });
 
           if (permissionRecord) {
-            await prisma.rolePermission.create({
-              data: {
-                id: `${createdRole.id}_${permissionRecord.id}`,
-                role_id: createdRole.id,
-                permission_id: permissionRecord.id,
-                is_essential: permission.is_essential,
-                created_by: 'system',
-                updated_by: 'system',
-              },
-            });
+            try {
+              await prisma.rolePermission.create({
+                data: {
+                  id: `${createdRole.id}_${permissionRecord.id}`,
+                  role_id: createdRole.id,
+                  permission_id: permissionRecord.id,
+                  is_essential: permission.is_essential,
+                  created_by: 'system',
+                  updated_by: 'system',
+                },
+              });
+            } catch (error: any) {
+              // Skip if already exists (P2002 = unique constraint violation)
+              if (error.code !== 'P2002') {
+                throw error;
+              }
+            }
           } else {
             console.warn(`⚠️  Permission "${permission.key_code}" not found for role "${role.name}"`);
           }

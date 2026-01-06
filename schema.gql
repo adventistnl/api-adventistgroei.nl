@@ -172,6 +172,11 @@ enum PermissionResolverName {
   deleteProjectActivity
   batchUpdateProjectActivities
   projectActivityLogs
+  uploadActivityDocument
+  downloadActivityDocument
+  deleteActivityDocument
+  validateActivityDocument
+  getActivityDocuments
   sendInviteEmail
   inviteUser
   validateInviteToken
@@ -202,11 +207,6 @@ enum PermissionResolverName {
   departmentKPIs
   departmentActivityData
   departmentBudgetTimeline
-  uploadActivityDocument
-  downloadActivityDocument
-  deleteActivityDocument
-  validateActivityDocument
-  getActivityDocuments
   uploadSubsidyReceipt
   downloadSubsidyReceipt
   deleteSubsidyReceipt
