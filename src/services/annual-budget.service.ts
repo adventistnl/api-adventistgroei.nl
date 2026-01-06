@@ -4,6 +4,9 @@ import { FindManyAnnualBudgetArgs } from 'src/@generated/annual-budget/find-many
 import { BudgetKPIs, DepartmentSpending, SpendingOverTime, BudgetDistribution, EntityDistribution } from 'src/dto/budget-analytics.dto';
 import { AnnualBudgetRepository } from 'src/repositories/annual-budget.repository';
 import { DepartmentRepository } from 'src/repositories/department.repository';
+import { DecimalHelper } from 'src/common/helpers/decimal.helper'; // New import
+import { Decimal } from '@prisma/client/runtime/library'; // New import
+
 
 @Injectable()
 export class AnnualBudgetService {
@@ -89,19 +92,18 @@ export class AnnualBudgetService {
     }
 
     // Calcular totais baseados nos dados reais do budget da instituição
-    // Converter Decimal para Number corretamente
-    const totalInstitutionBudget = Number(budgets[0].planned_budget) || 0;
-    const totalAllocated = Number(budgets[0].allocated_amount) || 0;
-    const totalSpent = Number(budgets[0].total_expenses) || 0;
+    const totalInstitutionBudget = DecimalHelper.toDecimal(budgets[0].planned_budget);
+    const totalAllocated = DecimalHelper.toDecimal(budgets[0].allocated_amount);
+    const totalSpent = DecimalHelper.toDecimal(budgets[0].total_expenses);
 
     // budgetRemaining = saldo restante do orçamento da instituição
-    // Usar o balance já calculado no banco: planned_budget - (allocated_amount + total_expenses)
-    const budgetRemaining = Number(budgets[0].balance) || 0;
+    const budgetRemaining = DecimalHelper.toDecimal(budgets[0].balance);
 
     // budgetUtilization = % do budget que foi utilizado (alocado + gasto)
     // = ((allocated_amount + total_expenses) / planned_budget) * 100
-    const budgetUtilization = totalInstitutionBudget > 0 ?
-      ((totalAllocated + totalSpent) / totalInstitutionBudget) * 100 : 0;
+    const utilizationRaw = totalInstitutionBudget.isPositive() 
+      ? totalAllocated.plus(totalSpent).dividedBy(totalInstitutionBudget).times(100)
+      : new Decimal(0);
 
     // Contar quantos departamentos têm budget ativo para este ano
     const departmentBudgets = await this.annualBudgetRepository.findMany({
@@ -115,11 +117,11 @@ export class AnnualBudgetService {
     const activeDepartments = departmentBudgets.length;
 
     return {
-      totalInstitutionBudget,
-      totalAllocated,
-      totalSpent,
-      budgetRemaining,
-      budgetUtilization: Math.round(budgetUtilization * 100) / 100, // Arredondar para 2 casas
+      totalInstitutionBudget: totalInstitutionBudget.toNumber(),
+      totalAllocated: totalAllocated.toNumber(),
+      totalSpent: totalSpent.toNumber(),
+      budgetRemaining: budgetRemaining.toNumber(),
+      budgetUtilization: DecimalHelper.round(utilizationRaw, 2).toNumber(),
       activeDepartments
     };
   }
@@ -140,11 +142,11 @@ export class AnnualBudgetService {
       .filter(budget => budget.department)
       .map(budget => ({
         name: budget.department?.name || 'Unknown Department',
-        planned: Number(budget.planned_budget) || 0,
-        approved: Number(budget.approved_amount || 0),
-        reserved: Number(budget.allocated_amount) || 0, // Reserved = Allocated (not yet spent)
-        spent: Number(budget.total_expenses) || 0, // Spent = Total expenses (already used)
-        available: Number(budget.balance) || 0, // Available = Balance (not allocated)
+        planned: DecimalHelper.toDecimal(budget.planned_budget).toNumber(),
+        approved: DecimalHelper.toDecimal(budget.approved_amount).toNumber(),
+        reserved: DecimalHelper.toDecimal(budget.allocated_amount).toNumber(), // Reserved = Allocated (not yet spent)
+        spent: DecimalHelper.toDecimal(budget.total_expenses).toNumber(), // Spent = Total expenses (already used)
+        available: DecimalHelper.toDecimal(budget.balance).toNumber(), // Available = Balance (not allocated)
         institution: institutionId
       }));
   }
@@ -177,7 +179,7 @@ export class AnnualBudgetService {
       const departments = validBudgets.map(budget => ({
         departmentId: budget.department_id || '',
         departmentName: budget.department?.name || 'Unknown Department',
-        amount: Number(budget.total_expenses) || 0
+        amount: DecimalHelper.toDecimal(budget.total_expenses).toNumber()
       }));
 
       return {
@@ -200,34 +202,21 @@ export class AnnualBudgetService {
     });
 
     // COLETAR todos os valores diretamente do budget da instituição
-    // A instituição já tem os valores agregados dos departamentos
-    const total = institutionBudgets.reduce((sum, budget) =>
-      sum + Number(budget.planned_budget), 0
-    );
+    const total = DecimalHelper.sum(institutionBudgets.map(b => b.planned_budget));
+    const spent = DecimalHelper.sum(institutionBudgets.map(b => b.total_expenses));
+    const allocated = DecimalHelper.sum(institutionBudgets.map(b => b.allocated_amount));
+    const available = DecimalHelper.sum(institutionBudgets.map(b => b.balance));
 
-    // Spent = total_expenses da INSTITUIÇÃO (já agregado)
-    const spent = institutionBudgets.reduce((sum, budget) =>
-      sum + Number(budget.total_expenses || 0), 0
-    );
-
-    // Allocated = allocated_amount da INSTITUIÇÃO (já agregado)
-    const allocated = institutionBudgets.reduce((sum, budget) =>
-      sum + Number(budget.allocated_amount || 0), 0
-    );
-
-    // Available = balance da INSTITUIÇÃO (já calculado)
-    const available = institutionBudgets.reduce((sum, budget) =>
-      sum + Number(budget.balance || 0), 0
-    );
-
-    const percentageUsed = total > 0 ? ((spent + allocated) / total) * 100 : 0;
+    const percentageUsed = total.isPositive() 
+      ? spent.plus(allocated).dividedBy(total).times(100) 
+      : new Decimal(0);
 
     return {
-      total,
-      spent,
-      allocated,
-      available: Math.max(0, available), // Garante que não seja negativo
-      percentageUsed: Math.round(percentageUsed * 100) / 100
+      total: total.toNumber(),
+      spent: spent.toNumber(),
+      allocated: allocated.toNumber(),
+      available: Decimal.max(0, available).toNumber(), // Garante que não seja negativo
+      percentageUsed: DecimalHelper.round(percentageUsed, 2).toNumber()
     };
   }
 
@@ -243,28 +232,30 @@ export class AnnualBudgetService {
 
     // Filtrar apenas budgets com approved_amount válido
     const approvedBudgets = budgets.filter(
-      budget => budget.approved_amount !== null && Number(budget.approved_amount) > 0
+      budget => budget.approved_amount !== null && DecimalHelper.toDecimal(budget.approved_amount).gt(0)
     );
 
     // Agrupar por entity_type e somar os valores
     const groupedByType = approvedBudgets.reduce((acc, budget) => {
       const type = budget.entity_type as string;
       if (!acc[type]) {
-        acc[type] = { total: 0, count: 0 };
+        acc[type] = { total: new Decimal(0), count: 0 };
       }
-      acc[type].total += Number(budget.approved_amount);
+      acc[type].total = acc[type].total.plus(DecimalHelper.toDecimal(budget.approved_amount));
       acc[type].count += 1;
       return acc;
-    }, {} as Record<string, { total: number; count: number }>);
+    }, {} as Record<string, { total: Decimal; count: number }>);
 
     // Calcular o total alocado para percentuais
-    const totalAllocated = Object.values(groupedByType).reduce((sum, group) => sum + group.total, 0);
+    const totalAllocated = Object.values(groupedByType).reduce((sum, group) => sum.plus(group.total), new Decimal(0));
 
     // Converter para o formato de resposta
     const entities: EntityDistribution[] = Object.entries(groupedByType).map(([type, { total, count }]) => ({
       name: type.charAt(0).toUpperCase() + type.slice(1),
-      amount: total,
-      percentage: totalAllocated > 0 ? Math.round((total / totalAllocated) * 100) : 0,
+      amount: total.toNumber(),
+      percentage: totalAllocated.isPositive() 
+        ? total.dividedBy(totalAllocated).times(100).round().toNumber() 
+        : 0,
       count
     }));
 
@@ -290,21 +281,10 @@ export class AnnualBudgetService {
     });
 
     // COLETAR os valores agregados dos departamentos
-    const totalPlanned = departmentBudgets.reduce((sum, budget) =>
-      sum + Number(budget.planned_budget || 0), 0
-    );
-
-    const totalAllocated = departmentBudgets.reduce((sum, budget) =>
-      sum + Number(budget.allocated_amount || 0), 0
-    );
-
-    const totalSpent = departmentBudgets.reduce((sum, budget) =>
-      sum + Number(budget.total_expenses || 0), 0
-    );
-
-    const totalAvailable = departmentBudgets.reduce((sum, budget) =>
-      sum + Number(budget.balance || 0), 0
-    );
+    const totalPlanned = DecimalHelper.sum(departmentBudgets.map(b => b.planned_budget));
+    const totalAllocated = DecimalHelper.sum(departmentBudgets.map(b => b.allocated_amount));
+    const totalSpent = DecimalHelper.sum(departmentBudgets.map(b => b.total_expenses));
+    const totalAvailable = DecimalHelper.sum(departmentBudgets.map(b => b.balance));
 
     // Total de departamentos = TODOS os departamentos INSTITUCIONAIS (não de igrejas)
     const totalDepartments = institutionalDepartments.length;
@@ -315,10 +295,10 @@ export class AnnualBudgetService {
     ).length;
 
     return {
-      totalPlanned,
-      totalAllocated,
-      totalSpent,
-      totalAvailable,
+      totalPlanned: totalPlanned.toNumber(),
+      totalAllocated: totalAllocated.toNumber(),
+      totalSpent: totalSpent.toNumber(),
+      totalAvailable: totalAvailable.toNumber(),
       totalDepartments,
       departmentsWithBudget
     };

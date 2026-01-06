@@ -1,6 +1,8 @@
-import { Injectable } from '@nestjs/common'
-import { PrismaService } from './prisma.service'
-import { ProjectKPIsDto } from '../dto/project-kpi.dto'
+import { Injectable } from '@nestjs/common';
+import { PrismaService } from './prisma.service';
+import { ProjectKPIsDto } from '../dto/project-kpi.dto';
+import { DecimalHelper } from 'src/common/helpers/decimal.helper';
+import { Decimal } from '@prisma/client/runtime/library';
 
 @Injectable()
 export class ProjectKPIService {
@@ -18,66 +20,71 @@ export class ProjectKPIService {
           where: { is_deleted: false },
         },
       },
-    })
+    });
 
     if (!project) {
-      throw new Error(`Project with ID ${projectId} not found`)
+      throw new Error(`Project with ID ${projectId} not found`);
     }
 
     // Calculate Activities KPIs
-    const totalActivities = project.activities.length
+    const totalActivities = project.activities.length;
     const completedActivities = project.activities.filter(
       (a) => a.status === 'COMPLETED',
-    ).length
+    ).length;
     const inProgressActivities = project.activities.filter(
       (a) => a.status === 'IN_PROGRESS',
-    ).length
+    ).length;
     const completionRate =
       totalActivities > 0
         ? Math.round((completedActivities / totalActivities) * 100)
-        : 0
+        : 0;
 
     // Calculate Budget KPIs
-    const projectBudget = Number(project.budget || 0)
-    const subsidizedBudget = Number(project.subsidized_budget || 0)
-    const balance = Number(project.balance || 0)
-    const allocatedBudget = project.activities.reduce(
-      (sum, activity) => sum + Number(activity.budget_amount || 0),
-      0,
-    )
-    const budgetUtilization =
-      projectBudget > 0
-        ? Math.round((allocatedBudget / projectBudget) * 100)
-        : 0
-    const subsidizedBudgetPercentage =
-      projectBudget > 0
-        ? Math.round((subsidizedBudget / projectBudget) * 100)
-        : 0
+    const projectBudget = DecimalHelper.toDecimal(project.budget);
+    const subsidizedBudget = DecimalHelper.toDecimal(project.subsidized_budget);
+    const balance = DecimalHelper.toDecimal(project.balance);
+    
+    // Sum allocated budget from activities
+    const allocatedBudget = project.activities.reduce<Decimal>(
+      (sum, activity) => sum.plus(DecimalHelper.toDecimal(activity.budget_amount)),
+      new Decimal(0),
+    );
+
+    // Calculate Percentages (safe division)
+    // budgetUtilization = (allocatedBudget / projectBudget) * 100
+    const budgetUtilization = projectBudget.isPositive() 
+      ? allocatedBudget.dividedBy(projectBudget).times(100).toNumber() 
+      : 0;
+      
+    // subsidizedBudgetPercentage = (subsidizedBudget / projectBudget) * 100
+    const subsidizedBudgetPercentage = projectBudget.isPositive()
+      ? subsidizedBudget.dividedBy(projectBudget).times(100).toNumber()
+      : 0;
 
     // Calculate Subsidy KPIs
     const subsidizedActivities = project.activities.filter(
       (a) => a.is_subsidized,
-    ).length
+    ).length;
     const subsidyRate =
       totalActivities > 0
         ? Math.round((subsidizedActivities / totalActivities) * 100)
-        : 0
-    const subsidyRequestsCount = project.subsidies.length
+        : 0;
+    const subsidyRequestsCount = project.subsidies.length;
 
     // Calculate Timeline KPIs
-    const now = new Date()
-    const endDate = new Date(project.end_at)
+    const now = new Date();
+    const endDate = new Date(project.end_at);
     const daysRemaining = Math.ceil(
       (endDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24),
-    )
+    );
 
     // Determine project status
-    const startDate = new Date(project.start_at)
-    let projectStatus = 'upcoming'
+    const startDate = new Date(project.start_at);
+    let projectStatus = 'upcoming';
     if (startDate <= now && endDate >= now) {
-      projectStatus = 'active'
+      projectStatus = 'active';
     } else if (endDate < now) {
-      projectStatus = 'completed'
+      projectStatus = 'completed';
     }
 
     return {
@@ -85,18 +92,18 @@ export class ProjectKPIService {
       completedActivities,
       inProgressActivities,
       completionRate,
-      projectBudget,
-      allocatedBudget,
-      subsidizedBudget,
-      balance,
-      budgetUtilization,
-      subsidizedBudgetPercentage,
+      projectBudget: projectBudget.toNumber(),
+      allocatedBudget: allocatedBudget.toNumber(),
+      subsidizedBudget: subsidizedBudget.toNumber(),
+      balance: balance.toNumber(),
+      budgetUtilization: Math.round(budgetUtilization),
+      subsidizedBudgetPercentage: Math.round(subsidizedBudgetPercentage),
       subsidizedActivities,
       subsidyRate,
       subsidyRequestsCount,
       daysRemaining,
       endDate,
       projectStatus,
-    }
+    };
   }
 }

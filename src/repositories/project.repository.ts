@@ -3,6 +3,7 @@ import { PrismaService } from '../services/prisma.service';
 import { Project } from '../@generated/project/project.model';
 import { ProjectCreateDto, ProjectUpdateDto } from '../dto/project.dto';
 import { Decimal } from '@prisma/client/runtime/library';
+import { DecimalHelper } from '../common/helpers/decimal.helper';
 import { InstitutionRepository } from './institution.repository';
 import { DepartmentRepository } from './department.repository';
 import { UserRepository } from './user.repository';
@@ -76,9 +77,9 @@ export class ProjectRepository {
         title: data.title,
         description: data.description,
         language_preference: data.language_preference,
-        budget: new Decimal(data.budget),
-        subsidized_budget: data.subsidized_budget ? new Decimal(data.subsidized_budget) : new Decimal(0),
-        balance: data.balance ? new Decimal(data.balance) : new Decimal(0),
+        budget: DecimalHelper.toDecimal(data.budget).toDecimalPlaces(2),
+        subsidized_budget: data.subsidized_budget ? DecimalHelper.toDecimal(data.subsidized_budget).toDecimalPlaces(2) : new Decimal(0),
+        balance: data.balance ? DecimalHelper.toDecimal(data.balance).toDecimalPlaces(2) : new Decimal(0),
         type: data.type,
         is_private: data.is_private,
         required_volunteers: data.required_volunteers,
@@ -219,9 +220,9 @@ export class ProjectRepository {
       Institution: institution_id ? { connect: { id: institution_id } } : undefined,
       owner: owner_id ? { connect: { id: owner_id } } : undefined,
       department: department_id ? { connect: { id: department_id } } : undefined,
-      budget: rest.budget ? new Decimal(rest.budget) : undefined,
-      subsidized_budget: rest.subsidized_budget !== undefined ? new Decimal(rest.subsidized_budget) : undefined,
-      balance: rest.balance !== undefined ? new Decimal(rest.balance) : undefined,
+      budget: rest.budget ? DecimalHelper.toDecimal(rest.budget).toDecimalPlaces(2) : undefined,
+      subsidized_budget: rest.subsidized_budget !== undefined ? DecimalHelper.toDecimal(rest.subsidized_budget).toDecimalPlaces(2) : undefined,
+      balance: rest.balance !== undefined ? DecimalHelper.toDecimal(rest.balance).toDecimalPlaces(2) : undefined,
       title: rest.title,
       description: rest.description,
       language_preference: rest.language_preference,

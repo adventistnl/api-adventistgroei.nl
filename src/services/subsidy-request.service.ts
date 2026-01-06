@@ -12,6 +12,8 @@ import { format } from 'date-fns';
 
 import { SubsidyHistoryType } from '../@generated/prisma/subsidy-history-type.enum';
 import { AnnualBudgetService } from './annual-budget.service';
+import { DecimalHelper } from '../common/helpers/decimal.helper';
+import { Decimal } from '@prisma/client/runtime/library';
 
 @Injectable()
 export class SubsidyRequestService {
@@ -377,20 +379,32 @@ export class SubsidyRequestService {
     if (subsidyRequest.subsidy_statuses_id !== status.id) {
        console.log(`🤖 Auto-updating subsidy ${id} status to ${targetStatusName}`);
 
-       // Special method for APPROVE vs UPDATE?
-       // If APPROVED, use approve method? 
-       // approve method sets approved_amount. If we auto-approve, maybe we should set it.
-       // However, to keep it simple and safe, we use update method first.
-       
-       const updateData: SubsidyRequestUpdateDto = {
-         subsidy_status_id: status.id,
-         notes: `Status atualizado automaticamente para ${targetStatusName} baseado na validação de documentos.`
-       };
-
-       // If APPROVED, we might might want to auto-set approved amount if it's not set?
-       // For now, let's strictly follow status update logic.
-
-       await this.update(id, updateData, userId);
+       // If changing to APPROVED or REJECTED, use the specific methods that handle budget
+       if (targetStatusName === 'APPROVED') {
+         // Calculate total approved amount from validated receipts
+          const approvedReceiptsValues = receipts
+            .filter(r => r.is_validated && r.approved)
+            .map(r => r.amount);
+         
+         const totalApprovedAmount = DecimalHelper.sum(approvedReceiptsValues).toNumber();
+         
+         // Use approve method which handles budget calculations
+         await this.approve(id, totalApprovedAmount, userId);
+       } else if (targetStatusName === 'REJECTED') {
+         // Use reject method which handles budget calculations
+         await this.reject(
+           id, 
+           'Todos os documentos foram rejeitados',
+           userId
+         );
+       } else {
+         // For other status changes (PENDING, IN_REVIEW), use regular update
+         const updateData: SubsidyRequestUpdateDto = {
+           subsidy_status_id: status.id,
+           notes: `Status atualizado automaticamente para ${targetStatusName} baseado na validação de documentos.`
+         };
+         await this.update(id, updateData, userId);
+       }
     }
   }
 
@@ -443,7 +457,8 @@ export class SubsidyRequestService {
       if (!grouped[dept]) grouped[dept] = {};
       if (!grouped[dept][month]) grouped[dept][month] = 0;
       
-      grouped[dept][month] += parseFloat(request.total_budget.toString() || '0');
+      const currentTotal = grouped[dept][month] || 0;
+      grouped[dept][month] = DecimalHelper.toDecimal(currentTotal).plus(request.total_budget).toNumber();
     });
     
     const result: SubsidyByDepartment[] = [];

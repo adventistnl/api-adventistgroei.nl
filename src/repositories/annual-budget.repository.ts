@@ -1,6 +1,7 @@
 import { Injectable, NotFoundException, Logger } from '@nestjs/common';
 import { PrismaService } from '../services/prisma.service';
 import { AnnualBudget } from '@prisma/client';
+import { Decimal } from '@prisma/client/runtime/library';
 import { CustomGraphQLError, ErrorCode } from 'src/common/errors/custom-graphql-error';
 import { AnnualBudgetEntityType } from 'src/@generated/prisma/annual-budget-entity-type.enum';
 import { AnnualBudgetStatus } from 'src/@generated/prisma/annual-budget-status.enum';
@@ -1100,14 +1101,15 @@ export class AnnualBudgetRepository {
     }
 
     await this.prisma.$transaction(async (tx) => {
-      // Update Department
-      const currentAllocated = Number(deptBudget.allocated_amount);
-      const currentExpenses = Number(deptBudget.total_expenses);
-      const currentPlanned = Number(deptBudget.planned_budget);
+      // Update Department using Decimal.js for precision
+      const currentAllocated = new Decimal(deptBudget.allocated_amount);
+      const currentExpenses = new Decimal(deptBudget.total_expenses);
+      const currentPlanned = new Decimal(deptBudget.planned_budget);
 
-      const newAllocated = currentAllocated + deltaAllocated;
-      const newExpenses = currentExpenses + deltaSpent;
-      const newBalance = currentPlanned - (newExpenses + newAllocated);
+      // Perform calculations using Decimal.js
+      const newAllocated = currentAllocated.plus(deltaAllocated);
+      const newExpenses = currentExpenses.plus(deltaSpent);
+      const newBalance = currentPlanned.minus(newExpenses.plus(newAllocated));
 
       await tx.annualBudget.update({
         where: { id: deptBudget.id },
@@ -1121,12 +1123,12 @@ export class AnnualBudgetRepository {
 
       // Update Institution (Only Expenses propagate)
       if (deltaSpent !== 0) {
-          const instExpenses = Number(institutionBudget.total_expenses);
-          const instPlanned = Number(institutionBudget.planned_budget);
-          const instAllocated = Number(institutionBudget.allocated_amount);
+          const instExpenses = new Decimal(institutionBudget.total_expenses);
+          const instPlanned = new Decimal(institutionBudget.planned_budget);
+          const instAllocated = new Decimal(institutionBudget.allocated_amount);
 
-          const newInstExpenses = instExpenses + deltaSpent;
-          const newInstBalance = instPlanned - (instAllocated + newInstExpenses);
+          const newInstExpenses = instExpenses.plus(deltaSpent);
+          const newInstBalance = instPlanned.minus(instAllocated.plus(newInstExpenses));
 
          await tx.annualBudget.update({
            where: { id: institutionBudget.id },

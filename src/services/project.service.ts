@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { ProjectRepository } from '../repositories/project.repository';
+import { DecimalHelper } from '../common/helpers/decimal.helper';
 import { Project } from '../@generated/project/project.model';
 import { ProjectCreateDto, ProjectUpdateDto } from '../dto/project.dto';
 import { PrismaService } from './prisma.service';
@@ -175,8 +176,8 @@ export class ProjectService {
       return start > now;
     });
 
-    const totalBudget = projects.reduce((sum, p) => sum + Number(p.budget), 0);
-    const totalSubsidizedBudget = projects.reduce((sum, p) => sum + Number(p.subsidized_budget || 0), 0);
+    const totalBudget = DecimalHelper.sum(projects.map(p => p.budget));
+    const totalSubsidizedBudget = DecimalHelper.sum(projects.map(p => p.subsidized_budget));
 
     // Count subsidy requests (projects with special projects)
     const specialProjects = await this.prisma.specialProjects.findMany({
@@ -188,19 +189,19 @@ export class ProjectService {
       },
     });
 
-    const totalSubsidyAmount = specialProjects.reduce((sum, sp) => sum + Number(sp.budget || 0), 0);
+    const totalSubsidyAmount = DecimalHelper.sum(specialProjects.map(sp => sp.budget));
 
     return {
       totalProjects: projects.length,
       activeProjects: activeProjects.length,
       completedProjects: completedProjects.length,
       upcomingProjects: upcomingProjects.length,
-      totalBudget,
-      totalSubsidizedBudget,
+      totalBudget: totalBudget.toNumber(),
+      totalSubsidizedBudget: totalSubsidizedBudget.toNumber(),
       totalSubsidyRequests: specialProjects.length,
-      totalSubsidyAmount,
+      totalSubsidyAmount: totalSubsidyAmount.toNumber(),
       projectsWithVolunteers: projects.filter(p => p.required_volunteers).length,
-      averageBudgetPerProject: projects.length > 0 ? totalBudget / projects.length : 0,
+      averageBudgetPerProject: projects.length > 0 ? totalBudget.dividedBy(projects.length).toNumber() : 0,
     };
   }
 
@@ -247,14 +248,15 @@ export class ProjectService {
 
     // Calculate metrics for each department
     const result: ProjectsByDepartment[] = [];
-    departmentMap.forEach((value, key) => {
-      const budgetUsed = value.projects.reduce((sum, p) => sum + Number(p.budget), 0);
+    departmentMap.forEach((value) => {
+      const budgetUsed = DecimalHelper.sum(value.projects.map(p => p.budget));
+      const annualBudget = DecimalHelper.toDecimal(value.annualBudget);
       result.push({
         department: value.name,
         projects: value.projects.length,
-        budget_used: budgetUsed,
-        remaining_budget: value.annualBudget - budgetUsed,
-        annual_budget: value.annualBudget,
+        budget_used: budgetUsed.toNumber(),
+        remaining_budget: annualBudget.minus(budgetUsed).toNumber(),
+        annual_budget: annualBudget.toNumber(),
       });
     });
 

@@ -5,6 +5,8 @@ import { Church } from '@prisma/client';
 import { CustomGraphQLError, ErrorCode } from 'src/common/errors/custom-graphql-error';
 import { InstitutionRepository } from './institution.repository';
 import { RegionRepository } from './region.repository';
+import { DecimalHelper } from 'src/common/helpers/decimal.helper';
+import { Decimal } from '@prisma/client/runtime/library';
 
 @Injectable()
 export class ChurchRepository {
@@ -430,17 +432,19 @@ export class ChurchRepository {
       },
     });
 
-    const totalBudget = budgets._sum.planned_budget?.toNumber() || 0;
-    const totalUsedBudget = budgets._sum.total_expenses?.toNumber() || 0;
-    const budgetUtilization = totalBudget > 0 ? (totalUsedBudget / totalBudget) * 100 : 0;
+    const totalBudget = DecimalHelper.toDecimal(budgets._sum.planned_budget);
+    const totalUsedBudget = DecimalHelper.toDecimal(budgets._sum.total_expenses);
+    const budgetUtilization = totalBudget.isPositive() 
+      ? totalUsedBudget.dividedBy(totalBudget).times(100).toNumber() 
+      : 0;
 
     return {
       totalMembers,
       totalDepartments,
       totalSubsidyRequests,
-      totalBudget,
-      totalUsedBudget,
-      budgetUtilization,
+      totalBudget: totalBudget.toNumber(),
+      totalUsedBudget: totalUsedBudget.toNumber(),
+      budgetUtilization: DecimalHelper.round(budgetUtilization, 2).toNumber(),
     };
   }
 

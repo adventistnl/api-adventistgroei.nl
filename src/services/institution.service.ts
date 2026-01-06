@@ -8,6 +8,8 @@ import { CustomGraphQLError, ErrorCode } from '../common/errors/custom-graphql-e
 import { ContactRepository, ChurchRepository, CommunicationRepository, DepartmentRepository, InstitutionRepository, ProjectRepository, NotificationRepository, RegionRepository, SettingRepository, SubsidyRequestRepository, UserRepository, AnnualBudgetRepository } from 'src/repositories';
 import { DirectMessageRepository } from 'src/repositories/direct-message.repository';
 import { ChurchChartData, ChurchActivityData } from '../models/church.model';
+import { DecimalHelper } from 'src/common/helpers/decimal.helper';
+import { Decimal } from '@prisma/client/runtime/library';
 
 @Injectable()
 export class InstitutionService {
@@ -133,17 +135,19 @@ export class InstitutionService {
     const totalMembers = kpiDataByChurch.reduce((sum, kpi) => sum + kpi.totalMembers, 0);
     const totalDepartments = kpiDataByChurch.reduce((sum, kpi) => sum + kpi.totalDepartments, 0);
     const totalSubsidyRequests = kpiDataByChurch.reduce((sum, kpi) => sum + kpi.totalSubsidyRequests, 0);
-    const totalBudget = kpiDataByChurch.reduce((sum, kpi) => sum + kpi.totalBudget, 0);
-    const totalUsedBudget = kpiDataByChurch.reduce((sum, kpi) => sum + kpi.totalUsedBudget, 0);
+    
+    // Aggregations using DecimalHelper for precision
+    const totalBudget = DecimalHelper.sum(kpiDataByChurch.map(kpi => kpi.totalBudget));
+    const totalUsedBudget = DecimalHelper.sum(kpiDataByChurch.map(kpi => kpi.totalUsedBudget));
 
     // Calculate utilization percentage
-    const budgetUtilization = totalBudget > 0
-      ? parseFloat(((totalUsedBudget / totalBudget) * 100).toFixed(2))
-      : 0;
+    const budgetUtilization = totalBudget.gt(0)
+      ? totalUsedBudget.dividedBy(totalBudget).times(100)
+      : new Decimal(0);
 
     // Calculate average members per church for this institution only
     const avgMembersPerChurch = churches.length > 0
-      ? parseFloat((totalMembers / churches.length).toFixed(2))
+      ? new Decimal(totalMembers).dividedBy(churches.length).toNumber()
       : 0;
 
     return {
@@ -151,10 +155,10 @@ export class InstitutionService {
       totalMembers,
       totalDepartments,
       totalSubsidyRequests,
-      totalBudget,
-      totalUsedBudget,
-      budgetUtilization,
-      avgMembersPerChurch,
+      totalBudget: totalBudget.toNumber(),
+      totalUsedBudget: totalUsedBudget.toNumber(),
+      budgetUtilization: DecimalHelper.round(budgetUtilization, 2).toNumber(),
+      avgMembersPerChurch: Number(avgMembersPerChurch.toFixed(2)),
     };
   }
 

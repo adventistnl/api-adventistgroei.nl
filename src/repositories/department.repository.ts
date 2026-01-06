@@ -6,6 +6,8 @@ import { CustomGraphQLError, ErrorCode } from 'src/common/errors/custom-graphql-
 import { InstitutionRepository } from './institution.repository';
 import { ChurchRepository } from './church.repository';
 import { DepartmentKPIs, DepartmentActivityData, DepartmentBudgetTimeline } from '../dto/department-analytics.dto';
+import { DecimalHelper } from 'src/common/helpers/decimal.helper';
+import { Decimal } from '@prisma/client/runtime/library';
 
 @Injectable()
 export class DepartmentRepository {
@@ -384,7 +386,7 @@ export class DepartmentRepository {
     ).length;
 
     const departmentsWithBudget = departmentsWithData.filter(
-      (dept) => dept.annual_budgets.length > 0 && Number(dept.annual_budgets[0]?.allocated_amount || 0) > 0
+      (dept) => dept.annual_budgets.length > 0 && DecimalHelper.toDecimal(dept.annual_budgets[0]?.allocated_amount).gt(0)
     ).length;
 
     // Total users
@@ -413,9 +415,15 @@ export class DepartmentRepository {
       },
     });
 
-    const totalAllocatedBudget = Number(budgetData._sum.allocated_amount || 0);
-    const totalSpentBudget = Number(budgetData._sum.total_expenses || 0);
-    const averageBudgetPerDepartment = departmentsWithBudget > 0 ? totalAllocatedBudget / departmentsWithBudget : 0;
+    const totalAllocatedBudget = DecimalHelper.toDecimal(budgetData._sum.allocated_amount);
+    const totalSpentBudget = DecimalHelper.toDecimal(budgetData._sum.total_expenses);
+    
+    // Calculate averages using Decimal
+    const averageBudgetPerDepartment = departmentsWithBudget > 0 
+      ? totalAllocatedBudget.dividedBy(departmentsWithBudget).toNumber() 
+      : 0;
+      
+    // Users per department is integer division mostly, but let's keep it simple as number
     const averageUsersPerDepartment = totalDepartments > 0 ? totalUsers / totalDepartments : 0;
 
     // Projects calculations
@@ -451,10 +459,10 @@ export class DepartmentRepository {
       activeDepartments,
       departmentsWithBudget,
       totalUsers,
-      totalAllocatedBudget,
-      totalSpentBudget,
-      averageBudgetPerDepartment,
-      averageUsersPerDepartment,
+      totalAllocatedBudget: totalAllocatedBudget.toNumber(),
+      totalSpentBudget: totalSpentBudget.toNumber(),
+      averageBudgetPerDepartment: DecimalHelper.round(averageBudgetPerDepartment, 2).toNumber(),
+      averageUsersPerDepartment: Number(averageUsersPerDepartment.toFixed(2)),
       totalProjects,
       openProjects,
       completedProjects,
@@ -497,8 +505,8 @@ export class DepartmentRepository {
 
     return departments.map((dept) => {
       const yearBudget = dept.annual_budgets[0];
-      const allocated_amount = Number(yearBudget?.allocated_amount) || 0;
-      const spent_amount = Number(yearBudget?.total_expenses) || 0;
+      const allocated_amount = DecimalHelper.toNumber(yearBudget?.allocated_amount);
+      const spent_amount = DecimalHelper.toNumber(yearBudget?.total_expenses);
       const user_count = dept.users.length;
       const project_count = dept.projects.length;
       const activity_count = dept.projects.reduce((sum, project) => sum + project.activities.length, 0);
@@ -561,21 +569,21 @@ export class DepartmentRepository {
 
     departments.forEach((dept) => {
       const yearBudget = dept.annual_budgets[0];
-      const allocated = Number(yearBudget?.allocated_amount) || 0;
-      const totalSpent = Number(yearBudget?.total_expenses) || 0;
+      const allocated = DecimalHelper.toNumber(yearBudget?.allocated_amount);
+      const totalSpent = DecimalHelper.toDecimal(yearBudget?.total_expenses);
 
       months.forEach((month, index) => {
         // Only show data up to current month
         if (index <= currentMonth) {
-          const monthlyProgress = (index + 1) / 12;
-          const spent = totalSpent * monthlyProgress;
+          const monthlyProgress = new Decimal(index + 1).dividedBy(12);
+          const spent = totalSpent.times(monthlyProgress);
 
           timeline.push({
             month,
             department_id: dept.id,
             department_name: dept.name,
             allocated,
-            spent,
+            spent: DecimalHelper.round(spent, 2).toNumber(),
           });
         }
       });
