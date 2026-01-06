@@ -7,6 +7,7 @@ import { ProjectKPIs, ProjectsByDepartment, SubsidyStatusDistribution, ProjectsT
 import { SubsidyRequestService } from './subsidy-request.service';
 import { ProjectActivityService } from './project-activity.service';
 import { CustomGraphQLError, ErrorCode } from '../common/errors/custom-graphql-error';
+import { AnnualBudgetService } from './annual-budget.service';
 
 @Injectable()
 export class ProjectService {
@@ -15,10 +16,31 @@ export class ProjectService {
     private readonly prisma: PrismaService,
     private readonly subsidyRequestService: SubsidyRequestService,
     private readonly projectActivityService: ProjectActivityService,
+    private readonly annualBudgetService: AnnualBudgetService,
   ) {}
 
   async create(data: ProjectCreateDto, userId: string): Promise<Project> {
-    return this.projectRepository.create(data, userId);
+    const project = await this.projectRepository.create(data, userId);
+
+    try {
+      // Update Annual Budget if there is a subsidized budget
+      if (data.subsidized_budget && data.subsidized_budget > 0) {
+        const year = new Date().getFullYear();
+        await this.annualBudgetService.updateBudgetFinancials(
+          data.department_id,
+          year,
+          data.subsidized_budget, // Add to Allocated
+          0, // No spending yet
+          userId
+        );
+      }
+    } catch (e) {
+      console.error("Failed to allocate budget for new project, rolling back...", e);
+      await this.projectRepository.softDelete(project.id, userId);
+      throw e;
+    }
+
+    return project;
   }
 
   async update(id: string, data: ProjectUpdateDto, userId: string): Promise<Project> {
@@ -119,7 +141,7 @@ export class ProjectService {
   }
 
   async getProjectKPIs(institutionId?: string): Promise<ProjectKPIs> {
-    const projects = await this.prisma.project.findMany({
+    const projectsData = await this.prisma.project.findMany({
       where: {
         is_deleted: false,
         ...(institutionId && {
@@ -132,6 +154,9 @@ export class ProjectService {
         activities: true,
       },
     });
+
+    // Type assertion to access fields that exist in the schema but TypeScript doesn't recognize
+    const projects = projectsData as Array<typeof projectsData[0] & { subsidized_budget: any }>
 
     const now = new Date();
     const activeProjects = projects.filter(p => {
@@ -151,6 +176,7 @@ export class ProjectService {
     });
 
     const totalBudget = projects.reduce((sum, p) => sum + Number(p.budget), 0);
+    const totalSubsidizedBudget = projects.reduce((sum, p) => sum + Number(p.subsidized_budget || 0), 0);
 
     // Count subsidy requests (projects with special projects)
     const specialProjects = await this.prisma.specialProjects.findMany({
@@ -170,6 +196,7 @@ export class ProjectService {
       completedProjects: completedProjects.length,
       upcomingProjects: upcomingProjects.length,
       totalBudget,
+      totalSubsidizedBudget,
       totalSubsidyRequests: specialProjects.length,
       totalSubsidyAmount,
       projectsWithVolunteers: projects.filter(p => p.required_volunteers).length,

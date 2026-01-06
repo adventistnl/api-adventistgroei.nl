@@ -23,6 +23,12 @@ export class ProjectMinAggregate {
     @Field(() => GraphQLDecimal, {nullable:true})
     budget?: Decimal;
 
+    @Field(() => GraphQLDecimal, {nullable:true})
+    subsidized_budget?: Decimal;
+
+    @Field(() => GraphQLDecimal, {nullable:true})
+    balance?: Decimal;
+
     @Field(() => String, {nullable:true})
     owner_id?: string;
 

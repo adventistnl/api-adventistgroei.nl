@@ -11,6 +11,7 @@ import { GoogleDriveService } from './google-drive.service';
 import { format } from 'date-fns';
 
 import { SubsidyHistoryType } from '../@generated/prisma/subsidy-history-type.enum';
+import { AnnualBudgetService } from './annual-budget.service';
 
 @Injectable()
 export class SubsidyRequestService {
@@ -20,6 +21,7 @@ export class SubsidyRequestService {
     private readonly historyRepository: SubsidyStatusHistoryRepository,
     private readonly prisma: PrismaService,
     private readonly driveService: GoogleDriveService,
+    private readonly annualBudgetService: AnnualBudgetService,
   ) {}
 
   async create(data: SubsidyRequestCreateDto, userId: string): Promise<SubsidyRequest> {
@@ -254,6 +256,22 @@ export class SubsidyRequestService {
       changed_by: userId,
     });
 
+    // Update Annual Budget (Release allocation, Add expense)
+    const fullRequest = await this.prisma.subsidyRequest.findUnique({
+      where: { id },
+      select: { department_id: true, total_budget: true }
+    });
+
+    if (fullRequest?.department_id) {
+       await this.annualBudgetService.updateBudgetFinancials(
+         fullRequest.department_id,
+         new Date().getFullYear(),
+         -Number(fullRequest.total_budget || 0), // Release allocation
+         approvedAmount, // Add expense
+         userId
+       );
+    }
+
     return result;
   }
 
@@ -291,6 +309,22 @@ export class SubsidyRequestService {
       reason: rejectionReason || 'Solicitação rejeitada',
       changed_by: userId,
     });
+
+    // Update Annual Budget (Release allocation only)
+    const fullRequest = await this.prisma.subsidyRequest.findUnique({
+      where: { id },
+      select: { department_id: true, total_budget: true }
+    });
+
+    if (fullRequest?.department_id) {
+       await this.annualBudgetService.updateBudgetFinancials(
+         fullRequest.department_id,
+         new Date().getFullYear(),
+         -Number(fullRequest.total_budget || 0), // Release allocation
+         0, // No expense
+         userId
+       );
+    }
 
     return result;
   }

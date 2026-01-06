@@ -50,6 +50,14 @@ export class ProjectWhereUniqueInput {
     @Type(() => DecimalFilter)
     budget?: DecimalFilter;
 
+    @Field(() => DecimalFilter, {nullable:true})
+    @Type(() => DecimalFilter)
+    subsidized_budget?: DecimalFilter;
+
+    @Field(() => DecimalFilter, {nullable:true})
+    @Type(() => DecimalFilter)
+    balance?: DecimalFilter;
+
     @Field(() => StringFilter, {nullable:true})
     owner_id?: StringFilter;
 

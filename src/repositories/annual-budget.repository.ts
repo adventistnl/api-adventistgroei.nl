@@ -1053,4 +1053,90 @@ export class AnnualBudgetRepository {
     });
   }
 
+  async updateBudgetFinancials(
+    departmentId: string,
+    year: number,
+    deltaAllocated: number,
+    deltaSpent: number,
+    userId: string
+  ): Promise<void> {
+    const deptBudget = await this.prisma.annualBudget.findFirst({
+      where: {
+        department_id: departmentId,
+        year: year,
+        entity_type: AnnualBudgetEntityType.INSTITUTION_DEPARTMENT,
+        is_deleted: false
+      },
+      include: { department: true }
+    });
+
+    if (!deptBudget) {
+      throw new CustomGraphQLError(
+        `Annual budget for department not found for year ${year}`,
+        ErrorCode.NOT_FOUND,
+        404
+      );
+    }
+
+    if (!deptBudget.department?.institution_id) {
+        throw new Error("Department not linked to institution");
+    }
+
+    const institutionBudget = await this.prisma.annualBudget.findFirst({
+      where: {
+        institution_id: deptBudget.department.institution_id,
+        year: year,
+        entity_type: AnnualBudgetEntityType.INSTITUTION,
+        is_deleted: false
+      }
+    });
+
+    if (!institutionBudget) {
+        throw new CustomGraphQLError("Institution budget not found", ErrorCode.NOT_FOUND, 404);
+    }
+
+    if (institutionBudget.is_locked) {
+        throw new CustomGraphQLError("Institution budget is locked", ErrorCode.BAD_REQUEST, 400);
+    }
+
+    await this.prisma.$transaction(async (tx) => {
+      // Update Department
+      const currentAllocated = Number(deptBudget.allocated_amount);
+      const currentExpenses = Number(deptBudget.total_expenses);
+      const currentPlanned = Number(deptBudget.planned_budget);
+
+      const newAllocated = currentAllocated + deltaAllocated;
+      const newExpenses = currentExpenses + deltaSpent;
+      const newBalance = currentPlanned - (newExpenses + newAllocated);
+
+      await tx.annualBudget.update({
+        where: { id: deptBudget.id },
+        data: {
+          allocated_amount: newAllocated,
+          total_expenses: newExpenses,
+          balance: newBalance,
+          updated_by: userId
+        }
+      });
+
+      // Update Institution (Only Expenses propagate)
+      if (deltaSpent !== 0) {
+          const instExpenses = Number(institutionBudget.total_expenses);
+          const instPlanned = Number(institutionBudget.planned_budget);
+          const instAllocated = Number(institutionBudget.allocated_amount);
+
+          const newInstExpenses = instExpenses + deltaSpent;
+          const newInstBalance = instPlanned - (instAllocated + newInstExpenses);
+
+         await tx.annualBudget.update({
+           where: { id: institutionBudget.id },
+           data: {
+             total_expenses: newInstExpenses,
+             balance: newInstBalance,
+             updated_by: userId
+           }
+         });
+      }
+    });
+  }
 }

@@ -28,6 +28,12 @@ export class ProjectOrderByWithAggregationInput {
     budget?: `${SortOrder}`;
 
     @Field(() => SortOrder, {nullable:true})
+    subsidized_budget?: `${SortOrder}`;
+
+    @Field(() => SortOrder, {nullable:true})
+    balance?: `${SortOrder}`;
+
+    @Field(() => SortOrder, {nullable:true})
     owner_id?: `${SortOrder}`;
 
     @Field(() => SortOrder, {nullable:true})

@@ -21,6 +21,12 @@ export class ProjectCountAggregate {
     budget!: number;
 
     @Field(() => Int, {nullable:false})
+    subsidized_budget!: number;
+
+    @Field(() => Int, {nullable:false})
+    balance!: number;
+
+    @Field(() => Int, {nullable:false})
     owner_id!: number;
 
     @Field(() => Int, {nullable:false})

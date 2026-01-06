@@ -20,6 +20,12 @@ export class ProjectMinAggregateInput {
     budget?: true;
 
     @Field(() => Boolean, {nullable:true})
+    subsidized_budget?: true;
+
+    @Field(() => Boolean, {nullable:true})
+    balance?: true;
+
+    @Field(() => Boolean, {nullable:true})
     owner_id?: true;
 
     @Field(() => Boolean, {nullable:true})

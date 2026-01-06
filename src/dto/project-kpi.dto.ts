@@ -22,6 +22,15 @@ export class ProjectKPIsDto {
   @Field(() => Float)
   allocatedBudget: number
 
+  @Field(() => Float)
+  subsidizedBudget: number
+
+  @Field(() => Float)
+  balance: number
+
+  @Field(() => Int)
+  subsidizedBudgetPercentage: number
+
   @Field(() => Int)
   budgetUtilization: number
 

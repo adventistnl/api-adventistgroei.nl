@@ -512,6 +512,8 @@ model Project {
   title               String
   description         String
   budget              Decimal
+  subsidized_budget   Decimal             @default(0)
+  balance             Decimal             @default(0)
   owner_id            String
   owner               User                    @relation(fields: [owner_id], references: [id])
   language_preference LanguagePreference

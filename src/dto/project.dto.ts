@@ -55,6 +55,16 @@ export class ProjectCreateDto {
   @IsNumber()
   budget: number;
 
+  @Field({ defaultValue: 0 })
+  @IsOptional()
+  @IsNumber()
+  subsidized_budget?: number;
+
+  @Field({ defaultValue: 0 })
+  @IsOptional()
+  @IsNumber()
+  balance?: number;
+
   @Field(() => ProjectType)
   @IsEnum(ProjectType)
   type: ProjectType;
@@ -150,6 +160,16 @@ export class ProjectUpdateDto {
   @IsOptional()
   @IsNumber()
   budget?: number;
+
+  @Field({ nullable: true })
+  @IsOptional()
+  @IsNumber()
+  subsidized_budget?: number;
+
+  @Field({ nullable: true })
+  @IsOptional()
+  @IsNumber()
+  balance?: number;
 
   @Field(() => ProjectType, { nullable: true })
   @IsOptional()

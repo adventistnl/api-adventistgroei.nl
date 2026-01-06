@@ -8,4 +8,10 @@ export class ProjectAvgAggregate {
 
     @Field(() => GraphQLDecimal, {nullable:true})
     budget?: Decimal;
+
+    @Field(() => GraphQLDecimal, {nullable:true})
+    subsidized_budget?: Decimal;
+
+    @Field(() => GraphQLDecimal, {nullable:true})
+    balance?: Decimal;
 }

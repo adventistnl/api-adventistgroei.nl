@@ -33,6 +33,12 @@ export class Project {
     @Field(() => GraphQLDecimal, {nullable:false})
     budget!: Decimal;
 
+    @Field(() => GraphQLDecimal, {defaultValue:0,nullable:false})
+    subsidized_budget!: Decimal;
+
+    @Field(() => GraphQLDecimal, {defaultValue:0,nullable:false})
+    balance!: Decimal;
+
     @Field(() => String, {nullable:false})
     owner_id!: string;
 

@@ -351,4 +351,20 @@ export class AnnualBudgetService {
   async updateDepartmentBudget(id: string, data: any, userId: string): Promise<AnnualBudget> {
     return this.annualBudgetRepository.updateDepartmentBudget(id, data, userId);
   }
+
+  async updateBudgetFinancials(
+    departmentId: string,
+    year: number,
+    deltaAllocated: number,
+    deltaSpent: number,
+    userId: string
+  ): Promise<void> {
+    return this.annualBudgetRepository.updateBudgetFinancials(
+      departmentId,
+      year,
+      deltaAllocated,
+      deltaSpent,
+      userId
+    );
+  }
 }

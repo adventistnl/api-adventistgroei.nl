@@ -28,6 +28,12 @@ export class ProjectGroupBy {
     @Field(() => GraphQLDecimal, {nullable:false})
     budget!: Decimal;
 
+    @Field(() => GraphQLDecimal, {nullable:false})
+    subsidized_budget!: Decimal;
+
+    @Field(() => GraphQLDecimal, {nullable:false})
+    balance!: Decimal;
+
     @Field(() => String, {nullable:false})
     owner_id!: string;
 

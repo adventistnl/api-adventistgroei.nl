@@ -28,6 +28,16 @@ export class ProjectCreateManyEventInput {
     @Transform(transformToDecimal)
     budget!: Decimal;
 
+    @Field(() => GraphQLDecimal, {nullable:true})
+    @Type(() => Object)
+    @Transform(transformToDecimal)
+    subsidized_budget?: Decimal;
+
+    @Field(() => GraphQLDecimal, {nullable:true})
+    @Type(() => Object)
+    @Transform(transformToDecimal)
+    balance?: Decimal;
+
     @Field(() => String, {nullable:false})
     owner_id!: string;
 

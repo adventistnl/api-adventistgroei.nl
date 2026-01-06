@@ -710,6 +710,8 @@ type Project {
   title: String!
   description: String!
   budget: Decimal!
+  subsidized_budget: Decimal!
+  balance: Decimal!
   owner_id: String!
   language_preference: LanguagePreference!
   type: ProjectType!
@@ -1528,6 +1530,7 @@ type ProjectKPIs {
   completedProjects: Int!
   upcomingProjects: Int!
   totalBudget: Float!
+  totalSubsidizedBudget: Float!
   totalSubsidyRequests: Int!
   totalSubsidyAmount: Float!
   projectsWithVolunteers: Int!
@@ -1562,6 +1565,9 @@ type ProjectKPIsDto {
   completionRate: Int!
   projectBudget: Float!
   allocatedBudget: Float!
+  subsidizedBudget: Float!
+  balance: Float!
+  subsidizedBudgetPercentage: Int!
   budgetUtilization: Int!
   subsidizedActivities: Int!
   subsidyRate: Int!
@@ -2465,6 +2471,8 @@ input ProjectWhereInput {
   title: StringFilter
   description: StringFilter
   budget: DecimalFilter
+  subsidized_budget: DecimalFilter
+  balance: DecimalFilter
   owner_id: StringFilter
   language_preference: EnumLanguagePreferenceFilter
   type: EnumProjectTypeFilter
@@ -3969,6 +3977,8 @@ input ProjectCreateDto {
   description: String!
   language_preference: LanguagePreference!
   budget: Float!
+  subsidized_budget: Float! = 0
+  balance: Float! = 0
   type: ProjectType!
   department_id: String!
   institution_id: String
@@ -4023,6 +4033,8 @@ input ProjectUpdateDto {
   description: String
   language_preference: LanguagePreference
   budget: Float
+  subsidized_budget: Float
+  balance: Float
   type: ProjectType
   department_id: String
   institution_id: String

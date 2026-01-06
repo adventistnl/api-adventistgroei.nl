@@ -13,16 +13,9 @@ export class ProjectKPIService {
       include: {
         activities: {
           where: { is_deleted: false },
-          select: {
-            id: true,
-            status: true,
-            budget_amount: true,
-            is_subsidized: true,
-          },
         },
         subsidies: {
           where: { is_deleted: false },
-          select: { id: true },
         },
       },
     })
@@ -46,6 +39,8 @@ export class ProjectKPIService {
 
     // Calculate Budget KPIs
     const projectBudget = Number(project.budget || 0)
+    const subsidizedBudget = Number(project.subsidized_budget || 0)
+    const balance = Number(project.balance || 0)
     const allocatedBudget = project.activities.reduce(
       (sum, activity) => sum + Number(activity.budget_amount || 0),
       0,
@@ -53,6 +48,10 @@ export class ProjectKPIService {
     const budgetUtilization =
       projectBudget > 0
         ? Math.round((allocatedBudget / projectBudget) * 100)
+        : 0
+    const subsidizedBudgetPercentage =
+      projectBudget > 0
+        ? Math.round((subsidizedBudget / projectBudget) * 100)
         : 0
 
     // Calculate Subsidy KPIs
@@ -88,7 +87,10 @@ export class ProjectKPIService {
       completionRate,
       projectBudget,
       allocatedBudget,
+      subsidizedBudget,
+      balance,
       budgetUtilization,
+      subsidizedBudgetPercentage,
       subsidizedActivities,
       subsidyRate,
       subsidyRequestsCount,

@@ -41,6 +41,14 @@ export class ProjectScalarWhereWithAggregatesInput {
     @Type(() => DecimalWithAggregatesFilter)
     budget?: DecimalWithAggregatesFilter;
 
+    @Field(() => DecimalWithAggregatesFilter, {nullable:true})
+    @Type(() => DecimalWithAggregatesFilter)
+    subsidized_budget?: DecimalWithAggregatesFilter;
+
+    @Field(() => DecimalWithAggregatesFilter, {nullable:true})
+    @Type(() => DecimalWithAggregatesFilter)
+    balance?: DecimalWithAggregatesFilter;
+
     @Field(() => StringWithAggregatesFilter, {nullable:true})
     owner_id?: StringWithAggregatesFilter;
 

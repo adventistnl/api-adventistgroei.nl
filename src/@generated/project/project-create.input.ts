@@ -33,6 +33,16 @@ export class ProjectCreateInput {
     @Transform(transformToDecimal)
     budget!: Decimal;
 
+    @Field(() => GraphQLDecimal, {nullable:true})
+    @Type(() => Object)
+    @Transform(transformToDecimal)
+    subsidized_budget?: Decimal;
+
+    @Field(() => GraphQLDecimal, {nullable:true})
+    @Type(() => Object)
+    @Transform(transformToDecimal)
+    balance?: Decimal;
+
     @Field(() => LanguagePreference, {nullable:false})
     language_preference!: `${LanguagePreference}`;
 

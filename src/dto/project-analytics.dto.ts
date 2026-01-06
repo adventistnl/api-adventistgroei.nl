@@ -17,6 +17,9 @@ export class ProjectKPIs {
   @Field(() => Float)
   totalBudget: number;
 
+  @Field(() => Float)
+  totalSubsidizedBudget: number;
+
   @Field(() => Int)
   totalSubsidyRequests: number;
 

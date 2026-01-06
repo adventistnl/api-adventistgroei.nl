@@ -33,6 +33,14 @@ export class ProjectUpdateWithoutVoluntary_usersInput {
     @Type(() => DecimalFieldUpdateOperationsInput)
     budget?: DecimalFieldUpdateOperationsInput;
 
+    @Field(() => DecimalFieldUpdateOperationsInput, {nullable:true})
+    @Type(() => DecimalFieldUpdateOperationsInput)
+    subsidized_budget?: DecimalFieldUpdateOperationsInput;
+
+    @Field(() => DecimalFieldUpdateOperationsInput, {nullable:true})
+    @Type(() => DecimalFieldUpdateOperationsInput)
+    balance?: DecimalFieldUpdateOperationsInput;
+
     @Field(() => EnumLanguagePreferenceFieldUpdateOperationsInput, {nullable:true})
     language_preference?: EnumLanguagePreferenceFieldUpdateOperationsInput;
 
