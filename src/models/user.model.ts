@@ -24,6 +24,9 @@ export class UserModel {
   @Field(() => String, { nullable: true })
   church_id: string | null;
 
+  @Field(() => String, { nullable: true })
+  department_id: string | null;
+
   @Field()
   name: string;
 

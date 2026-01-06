@@ -128,6 +128,11 @@ enum PermissionResolverName {
   deleteProjectActivity
   batchUpdateProjectActivities
   projectActivityLogs
+  uploadActivityDocument
+  downloadActivityDocument
+  deleteActivityDocument
+  validateActivityDocument
+  getActivityDocuments
   sendInviteEmail
   inviteUser
   validateInviteToken

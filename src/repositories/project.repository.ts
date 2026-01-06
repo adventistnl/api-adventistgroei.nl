@@ -10,6 +10,7 @@ import { UserRepository } from './user.repository';
 import { EntityType } from '../@generated/prisma/entity-type.enum';
 import { ProjectActivityLogRepository } from './project-activity-log.repository';
 import { ProjectActivityLogAction } from '../@generated/prisma/project-activity-log-action.enum';
+import { UserWithRoles } from '../models';
 
 @Injectable()
 export class ProjectRepository {
@@ -437,23 +438,52 @@ export class ProjectRepository {
     });
   }
 
-  async findAll(institutionId?: string): Promise<Project[]> {
-    return this.prisma.project.findMany({
-      where: {
-        is_deleted: false,
-        ...(institutionId && {
-          OR: [
-            { institution_id: institutionId },
+  async findAll(institutionId?: string, user?: UserWithRoles | null): Promise<Project[]> {
+    const where: any = {
+      is_deleted: false,
+    };
+
+    if (institutionId) {
+      where.OR = [
+        { institution_id: institutionId },
+        { department: { institution_id: institutionId } },
+      ];
+    }
+
+    if (user) {
+      const isGlobalAdmin = user.user_roles?.some(ur => ur.key_code === 'ADMIN' || ur.key_code === 'DEV');
+      const isInstitutionLeader = user.user_roles?.some(ur => ur.key_code === 'INSTITUTIONAL_LEADER');
+      
+      // If not admin or institution leader, apply filters
+      if (!isGlobalAdmin && !isInstitutionLeader) {
+        const isDepartmentLeader = user.user_roles?.some(ur => 
+          ur.key_code === 'INSTITUTIONAL_DEPARTMENT_LEADER' || 
+          ur.key_code === 'DEPARTMENT_CHURCH_LEADER'
+        );
+
+        if (isDepartmentLeader && user.department_id) {
+          // Department Leader sees all projects in their department
+          where.department_id = user.department_id;
+        } else {
+          // Regular user sees only assigned projects
+          // Assignments: Owner, Creator, or Activity Assignee
+          where.AND = [
             {
-              department: {
-                institution_id: institutionId,
-              },
-            },
-          ],
-        }),
-      },
+              OR: [
+                { owner_id: user.id },
+                { created_by: user.id },
+                { activities: { some: { assignees: { some: { user_id: user.id } }, is_deleted: false } } }
+              ]
+            }
+          ];
+        }
+      }
+    }
+
+    return this.prisma.project.findMany({
+      where,
       include: {
-        owner: true, // Inclui o relacionamento com o proprietário
+        owner: true,
         department: true,
         Institution: true,
         activities: {
@@ -463,7 +493,7 @@ export class ProjectRepository {
           include: {
             assignees: {
               include: {
-                user: true, // Inclui os dados dos usuários responsáveis
+                user: true,
               },
             },
             activity_funding: true,

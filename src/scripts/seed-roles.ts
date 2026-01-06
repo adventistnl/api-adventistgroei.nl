@@ -9,6 +9,19 @@ const roles = [
     description: 'Administrator with full access to all system features',
     is_fixed: true,
     permissions: [
+      // Activity Permissions
+      { key_code: 'PROJECT_ACTIVITIES_ACCESS', is_essential: true },
+      { key_code: 'ACTIVITY_ACCESS', is_essential: true },
+      { key_code: 'PROJECT_ACTIVITY_CREATE', is_essential: true },
+      { key_code: 'PROJECT_ACTIVITY_UPDATE', is_essential: true },
+      { key_code: 'PROJECT_ACTIVITY_DELETE', is_essential: true },
+      { key_code: 'PROJECT_ACTIVITIES_BATCH_UPDATE', is_essential: true },
+      { key_code: 'PROJECT_ACTIVITY_LOGS_ACCESS', is_essential: true },
+      { key_code: 'UPLOAD_ACTIVITY_DOCUMENT', is_essential: true },
+      { key_code: 'DOWNLOAD_ACTIVITY_DOCUMENT', is_essential: true },
+      { key_code: 'DELETE_ACTIVITY_DOCUMENT', is_essential: true },
+      { key_code: 'VALIDATE_ACTIVITY_DOCUMENT', is_essential: true },
+      { key_code: 'GET_ACTIVITY_DOCUMENTS', is_essential: true },
       // Todas as permissões de leitura e criação básicas
       { key_code: 'USERS_ACCESS', is_essential: true },
       { key_code: 'USER_ACCESS', is_essential: true },
@@ -181,6 +194,19 @@ const roles = [
     description: 'Institutional leader with access to manage institution',
     is_fixed: true,
     permissions: [
+      // Activity Permissions
+      { key_code: 'PROJECT_ACTIVITIES_ACCESS', is_essential: true },
+      { key_code: 'ACTIVITY_ACCESS', is_essential: true },
+      { key_code: 'PROJECT_ACTIVITY_CREATE', is_essential: true },
+      { key_code: 'PROJECT_ACTIVITY_UPDATE', is_essential: true },
+      { key_code: 'PROJECT_ACTIVITY_DELETE', is_essential: true },
+      { key_code: 'PROJECT_ACTIVITIES_BATCH_UPDATE', is_essential: true },
+      { key_code: 'PROJECT_ACTIVITY_LOGS_ACCESS', is_essential: true },
+      { key_code: 'UPLOAD_ACTIVITY_DOCUMENT', is_essential: true },
+      { key_code: 'DOWNLOAD_ACTIVITY_DOCUMENT', is_essential: true },
+      { key_code: 'DELETE_ACTIVITY_DOCUMENT', is_essential: true },
+      { key_code: 'VALIDATE_ACTIVITY_DOCUMENT', is_essential: true },
+      { key_code: 'GET_ACTIVITY_DOCUMENTS', is_essential: true },
       { key_code: 'USERS_ACCESS', is_essential: true },
       { key_code: 'USER_ACCESS', is_essential: true },
       { key_code: 'INSTITUTIONS_ACCESS', is_essential: true },
@@ -273,9 +299,14 @@ const roles = [
 async function main() {
   for (const role of roles) {
     try {
+      // First, upsert the role itself
       const createdRole = await prisma.role.upsert({
         where: { key_code: role.key_code },
-        update: {},
+        update: {
+          name: role.name,
+          description: role.description,
+          updated_by: 'system',
+        },
         create: {
           name: role.name,
           key_code: role.key_code,
@@ -283,25 +314,20 @@ async function main() {
           is_fixed: role.is_fixed,
           created_by: 'system',
           updated_by: 'system',
-          role_permissions: {
-            create: role.permissions.map(permission => ({
-              permission: { connect: { key_code: permission.key_code } },
-              is_essential: permission.is_essential,
-              created_by: 'system',
-              updated_by: 'system',
-            })),
-          },
         },
+      });
+
+      // Delete existing permissions for this role to ensure clean update
+      await prisma.rolePermission.deleteMany({
+        where: { role_id: createdRole.id },
       });
 
       // For DEV role, assign all permissions
       if (role.key_code === 'DEV') {
         const permissions = await prisma.permission.findMany();
         for (const permission of permissions) {
-          await prisma.rolePermission.upsert({
-            where: { id: `${createdRole.id}_${permission.id}` },
-            update: {},
-            create: {
+          await prisma.rolePermission.create({
+            data: {
               id: `${createdRole.id}_${permission.id}`,
               role_id: createdRole.id,
               permission_id: permission.id,
@@ -311,9 +337,33 @@ async function main() {
             },
           });
         }
+        console.log(`✅ Role "${role.name}" updated with ALL permissions (${permissions.length} total)`);
+      } else {
+        // For other roles, create the specified permissions
+        for (const permission of role.permissions) {
+          const permissionRecord = await prisma.permission.findUnique({
+            where: { key_code: permission.key_code },
+          });
+
+          if (permissionRecord) {
+            await prisma.rolePermission.create({
+              data: {
+                id: `${createdRole.id}_${permissionRecord.id}`,
+                role_id: createdRole.id,
+                permission_id: permissionRecord.id,
+                is_essential: permission.is_essential,
+                created_by: 'system',
+                updated_by: 'system',
+              },
+            });
+          } else {
+            console.warn(`⚠️  Permission "${permission.key_code}" not found for role "${role.name}"`);
+          }
+        }
+        console.log(`✅ Role "${role.name}" updated with ${role.permissions.length} permissions`);
       }
     } catch (error) {
-      console.error(`Error creating role ${role.name}:`, error);
+      console.error(`❌ Error creating/updating role ${role.name}:`, error);
     }
   }
 }

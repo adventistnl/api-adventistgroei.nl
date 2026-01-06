@@ -23,9 +23,10 @@ export class ProjectResolver {
   @UseGuards(PermissionsGuard)
   @Permission()
   async projects(
-    @Args('institutionId', { nullable: true }) institutionId?: string
+    @Args('institutionId', { nullable: true }) institutionId?: string,
+    @Context() context?: { userId: string },
   ): Promise<Project[]> {
-    return this.projectService.findAll(institutionId);
+    return this.projectService.findAll(institutionId, context?.userId);
   }
 
   @Query(() => Project, { nullable: true })

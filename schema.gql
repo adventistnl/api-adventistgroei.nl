@@ -1228,6 +1228,7 @@ type UserModel {
   institution_id: String!
   password: String
   church_id: String
+  department_id: String
   name: String!
   email: String!
   language_preference: String!
@@ -1249,6 +1250,7 @@ type UserWithRoles {
   institution_id: String!
   password: String
   church_id: String
+  department_id: String
   name: String!
   email: String!
   language_preference: String!

@@ -9,6 +9,8 @@ import { SubsidyRequestService } from './subsidy-request.service';
 import { ProjectActivityService } from './project-activity.service';
 import { CustomGraphQLError, ErrorCode } from '../common/errors/custom-graphql-error';
 import { AnnualBudgetService } from './annual-budget.service';
+import { UserRepository } from '../repositories/user.repository';
+import { UserWithRoles } from '../models';
 
 @Injectable()
 export class ProjectService {
@@ -18,6 +20,7 @@ export class ProjectService {
     private readonly subsidyRequestService: SubsidyRequestService,
     private readonly projectActivityService: ProjectActivityService,
     private readonly annualBudgetService: AnnualBudgetService,
+    private readonly userRepository: UserRepository,
   ) {}
 
   async create(data: ProjectCreateDto, userId: string): Promise<Project> {
@@ -133,8 +136,12 @@ export class ProjectService {
     return this.projectRepository.findById(id);
   }
 
-  async findAll(institutionId?: string): Promise<Project[]> {
-    return this.projectRepository.findAll(institutionId);
+  async findAll(institutionId?: string, userId?: string): Promise<Project[]> {
+    let user: UserWithRoles | null = null;
+    if (userId) {
+      user = await this.userRepository.findByIdWithRoles(userId);
+    }
+    return this.projectRepository.findAll(institutionId, user);
   }
 
   async getProjectsByChurch(churchId: string): Promise<Project[]> {
