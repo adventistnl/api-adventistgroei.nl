@@ -291,7 +291,7 @@ export class AnnualBudgetService {
 
     // Departamentos com budget = apenas os que têm budget no ano atual
     const departmentsWithBudget = departmentBudgets.filter(
-      budget => Number(budget.planned_budget || 0) > 0
+      budget => DecimalHelper.toDecimal(budget.planned_budget).gt(0)
     ).length;
 
     return {

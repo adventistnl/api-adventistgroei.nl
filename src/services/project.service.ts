@@ -239,7 +239,7 @@ export class ProjectService {
         departmentMap.set(project.department_id, {
           name: project.department.name,
           projects: [],
-          annualBudget: Number(annualBudget?.planned_budget || 0),
+          annualBudget: DecimalHelper.toDecimal(annualBudget?.planned_budget).toNumber(),
         });
       }
 
@@ -329,7 +329,7 @@ export class ProjectService {
       }
       const createdData = monthMap.get(createdMonth)!;
       createdData.created += 1;
-      createdData.budget += Number(project.budget);
+      createdData.budget = DecimalHelper.toDecimal(createdData.budget).plus(project.budget).toNumber();
 
       // Count completed projects
       const now = new Date();

@@ -132,9 +132,9 @@ export class InstitutionService {
     );
 
     // Calculate totals for active churches in this institution
-    const totalMembers = kpiDataByChurch.reduce((sum, kpi) => sum + kpi.totalMembers, 0);
-    const totalDepartments = kpiDataByChurch.reduce((sum, kpi) => sum + kpi.totalDepartments, 0);
-    const totalSubsidyRequests = kpiDataByChurch.reduce((sum, kpi) => sum + kpi.totalSubsidyRequests, 0);
+    const totalMembers = DecimalHelper.sum(kpiDataByChurch.map(kpi => kpi.totalMembers)).toNumber();
+    const totalDepartments = DecimalHelper.sum(kpiDataByChurch.map(kpi => kpi.totalDepartments)).toNumber();
+    const totalSubsidyRequests = DecimalHelper.sum(kpiDataByChurch.map(kpi => kpi.totalSubsidyRequests)).toNumber();
     
     // Aggregations using DecimalHelper for precision
     const totalBudget = DecimalHelper.sum(kpiDataByChurch.map(kpi => kpi.totalBudget));
@@ -158,7 +158,7 @@ export class InstitutionService {
       totalBudget: totalBudget.toNumber(),
       totalUsedBudget: totalUsedBudget.toNumber(),
       budgetUtilization: DecimalHelper.round(budgetUtilization, 2).toNumber(),
-      avgMembersPerChurch: Number(avgMembersPerChurch.toFixed(2)),
+      avgMembersPerChurch: DecimalHelper.round(avgMembersPerChurch, 2).toNumber(),
     };
   }
 

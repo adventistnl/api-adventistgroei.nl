@@ -423,10 +423,9 @@ export class SubsidyRequestService {
     const approvedRequests = requests.filter(r => r.subsidy_status?.name === 'APPROVED').length;
     const rejectedRequests = requests.filter(r => r.subsidy_status?.name === 'REJECTED').length;
     
-    const totalRequested = requests.reduce((sum, r) => sum + parseFloat(r.total_budget.toString() || '0'), 0);
-    const totalApproved = requests
-      .filter(r => r.subsidy_status?.name === 'APPROVED')
-      .reduce((sum, r) => sum + parseFloat(r.approved_amount.toString() || '0'), 0);
+    const totalRequested = DecimalHelper.sum(requests.map(r => r.total_budget)).toNumber();
+    const approvedRequestsList = requests.filter(r => r.subsidy_status?.name === 'APPROVED');
+    const totalApproved = DecimalHelper.sum(approvedRequestsList.map(r => r.approved_amount)).toNumber();
     
     const approvalRate = totalRequests > 0 ? Math.round((approvedRequests / totalRequests) * 100) : 0;
     

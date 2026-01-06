@@ -20,6 +20,7 @@ import { SubsidyReceiptService } from '../services/subsidy-receipt.service';
 import { JwtAuthGuard } from '../middlewares/jwt-auth.guard';
 import { PermissionsGuard } from '../middlewares/permissions.guard';
 import { Permission } from '../middlewares/permissions.decorator';
+import { DecimalHelper } from '../common/helpers/decimal.helper';
 
 interface RequestWithUser extends Request {
   user: {
@@ -68,7 +69,7 @@ export class SubsidyReceiptController {
       subsidy_request_item_id: subsidyRequestItemId || undefined,
       project_activity_id: projectActivityId,
       type,
-      amount: amount ? parseFloat(amount) : undefined,
+      amount: amount ? DecimalHelper.toDecimal(amount).toNumber() : undefined,
     };
 
     const result = await this.subsidyReceiptService.uploadReceipt(
