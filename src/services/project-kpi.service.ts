@@ -70,8 +70,9 @@ export class ProjectKPIService {
     ).toNumber();
 
     // KPI: Subsidized Budget
-    // User expectation: This equals the "Total Subsidy Amount" (Requested/Approved Subsidies)
-    const subsidizedBudget = new Decimal(totalSubsidyAmount);
+    // This represents the total budget allocated for subsidies (from project.subsidized_budget)
+    // The total amount already requested is available as totalSubsidyAmount
+    const subsidizedBudget = DecimalHelper.toDecimal(project.subsidized_budget);
 
     // KPI: Local Contribution (mapped to 'balance')
     // User expectation: Total Budget - Subsidized Budget = What local entity pays

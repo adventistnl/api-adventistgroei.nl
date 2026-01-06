@@ -67,12 +67,22 @@ export class SubsidyRequestService {
 
     // If status changed, create history record
     if (data.subsidy_status_id && data.subsidy_status_id !== current.subsidy_statuses_id) {
+      // Fetch status names for better history message
+      const [previousStatus, newStatus] = await Promise.all([
+        this.prisma.subsidyStatus.findUnique({ where: { id: current.subsidy_statuses_id } }),
+        this.prisma.subsidyStatus.findUnique({ where: { id: data.subsidy_status_id } })
+      ]);
+
+      const previousStatusName = previousStatus?.description || previousStatus?.name || 'Desconhecido';
+      const newStatusName = newStatus?.description || newStatus?.name || 'Desconhecido';
+      const reason = data.notes || `Status alterado de ${previousStatusName} para ${newStatusName}`;
+
       await this.historyRepository.create({
         subsidy_request_id: id,
         status_id: data.subsidy_status_id,
         previous_status_id: current.subsidy_statuses_id,
         type: SubsidyHistoryType.STATUS_CHANGE,
-        reason: data.notes || 'Status alterado',
+        reason,
         changed_by: userId,
       });
     }
