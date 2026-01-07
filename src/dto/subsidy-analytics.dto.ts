@@ -17,6 +17,9 @@ export class SubsidyKPIs {
   @Field(() => Int)
   rejectedRequests: number;
 
+  @Field(() => Int)
+  closedRequests: number;
+
   @Field(() => Float)
   totalRequested: number;
 

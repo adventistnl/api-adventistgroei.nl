@@ -1587,6 +1587,7 @@ type SubsidyKPIs {
   inReviewRequests: Int!
   approvedRequests: Int!
   rejectedRequests: Int!
+  closedRequests: Int!
   totalRequested: Float!
   totalApproved: Float!
   approvalRate: Int!

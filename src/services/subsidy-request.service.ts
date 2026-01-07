@@ -442,6 +442,7 @@ export class SubsidyRequestService {
     const inReviewRequests = requests.filter(r => r.subsidy_status?.name === 'IN_REVIEW').length;
     const approvedRequests = requests.filter(r => r.subsidy_status?.name === 'APPROVED').length;
     const rejectedRequests = requests.filter(r => r.subsidy_status?.name === 'REJECTED').length;
+    const closedRequests = requests.filter(r => r.subsidy_status?.name === 'CLOSED').length;
     
     const totalRequested = DecimalHelper.sum(requests.map(r => r.total_budget)).toNumber();
     const approvedRequestsList = requests.filter(r => r.subsidy_status?.name === 'APPROVED');
@@ -455,6 +456,7 @@ export class SubsidyRequestService {
       inReviewRequests,
       approvedRequests,
       rejectedRequests,
+      closedRequests,
       totalRequested,
       totalApproved,
       approvalRate

@@ -133,7 +133,8 @@ export class SubsidyRequestResolver {
       { status: 'Pending', count: kpis.pendingRequests, fill: '#f59e0b' },
       { status: 'In Review', count: kpis.inReviewRequests, fill: '#3b82f6' },
       { status: 'Approved', count: kpis.approvedRequests, fill: '#10b981' },
-      { status: 'Rejected', count: kpis.rejectedRequests, fill: '#ef4444' }
+      { status: 'Rejected', count: kpis.rejectedRequests, fill: '#ef4444' },
+      { status: 'Closed', count: kpis.closedRequests, fill: '#6b7280' }
     ];
   }
 }
