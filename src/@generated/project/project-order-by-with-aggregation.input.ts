@@ -84,6 +84,9 @@ export class ProjectOrderByWithAggregationInput {
     @Field(() => SortOrderInput, {nullable:true})
     institution_id?: SortOrderInput;
 
+    @Field(() => SortOrderInput, {nullable:true})
+    church_id?: SortOrderInput;
+
     @Field(() => ProjectCountOrderByAggregateInput, {nullable:true})
     @Type(() => ProjectCountOrderByAggregateInput)
     _count?: ProjectCountOrderByAggregateInput;

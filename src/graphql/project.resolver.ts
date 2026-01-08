@@ -11,6 +11,8 @@ import { ProjectKPIsDto } from '../dto/project-kpi.dto';
 import { Permission } from '../middlewares';
 import { PermissionsGuard } from '../middlewares/permissions.guard';
 
+import { Church } from '../@generated/church/church.model';
+
 @Resolver(() => Project)
 export class ProjectResolver {
   constructor(
@@ -18,6 +20,33 @@ export class ProjectResolver {
     private readonly subsidyRequestRepository: SubsidyRequestRepository,
     private readonly projectKPIService: ProjectKPIService,
   ) {}
+
+  @ResolveField(() => Church, { nullable: true, name: 'Church' })
+  getChurch(@Parent() project: Project): Church | null {
+    // Check for uppercase Church (if already populated matching GraphQL model)
+    if (project.Church) {
+      return project.Church;
+    }
+    
+    // Check for lowercase church (standard Prisma output based on schema)
+    if ((project as any).church) {
+      return (project as any).church;
+    }
+    
+    // Fallback to department's church if available
+    if (project.department) {
+       // Check department's church (lowercase in schema and model)
+       if (project.department.church) {
+         return project.department.church;
+       }
+       // Fallback for safety
+       if ((project.department as any).Church) {
+         return (project.department as any).Church;
+       }
+    }
+
+    return null;
+  }
 
   @Query(() => [Project])
   @UseGuards(PermissionsGuard)

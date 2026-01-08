@@ -15,6 +15,7 @@ import { DepartmentListRelationFilter } from '../department/department-list-rela
 import { UserListRelationFilter } from '../user/user-list-relation-filter.input';
 import { SubsidyRequestListRelationFilter } from '../subsidy-request/subsidy-request-list-relation-filter.input';
 import { AnnualBudgetListRelationFilter } from '../annual-budget/annual-budget-list-relation-filter.input';
+import { ProjectListRelationFilter } from '../project/project-list-relation-filter.input';
 
 @InputType()
 export class ChurchWhereUniqueInput {
@@ -93,4 +94,8 @@ export class ChurchWhereUniqueInput {
     @Field(() => AnnualBudgetListRelationFilter, {nullable:true})
     @Type(() => AnnualBudgetListRelationFilter)
     annual_budgets?: AnnualBudgetListRelationFilter;
+
+    @Field(() => ProjectListRelationFilter, {nullable:true})
+    @Type(() => ProjectListRelationFilter)
+    projects?: ProjectListRelationFilter;
 }

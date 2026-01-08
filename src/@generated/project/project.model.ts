@@ -9,6 +9,7 @@ import { Department } from '../department/department.model';
 import { User } from '../user/user.model';
 import { Event } from '../event/event.model';
 import { Institution } from '../institution/institution.model';
+import { Church } from '../church/church.model';
 import { VoluntariesOnProjects } from '../voluntaries-on-projects/voluntaries-on-projects.model';
 import { ProjectActivity } from '../project-activity/project-activity.model';
 import { SubsidyRequest } from '../subsidy-request/subsidy-request.model';
@@ -90,6 +91,9 @@ export class Project {
     @Field(() => String, {nullable:true})
     institution_id!: string | null;
 
+    @Field(() => String, {nullable:true})
+    church_id!: string | null;
+
     @Field(() => Department, {nullable:false})
     department?: Department;
 
@@ -101,6 +105,9 @@ export class Project {
 
     @Field(() => Institution, {nullable:true})
     Institution?: Institution | null;
+
+    @Field(() => Church, {nullable:true})
+    Church?: Church | null;
 
     @Field(() => [VoluntariesOnProjects], {nullable:true})
     voluntary_users?: Array<VoluntariesOnProjects>;

@@ -22,7 +22,10 @@ export class ChurchService {
     return await this.churchRepository.softDelete(churchId, userId);
   }
 
-  async getChurches(): Promise<Church[]> {
+  async getChurches(institutionId?: string): Promise<Church[]> {
+    if (institutionId) {
+      return await this.churchRepository.findManyByFilters({ institution_id: institutionId });
+    }
     return await this.churchRepository.findAll();
   }
 

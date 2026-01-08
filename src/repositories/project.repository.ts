@@ -29,6 +29,7 @@ export class ProjectRepository {
     if (data.institution_id) {
       await this.institutionRepository.findById(data.institution_id);
     }
+    // TODO: Add church validation
     await this.departmentRepository.findById(data.department_id);
 
     const ownerId = data.owner_id || userId;
@@ -93,6 +94,7 @@ export class ProjectRepository {
         department: { connect: { id: data.department_id } },
         owner: { connect: { id: ownerId } },
         Institution: data.institution_id ? { connect: { id: data.institution_id } } : undefined,
+        church: data.church_id ? { connect: { id: data.church_id } } : undefined,
         event: eventId ? { connect: { id: eventId } } : undefined,
       },
     });
@@ -205,7 +207,7 @@ export class ProjectRepository {
   }
   
   async update(id: string, data: ProjectUpdateDto, userId: string): Promise<Project> {
-    const { institution_id, department_id, owner_id, activities, ...rest } = data;
+    const { institution_id, department_id, owner_id, church_id, activities, ...rest } = data;
 
     if (institution_id) {
       await this.institutionRepository.findById(institution_id);
@@ -216,9 +218,11 @@ export class ProjectRepository {
     if (owner_id) {
       await this.userRepository.findById(owner_id);
     }
+    // TODO: Add church validation
 
     const updateData: any = {
       Institution: institution_id ? { connect: { id: institution_id } } : undefined,
+      church: church_id ? { connect: { id: church_id } } : undefined,
       owner: owner_id ? { connect: { id: owner_id } } : undefined,
       department: department_id ? { connect: { id: department_id } } : undefined,
       budget: rest.budget ? DecimalHelper.toDecimal(rest.budget).toDecimalPlaces(2) : undefined,
@@ -331,8 +335,13 @@ export class ProjectRepository {
       where: { id, is_deleted: false },
       include: {
         owner: true, // Inclui o relacionamento com o proprietário
-        department: true,
+        department: {
+          include: {
+            church: true,
+          },
+        },
         Institution: true,
+        church: true,
         activities: {
           where: {
             is_deleted: false,
@@ -484,8 +493,13 @@ export class ProjectRepository {
       where,
       include: {
         owner: true,
-        department: true,
+        department: {
+          include: {
+            church: true,
+          },
+        },
         Institution: true,
+        church: true,
         activities: {
           where: {
             is_deleted: false,
@@ -513,8 +527,13 @@ export class ProjectRepository {
       },
       include: {
         owner: true,
-        department: true,
+        department: {
+          include: {
+            church: true,
+          },
+        },
         Institution: true,
+        church: true,
         activities: {
           where: {
             is_deleted: false,

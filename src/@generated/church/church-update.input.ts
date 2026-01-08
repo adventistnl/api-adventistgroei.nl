@@ -14,6 +14,7 @@ import { DepartmentUpdateManyWithoutChurchNestedInput } from '../department/depa
 import { UserUpdateManyWithoutChurchNestedInput } from '../user/user-update-many-without-church-nested.input';
 import { SubsidyRequestUpdateManyWithoutChurchNestedInput } from '../subsidy-request/subsidy-request-update-many-without-church-nested.input';
 import { AnnualBudgetUpdateManyWithoutChurchNestedInput } from '../annual-budget/annual-budget-update-many-without-church-nested.input';
+import { ProjectUpdateManyWithoutChurchNestedInput } from '../project/project-update-many-without-church-nested.input';
 
 @InputType()
 export class ChurchUpdateInput {
@@ -74,4 +75,8 @@ export class ChurchUpdateInput {
     @Field(() => AnnualBudgetUpdateManyWithoutChurchNestedInput, {nullable:true})
     @Type(() => AnnualBudgetUpdateManyWithoutChurchNestedInput)
     annual_budgets?: AnnualBudgetUpdateManyWithoutChurchNestedInput;
+
+    @Field(() => ProjectUpdateManyWithoutChurchNestedInput, {nullable:true})
+    @Type(() => ProjectUpdateManyWithoutChurchNestedInput)
+    projects?: ProjectUpdateManyWithoutChurchNestedInput;
 }

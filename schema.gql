@@ -729,10 +729,12 @@ type Project {
   deleted_by: String
   event_id: String
   institution_id: String
+  church_id: String
   department: Department!
   owner: User!
   event: Event
   Institution: Institution
+  Church: Church
   voluntary_users: [VoluntariesOnProjects!]
   activities: [ProjectActivity!]
   subsidies: [SubsidyRequest!]
@@ -1087,6 +1089,7 @@ type ChurchCount {
   users: Int!
   subsidy_requests: Int!
   annual_budgets: Int!
+  projects: Int!
 }
 
 type Church {
@@ -1110,6 +1113,7 @@ type Church {
   users: [User!]
   subsidy_requests: [SubsidyRequest!]
   annual_budgets: [AnnualBudget!]
+  projects: [Project!]
   _count: ChurchCount!
 }
 
@@ -1622,7 +1626,7 @@ type ForgotPasswordResponse {
 
 type Query {
   permissions: [PermissionGroupPermissionsModel!]!
-  churches: [ChurchModel!]!
+  churches(institution_id: String): [ChurchModel!]!
   church(id: String!): ChurchModel
   churchActivityTimeline(institution_id: String, selectedYear: Float): [JSON!]!
   institutions: [Institution!]!
@@ -2165,6 +2169,7 @@ input ChurchWhereInput {
   users: UserListRelationFilter
   subsidy_requests: SubsidyRequestListRelationFilter
   annual_budgets: AnnualBudgetListRelationFilter
+  projects: ProjectListRelationFilter
 }
 
 input EnumChurchTypeFilter {
@@ -2495,10 +2500,12 @@ input ProjectWhereInput {
   deleted_by: StringNullableFilter
   event_id: StringNullableFilter
   institution_id: StringNullableFilter
+  church_id: StringNullableFilter
   department: DepartmentScalarRelationFilter
   owner: UserScalarRelationFilter
   event: EventNullableScalarRelationFilter
   Institution: InstitutionNullableScalarRelationFilter
+  church: ChurchNullableScalarRelationFilter
   voluntary_users: VoluntariesOnProjectsListRelationFilter
   activities: ProjectActivityListRelationFilter
   subsidies: SubsidyRequestListRelationFilter
@@ -3545,6 +3552,7 @@ input ChurchOrderByWithRelationInput {
   users: UserOrderByRelationAggregateInput
   subsidy_requests: SubsidyRequestOrderByRelationAggregateInput
   annual_budgets: AnnualBudgetOrderByRelationAggregateInput
+  projects: ProjectOrderByRelationAggregateInput
 }
 
 input RegionOrderByWithRelationInput {
@@ -3987,6 +3995,7 @@ input ProjectCreateDto {
   type: ProjectType!
   department_id: String!
   institution_id: String
+  church_id: String
   owner_id: String
   start_at: String!
   end_at: String!
@@ -4043,6 +4052,7 @@ input ProjectUpdateDto {
   type: ProjectType
   department_id: String
   institution_id: String
+  church_id: String
   owner_id: String
   start_at: String
   end_at: String

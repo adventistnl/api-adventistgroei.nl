@@ -92,6 +92,9 @@ export class ProjectUncheckedCreateWithoutVoluntary_usersInput {
     @Field(() => String, {nullable:true})
     institution_id?: string;
 
+    @Field(() => String, {nullable:true})
+    church_id?: string;
+
     @Field(() => ProjectActivityUncheckedCreateNestedManyWithoutProjectInput, {nullable:true})
     @Type(() => ProjectActivityUncheckedCreateNestedManyWithoutProjectInput)
     activities?: ProjectActivityUncheckedCreateNestedManyWithoutProjectInput;

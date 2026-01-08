@@ -7,6 +7,7 @@ import { Type } from 'class-transformer';
 import { UserOrderByWithRelationInput } from '../user/user-order-by-with-relation.input';
 import { EventOrderByWithRelationInput } from '../event/event-order-by-with-relation.input';
 import { InstitutionOrderByWithRelationInput } from '../institution/institution-order-by-with-relation.input';
+import { ChurchOrderByWithRelationInput } from '../church/church-order-by-with-relation.input';
 import { VoluntariesOnProjectsOrderByRelationAggregateInput } from '../voluntaries-on-projects/voluntaries-on-projects-order-by-relation-aggregate.input';
 import { ProjectActivityOrderByRelationAggregateInput } from '../project-activity/project-activity-order-by-relation-aggregate.input';
 import { SubsidyRequestOrderByRelationAggregateInput } from '../subsidy-request/subsidy-request-order-by-relation-aggregate.input';
@@ -87,6 +88,9 @@ export class ProjectOrderByWithRelationInput {
     @Field(() => SortOrderInput, {nullable:true})
     institution_id?: SortOrderInput;
 
+    @Field(() => SortOrderInput, {nullable:true})
+    church_id?: SortOrderInput;
+
     @Field(() => DepartmentOrderByWithRelationInput, {nullable:true})
     @Type(() => DepartmentOrderByWithRelationInput)
     department?: DepartmentOrderByWithRelationInput;
@@ -102,6 +106,10 @@ export class ProjectOrderByWithRelationInput {
     @Field(() => InstitutionOrderByWithRelationInput, {nullable:true})
     @Type(() => InstitutionOrderByWithRelationInput)
     Institution?: InstitutionOrderByWithRelationInput;
+
+    @Field(() => ChurchOrderByWithRelationInput, {nullable:true})
+    @Type(() => ChurchOrderByWithRelationInput)
+    church?: ChurchOrderByWithRelationInput;
 
     @Field(() => VoluntariesOnProjectsOrderByRelationAggregateInput, {nullable:true})
     @Type(() => VoluntariesOnProjectsOrderByRelationAggregateInput)

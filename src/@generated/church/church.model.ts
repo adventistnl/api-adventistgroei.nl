@@ -9,6 +9,7 @@ import { Department } from '../department/department.model';
 import { User } from '../user/user.model';
 import { SubsidyRequest } from '../subsidy-request/subsidy-request.model';
 import { AnnualBudget } from '../annual-budget/annual-budget.model';
+import { Project } from '../project/project.model';
 import { ChurchCount } from './church-count.output';
 
 @ObjectType()
@@ -73,6 +74,9 @@ export class Church {
 
     @Field(() => [AnnualBudget], {nullable:true})
     annual_budgets?: Array<AnnualBudget>;
+
+    @Field(() => [Project], {nullable:true})
+    projects?: Array<Project>;
 
     @Field(() => ChurchCount, {nullable:false})
     _count?: ChurchCount;

@@ -369,6 +369,7 @@ model Church {
   users            User[]
   subsidy_requests SubsidyRequest[]
   annual_budgets   AnnualBudget[]
+  projects         Project[]
 }
 
 model Department {
@@ -534,6 +535,8 @@ model Project {
   event               Event?                  @relation(fields: [event_id], references: [id])
   Institution         Institution?            @relation(fields: [institution_id], references: [id])
   institution_id      String?
+  church_id           String?
+  church              Church?                 @relation(fields: [church_id], references: [id])
   voluntary_users     VoluntariesOnProjects[]
   activities          ProjectActivity[]
   subsidies           SubsidyRequest[]

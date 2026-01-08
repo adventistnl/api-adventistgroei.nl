@@ -85,6 +85,9 @@ export class ProjectGroupBy {
     @Field(() => String, {nullable:true})
     institution_id?: string;
 
+    @Field(() => String, {nullable:true})
+    church_id?: string;
+
     @Field(() => ProjectCountAggregate, {nullable:true})
     _count?: ProjectCountAggregate;
 

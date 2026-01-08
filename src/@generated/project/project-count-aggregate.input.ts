@@ -77,5 +77,8 @@ export class ProjectCountAggregateInput {
     institution_id?: true;
 
     @Field(() => Boolean, {nullable:true})
+    church_id?: true;
+
+    @Field(() => Boolean, {nullable:true})
     _all?: true;
 }

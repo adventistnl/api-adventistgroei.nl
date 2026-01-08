@@ -81,6 +81,11 @@ export class ProjectCreateDto {
   @Field({ nullable: true })
   @IsOptional()
   @IsString()
+  church_id?: string;
+
+  @Field({ nullable: true })
+  @IsOptional()
+  @IsString()
   owner_id?: string;
 
   @Field()
@@ -184,6 +189,11 @@ export class ProjectUpdateDto {
   @IsOptional()
   @IsString()
   institution_id?: string;
+
+  @Field({ nullable: true })
+  @IsOptional()
+  @IsString()
+  church_id?: string;
 
   @Field({ nullable: true })
   @IsOptional()

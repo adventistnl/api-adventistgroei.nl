@@ -12,6 +12,7 @@ import { NullableStringFieldUpdateOperationsInput } from '../prisma/nullable-str
 import { DepartmentUpdateOneRequiredWithoutProjectsNestedInput } from '../department/department-update-one-required-without-projects-nested.input';
 import { EventUpdateOneWithoutProjectsNestedInput } from '../event/event-update-one-without-projects-nested.input';
 import { InstitutionUpdateOneWithoutProjectsNestedInput } from '../institution/institution-update-one-without-projects-nested.input';
+import { ChurchUpdateOneWithoutProjectsNestedInput } from '../church/church-update-one-without-projects-nested.input';
 import { VoluntariesOnProjectsUpdateManyWithoutProjectNestedInput } from '../voluntaries-on-projects/voluntaries-on-projects-update-many-without-project-nested.input';
 import { ProjectActivityUpdateManyWithoutProjectNestedInput } from '../project-activity/project-activity-update-many-without-project-nested.input';
 import { SubsidyRequestUpdateManyWithoutProjectNestedInput } from '../subsidy-request/subsidy-request-update-many-without-project-nested.input';
@@ -94,6 +95,10 @@ export class ProjectUpdateWithoutOwnerInput {
     @Field(() => InstitutionUpdateOneWithoutProjectsNestedInput, {nullable:true})
     @Type(() => InstitutionUpdateOneWithoutProjectsNestedInput)
     Institution?: InstitutionUpdateOneWithoutProjectsNestedInput;
+
+    @Field(() => ChurchUpdateOneWithoutProjectsNestedInput, {nullable:true})
+    @Type(() => ChurchUpdateOneWithoutProjectsNestedInput)
+    church?: ChurchUpdateOneWithoutProjectsNestedInput;
 
     @Field(() => VoluntariesOnProjectsUpdateManyWithoutProjectNestedInput, {nullable:true})
     @Type(() => VoluntariesOnProjectsUpdateManyWithoutProjectNestedInput)

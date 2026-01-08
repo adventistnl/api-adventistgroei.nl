@@ -76,4 +76,7 @@ export class ProjectCountOrderByAggregateInput {
 
     @Field(() => SortOrder, {nullable:true})
     institution_id?: `${SortOrder}`;
+
+    @Field(() => SortOrder, {nullable:true})
+    church_id?: `${SortOrder}`;
 }

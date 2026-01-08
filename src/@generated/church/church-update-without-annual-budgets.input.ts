@@ -13,6 +13,7 @@ import { ContactUpdateOneWithoutChurchNestedInput } from '../contact/contact-upd
 import { DepartmentUpdateManyWithoutChurchNestedInput } from '../department/department-update-many-without-church-nested.input';
 import { UserUpdateManyWithoutChurchNestedInput } from '../user/user-update-many-without-church-nested.input';
 import { SubsidyRequestUpdateManyWithoutChurchNestedInput } from '../subsidy-request/subsidy-request-update-many-without-church-nested.input';
+import { ProjectUpdateManyWithoutChurchNestedInput } from '../project/project-update-many-without-church-nested.input';
 
 @InputType()
 export class ChurchUpdateWithoutAnnual_budgetsInput {
@@ -69,4 +70,8 @@ export class ChurchUpdateWithoutAnnual_budgetsInput {
     @Field(() => SubsidyRequestUpdateManyWithoutChurchNestedInput, {nullable:true})
     @Type(() => SubsidyRequestUpdateManyWithoutChurchNestedInput)
     subsidy_requests?: SubsidyRequestUpdateManyWithoutChurchNestedInput;
+
+    @Field(() => ProjectUpdateManyWithoutChurchNestedInput, {nullable:true})
+    @Type(() => ProjectUpdateManyWithoutChurchNestedInput)
+    projects?: ProjectUpdateManyWithoutChurchNestedInput;
 }

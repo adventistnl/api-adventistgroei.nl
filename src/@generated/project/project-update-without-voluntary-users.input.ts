@@ -13,6 +13,7 @@ import { DepartmentUpdateOneRequiredWithoutProjectsNestedInput } from '../depart
 import { UserUpdateOneRequiredWithoutProjectNestedInput } from '../user/user-update-one-required-without-project-nested.input';
 import { EventUpdateOneWithoutProjectsNestedInput } from '../event/event-update-one-without-projects-nested.input';
 import { InstitutionUpdateOneWithoutProjectsNestedInput } from '../institution/institution-update-one-without-projects-nested.input';
+import { ChurchUpdateOneWithoutProjectsNestedInput } from '../church/church-update-one-without-projects-nested.input';
 import { ProjectActivityUpdateManyWithoutProjectNestedInput } from '../project-activity/project-activity-update-many-without-project-nested.input';
 import { SubsidyRequestUpdateManyWithoutProjectNestedInput } from '../subsidy-request/subsidy-request-update-many-without-project-nested.input';
 import { SpecialProjectsUpdateManyWithoutProjectNestedInput } from '../special-projects/special-projects-update-many-without-project-nested.input';
@@ -98,6 +99,10 @@ export class ProjectUpdateWithoutVoluntary_usersInput {
     @Field(() => InstitutionUpdateOneWithoutProjectsNestedInput, {nullable:true})
     @Type(() => InstitutionUpdateOneWithoutProjectsNestedInput)
     Institution?: InstitutionUpdateOneWithoutProjectsNestedInput;
+
+    @Field(() => ChurchUpdateOneWithoutProjectsNestedInput, {nullable:true})
+    @Type(() => ChurchUpdateOneWithoutProjectsNestedInput)
+    church?: ChurchUpdateOneWithoutProjectsNestedInput;
 
     @Field(() => ProjectActivityUpdateManyWithoutProjectNestedInput, {nullable:true})
     @Type(() => ProjectActivityUpdateManyWithoutProjectNestedInput)

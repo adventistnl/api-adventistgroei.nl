@@ -99,4 +99,7 @@ export class ProjectScalarWhereWithAggregatesInput {
 
     @Field(() => StringNullableWithAggregatesFilter, {nullable:true})
     institution_id?: StringNullableWithAggregatesFilter;
+
+    @Field(() => StringNullableWithAggregatesFilter, {nullable:true})
+    church_id?: StringNullableWithAggregatesFilter;
 }

@@ -90,6 +90,9 @@ export class ProjectUncheckedCreateWithoutEventInput {
     @Field(() => String, {nullable:true})
     institution_id?: string;
 
+    @Field(() => String, {nullable:true})
+    church_id?: string;
+
     @Field(() => VoluntariesOnProjectsUncheckedCreateNestedManyWithoutProjectInput, {nullable:true})
     @Type(() => VoluntariesOnProjectsUncheckedCreateNestedManyWithoutProjectInput)
     voluntary_users?: VoluntariesOnProjectsUncheckedCreateNestedManyWithoutProjectInput;

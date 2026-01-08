@@ -84,4 +84,7 @@ export class ProjectUncheckedUpdateManyWithoutOwnerInput {
 
     @Field(() => NullableStringFieldUpdateOperationsInput, {nullable:true})
     institution_id?: NullableStringFieldUpdateOperationsInput;
+
+    @Field(() => NullableStringFieldUpdateOperationsInput, {nullable:true})
+    church_id?: NullableStringFieldUpdateOperationsInput;
 }

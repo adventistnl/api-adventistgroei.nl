@@ -92,6 +92,9 @@ export class ProjectUncheckedUpdateInput {
     @Field(() => NullableStringFieldUpdateOperationsInput, {nullable:true})
     institution_id?: NullableStringFieldUpdateOperationsInput;
 
+    @Field(() => NullableStringFieldUpdateOperationsInput, {nullable:true})
+    church_id?: NullableStringFieldUpdateOperationsInput;
+
     @Field(() => VoluntariesOnProjectsUncheckedUpdateManyWithoutProjectNestedInput, {nullable:true})
     @Type(() => VoluntariesOnProjectsUncheckedUpdateManyWithoutProjectNestedInput)
     voluntary_users?: VoluntariesOnProjectsUncheckedUpdateManyWithoutProjectNestedInput;

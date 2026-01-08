@@ -75,4 +75,7 @@ export class ProjectMaxAggregateInput {
 
     @Field(() => Boolean, {nullable:true})
     institution_id?: true;
+
+    @Field(() => Boolean, {nullable:true})
+    church_id?: true;
 }

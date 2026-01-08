@@ -26,8 +26,10 @@ export class ChurchResolver {
 
   @Permission()
   @Query(() => [ChurchModel])
-  async churches(): Promise<Church[]> {
-    return await this.churchService.getChurches();
+  async churches(
+    @Args('institution_id', { nullable: true }) institution_id?: string
+  ): Promise<Church[]> {
+    return await this.churchService.getChurches(institution_id);
   }
 
   @Permission()

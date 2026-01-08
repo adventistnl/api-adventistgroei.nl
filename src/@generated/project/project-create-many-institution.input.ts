@@ -85,4 +85,7 @@ export class ProjectCreateManyInstitutionInput {
 
     @Field(() => String, {nullable:true})
     event_id?: string;
+
+    @Field(() => String, {nullable:true})
+    church_id?: string;
 }

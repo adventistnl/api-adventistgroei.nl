@@ -10,6 +10,7 @@ import { DepartmentUncheckedUpdateManyWithoutChurchNestedInput } from '../depart
 import { Type } from 'class-transformer';
 import { UserUncheckedUpdateManyWithoutChurchNestedInput } from '../user/user-unchecked-update-many-without-church-nested.input';
 import { SubsidyRequestUncheckedUpdateManyWithoutChurchNestedInput } from '../subsidy-request/subsidy-request-unchecked-update-many-without-church-nested.input';
+import { ProjectUncheckedUpdateManyWithoutChurchNestedInput } from '../project/project-unchecked-update-many-without-church-nested.input';
 
 @InputType()
 export class ChurchUncheckedUpdateWithoutAnnual_budgetsInput {
@@ -64,4 +65,8 @@ export class ChurchUncheckedUpdateWithoutAnnual_budgetsInput {
     @Field(() => SubsidyRequestUncheckedUpdateManyWithoutChurchNestedInput, {nullable:true})
     @Type(() => SubsidyRequestUncheckedUpdateManyWithoutChurchNestedInput)
     subsidy_requests?: SubsidyRequestUncheckedUpdateManyWithoutChurchNestedInput;
+
+    @Field(() => ProjectUncheckedUpdateManyWithoutChurchNestedInput, {nullable:true})
+    @Type(() => ProjectUncheckedUpdateManyWithoutChurchNestedInput)
+    projects?: ProjectUncheckedUpdateManyWithoutChurchNestedInput;
 }

@@ -24,7 +24,8 @@ export enum ProjectScalarFieldEnum {
     deleted_at = "deleted_at",
     deleted_by = "deleted_by",
     event_id = "event_id",
-    institution_id = "institution_id"
+    institution_id = "institution_id",
+    church_id = "church_id"
 }
 
 

@@ -10,6 +10,7 @@ import { DepartmentOrderByRelationAggregateInput } from '../department/departmen
 import { UserOrderByRelationAggregateInput } from '../user/user-order-by-relation-aggregate.input';
 import { SubsidyRequestOrderByRelationAggregateInput } from '../subsidy-request/subsidy-request-order-by-relation-aggregate.input';
 import { AnnualBudgetOrderByRelationAggregateInput } from '../annual-budget/annual-budget-order-by-relation-aggregate.input';
+import { ProjectOrderByRelationAggregateInput } from '../project/project-order-by-relation-aggregate.input';
 
 @InputType()
 export class ChurchOrderByWithRelationInput {
@@ -79,4 +80,8 @@ export class ChurchOrderByWithRelationInput {
     @Field(() => AnnualBudgetOrderByRelationAggregateInput, {nullable:true})
     @Type(() => AnnualBudgetOrderByRelationAggregateInput)
     annual_budgets?: AnnualBudgetOrderByRelationAggregateInput;
+
+    @Field(() => ProjectOrderByRelationAggregateInput, {nullable:true})
+    @Type(() => ProjectOrderByRelationAggregateInput)
+    projects?: ProjectOrderByRelationAggregateInput;
 }

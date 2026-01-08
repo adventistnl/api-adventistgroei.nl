@@ -8,6 +8,7 @@ import { DepartmentCreateNestedManyWithoutChurchInput } from '../department/depa
 import { UserCreateNestedManyWithoutChurchInput } from '../user/user-create-nested-many-without-church.input';
 import { SubsidyRequestCreateNestedManyWithoutChurchInput } from '../subsidy-request/subsidy-request-create-nested-many-without-church.input';
 import { AnnualBudgetCreateNestedManyWithoutChurchInput } from '../annual-budget/annual-budget-create-nested-many-without-church.input';
+import { ProjectCreateNestedManyWithoutChurchInput } from '../project/project-create-nested-many-without-church.input';
 
 @InputType()
 export class ChurchCreateWithoutContactInput {
@@ -64,4 +65,8 @@ export class ChurchCreateWithoutContactInput {
     @Field(() => AnnualBudgetCreateNestedManyWithoutChurchInput, {nullable:true})
     @Type(() => AnnualBudgetCreateNestedManyWithoutChurchInput)
     annual_budgets?: AnnualBudgetCreateNestedManyWithoutChurchInput;
+
+    @Field(() => ProjectCreateNestedManyWithoutChurchInput, {nullable:true})
+    @Type(() => ProjectCreateNestedManyWithoutChurchInput)
+    projects?: ProjectCreateNestedManyWithoutChurchInput;
 }

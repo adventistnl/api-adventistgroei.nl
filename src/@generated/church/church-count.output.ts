@@ -16,4 +16,7 @@ export class ChurchCount {
 
     @Field(() => Int, {nullable:false})
     annual_budgets?: number;
+
+    @Field(() => Int, {nullable:false})
+    projects?: number;
 }

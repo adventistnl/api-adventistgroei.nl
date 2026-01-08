@@ -14,6 +14,7 @@ import { DepartmentScalarRelationFilter } from '../department/department-scalar-
 import { UserScalarRelationFilter } from '../user/user-scalar-relation-filter.input';
 import { EventNullableScalarRelationFilter } from '../event/event-nullable-scalar-relation-filter.input';
 import { InstitutionNullableScalarRelationFilter } from '../institution/institution-nullable-scalar-relation-filter.input';
+import { ChurchNullableScalarRelationFilter } from '../church/church-nullable-scalar-relation-filter.input';
 import { VoluntariesOnProjectsListRelationFilter } from '../voluntaries-on-projects/voluntaries-on-projects-list-relation-filter.input';
 import { ProjectActivityListRelationFilter } from '../project-activity/project-activity-list-relation-filter.input';
 import { SubsidyRequestListRelationFilter } from '../subsidy-request/subsidy-request-list-relation-filter.input';
@@ -109,6 +110,9 @@ export class ProjectWhereUniqueInput {
     @Field(() => StringNullableFilter, {nullable:true})
     institution_id?: StringNullableFilter;
 
+    @Field(() => StringNullableFilter, {nullable:true})
+    church_id?: StringNullableFilter;
+
     @Field(() => DepartmentScalarRelationFilter, {nullable:true})
     @Type(() => DepartmentScalarRelationFilter)
     department?: DepartmentScalarRelationFilter;
@@ -124,6 +128,10 @@ export class ProjectWhereUniqueInput {
     @Field(() => InstitutionNullableScalarRelationFilter, {nullable:true})
     @Type(() => InstitutionNullableScalarRelationFilter)
     Institution?: InstitutionNullableScalarRelationFilter;
+
+    @Field(() => ChurchNullableScalarRelationFilter, {nullable:true})
+    @Type(() => ChurchNullableScalarRelationFilter)
+    church?: ChurchNullableScalarRelationFilter;
 
     @Field(() => VoluntariesOnProjectsListRelationFilter, {nullable:true})
     @Type(() => VoluntariesOnProjectsListRelationFilter)

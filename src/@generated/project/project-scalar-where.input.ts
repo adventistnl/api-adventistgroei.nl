@@ -99,4 +99,7 @@ export class ProjectScalarWhereInput {
 
     @Field(() => StringNullableFilter, {nullable:true})
     institution_id?: StringNullableFilter;
+
+    @Field(() => StringNullableFilter, {nullable:true})
+    church_id?: StringNullableFilter;
 }
