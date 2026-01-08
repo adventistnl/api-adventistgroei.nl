@@ -159,7 +159,11 @@ export class ProjectService {
         }),
       },
       include: {
-        activities: true,
+        activities: {
+          where: {
+            is_deleted: false,
+          },
+        },
       },
     });
 
