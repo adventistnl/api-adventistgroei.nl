@@ -27,14 +27,42 @@ export class ProjectActivityService {
 
   private async recalculateProjectBudget(projectId: string, userId: string): Promise<void> {
     try {
-      console.log(`💰 Recalculating budget for project ${projectId}...`);
+      console.log(`💰 Recalculating budget and balance for project ${projectId}...`);
       
-      const activities = await this.repository.findManyByFilters({ project_id: projectId });
-      const totalBudget = DecimalHelper.sum(activities.map(a => a.budget_amount));
+      // Get project to know subsidized_budget
+      const project = await this.projectRepository.findById(projectId);
+      if (!project) {
+        console.error(`❌ Project ${projectId} not found`);
+        return;
+      }
 
-      await this.projectRepository.update(projectId, { budget: totalBudget.toNumber() }, userId);
+      // Get all non-deleted activities
+      const activities = await this.repository.findManyByFilters({ 
+        project_id: projectId,
+        is_deleted: false 
+      });
       
-      console.log(`✅ Project ${projectId} budget updated to ${totalBudget.toNumber()}`);
+      // Calculate sum of all activity budgets (total project budget)
+      const totalBudget = DecimalHelper.sum(activities.map(a => a.budget_amount));
+      
+      // Calculate balance: total budget - subsidized budget (church contribution)
+      const subsidizedBudget = DecimalHelper.toDecimal(project.subsidized_budget);
+      const balance = totalBudget.minus(subsidizedBudget);
+
+      // Update project with new budget and balance
+      await this.projectRepository.update(
+        projectId, 
+        { 
+          budget: totalBudget.toNumber(),
+          balance: balance.toNumber() 
+        }, 
+        userId
+      );
+      
+      console.log(`✅ Project ${projectId} updated:`);
+      console.log(`   - Total budget (activities sum): ${totalBudget.toNumber()}`);
+      console.log(`   - Subsidized budget: ${subsidizedBudget.toNumber()}`);
+      console.log(`   - Balance (church contribution): ${balance.toNumber()}`);
     } catch (error) {
       console.error(`❌ Error recalculating project budget:`, error);
       // We don't throw here to avoid blocking the main operation if budget update fails
