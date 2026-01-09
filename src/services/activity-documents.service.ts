@@ -104,10 +104,7 @@ export class ActivityDocumentsService {
       // 6. Upload para Google Drive
       driveFileId = await this.driveService.uploadFile(buffer, filename, mimetype, activityFolder);
 
-      // 7. Verificar se usuário tem permission de validação para auto-validar
-      const isAutoValidated = await this.userHasPermission(userId, 'validateActivityDocument');
-
-      // 8. Criar registro no banco
+      // 7. Criar registro no banco (sempre inicia não validado)
       const document = await this.repository.create(
         {
           activity_id: input.activity_id,
@@ -117,8 +114,8 @@ export class ActivityDocumentsService {
           filename,  // Nome original do arquivo
           type: input.type,
           uploaded_by: userId,
-          is_validated: isAutoValidated,
-          validated_at: isAutoValidated ? new Date() : null,
+          is_validated: false,
+          validated_at: null,
         },
         userId,
       );
@@ -320,39 +317,7 @@ export class ActivityDocumentsService {
   }
 
   /**
-   * Verificar se usuário tem uma permission específica
-   */
-  private async userHasPermission(
-    userId: string,
-    permissionResolverName: string,
-  ): Promise<boolean> {
-    const user = await this.prisma.user.findUnique({
-      where: { id: userId },
-      include: {
-        user_roles: {
-          where: { is_deleted: false },
-          include: {
-            role: {
-              include: {
-                role_permissions: {
-                  where: { is_deleted: false },
-                  include: { permission: true },
-                },
-              },
-            },
-          },
-        },
-      },
-    });
 
-    if (!user) return false;
-
-    const userPermissions = user.user_roles
-      .flatMap((ur) => ur.role.role_permissions)
-      .map((rp) => rp.permission.resolver_name);
-
-    return userPermissions.includes(permissionResolverName as any);
-  }
 
   /**
    * Verificar se usuário pode acessar atividade
