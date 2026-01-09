@@ -26,6 +26,81 @@ export class SubsidyRequestService {
     private readonly annualBudgetService: AnnualBudgetService,
   ) {}
 
+  private validateStatusTransition(currentStatusName: string | undefined, newStatusName: string) {
+      if (!currentStatusName) return;
+
+      const from = currentStatusName.toUpperCase();
+      const to = newStatusName.toUpperCase();
+
+      // Rule 1: Closed status cannot be changed to anything else
+      if (from === 'CLOSED' && from !== to) {
+          throw new CustomGraphQLError(
+              'Cannot change status of a CLOSED subsidy request',
+              ErrorCode.BAD_REQUEST,
+              400,
+              { additional: { errorCode: 'STATUS_IS_CLOSED' } }
+          );
+      }
+
+      // Rule 2: In Review -> Closed Not Allowed directly
+      if (from === 'IN_REVIEW' && to === 'CLOSED') {
+           throw new CustomGraphQLError(
+              'Cannot change status directly from IN_REVIEW to CLOSED',
+              ErrorCode.BAD_REQUEST,
+              400,
+              { additional: { errorCode: 'INVALID_TRANSITION_IN_REVIEW_TO_CLOSED' } }
+          );
+      }
+
+      // Rule 3: Approved/Rejected can ONLY go to Closed (if not staying same)
+      if ((from === 'APPROVED' || from === 'REJECTED') && to !== 'CLOSED' && from !== to) {
+           throw new CustomGraphQLError(
+              `Cannot change status from ${from} to ${to}. Approved/Rejected requests can only be CLOSED.`,
+              ErrorCode.BAD_REQUEST,
+              400,
+              { additional: { errorCode: 'INVALID_TRANSITION_FINAL_STATE' } }
+          );
+      }
+      if ((from === 'APPROVED' || from === 'REJECTED') && to !== 'CLOSED' && from !== to) {
+           throw new CustomGraphQLError(
+              `Cannot change status from ${from} to ${to}. Approved/Rejected requests can only be CLOSED.`,
+              ErrorCode.BAD_REQUEST,
+              400,
+              { additional: { errorCode: 'INVALID_TRANSITION_FINAL_STATE' } }
+          );
+      }
+  }
+
+  private ensureNotClosed(statusName: string | undefined) {
+    if (statusName?.toUpperCase() === 'CLOSED') {
+      throw new CustomGraphQLError(
+        'Action not allowed on a CLOSED subsidy request',
+        ErrorCode.BAD_REQUEST, // Or STATUS_CHANGE_NOT_ALLOWED
+        400,
+        { additional: { errorCode: 'STATUS_IS_CLOSED' } }
+      );
+    }
+  }
+
+  private async ensureAllDocumentsValidated(id: string) {
+    const pendingReceipts = await this.prisma.subsidyReceipt.count({
+      where: {
+        subsidy_request_id: id,
+        is_deleted: false,
+        is_validated: false 
+      }
+    });
+
+    if (pendingReceipts > 0) {
+       throw new CustomGraphQLError(
+        'Cannot change status. All documents must be validated first.',
+        ErrorCode.BAD_REQUEST,
+        400,
+        { additional: { errorCode: 'DOCUMENTS_NOT_VALIDATED' } }
+      );
+    }
+  }
+
   async create(data: SubsidyRequestCreateDto, userId: string): Promise<SubsidyRequest> {
     // Se subsidy_status_id não foi fornecido, buscar status "PENDING" automaticamente
     if (!data.subsidy_status_id) {
@@ -57,11 +132,16 @@ export class SubsidyRequestService {
 
   async update(id: string, data: SubsidyRequestUpdateDto, userId: string): Promise<SubsidyRequest> {
     // Get current subsidy to check if status changed
+
+
     const current = await this.subsidyRequestRepository.findById(id);
     
     if (!current) {
       throw new CustomGraphQLError('SubsidyRequest not found', ErrorCode.NOT_FOUND, 404);
     }
+
+    // Checking if currently closed
+    this.ensureNotClosed(current.subsidy_status?.name);
 
     const result = await this.subsidyRequestRepository.update(id, data, userId);
 
@@ -72,6 +152,15 @@ export class SubsidyRequestService {
         this.prisma.subsidyStatus.findUnique({ where: { id: current.subsidy_statuses_id } }),
         this.prisma.subsidyStatus.findUnique({ where: { id: data.subsidy_status_id } })
       ]);
+
+      if (newStatus) {
+         this.validateStatusTransition(current.subsidy_status?.name, newStatus.name);
+         
+         const targetName = newStatus.name.toUpperCase();
+         if (['APPROVED', 'REJECTED', 'CLOSED'].includes(targetName)) {
+            await this.ensureAllDocumentsValidated(id);
+         }
+      }
 
       const previousStatusName = previousStatus?.description || previousStatus?.name || 'Desconhecido';
       const newStatusName = newStatus?.description || newStatus?.name || 'Desconhecido';
@@ -106,6 +195,12 @@ export class SubsidyRequestService {
     if (!subsidyRequest) {
       throw new CustomGraphQLError('SubsidyRequest not found', ErrorCode.NOT_FOUND, 404);
     }
+
+    if (!subsidyRequest) {
+      throw new CustomGraphQLError('SubsidyRequest not found', ErrorCode.NOT_FOUND, 404);
+    }
+
+    this.ensureNotClosed(subsidyRequest.subsidy_status?.name);
 
     return this.historyRepository.create({
       subsidy_request_id: subsidyRequestId,
@@ -249,6 +344,12 @@ export class SubsidyRequestService {
       throw new CustomGraphQLError('SubsidyRequest not found', ErrorCode.NOT_FOUND, 404);
     }
 
+    // Validate Status Transition
+    this.validateStatusTransition(current.subsidy_status?.name, 'APPROVED');
+
+    // Ensure all documents are validated
+    await this.ensureAllDocumentsValidated(id);
+
     // Buscar status "APPROVED"
     const approvedStatus = await this.prisma.subsidyStatus.findFirst({
       where: { name: 'APPROVED', is_deleted: false },
@@ -304,6 +405,12 @@ export class SubsidyRequestService {
     if (!current) {
       throw new CustomGraphQLError('SubsidyRequest not found', ErrorCode.NOT_FOUND, 404);
     }
+
+    // Validate Status Transition
+    this.validateStatusTransition(current.subsidy_status?.name, 'REJECTED');
+
+    // Ensure all documents are validated
+    await this.ensureAllDocumentsValidated(id);
 
     // Buscar status "REJECTED"
     const rejectedStatus = await this.prisma.subsidyStatus.findFirst({

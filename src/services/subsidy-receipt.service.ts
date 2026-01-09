@@ -28,6 +28,18 @@ export class SubsidyReceiptService {
     private readonly historyRepository: SubsidyStatusHistoryRepository,
   ) {}
 
+  private ensureNotClosed(statusName: string | undefined) {
+    if (statusName?.toUpperCase() === 'CLOSED') {
+      throw new CustomGraphQLError(
+        'Action not allowed on a CLOSED subsidy request',
+        ErrorCode.BAD_REQUEST,
+        400,
+        { additional: { errorCode: 'STATUS_IS_CLOSED' } }
+      );
+    }
+  }
+
+
   /**
    * Upload de recibo de subsídio
    */
@@ -62,12 +74,16 @@ export class SubsidyReceiptService {
               institution: true,
             },
           },
+          subsidy_status: true,
         },
       });
 
       if (!subsidyRequest) {
         throw new CustomGraphQLError('Solicitação de subsídio não encontrada', ErrorCode.NOT_FOUND, 404);
       }
+
+      this.ensureNotClosed(subsidyRequest.subsidy_status?.name);
+
 
       // 3. Buscar atividade relacionada
       const activity = await this.prisma.projectActivity.findUnique({
@@ -224,6 +240,16 @@ export class SubsidyReceiptService {
       throw new CustomGraphQLError('Recibo não encontrado', ErrorCode.NOT_FOUND, 404);
     }
 
+    if (receipt.subsidy_request_id) {
+        const subsidyRequest = await this.prisma.subsidyRequest.findUnique({
+            where: { id: receipt.subsidy_request_id },
+            include: { subsidy_status: true }
+        });
+        if (subsidyRequest) {
+            this.ensureNotClosed(subsidyRequest.subsidy_status?.name);
+        }
+    }
+
     try {
       // Create history record BEFORE deletion (if subsidy_request_id exists)
       if (receipt.subsidy_request_id) {
@@ -273,6 +299,16 @@ export class SubsidyReceiptService {
       throw new CustomGraphQLError('Recibo não encontrado', ErrorCode.NOT_FOUND, 404);
     }
 
+    if (receipt.subsidy_request_id) {
+        const subsidyRequest = await this.prisma.subsidyRequest.findUnique({
+            where: { id: receipt.subsidy_request_id },
+            include: { subsidy_status: true }
+        });
+        if (subsidyRequest) {
+            this.ensureNotClosed(subsidyRequest.subsidy_status?.name);
+        }
+    }
+
     const updatedReceipt = await this.repository.validateReceipt(id, userId);
 
     // Check for subsidy_request_id
@@ -311,6 +347,16 @@ export class SubsidyReceiptService {
 
     if (!receipt) {
       throw new CustomGraphQLError('Recibo não encontrado', ErrorCode.NOT_FOUND, 404);
+    }
+
+    if (receipt.subsidy_request_id) {
+        const subsidyRequest = await this.prisma.subsidyRequest.findUnique({
+            where: { id: receipt.subsidy_request_id },
+            include: { subsidy_status: true }
+        });
+        if (subsidyRequest) {
+            this.ensureNotClosed(subsidyRequest.subsidy_status?.name);
+        }
     }
 
     const updatedReceipt = await this.repository.rejectReceipt(id, userId, reason);
