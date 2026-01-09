@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Inject, forwardRef } from '@nestjs/common';
 import { SubsidyReceipt } from 'src/@generated/subsidy-receipt/subsidy-receipt.model';
 import { CustomGraphQLError, ErrorCode } from 'src/common/errors/custom-graphql-error';
 import { SubsidyReceiptRepository } from 'src/repositories/subsidy-receipt.repository';
@@ -24,6 +24,7 @@ export class SubsidyReceiptService {
     private readonly repository: SubsidyReceiptRepository,
     private readonly driveService: GoogleDriveService,
     private readonly prisma: PrismaService,
+    @Inject(forwardRef(() => SubsidyRequestService))
     private readonly subsidyRequestService: SubsidyRequestService,
     private readonly historyRepository: SubsidyStatusHistoryRepository,
   ) {}
@@ -604,8 +605,73 @@ export class SubsidyReceiptService {
       console.log(`No parent folder found for file ${receipt.drive_file_id}`);
       return null;
     } catch (error) {
-      console.error(`Error getting subsidy folder ID: ${error.message}`);
+      const message = error instanceof Error ? error.message : 'Unknown error';
+      console.error(`Error getting subsidy folder ID: ${message}`);
       return null;
     }
+  }
+
+  /**
+   * Create a receipt from an existing Activity Document
+   */
+  async createFromActivityDocument(
+    userId: string,
+    subsidyRequestId: string,
+    activityDocumentId: string,
+    activityId: string,
+    subsidyRequestItemId?: string,
+    amount?: number
+  ): Promise<SubsidyReceipt> {
+    
+    // 1. Find the activity document
+    const activityDoc = await this.prisma.activityDocuments.findUnique({
+      where: { id: activityDocumentId },
+    });
+
+    if (!activityDoc) {
+      throw new CustomGraphQLError('Documento da atividade não encontrado', ErrorCode.NOT_FOUND, 404);
+    }
+
+    // 2. Find the subsidy request to validate permission and status
+    const subsidyRequest = await this.prisma.subsidyRequest.findUnique({
+      where: { id: subsidyRequestId },
+      include: { subsidy_status: true }
+    });
+
+    if (!subsidyRequest) {
+      throw new CustomGraphQLError('Solicitação de subsídio não encontrada', ErrorCode.NOT_FOUND, 404);
+    }
+
+    this.ensureNotClosed(subsidyRequest.subsidy_status?.name);
+
+    // 3. Create the Subsidy Receipt pointing to the same Drive File
+    const receipt = await this.repository.create(
+      {
+        subsidy_request_id: subsidyRequestId,
+        subsidy_request_item_id: subsidyRequestItemId,
+        project_activities_id: activityId,
+        file_url: activityDoc.file_url || '',
+        drive_file_id: activityDoc.drive_file_id || '',
+        filename: activityDoc.filename,
+        type: activityDoc.type,
+        uploaded_by: userId,
+        amount: amount || 0, 
+        is_validated: false,
+        validated_at: null,
+      },
+      userId,
+    );
+
+     // 4. Create history record
+     await this.historyRepository.create({
+      subsidy_request_id: subsidyRequestId,
+      status_id: subsidyRequest.subsidy_statuses_id,
+      previous_status_id: undefined,
+      type: SubsidyHistoryType.DOCUMENT_ACTION,
+      reason: `Documento "${activityDoc.filename}" importado da atividade`,
+      changed_by: userId,
+    });
+
+    return receipt;
   }
 }

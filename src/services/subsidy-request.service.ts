@@ -1,7 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Inject, forwardRef } from '@nestjs/common';
 import { SubsidyRequestRepository } from '../repositories/subsidy-request.repository';
 import { SubsidyRequestItemRepository } from '../repositories/subsidy-request-item.repository';
 import { SubsidyStatusHistoryRepository } from '../repositories/subsidy-status-history.repository';
+import { SubsidyReceiptRepository } from '../repositories/subsidy-receipt.repository';
 import { SubsidyRequest } from '../@generated/subsidy-request/subsidy-request.model';
 import { SubsidyRequestCreateDto, SubsidyRequestUpdateDto } from '../dto/subsidy-request.dto';
 import { SubsidyKPIs, SubsidyByDepartment, SubsidyByMonth } from '../dto/subsidy-analytics.dto';
@@ -13,7 +14,7 @@ import { format } from 'date-fns';
 import { SubsidyHistoryType } from '../@generated/prisma/subsidy-history-type.enum';
 import { AnnualBudgetService } from './annual-budget.service';
 import { DecimalHelper } from '../common/helpers/decimal.helper';
-import { Decimal } from '@prisma/client/runtime/library';
+import { SubsidyReceiptService } from './subsidy-receipt.service';
 
 @Injectable()
 export class SubsidyRequestService {
@@ -21,9 +22,12 @@ export class SubsidyRequestService {
     private readonly subsidyRequestRepository: SubsidyRequestRepository,
     private readonly subsidyRequestItemRepository: SubsidyRequestItemRepository,
     private readonly historyRepository: SubsidyStatusHistoryRepository,
+    private readonly subsidyReceiptRepository: SubsidyReceiptRepository,
     private readonly prisma: PrismaService,
     private readonly driveService: GoogleDriveService,
     private readonly annualBudgetService: AnnualBudgetService,
+    @Inject(forwardRef(() => SubsidyReceiptService))
+    private readonly subsidyReceiptService: SubsidyReceiptService,
   ) {}
 
   private validateStatusTransition(currentStatusName: string | undefined, newStatusName: string) {
@@ -127,6 +131,53 @@ export class SubsidyRequestService {
       changed_by: userId,
     });
 
+    // Process linked_activity_document_ids if any
+    if (data.items && data.items.length > 0) {
+      // Fetch created items to get their IDs
+      const createdItems = await this.subsidyRequestItemRepository.findBySubsidyRequestId(subsidyRequest.id);
+      
+      for (const itemInput of data.items) {
+        if (itemInput.linked_activity_document_ids && itemInput.linked_activity_document_ids.length > 0) {
+          const createdItem = createdItems.find(
+            (ci) => ci.project_activity_id === itemInput.project_activity_id
+          );
+
+          if (createdItem) {
+            for (let i = 0; i < itemInput.linked_activity_document_ids.length; i++) {
+              const docId = itemInput.linked_activity_document_ids[i];
+              const docAmount = itemInput.linked_document_amounts?.[i] || 0;
+              
+              await this.subsidyReceiptService.createFromActivityDocument(
+                userId,
+                subsidyRequest.id,
+                docId,
+                itemInput.project_activity_id,
+                createdItem.id,
+                docAmount
+              );
+            }
+          }
+        }
+      }
+    }
+
+    // Validate that the sum of receipt amounts matches the requested amount for each item
+    if (data.items && data.items.length > 0) {
+      for (const itemInput of data.items) {
+        // Calculate sum of document amounts for this item
+        const documentAmountsSum = (itemInput.linked_document_amounts || []).reduce((sum, amount) => sum + amount, 0);
+        
+        // Check if sum matches requested amount
+        if (documentAmountsSum > 0 && Math.abs(documentAmountsSum - itemInput.requested_amount) > 0.01) {
+          throw new CustomGraphQLError(
+            `A soma dos valores dos documentos (${documentAmountsSum}) não corresponde ao valor solicitado (${itemInput.requested_amount}) para a atividade`,
+            ErrorCode.VALIDATION_ERROR,
+            400
+          );
+        }
+      }
+    }
+
     return subsidyRequest;
   }
 
@@ -144,6 +195,67 @@ export class SubsidyRequestService {
     this.ensureNotClosed(current.subsidy_status?.name);
 
     const result = await this.subsidyRequestRepository.update(id, data, userId);
+
+    // Process linked_activity_document_ids if any
+    if (data.items && data.items.length > 0) {
+      // Fetch created items to get their IDs
+      const createdItems = await this.subsidyRequestItemRepository.findBySubsidyRequestId(id);
+      
+      for (const itemInput of data.items) {
+        if (itemInput.linked_activity_document_ids && itemInput.linked_activity_document_ids.length > 0) {
+          const createdItem = createdItems.find(
+            (ci) => ci.project_activity_id === itemInput.project_activity_id
+          );
+
+          if (createdItem) {
+            for (let i = 0; i < itemInput.linked_activity_document_ids.length; i++) {
+              const docId = itemInput.linked_activity_document_ids[i];
+              const docAmount = itemInput.linked_document_amounts?.[i] || 0;
+              
+              await this.subsidyReceiptService.createFromActivityDocument(
+                userId,
+                id,
+                docId,
+                itemInput.project_activity_id,
+                createdItem.id,
+                docAmount
+              );
+            }
+          }
+        }
+
+
+      }
+    }
+
+    // Validate that the sum of receipt amounts matches the requested amount for each item
+    // For UPDATE, we need to check ALL receipts for each item, not just linked ones
+    if (data.items && data.items.length > 0) {
+      const createdItems = await this.subsidyRequestItemRepository.findBySubsidyRequestId(id);
+      
+      for (const itemInput of data.items) {
+        const createdItem = createdItems.find(
+          (ci) => ci.project_activity_id === itemInput.project_activity_id
+        );
+
+        if (createdItem) {
+          // Fetch all receipts for this item
+          const itemReceipts = await this.subsidyReceiptRepository.findBySubsidyRequestItemId(createdItem.id);
+          const totalReceiptAmount = itemReceipts
+            .filter(r => !r.is_deleted)
+            .reduce((sum, receipt) => sum + Number(receipt.amount), 0);
+
+          // Check if sum matches requested amount
+          if (totalReceiptAmount > 0 && Math.abs(totalReceiptAmount - itemInput.requested_amount) > 0.01) {
+            throw new CustomGraphQLError(
+              `A soma dos valores dos documentos (${totalReceiptAmount}) não corresponde ao valor solicitado (${itemInput.requested_amount}) para a atividade`,
+              ErrorCode.VALIDATION_ERROR,
+              400
+            );
+          }
+        }
+      }
+    }
 
     // If status changed, create history record
     if (data.subsidy_status_id && data.subsidy_status_id !== current.subsidy_statuses_id) {

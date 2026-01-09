@@ -353,6 +353,11 @@ export class ProjectRepository {
               },
             },
             activity_funding: true,
+            activity_documents: {
+              where: {
+                is_deleted: false,
+              },
+            },
           },
         },
         subsidies: {
@@ -406,6 +411,11 @@ export class ProjectRepository {
               },
             },
             activity_funding: true,
+            activity_documents: {
+              where: {
+                is_deleted: false,
+              },
+            },
           },
         },
       },
@@ -441,6 +451,11 @@ export class ProjectRepository {
               },
             },
             activity_funding: true,
+            activity_documents: {
+              where: {
+                is_deleted: false,
+              },
+            },
           },
         },
       },
@@ -511,6 +526,11 @@ export class ProjectRepository {
               },
             },
             activity_funding: true,
+            activity_documents: {
+              where: {
+                is_deleted: false,
+              },
+            },
           },
         },
       },
@@ -545,6 +565,11 @@ export class ProjectRepository {
               },
             },
             activity_funding: true,
+            activity_documents: {
+              where: {
+                is_deleted: false,
+              },
+            },
           },
         },
       },

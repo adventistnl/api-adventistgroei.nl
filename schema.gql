@@ -4131,6 +4131,8 @@ input SubsidyRequestItemInput {
   project_activity_id: String!
   requested_amount: Float!
   notes: String
+  linked_activity_document_ids: [String!]
+  linked_document_amounts: [Float!]
 }
 
 input SubsidyRequestUpdateDto {
