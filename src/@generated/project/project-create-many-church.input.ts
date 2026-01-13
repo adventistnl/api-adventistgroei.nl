@@ -7,6 +7,7 @@ import { Transform } from 'class-transformer';
 import { Type } from 'class-transformer';
 import { LanguagePreference } from '../prisma/language-preference.enum';
 import { ProjectType } from '../prisma/project-type.enum';
+import { ProjectStatus } from '../prisma/project-status.enum';
 
 @InputType()
 export class ProjectCreateManyChurchInput {
@@ -46,6 +47,9 @@ export class ProjectCreateManyChurchInput {
 
     @Field(() => ProjectType, {nullable:false})
     type!: `${ProjectType}`;
+
+    @Field(() => ProjectStatus, {nullable:true})
+    status?: `${ProjectStatus}`;
 
     @Field(() => Boolean, {nullable:true})
     is_private?: boolean;

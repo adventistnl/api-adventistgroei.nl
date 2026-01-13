@@ -5,6 +5,7 @@ import { DecimalFieldUpdateOperationsInput } from '../prisma/decimal-field-updat
 import { Type } from 'class-transformer';
 import { EnumLanguagePreferenceFieldUpdateOperationsInput } from '../prisma/enum-language-preference-field-update-operations.input';
 import { EnumProjectTypeFieldUpdateOperationsInput } from '../prisma/enum-project-type-field-update-operations.input';
+import { EnumProjectStatusFieldUpdateOperationsInput } from '../prisma/enum-project-status-field-update-operations.input';
 import { BoolFieldUpdateOperationsInput } from '../prisma/bool-field-update-operations.input';
 import { DateTimeFieldUpdateOperationsInput } from '../prisma/date-time-field-update-operations.input';
 import { NullableDateTimeFieldUpdateOperationsInput } from '../prisma/nullable-date-time-field-update-operations.input';
@@ -42,6 +43,9 @@ export class ProjectUncheckedUpdateManyWithoutDepartmentInput {
 
     @Field(() => EnumProjectTypeFieldUpdateOperationsInput, {nullable:true})
     type?: EnumProjectTypeFieldUpdateOperationsInput;
+
+    @Field(() => EnumProjectStatusFieldUpdateOperationsInput, {nullable:true})
+    status?: EnumProjectStatusFieldUpdateOperationsInput;
 
     @Field(() => BoolFieldUpdateOperationsInput, {nullable:true})
     is_private?: BoolFieldUpdateOperationsInput;

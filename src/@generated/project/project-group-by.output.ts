@@ -4,6 +4,7 @@ import { Decimal } from '@prisma/client/runtime/library';
 import { GraphQLDecimal } from 'prisma-graphql-type-decimal';
 import { LanguagePreference } from '../prisma/language-preference.enum';
 import { ProjectType } from '../prisma/project-type.enum';
+import { ProjectStatus } from '../prisma/project-status.enum';
 import { ProjectCountAggregate } from './project-count-aggregate.output';
 import { ProjectAvgAggregate } from './project-avg-aggregate.output';
 import { ProjectSumAggregate } from './project-sum-aggregate.output';
@@ -42,6 +43,9 @@ export class ProjectGroupBy {
 
     @Field(() => ProjectType, {nullable:false})
     type!: `${ProjectType}`;
+
+    @Field(() => ProjectStatus, {nullable:false})
+    status!: `${ProjectStatus}`;
 
     @Field(() => Boolean, {nullable:false})
     is_private!: boolean;

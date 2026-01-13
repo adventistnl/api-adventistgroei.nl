@@ -232,6 +232,7 @@ export class ProjectRepository {
       description: rest.description,
       language_preference: rest.language_preference,
       type: rest.type,
+      status: rest.status, // Project status field
       is_private: rest.is_private,
       required_volunteers: rest.required_volunteers,
       start_at: rest.start_at ? new Date(rest.start_at) : undefined,

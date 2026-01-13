@@ -11,6 +11,7 @@ export enum ProjectScalarFieldEnum {
     owner_id = "owner_id",
     language_preference = "language_preference",
     type = "type",
+    status = "status",
     is_private = "is_private",
     required_volunteers = "required_volunteers",
     start_at = "start_at",

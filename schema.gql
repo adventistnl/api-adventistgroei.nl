@@ -715,6 +715,7 @@ type Project {
   owner_id: String!
   language_preference: LanguagePreference!
   type: ProjectType!
+  status: ProjectStatus!
   is_private: Boolean!
   required_volunteers: Boolean!
   start_at: DateTime!
@@ -734,12 +735,13 @@ type Project {
   owner: User!
   event: Event
   Institution: Institution
-  Church: Church
+  church: Church
   voluntary_users: [VoluntariesOnProjects!]
   activities: [ProjectActivity!]
   subsidies: [SubsidyRequest!]
   special_projects: [SpecialProjects!]
   _count: ProjectCount!
+  Church: Church
   kpis: ProjectKPIsDto!
 }
 
@@ -752,6 +754,15 @@ enum LanguagePreference {
 enum ProjectType {
   Local
   Global
+}
+
+enum ProjectStatus {
+  DRAFT
+  IN_PROGRESS
+  IN_REVIEW
+  ON_HOLD
+  EXPIRED
+  CONCLUDED
 }
 
 type EventCount {
@@ -2486,6 +2497,7 @@ input ProjectWhereInput {
   owner_id: StringFilter
   language_preference: EnumLanguagePreferenceFilter
   type: EnumProjectTypeFilter
+  status: EnumProjectStatusFilter
   is_private: BoolFilter
   required_volunteers: BoolFilter
   start_at: DateTimeFilter
@@ -2524,6 +2536,20 @@ input NestedEnumProjectTypeFilter {
   in: [ProjectType!]
   notIn: [ProjectType!]
   not: NestedEnumProjectTypeFilter
+}
+
+input EnumProjectStatusFilter {
+  equals: ProjectStatus
+  in: [ProjectStatus!]
+  notIn: [ProjectStatus!]
+  not: NestedEnumProjectStatusFilter
+}
+
+input NestedEnumProjectStatusFilter {
+  equals: ProjectStatus
+  in: [ProjectStatus!]
+  notIn: [ProjectStatus!]
+  not: NestedEnumProjectStatusFilter
 }
 
 input EventNullableScalarRelationFilter {
@@ -4050,6 +4076,7 @@ input ProjectUpdateDto {
   subsidized_budget: Float
   balance: Float
   type: ProjectType
+  status: ProjectStatus
   department_id: String
   institution_id: String
   church_id: String

@@ -11,6 +11,7 @@ import { CustomGraphQLError, ErrorCode } from '../common/errors/custom-graphql-e
 import { AnnualBudgetService } from './annual-budget.service';
 import { UserRepository } from '../repositories/user.repository';
 import { UserWithRoles } from '../models';
+import { ProjectStatus } from '../@generated/prisma/project-status.enum';
 
 @Injectable()
 export class ProjectService {
@@ -48,7 +49,124 @@ export class ProjectService {
   }
 
   async update(id: string, data: ProjectUpdateDto, userId: string): Promise<Project> {
+    // Get current project to check status
+    const existingProject = await this.findById(id);
+    if (!existingProject) {
+      throw new CustomGraphQLError(
+        'Project not found',
+        ErrorCode.NOT_FOUND,
+        404,
+        { additional: { errorCode: 'PROJECT_NOT_FOUND' } }
+      );
+    }
+
+    // Block any modifications if project is CONCLUDED
+    if (existingProject.status === ProjectStatus.CONCLUDED) {
+      throw new CustomGraphQLError(
+        'Cannot modify a concluded project',
+        ErrorCode.BAD_REQUEST,
+        400,
+        { additional: { errorCode: 'PROJECT_IS_CONCLUDED' } }
+      );
+    }
+
+    // Validate transition to CONCLUDED
+    if (data.status === ProjectStatus.CONCLUDED) {
+      await this.validateConcludedTransition(id);
+    }
+
     return this.projectRepository.update(id, data, userId);
+  }
+
+  /**
+   * Validates if a project can transition to CONCLUDED status.
+   * Requirements:
+   * - All activities must have status = COMPLETED
+   * - All activity documents must be validated
+   * - All subsidies must have status = CLOSED
+   */
+  async validateConcludedTransition(projectId: string): Promise<void> {
+    // Check for incomplete activities
+    const incompleteActivities = await this.prisma.projectActivity.count({
+      where: {
+        project_id: projectId,
+        is_deleted: false,
+        status: { not: 'COMPLETED' },
+      },
+    });
+
+    if (incompleteActivities > 0) {
+      throw new CustomGraphQLError(
+        `Cannot conclude project: ${incompleteActivities} activities are not completed`,
+        ErrorCode.BAD_REQUEST,
+        400,
+        { additional: { errorCode: 'PROJECT_HAS_INCOMPLETE_ACTIVITIES', count: incompleteActivities } }
+      );
+    }
+
+    // Check for unvalidated documents
+    const unvalidatedDocuments = await this.prisma.activityDocuments.count({
+      where: {
+        project_activity: {
+          project_id: projectId,
+          is_deleted: false,
+        },
+        is_deleted: false,
+        is_validated: false,
+      },
+    });
+
+    if (unvalidatedDocuments > 0) {
+      throw new CustomGraphQLError(
+        `Cannot conclude project: ${unvalidatedDocuments} documents are not validated`,
+        ErrorCode.BAD_REQUEST,
+        400,
+        { additional: { errorCode: 'PROJECT_HAS_UNVALIDATED_DOCUMENTS', count: unvalidatedDocuments } }
+      );
+    }
+
+    // Check for open subsidies (not CLOSED)
+    const openSubsidies = await this.prisma.subsidyRequest.count({
+      where: {
+        project_id: projectId,
+        is_deleted: false,
+        subsidy_status: {
+          name: { not: 'CLOSED' },
+        },
+      },
+    });
+
+    if (openSubsidies > 0) {
+      throw new CustomGraphQLError(
+        `Cannot conclude project: ${openSubsidies} subsidy requests are not closed`,
+        ErrorCode.BAD_REQUEST,
+        400,
+        { additional: { errorCode: 'PROJECT_HAS_OPEN_SUBSIDIES', count: openSubsidies } }
+      );
+    }
+  }
+
+  /**
+   * Checks if project should revert to DRAFT status (no activities).
+   * Called after deleting an activity.
+   */
+  async checkAndRevertToDraft(projectId: string, userId: string): Promise<void> {
+    const project = await this.findById(projectId);
+    if (!project || project.status === ProjectStatus.CONCLUDED) {
+      return; // Don't change CONCLUDED projects
+    }
+
+    const activeActivities = await this.prisma.projectActivity.count({
+      where: {
+        project_id: projectId,
+        is_deleted: false,
+      },
+    });
+
+    if (activeActivities === 0 && project.status !== ProjectStatus.DRAFT) {
+      await this.projectRepository.update(projectId, { status: ProjectStatus.DRAFT }, userId);
+      console.log(`📋 Project ${projectId} reverted to DRAFT (no activities)`);
+    }
   }
 
   async delete(id: string, userId: string): Promise<Project> {

@@ -212,8 +212,34 @@ export class ProjectActivityService {
     // Recalculate project budget
     await this.recalculateProjectBudget(activity.project_id, userId);
 
+    // Check if project should revert to DRAFT (no more activities)
+    await this.checkAndRevertProjectToDraft(activity.project_id, userId);
+
     console.log(`✅ Activity ${id} soft deleted successfully`);
     return deletedActivity;
+  }
+
+  /**
+   * Checks if project should revert to DRAFT status (no non-deleted activities).
+   * Called after deleting an activity.
+   */
+  private async checkAndRevertProjectToDraft(projectId: string, userId: string): Promise<void> {
+    const project = await this.projectRepository.findById(projectId);
+    if (!project || project.status === 'CONCLUDED') {
+      return; // Don't change CONCLUDED projects
+    }
+
+    const activeActivities = await this.prisma.projectActivity.count({
+      where: {
+        project_id: projectId,
+        is_deleted: false,
+      },
+    });
+
+    if (activeActivities === 0 && project.status !== 'DRAFT') {
+      await this.projectRepository.update(projectId, { status: 'DRAFT' as any }, userId);
+      console.log(`📋 Project ${projectId} reverted to DRAFT (no activities)`);
+    }
   }
 
   async batchUpdate(data: ProjectActivityBatchUpdateDto, userId: string): Promise<ProjectActivity[]> {

@@ -5,6 +5,7 @@ import { StringFilter } from '../prisma/string-filter.input';
 import { DecimalFilter } from '../prisma/decimal-filter.input';
 import { EnumLanguagePreferenceFilter } from '../prisma/enum-language-preference-filter.input';
 import { EnumProjectTypeFilter } from '../prisma/enum-project-type-filter.input';
+import { EnumProjectStatusFilter } from '../prisma/enum-project-status-filter.input';
 import { BoolFilter } from '../prisma/bool-filter.input';
 import { DateTimeFilter } from '../prisma/date-time-filter.input';
 import { DateTimeNullableFilter } from '../prisma/date-time-nullable-filter.input';
@@ -66,6 +67,9 @@ export class ProjectWhereInput {
 
     @Field(() => EnumProjectTypeFilter, {nullable:true})
     type?: EnumProjectTypeFilter;
+
+    @Field(() => EnumProjectStatusFilter, {nullable:true})
+    status?: EnumProjectStatusFilter;
 
     @Field(() => BoolFilter, {nullable:true})
     is_private?: BoolFilter;

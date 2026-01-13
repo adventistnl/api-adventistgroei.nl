@@ -43,6 +43,9 @@ export class ProjectOrderByWithAggregationInput {
     type?: `${SortOrder}`;
 
     @Field(() => SortOrder, {nullable:true})
+    status?: `${SortOrder}`;
+
+    @Field(() => SortOrder, {nullable:true})
     is_private?: `${SortOrder}`;
 
     @Field(() => SortOrder, {nullable:true})

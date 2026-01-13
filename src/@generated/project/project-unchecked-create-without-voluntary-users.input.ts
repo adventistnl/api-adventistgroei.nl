@@ -7,6 +7,7 @@ import { Transform } from 'class-transformer';
 import { Type } from 'class-transformer';
 import { LanguagePreference } from '../prisma/language-preference.enum';
 import { ProjectType } from '../prisma/project-type.enum';
+import { ProjectStatus } from '../prisma/project-status.enum';
 import { ProjectActivityUncheckedCreateNestedManyWithoutProjectInput } from '../project-activity/project-activity-unchecked-create-nested-many-without-project.input';
 import { SubsidyRequestUncheckedCreateNestedManyWithoutProjectInput } from '../subsidy-request/subsidy-request-unchecked-create-nested-many-without-project.input';
 import { SpecialProjectsUncheckedCreateNestedManyWithoutProjectInput } from '../special-projects/special-projects-unchecked-create-nested-many-without-project.input';
@@ -49,6 +50,9 @@ export class ProjectUncheckedCreateWithoutVoluntary_usersInput {
 
     @Field(() => ProjectType, {nullable:false})
     type!: `${ProjectType}`;
+
+    @Field(() => ProjectStatus, {nullable:true})
+    status?: `${ProjectStatus}`;
 
     @Field(() => Boolean, {nullable:true})
     is_private?: boolean;

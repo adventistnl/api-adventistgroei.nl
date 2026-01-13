@@ -5,6 +5,7 @@ import { StringWithAggregatesFilter } from '../prisma/string-with-aggregates-fil
 import { DecimalWithAggregatesFilter } from '../prisma/decimal-with-aggregates-filter.input';
 import { EnumLanguagePreferenceWithAggregatesFilter } from '../prisma/enum-language-preference-with-aggregates-filter.input';
 import { EnumProjectTypeWithAggregatesFilter } from '../prisma/enum-project-type-with-aggregates-filter.input';
+import { EnumProjectStatusWithAggregatesFilter } from '../prisma/enum-project-status-with-aggregates-filter.input';
 import { BoolWithAggregatesFilter } from '../prisma/bool-with-aggregates-filter.input';
 import { DateTimeWithAggregatesFilter } from '../prisma/date-time-with-aggregates-filter.input';
 import { DateTimeNullableWithAggregatesFilter } from '../prisma/date-time-nullable-with-aggregates-filter.input';
@@ -57,6 +58,9 @@ export class ProjectScalarWhereWithAggregatesInput {
 
     @Field(() => EnumProjectTypeWithAggregatesFilter, {nullable:true})
     type?: EnumProjectTypeWithAggregatesFilter;
+
+    @Field(() => EnumProjectStatusWithAggregatesFilter, {nullable:true})
+    status?: EnumProjectStatusWithAggregatesFilter;
 
     @Field(() => BoolWithAggregatesFilter, {nullable:true})
     is_private?: BoolWithAggregatesFilter;

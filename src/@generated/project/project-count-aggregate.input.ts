@@ -35,6 +35,9 @@ export class ProjectCountAggregateInput {
     type?: true;
 
     @Field(() => Boolean, {nullable:true})
+    status?: true;
+
+    @Field(() => Boolean, {nullable:true})
     is_private?: true;
 
     @Field(() => Boolean, {nullable:true})

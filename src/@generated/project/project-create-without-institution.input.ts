@@ -7,6 +7,7 @@ import { Transform } from 'class-transformer';
 import { Type } from 'class-transformer';
 import { LanguagePreference } from '../prisma/language-preference.enum';
 import { ProjectType } from '../prisma/project-type.enum';
+import { ProjectStatus } from '../prisma/project-status.enum';
 import { DepartmentCreateNestedOneWithoutProjectsInput } from '../department/department-create-nested-one-without-projects.input';
 import { UserCreateNestedOneWithoutProjectInput } from '../user/user-create-nested-one-without-project.input';
 import { EventCreateNestedOneWithoutProjectsInput } from '../event/event-create-nested-one-without-projects.input';
@@ -48,6 +49,9 @@ export class ProjectCreateWithoutInstitutionInput {
 
     @Field(() => ProjectType, {nullable:false})
     type!: `${ProjectType}`;
+
+    @Field(() => ProjectStatus, {nullable:true})
+    status?: `${ProjectStatus}`;
 
     @Field(() => Boolean, {nullable:true})
     is_private?: boolean;

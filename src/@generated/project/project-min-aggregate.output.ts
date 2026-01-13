@@ -4,6 +4,7 @@ import { Decimal } from '@prisma/client/runtime/library';
 import { GraphQLDecimal } from 'prisma-graphql-type-decimal';
 import { LanguagePreference } from '../prisma/language-preference.enum';
 import { ProjectType } from '../prisma/project-type.enum';
+import { ProjectStatus } from '../prisma/project-status.enum';
 
 @ObjectType()
 export class ProjectMinAggregate {
@@ -37,6 +38,9 @@ export class ProjectMinAggregate {
 
     @Field(() => ProjectType, {nullable:true})
     type?: `${ProjectType}`;
+
+    @Field(() => ProjectStatus, {nullable:true})
+    status?: `${ProjectStatus}`;
 
     @Field(() => Boolean, {nullable:true})
     is_private?: boolean;

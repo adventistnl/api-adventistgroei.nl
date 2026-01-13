@@ -5,6 +5,7 @@ import { GraphQLDecimal } from 'prisma-graphql-type-decimal';
 import { Decimal } from '@prisma/client/runtime/library';
 import { LanguagePreference } from '../prisma/language-preference.enum';
 import { ProjectType } from '../prisma/project-type.enum';
+import { ProjectStatus } from '../prisma/project-status.enum';
 import { Department } from '../department/department.model';
 import { User } from '../user/user.model';
 import { Event } from '../event/event.model';
@@ -48,6 +49,9 @@ export class Project {
 
     @Field(() => ProjectType, {nullable:false})
     type!: `${ProjectType}`;
+
+    @Field(() => ProjectStatus, {defaultValue:'DRAFT',nullable:false})
+    status!: `${ProjectStatus}`;
 
     @Field(() => Boolean, {defaultValue:false,nullable:false})
     is_private!: boolean;
@@ -107,7 +111,7 @@ export class Project {
     Institution?: Institution | null;
 
     @Field(() => Church, {nullable:true})
-    Church?: Church | null;
+    church?: Church | null;
 
     @Field(() => [VoluntariesOnProjects], {nullable:true})
     voluntary_users?: Array<VoluntariesOnProjects>;

@@ -36,6 +36,9 @@ export class ProjectCountAggregate {
     type!: number;
 
     @Field(() => Int, {nullable:false})
+    status!: number;
+
+    @Field(() => Int, {nullable:false})
     is_private!: number;
 
     @Field(() => Int, {nullable:false})

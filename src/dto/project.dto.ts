@@ -3,8 +3,9 @@ import { IsOptional, IsString, IsEnum, IsNumber, IsDateString, IsBoolean, Valida
 import { Type } from 'class-transformer';
 import { LanguagePreference } from '../@generated/prisma/language-preference.enum';
 import { ProjectType } from '../@generated/prisma/project-type.enum';
+import { ProjectStatus } from '../@generated/prisma/project-status.enum';
 import { EventType } from '../@generated/prisma/event-type.enum';
-import { ProjectActivityCreateDto, ProjectActivityUpdateDto, ProjectActivityCreateWithoutProjectDto } from './project-activity.dto';
+import { ProjectActivityUpdateDto, ProjectActivityCreateWithoutProjectDto } from './project-activity.dto';
 
 @InputType()
 export class EventCreateDto {
@@ -180,6 +181,11 @@ export class ProjectUpdateDto {
   @IsOptional()
   @IsEnum(ProjectType)
   type?: ProjectType;
+
+  @Field(() => ProjectStatus, { nullable: true })
+  @IsOptional()
+  @IsEnum(ProjectStatus)
+  status?: ProjectStatus;
 
   @Field({ nullable: true })
   @IsOptional()

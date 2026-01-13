@@ -219,6 +219,15 @@ enum CommunicationStatus {
   FAILED
 }
 
+enum ProjectStatus {
+  DRAFT
+  IN_PROGRESS
+  IN_REVIEW
+  ON_HOLD
+  EXPIRED
+  CONCLUDED
+}
+
 enum ProjectType {
   Local
   Global
@@ -519,6 +528,7 @@ model Project {
   owner               User                    @relation(fields: [owner_id], references: [id])
   language_preference LanguagePreference
   type                ProjectType
+  status              ProjectStatus           @default(DRAFT)
   is_private          Boolean                 @default(false)
   required_volunteers Boolean                 @default(false)
   start_at            DateTime

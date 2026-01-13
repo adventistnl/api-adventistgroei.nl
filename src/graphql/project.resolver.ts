@@ -23,14 +23,9 @@ export class ProjectResolver {
 
   @ResolveField(() => Church, { nullable: true, name: 'Church' })
   getChurch(@Parent() project: Project): Church | null {
-    // Check for uppercase Church (if already populated matching GraphQL model)
-    if (project.Church) {
-      return project.Church;
-    }
-    
     // Check for lowercase church (standard Prisma output based on schema)
-    if ((project as any).church) {
-      return (project as any).church;
+    if (project.church) {
+      return project.church;
     }
     
     // Fallback to department's church if available
@@ -38,10 +33,6 @@ export class ProjectResolver {
        // Check department's church (lowercase in schema and model)
        if (project.department.church) {
          return project.department.church;
-       }
-       // Fallback for safety
-       if ((project.department as any).Church) {
-         return (project.department as any).Church;
        }
     }
 
