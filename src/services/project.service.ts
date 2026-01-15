@@ -252,7 +252,25 @@ export class ProjectService {
       where: { project_id: id },
     });
 
-    // 7. Soft delete the project
+    // 7. Release subsidized_budget from annual budget
+    const projectData = await this.prisma.project.findUnique({
+      where: { id },
+      select: { department_id: true, subsidized_budget: true, start_at: true }
+    });
+
+    if (projectData?.department_id && projectData.subsidized_budget) {
+      const projectYear = new Date(projectData.start_at).getFullYear();
+      console.log(`💰 Releasing subsidized_budget ${Number(projectData.subsidized_budget)} from annual budget (year: ${projectYear})...`);
+      await this.annualBudgetService.updateBudgetFinancials(
+        projectData.department_id,
+        projectYear,
+        -Number(projectData.subsidized_budget), // Release allocation
+        0,
+        userId
+      );
+    }
+
+    // 8. Soft delete the project
     console.log(`🎯 Soft deleting project...`);
     const deletedProject = await this.projectRepository.softDelete(id, userId);
 

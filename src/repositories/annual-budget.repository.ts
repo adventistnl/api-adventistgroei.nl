@@ -8,6 +8,7 @@ import { AnnualBudgetStatus } from 'src/@generated/prisma/annual-budget-status.e
 import { AnnualBudgetPriority } from 'src/@generated/prisma/annual-budget-priority.enum';
 import { AnnualBudgetCategory } from 'src/@generated/prisma/annual-budget-category.enum';
 import { FindManyAnnualBudgetArgs } from 'src/@generated/annual-budget/find-many-annual-budget.args';
+import { DecimalHelper } from 'src/common/helpers/decimal.helper';
 
 @Injectable()
 export class AnnualBudgetRepository {
@@ -1113,12 +1114,13 @@ export class AnnualBudgetRepository {
       const newExpenses = currentExpenses.plus(deltaSpent);
       const newBalance = currentPlanned.minus(newExpenses.plus(newAllocated));
 
+      // Normalize values to prevent tiny floating point errors like -0.000000000001
       await tx.annualBudget.update({
         where: { id: deptBudget.id },
         data: {
-          allocated_amount: newAllocated,
-          total_expenses: newExpenses,
-          balance: newBalance,
+          allocated_amount: DecimalHelper.normalizeZero(newAllocated),
+          total_expenses: DecimalHelper.normalizeZero(newExpenses),
+          balance: DecimalHelper.normalizeZero(newBalance),
           updated_by: userId
         }
       });
