@@ -99,4 +99,25 @@ export class DecimalHelper {
     const decimal = this.toDecimal(value);
     return decimal.toFixed(decimals);
   }
+
+  /**
+   * Safely rounds a number, returning 0 if the result is NaN or Infinity.
+   */
+  static safeRound(value: number): number {
+    if (!Number.isFinite(value)) {
+      return 0;
+    }
+    return Math.round(value);
+  }
+
+  /**
+   * Safely converts a Decimal to number, returning 0 if the result is NaN or Infinity.
+   */
+  static safeToNumber(value: Decimal): number {
+    const num = value.toNumber();
+    if (!Number.isFinite(num)) {
+      return 0;
+    }
+    return num;
+  }
 }

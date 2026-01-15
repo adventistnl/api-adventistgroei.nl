@@ -125,12 +125,12 @@ export class ProjectKPIService {
       completedActivities,
       inProgressActivities,
       completionRate,
-      projectBudget: projectBudget.toNumber(),
-      allocatedBudget: allocatedBudget.toNumber(),
-      subsidizedBudget: subsidizedBudget.toNumber(),
-      balance: balance.toNumber(), // Mapped to Local Contribution
-      budgetUtilization: Math.round(budgetUtilization),
-      subsidizedBudgetPercentage: Math.round(subsidizedBudgetPercentage),
+      projectBudget: DecimalHelper.safeToNumber(projectBudget),
+      allocatedBudget: DecimalHelper.safeToNumber(allocatedBudget),
+      subsidizedBudget: DecimalHelper.safeToNumber(subsidizedBudget),
+      balance: DecimalHelper.safeToNumber(balance), // Mapped to Local Contribution
+      budgetUtilization: DecimalHelper.safeRound(budgetUtilization),
+      subsidizedBudgetPercentage: DecimalHelper.safeRound(subsidizedBudgetPercentage),
       subsidizedActivities,
       subsidyRate,
       subsidyRequestsCount,
