@@ -209,7 +209,7 @@ export class SubsidyRequestService {
         // Check if sum matches requested amount
         if (documentAmountsSum > 0 && Math.abs(documentAmountsSum - itemInput.requested_amount) > 0.01) {
           throw new CustomGraphQLError(
-            `A soma dos valores dos documentos (${documentAmountsSum}) não corresponde ao valor solicitado (${itemInput.requested_amount}) para a atividade`,
+            `The sum of document amounts (${documentAmountsSum}) does not match the requested amount (${itemInput.requested_amount}) for the activity`,
             ErrorCode.VALIDATION_ERROR,
             400
           );
@@ -287,7 +287,7 @@ export class SubsidyRequestService {
           // Check if sum matches requested amount
           if (totalReceiptAmount > 0 && Math.abs(totalReceiptAmount - itemInput.requested_amount) > 0.01) {
             throw new CustomGraphQLError(
-              `A soma dos valores dos documentos (${totalReceiptAmount}) não corresponde ao valor solicitado (${itemInput.requested_amount}) para a atividade`,
+              `The sum of document amounts (${totalReceiptAmount}) does not match the requested amount (${itemInput.requested_amount}) for the activity`,
               ErrorCode.VALIDATION_ERROR,
               400
             );
@@ -657,7 +657,7 @@ export class SubsidyRequestService {
         console.log(`🤖 Auto-updating subsidy ${id} status to IN_REVIEW`);
         const updateData: SubsidyRequestUpdateDto = {
           subsidy_status_id: status.id,
-          notes: `Status automaticamente alterado para IN_REVIEW. ${approvedDocs} aprovados, ${rejectedDocs} rejeitados, ${pendingDocs} pendentes.`
+          notes: `Status automatically changed to IN_REVIEW. ${approvedDocs} approved, ${rejectedDocs} rejected, ${pendingDocs} pending.`
         };
         await this.update(id, updateData, userId);
       }

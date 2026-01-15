@@ -42,7 +42,7 @@ export class SubsidyReceiptService {
 
 
   /**
-   * Upload de recibo de subsídio
+   * Upload subsidy receipt
    */
   async uploadReceipt(
     input: UploadSubsidyReceiptInput,
@@ -80,7 +80,7 @@ export class SubsidyReceiptService {
       });
 
       if (!subsidyRequest) {
-        throw new CustomGraphQLError('Solicitação de subsídio não encontrada', ErrorCode.NOT_FOUND, 404);
+        throw new CustomGraphQLError('Subsidy request not found', ErrorCode.NOT_FOUND, 404);
       }
 
       this.ensureNotClosed(subsidyRequest.subsidy_status?.name);
@@ -92,7 +92,7 @@ export class SubsidyReceiptService {
       });
 
       if (!activity) {
-        throw new CustomGraphQLError('Atividade não encontrada', ErrorCode.NOT_FOUND, 404);
+        throw new CustomGraphQLError('Activity not found', ErrorCode.NOT_FOUND, 404);
       }
 
       // 4. Extrair dados da hierarquia
@@ -200,14 +200,14 @@ export class SubsidyReceiptService {
     const receipt = await this.repository.findById(id);
 
     if (!receipt) {
-      throw new CustomGraphQLError('Recibo não encontrado', ErrorCode.NOT_FOUND, 404);
+        throw new CustomGraphQLError('Receipt not found', ErrorCode.NOT_FOUND, 404);
     }
 
     // Verificar permissão de acesso
     const hasAccess = await this.checkUserCanAccessSubsidy(userId, receipt.subsidy_request_id);
     if (!hasAccess) {
       throw new CustomGraphQLError(
-        'Você não tem permissão para acessar este recibo',
+        'You do not have permission to access this receipt',
         ErrorCode.FORBIDDEN,
         403,
       );
@@ -215,7 +215,7 @@ export class SubsidyReceiptService {
 
     if (!receipt.drive_file_id) {
       throw new CustomGraphQLError(
-        'ID do arquivo no Drive não encontrado',
+        'Drive file ID not found',
         ErrorCode.INTERNAL_SERVER_ERROR,
         500,
       );
@@ -238,7 +238,7 @@ export class SubsidyReceiptService {
     const receipt = await this.repository.findById(id);
 
     if (!receipt) {
-      throw new CustomGraphQLError('Recibo não encontrado', ErrorCode.NOT_FOUND, 404);
+      throw new CustomGraphQLError('Receipt not found', ErrorCode.NOT_FOUND, 404);
     }
 
     if (receipt.subsidy_request_id) {
@@ -297,7 +297,7 @@ export class SubsidyReceiptService {
     const receipt = await this.repository.findById(id);
 
     if (!receipt) {
-      throw new CustomGraphQLError('Recibo não encontrado', ErrorCode.NOT_FOUND, 404);
+      throw new CustomGraphQLError('Receipt not found', ErrorCode.NOT_FOUND, 404);
     }
 
     if (receipt.subsidy_request_id) {
@@ -347,7 +347,7 @@ export class SubsidyReceiptService {
     const receipt = await this.repository.findById(id);
 
     if (!receipt) {
-      throw new CustomGraphQLError('Recibo não encontrado', ErrorCode.NOT_FOUND, 404);
+      throw new CustomGraphQLError('Receipt not found', ErrorCode.NOT_FOUND, 404);
     }
 
     if (receipt.subsidy_request_id) {
@@ -466,7 +466,7 @@ export class SubsidyReceiptService {
 
     if (!allowedMimeTypes.includes(file.mimetype)) {
       throw new CustomGraphQLError(
-        'Tipo de arquivo inválido. Apenas JPG, PNG e PDF são permitidos.',
+        'Invalid file type. Only JPG, PNG and PDF are allowed.',
         ErrorCode.BAD_REQUEST,
         400,
       );
@@ -486,7 +486,7 @@ export class SubsidyReceiptService {
 
       if (totalSize > maxSize) {
         throw new CustomGraphQLError(
-          'Arquivo muito grande. Tamanho máximo: 10MB',
+          'File too large. Maximum size: 10MB',
           ErrorCode.BAD_REQUEST,
           400,
         );
@@ -629,7 +629,7 @@ export class SubsidyReceiptService {
     });
 
     if (!activityDoc) {
-      throw new CustomGraphQLError('Documento da atividade não encontrado', ErrorCode.NOT_FOUND, 404);
+      throw new CustomGraphQLError('Activity document not found', ErrorCode.NOT_FOUND, 404);
     }
 
     // 2. Find the subsidy request to validate permission and status
@@ -639,7 +639,7 @@ export class SubsidyReceiptService {
     });
 
     if (!subsidyRequest) {
-      throw new CustomGraphQLError('Solicitação de subsídio não encontrada', ErrorCode.NOT_FOUND, 404);
+      throw new CustomGraphQLError('Subsidy request not found', ErrorCode.NOT_FOUND, 404);
     }
 
     this.ensureNotClosed(subsidyRequest.subsidy_status?.name);
