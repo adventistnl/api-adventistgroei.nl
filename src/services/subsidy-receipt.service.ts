@@ -164,7 +164,7 @@ export class SubsidyReceiptService {
         status_id: subsidyRequest.subsidy_statuses_id,
         previous_status_id: undefined,
         type: SubsidyHistoryType.DOCUMENT_ACTION,
-        reason: `Documento "${filename}" enviado`,
+        reason: `Document "${filename}" uploaded`,
         changed_by: userId,
       });
 
@@ -264,7 +264,7 @@ export class SubsidyReceiptService {
             status_id: subsidyRequest.subsidy_statuses_id,
             previous_status_id: undefined,
             type: SubsidyHistoryType.DOCUMENT_ACTION,
-            reason: `Documento "${receipt.filename}" removido`,
+            reason: `Document "${receipt.filename}" removed`,
             changed_by: userId,
           });
         }
@@ -330,7 +330,7 @@ export class SubsidyReceiptService {
         status_id: subsidyRequest.subsidy_statuses_id,
         previous_status_id: undefined,
         type: SubsidyHistoryType.DOCUMENT_ACTION,
-        reason: `Documento "${receipt.filename}" validado`,
+        reason: `Document "${receipt.filename}" validated`,
         changed_by: userId,
       });
 
@@ -380,7 +380,7 @@ export class SubsidyReceiptService {
         status_id: subsidyRequest.subsidy_statuses_id,
         previous_status_id: undefined,
         type: SubsidyHistoryType.DOCUMENT_ACTION,
-        reason: `Documento "${receipt.filename}" rejeitado. Motivo: ${reason || 'Sem motivo especificado'}`,
+        reason: `Document "${receipt.filename}" rejected. Reason: ${reason || 'No reason specified'}`,
         changed_by: userId,
       });
 
@@ -668,7 +668,7 @@ export class SubsidyReceiptService {
       status_id: subsidyRequest.subsidy_statuses_id,
       previous_status_id: undefined,
       type: SubsidyHistoryType.DOCUMENT_ACTION,
-      reason: `Documento "${activityDoc.filename}" importado da atividade`,
+      reason: `Document "${activityDoc.filename}" imported from activity`,
       changed_by: userId,
     });
 

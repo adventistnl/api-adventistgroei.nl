@@ -166,7 +166,7 @@ export class SubsidyRequestService {
       status_id: data.subsidy_status_id,
       previous_status_id: undefined,
       type: SubsidyHistoryType.STATUS_CHANGE,
-      reason: 'Solicitação criada',
+      reason: 'Request created',
       changed_by: userId,
     });
 
@@ -333,7 +333,7 @@ export class SubsidyRequestService {
         subsidy_request_id: id,
         status_id: current.subsidy_statuses_id, // Keep current status context
         type: SubsidyHistoryType.PRIORITY_CHANGE,
-        reason: `Prioridade alterada de ${current.priority} para ${data.priority}`,
+        reason: `Priority changed from ${current.priority} to ${data.priority}`,
         changed_by: userId,
       });
     }
@@ -395,7 +395,7 @@ export class SubsidyRequestService {
         status_id: subsidyRequest.subsidy_statuses_id,
         previous_status_id: undefined,
         type: SubsidyHistoryType.STATUS_CHANGE,
-        reason: 'Solicitação de subsídio deletada',
+        reason: 'Subsidy request deleted',
         changed_by: userId,
       });
 
@@ -526,7 +526,7 @@ export class SubsidyRequestService {
       subsidy_request_id: id,
       status_id: approvedStatus.id,
       previous_status_id: current.subsidy_statuses_id,
-      reason: `Solicitação aprovada. Valor aprovado: ${approvedAmount}`,
+      reason: `Request approved. Approved amount: ${approvedAmount}`,
       changed_by: userId,
     });
 
@@ -586,7 +586,7 @@ export class SubsidyRequestService {
       subsidy_request_id: id,
       status_id: rejectedStatus.id,
       previous_status_id: current.subsidy_statuses_id,
-      reason: rejectionReason || 'Solicitação rejeitada',
+      reason: rejectionReason || 'Request rejected',
       changed_by: userId,
     });
 
