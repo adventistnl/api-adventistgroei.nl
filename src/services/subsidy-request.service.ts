@@ -105,6 +105,45 @@ export class SubsidyRequestService {
     }
   }
 
+  /**
+   * Validates that ALL documents are approved (not just validated).
+   * This blocks approval of subsidy if any document was rejected.
+   */
+  private async ensureAllDocumentsApproved(id: string) {
+    const receipts = await this.prisma.subsidyReceipt.findMany({
+      where: {
+        subsidy_request_id: id,
+        is_deleted: false,
+      },
+      select: {
+        is_validated: true,
+        approved: true,
+      }
+    });
+
+    // Check for any pending (not validated) documents
+    const pendingCount = receipts.filter(r => !r.is_validated).length;
+    if (pendingCount > 0) {
+      throw new CustomGraphQLError(
+        `Cannot approve subsidy. ${pendingCount} document(s) are still pending validation.`,
+        ErrorCode.BAD_REQUEST,
+        400,
+        { additional: { errorCode: 'DOCUMENTS_NOT_VALIDATED' } }
+      );
+    }
+
+    // Check for any rejected documents
+    const rejectedCount = receipts.filter(r => r.is_validated && !r.approved).length;
+    if (rejectedCount > 0) {
+      throw new CustomGraphQLError(
+        `Cannot approve subsidy. ${rejectedCount} document(s) were rejected.`,
+        ErrorCode.BAD_REQUEST,
+        400,
+        { additional: { errorCode: 'DOCUMENTS_REJECTED' } }
+      );
+    }
+  }
+
   async create(data: SubsidyRequestCreateDto, userId: string): Promise<SubsidyRequest> {
     // Se subsidy_status_id não foi fornecido, buscar status "PENDING" automaticamente
     if (!data.subsidy_status_id) {
@@ -459,8 +498,8 @@ export class SubsidyRequestService {
     // Validate Status Transition
     this.validateStatusTransition(current.subsidy_status?.name, 'APPROVED');
 
-    // Ensure all documents are validated
-    await this.ensureAllDocumentsValidated(id);
+    // Ensure all documents are approved (not just validated - rejects any with rejected docs)
+    await this.ensureAllDocumentsApproved(id);
 
     // Buscar status "APPROVED"
     const approvedStatus = await this.prisma.subsidyStatus.findFirst({
@@ -570,6 +609,12 @@ export class SubsidyRequestService {
     return result;
   }
 
+  /**
+   * Recalculates subsidy status based on document validations.
+   * NOTE: This method NO LONGER automatically changes status to APPROVED/REJECTED.
+   * Status changes to APPROVED/REJECTED/CLOSED must be done manually by the user.
+   * This prevents duplicate budget calculations when documents are validated.
+   */
   async recalculateStatus(id: string, userId: string): Promise<void> {
     const subsidyRequest = await this.subsidyRequestRepository.findById(id);
     if (!subsidyRequest) return;
@@ -589,62 +634,35 @@ export class SubsidyRequestService {
     const rejectedDocs = receipts.filter(r => r.is_validated && !r.approved).length;
     const pendingDocs = receipts.filter(r => !r.is_validated).length;
 
-    let targetStatusName = 'PENDING';
-
+    // Determine what status WOULD be if auto-updated (for logging only)
+    let suggestedStatus = 'PENDING';
     if (approvedDocs === totalDocs) {
-      targetStatusName = 'APPROVED';
+      suggestedStatus = 'APPROVED';
     } else if (rejectedDocs === totalDocs) {
-      targetStatusName = 'REJECTED';
+      suggestedStatus = 'REJECTED';
     } else if (pendingDocs < totalDocs) {
-      // Partial validation or mixed results (e.g. some approved, some rejected)
-      // "In Review": If not 100% approved and not 100% rejected, and at least some processing started
-      targetStatusName = 'IN_REVIEW';
-    } else {
-      // All pending
-      targetStatusName = 'PENDING';
+      suggestedStatus = 'IN_REVIEW';
     }
 
-    // Fetch Status ID
-    const status = await this.prisma.subsidyStatus.findFirst({
-      where: { name: targetStatusName, is_deleted: false }
-    });
+    console.log(`📊 [recalculateStatus] Subsidy ${id}: ${approvedDocs}/${totalDocs} approved, ${rejectedDocs}/${totalDocs} rejected, ${pendingDocs}/${totalDocs} pending. Suggested status: ${suggestedStatus}`);
 
-    if (!status) {
-      console.warn(`[recalculateStatus] Status ${targetStatusName} not found`);
-      return;
+    // Only auto-update to IN_REVIEW when documents start being validated
+    // APPROVED/REJECTED/CLOSED must be set manually to trigger budget calculations once
+    if (suggestedStatus === 'IN_REVIEW') {
+      const status = await this.prisma.subsidyStatus.findFirst({
+        where: { name: 'IN_REVIEW', is_deleted: false }
+      });
+
+      if (status && subsidyRequest.subsidy_statuses_id !== status.id) {
+        console.log(`🤖 Auto-updating subsidy ${id} status to IN_REVIEW`);
+        const updateData: SubsidyRequestUpdateDto = {
+          subsidy_status_id: status.id,
+          notes: `Status automaticamente alterado para IN_REVIEW. ${approvedDocs} aprovados, ${rejectedDocs} rejeitados, ${pendingDocs} pendentes.`
+        };
+        await this.update(id, updateData, userId);
+      }
     }
-
-    // Check if update is needed
-    if (subsidyRequest.subsidy_statuses_id !== status.id) {
-       console.log(`🤖 Auto-updating subsidy ${id} status to ${targetStatusName}`);
-
-       // If changing to APPROVED or REJECTED, use the specific methods that handle budget
-       if (targetStatusName === 'APPROVED') {
-         // Calculate total approved amount from validated receipts
-          const approvedReceiptsValues = receipts
-            .filter(r => r.is_validated && r.approved)
-            .map(r => r.amount);
-         
-         const totalApprovedAmount = DecimalHelper.sum(approvedReceiptsValues).toNumber();
-         
-         // Use approve method which handles budget calculations
-         await this.approve(id, totalApprovedAmount, userId);
-       } else if (targetStatusName === 'REJECTED') {
-         // Use reject method which handles budget calculations
-         await this.reject(
-           id, 
-           'Todos os documentos foram rejeitados',
-           userId
-         );
-       } else {
-         // For other status changes (PENDING, IN_REVIEW), use regular update
-         const updateData: SubsidyRequestUpdateDto = {
-           subsidy_status_id: status.id,
-           notes: `Status atualizado automaticamente para ${targetStatusName} baseado na validação de documentos.`
-         };
-         await this.update(id, updateData, userId);
-       }
-    }
+    // For APPROVED/REJECTED, just log - user must manually approve/reject to trigger budget calculations
   }
 
   // Analytics methods
