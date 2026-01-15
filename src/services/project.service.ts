@@ -75,6 +75,16 @@ export class ProjectService {
       await this.validateConcludedTransition(id);
     }
 
+    // If project is EXPIRED and end_at is being extended to future, revert to IN_PROGRESS
+    if (existingProject.status === ProjectStatus.EXPIRED && data.end_at) {
+      const newEndDate = new Date(data.end_at);
+      const now = new Date();
+      if (newEndDate > now) {
+        // Automatically revert status to IN_PROGRESS when extending expired project
+        data.status = ProjectStatus.IN_PROGRESS;
+      }
+    }
+
     return this.projectRepository.update(id, data, userId);
   }
 
