@@ -1096,9 +1096,11 @@ export class AnnualBudgetRepository {
         throw new CustomGraphQLError("Institution budget not found", ErrorCode.NOT_FOUND, 404);
     }
 
-    if (institutionBudget.is_locked) {
-        throw new CustomGraphQLError("Institution budget is locked", ErrorCode.BAD_REQUEST, 400);
-    }
+    // NOTE: is_locked check removed here because:
+    // - is_locked = true means budget is finalized and READY for project allocations
+    // - This method is called when creating projects/subsidies which NEED a locked budget
+    // - The is_locked check should only block modifications to the budget definition itself,
+    //   not the allocation of funds for projects
 
     await this.prisma.$transaction(async (tx) => {
       // Update Department using Decimal.js for precision
