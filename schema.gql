@@ -66,6 +66,640 @@ A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date
 """
 scalar DateTime
 
+type EventRecipient {
+  id: ID!
+  event_id: String!
+  target_type: EventTargetType!
+  target_id: String!
+  created_at: DateTime!
+  updated_at: DateTime!
+  created_by: String!
+  updated_by: String!
+  is_deleted: Boolean!
+  deleted_at: DateTime
+  deleted_by: String
+  userId: String
+  event: Event!
+  User: User
+}
+
+enum EventTargetType {
+  institution
+  region
+  department
+  church
+  user
+}
+
+type EventRegistration {
+  id: ID!
+  user_id: String!
+  event_id: String!
+  status: EventRegistrationStatus!
+  created_at: DateTime!
+  updated_at: DateTime!
+  created_by: String!
+  updated_by: String!
+  is_deleted: Boolean!
+  deleted_at: DateTime
+  deleted_by: String
+  user: User!
+  event: Event!
+}
+
+enum EventRegistrationStatus {
+  paid
+  pendent
+  reserved
+  approved
+  canceled
+}
+
+type EventCount {
+  event_recipients: Int!
+  event_registrations: Int!
+  projects: Int!
+}
+
+type Event {
+  id: ID!
+  target_type: EventTargetType!
+  target_id: String
+  title: String!
+  description: String!
+  contact_id: String!
+  type: EventType!
+  language_preference: LanguagePreference!
+  max_participants: Int!
+  ticket_amount: Decimal!
+  location: String
+  is_private: Boolean!
+  required_volunteers: Boolean!
+  start_at: DateTime
+  end_at: DateTime
+  subscription_expires_at: DateTime!
+  created_at: DateTime!
+  updated_at: DateTime!
+  created_by: String!
+  updated_by: String!
+  is_deleted: Boolean!
+  deleted_at: DateTime
+  deleted_by: String
+  contact: Contact!
+  event_recipients: [EventRecipient!]
+  event_registrations: [EventRegistration!]
+  projects: [Project!]
+  _count: EventCount!
+}
+
+enum EventType {
+  show
+  evangelism
+}
+
+"""Idioma preferencial da instituição"""
+enum LanguagePreference {
+  en
+  nl
+}
+
+"""An arbitrary-precision Decimal type"""
+scalar Decimal
+
+type VoluntariesOnProjects {
+  user_id: String!
+  project_id: String!
+  created_at: DateTime!
+  updated_at: DateTime!
+  created_by: String!
+  updated_by: String!
+  is_deleted: Boolean!
+  deleted_at: DateTime
+  deleted_by: String
+  user: User!
+  project: Project!
+}
+
+type SpecialProjects {
+  id: ID!
+  department_id: String!
+  institution_id: String
+  project_id: String
+  justification_note: String
+  budget: Decimal
+  subsidy_status_id: String!
+  type: String!
+  location_church_plant: String
+  created_at: DateTime!
+  updated_at: DateTime!
+  created_by: String!
+  updated_by: String!
+  is_deleted: Boolean!
+  deleted_at: DateTime
+  deleted_by: String
+  project: Project
+  subsidy_status: SubsidyStatus
+}
+
+type ProjectCount {
+  voluntary_users: Int!
+  activities: Int!
+  subsidies: Int!
+  special_projects: Int!
+}
+
+type Project {
+  id: ID!
+  department_id: String!
+  church_department_id: String
+  title: String!
+  description: String!
+  budget: Decimal!
+  subsidized_budget: Decimal!
+  balance: Decimal!
+  owner_id: String!
+  language_preference: LanguagePreference!
+  type: ProjectType!
+  status: ProjectStatus!
+  is_private: Boolean!
+  required_volunteers: Boolean!
+  start_at: DateTime!
+  end_at: DateTime!
+  created_at: DateTime!
+  updated_at: DateTime!
+  deadline: DateTime
+  created_by: String!
+  updated_by: String!
+  is_deleted: Boolean!
+  deleted_at: DateTime
+  deleted_by: String
+  event_id: String
+  institution_id: String
+  church_id: String
+  department: Department!
+  church_department: Department
+  owner: User!
+  event: Event
+  Institution: Institution
+  church: Church
+  voluntary_users: [VoluntariesOnProjects!]
+  activities: [ProjectActivity!]
+  subsidies: [SubsidyRequest!]
+  special_projects: [SpecialProjects!]
+  _count: ProjectCount!
+  Church: Church
+  churchDepartment: Department
+  kpis: ProjectKPIsDto!
+}
+
+enum ProjectType {
+  Local
+  Global
+}
+
+enum ProjectStatus {
+  DRAFT
+  IN_PROGRESS
+  IN_REVIEW
+  ON_HOLD
+  EXPIRED
+  CONCLUDED
+}
+
+type SubsidyReceipt {
+  id: ID!
+  project_activities_id: String!
+  file_url: String!
+  drive_file_id: String
+  filename: String!
+  type: String!
+  amount: Decimal
+  approved: Boolean!
+  is_validated: Boolean!
+  validated_at: DateTime
+  validated_by: String
+  uploaded_by: String!
+  created_at: DateTime!
+  updated_at: DateTime!
+  created_by: String!
+  updated_by: String!
+  is_deleted: Boolean!
+  deleted_at: DateTime
+  deleted_by: String
+  subsidy_request_id: String
+  subsidy_request_item_id: String
+  project_activity: ProjectActivity!
+  subsidy_request: SubsidyRequest
+  subsidy_request_item: SubsidyRequestItem
+}
+
+type ActivityDocuments {
+  id: ID!
+  activity_id: String!
+  file_url: String!
+  drive_file_id: String
+  filename: String!
+  type: String!
+  is_validated: Boolean!
+  uploaded_by: String!
+  created_at: DateTime!
+  validated_at: DateTime
+  project_activity_id: String
+  updated_at: DateTime!
+  updated_by: String
+  is_deleted: Boolean!
+  deleted_at: DateTime
+  deleted_by: String
+  project_activity: ProjectActivity
+}
+
+type ActivityFunding {
+  id: ID!
+  activity_id: String!
+  entity_contribution_amount: Decimal!
+  entity_contribution_percent: Float!
+  entity_type: EntityType!
+  entity_id: String!
+  validated: Boolean!
+  created_at: DateTime!
+  updated_at: DateTime!
+  created_by: String
+  updated_by: String
+  is_deleted: Boolean!
+  deleted_at: DateTime
+  deleted_by: String
+  activity: ProjectActivity!
+}
+
+enum EntityType {
+  INSTITUTION
+  REGION
+  CHURCH
+  INSTITUTION_DEPARTMENT
+  CHURCH_DEPARTMENT
+  USER
+}
+
+type ProjectActivityLog {
+  id: ID!
+  activity_id: String!
+  user_id: String!
+  action: ProjectActivityLogAction!
+  field_name: String
+  old_value: String
+  new_value: String
+  metadata: JSON
+  created_at: DateTime!
+  activity: ProjectActivity!
+  user: User!
+}
+
+enum ProjectActivityLogAction {
+  CREATED
+  UPDATED
+  DELETED
+  STATUS_CHANGED
+  PRIORITY_CHANGED
+  ASSIGNED
+  UNASSIGNED
+  BUDGET_UPDATED
+  DEADLINE_UPDATED
+  TAG_ADDED
+  TAG_REMOVED
+  SUBSIDIZED_CHANGED
+}
+
+type ProjectActivityAssignee {
+  id: ID!
+  activity_id: String!
+  user_id: String!
+  created_at: DateTime!
+  created_by: String!
+  activity: ProjectActivity!
+  user: User!
+}
+
+type ProjectActivityCount {
+  subsidy_request_items: Int!
+  subsidy_receipts: Int!
+  activity_documents: Int!
+  logs: Int!
+  assignees: Int!
+}
+
+type ProjectActivity {
+  id: ID!
+  project_id: String!
+  name: String!
+  description: String!
+  budget_amount: Decimal!
+  created_at: DateTime!
+  updated_at: DateTime!
+  created_by: String!
+  updated_by: String!
+  is_deleted: Boolean!
+  deleted_at: DateTime
+  deleted_by: String
+  deadline: DateTime!
+  tags: [ActivityTags!]
+  custom_tags: [String!]
+  status: ActivityStatus!
+  priority: ActivityPriority!
+  is_subsidized: Boolean!
+  subsidy_request_items: [SubsidyRequestItem!]
+  project: Project!
+  subsidy_receipts: [SubsidyReceipt!]
+  activity_documents: [ActivityDocuments!]
+  activity_funding: ActivityFunding
+  logs: [ProjectActivityLog!]
+  assignees: [ProjectActivityAssignee!]
+  _count: ProjectActivityCount!
+}
+
+enum ActivityTags {
+  EQUIPMENT
+  MATERIALS
+  SERVICES
+  TRAVEL
+  EVENT
+  TRANSPORT
+  MARKETING
+  REFORM
+  TRAINING
+  FEEDING
+  ACCOMMODATION
+}
+
+enum ActivityStatus {
+  TODO
+  IN_PROGRESS
+  COMPLETED
+  ON_HOLD
+}
+
+enum ActivityPriority {
+  URGENT
+  HIGH
+  MEDIUM
+  LOW
+}
+
+type SubsidyRequestItemCount {
+  subsidy_receipts: Int!
+}
+
+type SubsidyRequestItem {
+  id: ID!
+  subsidy_request_id: String!
+  project_activity_id: String!
+  requested_amount: Decimal!
+  approved_amount: Decimal!
+  notes: String
+  created_at: DateTime!
+  updated_at: DateTime!
+  is_deleted: Boolean!
+  deleted_at: DateTime
+  deleted_by: String
+  subsidy_request: SubsidyRequest!
+  project_activity: ProjectActivity!
+  subsidy_receipts: [SubsidyReceipt!]
+  _count: SubsidyRequestItemCount!
+}
+
+type SubsidyStatusHistory {
+  id: ID!
+  subsidy_request_id: String!
+  status_id: String!
+  previous_status_id: String
+  type: SubsidyHistoryType!
+  reason: String
+  changed_by: String!
+  changed_at: DateTime!
+  created_at: DateTime!
+  updated_at: DateTime!
+  is_deleted: Boolean!
+  deleted_at: DateTime
+  deleted_by: String
+  subsidy_request: SubsidyRequest!
+  status: SubsidyStatus!
+  previous_status: SubsidyStatus
+  user: User!
+}
+
+enum SubsidyHistoryType {
+  STATUS_CHANGE
+  PRIORITY_CHANGE
+  COMMENT
+  DOCUMENT_ACTION
+}
+
+type SubsidyRequestCount {
+  items: Int!
+  subsidy_receipts: Int!
+  status_history: Int!
+}
+
+type SubsidyRequest {
+  id: ID!
+  description: String!
+  total_budget: Decimal!
+  approved_amount: Decimal!
+  rejection_reason: String
+  created_at: DateTime!
+  updated_at: DateTime!
+  approved_at: DateTime
+  created_by: String!
+  updated_by: String!
+  approved_by: String
+  is_deleted: Boolean!
+  deleted_at: DateTime
+  deleted_by: String
+  institution_id: String!
+  requester_id: String!
+  department_id: String!
+  church_id: String
+  priority: SubsidyRequestPriority!
+  subsidy_statuses_id: String!
+  project_id: String!
+  institution: Institution!
+  requester: User!
+  department: Department!
+  church: Church
+  subsidy_status: SubsidyStatus!
+  items: [SubsidyRequestItem!]
+  project: Project!
+  subsidy_receipts: [SubsidyReceipt!]
+  status_history: [SubsidyStatusHistory!]
+  _count: SubsidyRequestCount!
+}
+
+enum SubsidyRequestPriority {
+  LOW
+  MEDIUM
+  HIGH
+}
+
+type SubsidyStatusCount {
+  subsidy_requests: Int!
+  special_projects: Int!
+  history_as_current: Int!
+  history_as_previous: Int!
+}
+
+type SubsidyStatus {
+  id: ID!
+  department_id: String!
+  assigned_to: String!
+  name: String!
+  description: String!
+  order: Int!
+  created_at: DateTime!
+  updated_at: DateTime!
+  created_by: String!
+  updated_by: String!
+  is_deleted: Boolean!
+  deleted_at: DateTime
+  deleted_by: String
+  department: Department!
+  assigned_user: User!
+  subsidy_requests: [SubsidyRequest!]
+  special_projects: [SpecialProjects!]
+  history_as_current: [SubsidyStatusHistory!]
+  history_as_previous: [SubsidyStatusHistory!]
+  _count: SubsidyStatusCount!
+}
+
+type AnnualReport {
+  id: ID!
+  department_id: String!
+  text: String!
+  file_path: String!
+  submission_date: DateTime!
+  created_at: DateTime!
+  updated_at: DateTime!
+  created_by: String!
+  updated_by: String!
+  is_deleted: Boolean!
+  deleted_at: DateTime
+  deleted_by: String
+  department: Department!
+}
+
+type AnnualBudget {
+  id: ID!
+  year: Int!
+  planned_budget: Decimal!
+  total_expenses: Decimal!
+  balance: Decimal!
+  notes: String
+  description: String
+  justification: String
+  approved_by: String
+  created_at: DateTime!
+  updated_at: DateTime!
+  created_by: String!
+  updated_by: String!
+  is_deleted: Boolean!
+  deleted_at: DateTime
+  deleted_by: String
+  status: AnnualBudgetStatus!
+  institution_id: String
+  church_id: String
+  department_id: String
+  allocated_amount: Decimal!
+  approved_amount: Decimal
+  requested_by: String!
+  reviewed_by: String
+  submitted_date: DateTime!
+  review_date: DateTime
+  approval_date: DateTime
+  priority: AnnualBudgetPriority!
+  category: AnnualBudgetCategory!
+  documents: JSON
+  is_locked: Boolean!
+  has_budget_record: Boolean!
+  entity_type: AnnualBudgetEntityType!
+  approved_user: User
+  institution: Institution
+  church: Church
+  department: Department
+  approvedAmount: Float!
+  spentAmount: Float!
+  usagePercentage: Float!
+  remainingAmount: Float!
+}
+
+enum AnnualBudgetStatus {
+  DRAFT
+  SUBMITTED
+  APPROVED
+  REJECTED
+  REVISION_REQUESTED
+  IN_PROGRESS
+  CLOSED
+}
+
+enum AnnualBudgetPriority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+}
+
+enum AnnualBudgetCategory {
+  OPERATIONAL
+  PROJECT
+  MAINTENANCE
+  EMERGENCY
+  EXPANSION
+}
+
+enum AnnualBudgetEntityType {
+  INSTITUTION
+  CHURCH
+  INSTITUTION_DEPARTMENT
+  CHURCH_DEPARTMENT
+}
+
+type DepartmentCount {
+  subsidy_statuses: Int!
+  projects: Int!
+  church_projects: Int!
+  annual_reports: Int!
+  subsidy_requests: Int!
+  users: Int!
+  annual_budgets: Int!
+}
+
+type Department {
+  id: ID!
+  institution_id: String!
+  church_id: String
+  name: String!
+  description: String!
+  leader_id: String!
+  contact_id: String
+  created_at: DateTime!
+  updated_at: DateTime!
+  created_by: String!
+  updated_by: String!
+  is_deleted: Boolean!
+  deleted_at: DateTime
+  deleted_by: String
+  institution: Institution!
+  church: Church
+  leader: User!
+  contact: Contact
+  subsidy_statuses: [SubsidyStatus!]
+  projects: [Project!]
+  church_projects: [Project!]
+  annual_reports: [AnnualReport!]
+  subsidy_requests: [SubsidyRequest!]
+  users: [User!]
+  annual_budgets: [AnnualBudget!]!
+  _count: DepartmentCount!
+}
+
 type PermissionCount {
   role_permissions: Int!
 }
@@ -96,6 +730,7 @@ enum PermissionResolverName {
   updateUser
   updateOwnUser
   updateUserDepartment
+  updateChurchLeader
   deleteUser
   addRoleToUser
   removeRoleFromUser
@@ -363,509 +998,6 @@ type Notification {
   user: User!
 }
 
-type EventRecipient {
-  id: ID!
-  event_id: String!
-  target_type: EventTargetType!
-  target_id: String!
-  created_at: DateTime!
-  updated_at: DateTime!
-  created_by: String!
-  updated_by: String!
-  is_deleted: Boolean!
-  deleted_at: DateTime
-  deleted_by: String
-  userId: String
-  event: Event!
-  User: User
-}
-
-enum EventTargetType {
-  institution
-  region
-  department
-  church
-  user
-}
-
-type VoluntariesOnProjects {
-  user_id: String!
-  project_id: String!
-  created_at: DateTime!
-  updated_at: DateTime!
-  created_by: String!
-  updated_by: String!
-  is_deleted: Boolean!
-  deleted_at: DateTime
-  deleted_by: String
-  user: User!
-  project: Project!
-}
-
-type SpecialProjects {
-  id: ID!
-  department_id: String!
-  institution_id: String
-  project_id: String
-  justification_note: String
-  budget: Decimal
-  subsidy_status_id: String!
-  type: String!
-  location_church_plant: String
-  created_at: DateTime!
-  updated_at: DateTime!
-  created_by: String!
-  updated_by: String!
-  is_deleted: Boolean!
-  deleted_at: DateTime
-  deleted_by: String
-  project: Project
-  subsidy_status: SubsidyStatus
-}
-
-"""An arbitrary-precision Decimal type"""
-scalar Decimal
-
-type SubsidyStatusHistory {
-  id: ID!
-  subsidy_request_id: String!
-  status_id: String!
-  previous_status_id: String
-  type: SubsidyHistoryType!
-  reason: String
-  changed_by: String!
-  changed_at: DateTime!
-  created_at: DateTime!
-  updated_at: DateTime!
-  is_deleted: Boolean!
-  deleted_at: DateTime
-  deleted_by: String
-  subsidy_request: SubsidyRequest!
-  status: SubsidyStatus!
-  previous_status: SubsidyStatus
-  user: User!
-}
-
-enum SubsidyHistoryType {
-  STATUS_CHANGE
-  PRIORITY_CHANGE
-  COMMENT
-  DOCUMENT_ACTION
-}
-
-type SubsidyStatusCount {
-  subsidy_requests: Int!
-  special_projects: Int!
-  history_as_current: Int!
-  history_as_previous: Int!
-}
-
-type SubsidyStatus {
-  id: ID!
-  department_id: String!
-  assigned_to: String!
-  name: String!
-  description: String!
-  order: Int!
-  created_at: DateTime!
-  updated_at: DateTime!
-  created_by: String!
-  updated_by: String!
-  is_deleted: Boolean!
-  deleted_at: DateTime
-  deleted_by: String
-  department: Department!
-  assigned_user: User!
-  subsidy_requests: [SubsidyRequest!]
-  special_projects: [SpecialProjects!]
-  history_as_current: [SubsidyStatusHistory!]
-  history_as_previous: [SubsidyStatusHistory!]
-  _count: SubsidyStatusCount!
-}
-
-type SubsidyReceipt {
-  id: ID!
-  project_activities_id: String!
-  file_url: String!
-  drive_file_id: String
-  filename: String!
-  type: String!
-  amount: Decimal
-  approved: Boolean!
-  is_validated: Boolean!
-  validated_at: DateTime
-  validated_by: String
-  uploaded_by: String!
-  created_at: DateTime!
-  updated_at: DateTime!
-  created_by: String!
-  updated_by: String!
-  is_deleted: Boolean!
-  deleted_at: DateTime
-  deleted_by: String
-  subsidy_request_id: String
-  subsidy_request_item_id: String
-  project_activity: ProjectActivity!
-  subsidy_request: SubsidyRequest
-  subsidy_request_item: SubsidyRequestItem
-}
-
-type SubsidyRequestCount {
-  items: Int!
-  subsidy_receipts: Int!
-  status_history: Int!
-}
-
-type SubsidyRequest {
-  id: ID!
-  description: String!
-  total_budget: Decimal!
-  approved_amount: Decimal!
-  rejection_reason: String
-  created_at: DateTime!
-  updated_at: DateTime!
-  approved_at: DateTime
-  created_by: String!
-  updated_by: String!
-  approved_by: String
-  is_deleted: Boolean!
-  deleted_at: DateTime
-  deleted_by: String
-  institution_id: String!
-  requester_id: String!
-  department_id: String!
-  church_id: String
-  priority: SubsidyRequestPriority!
-  subsidy_statuses_id: String!
-  project_id: String!
-  institution: Institution!
-  requester: User!
-  department: Department!
-  church: Church
-  subsidy_status: SubsidyStatus!
-  items: [SubsidyRequestItem!]
-  project: Project!
-  subsidy_receipts: [SubsidyReceipt!]
-  status_history: [SubsidyStatusHistory!]
-  _count: SubsidyRequestCount!
-}
-
-enum SubsidyRequestPriority {
-  LOW
-  MEDIUM
-  HIGH
-}
-
-type SubsidyRequestItemCount {
-  subsidy_receipts: Int!
-}
-
-type SubsidyRequestItem {
-  id: ID!
-  subsidy_request_id: String!
-  project_activity_id: String!
-  requested_amount: Decimal!
-  approved_amount: Decimal!
-  notes: String
-  created_at: DateTime!
-  updated_at: DateTime!
-  is_deleted: Boolean!
-  deleted_at: DateTime
-  deleted_by: String
-  subsidy_request: SubsidyRequest!
-  project_activity: ProjectActivity!
-  subsidy_receipts: [SubsidyReceipt!]
-  _count: SubsidyRequestItemCount!
-}
-
-type ActivityDocuments {
-  id: ID!
-  activity_id: String!
-  file_url: String!
-  drive_file_id: String
-  filename: String!
-  type: String!
-  is_validated: Boolean!
-  uploaded_by: String!
-  created_at: DateTime!
-  validated_at: DateTime
-  project_activity_id: String
-  updated_at: DateTime!
-  updated_by: String
-  is_deleted: Boolean!
-  deleted_at: DateTime
-  deleted_by: String
-  project_activity: ProjectActivity
-}
-
-type ActivityFunding {
-  id: ID!
-  activity_id: String!
-  entity_contribution_amount: Decimal!
-  entity_contribution_percent: Float!
-  entity_type: EntityType!
-  entity_id: String!
-  validated: Boolean!
-  created_at: DateTime!
-  updated_at: DateTime!
-  created_by: String
-  updated_by: String
-  is_deleted: Boolean!
-  deleted_at: DateTime
-  deleted_by: String
-  activity: ProjectActivity!
-}
-
-enum EntityType {
-  INSTITUTION
-  REGION
-  CHURCH
-  INSTITUTION_DEPARTMENT
-  CHURCH_DEPARTMENT
-  USER
-}
-
-type ProjectActivityLog {
-  id: ID!
-  activity_id: String!
-  user_id: String!
-  action: ProjectActivityLogAction!
-  field_name: String
-  old_value: String
-  new_value: String
-  metadata: JSON
-  created_at: DateTime!
-  activity: ProjectActivity!
-  user: User!
-}
-
-enum ProjectActivityLogAction {
-  CREATED
-  UPDATED
-  DELETED
-  STATUS_CHANGED
-  PRIORITY_CHANGED
-  ASSIGNED
-  UNASSIGNED
-  BUDGET_UPDATED
-  DEADLINE_UPDATED
-  TAG_ADDED
-  TAG_REMOVED
-  SUBSIDIZED_CHANGED
-}
-
-type ProjectActivityAssignee {
-  id: ID!
-  activity_id: String!
-  user_id: String!
-  created_at: DateTime!
-  created_by: String!
-  activity: ProjectActivity!
-  user: User!
-}
-
-type ProjectActivityCount {
-  subsidy_request_items: Int!
-  subsidy_receipts: Int!
-  activity_documents: Int!
-  logs: Int!
-  assignees: Int!
-}
-
-type ProjectActivity {
-  id: ID!
-  project_id: String!
-  name: String!
-  description: String!
-  budget_amount: Decimal!
-  created_at: DateTime!
-  updated_at: DateTime!
-  created_by: String!
-  updated_by: String!
-  is_deleted: Boolean!
-  deleted_at: DateTime
-  deleted_by: String
-  deadline: DateTime!
-  tags: [ActivityTags!]
-  custom_tags: [String!]
-  status: ActivityStatus!
-  priority: ActivityPriority!
-  is_subsidized: Boolean!
-  subsidy_request_items: [SubsidyRequestItem!]
-  project: Project!
-  subsidy_receipts: [SubsidyReceipt!]
-  activity_documents: [ActivityDocuments!]
-  activity_funding: ActivityFunding
-  logs: [ProjectActivityLog!]
-  assignees: [ProjectActivityAssignee!]
-  _count: ProjectActivityCount!
-}
-
-enum ActivityTags {
-  EQUIPMENT
-  MATERIALS
-  SERVICES
-  TRAVEL
-  EVENT
-  TRANSPORT
-  MARKETING
-  REFORM
-  TRAINING
-  FEEDING
-  ACCOMMODATION
-}
-
-enum ActivityStatus {
-  TODO
-  IN_PROGRESS
-  COMPLETED
-  ON_HOLD
-}
-
-enum ActivityPriority {
-  URGENT
-  HIGH
-  MEDIUM
-  LOW
-}
-
-type ProjectCount {
-  voluntary_users: Int!
-  activities: Int!
-  subsidies: Int!
-  special_projects: Int!
-}
-
-type Project {
-  id: ID!
-  department_id: String!
-  church_department_id: String
-  title: String!
-  description: String!
-  budget: Decimal!
-  subsidized_budget: Decimal!
-  balance: Decimal!
-  owner_id: String!
-  language_preference: LanguagePreference!
-  type: ProjectType!
-  status: ProjectStatus!
-  is_private: Boolean!
-  required_volunteers: Boolean!
-  start_at: DateTime!
-  end_at: DateTime!
-  created_at: DateTime!
-  updated_at: DateTime!
-  deadline: DateTime
-  created_by: String!
-  updated_by: String!
-  is_deleted: Boolean!
-  deleted_at: DateTime
-  deleted_by: String
-  event_id: String
-  institution_id: String
-  church_id: String
-  department: Department!
-  church_department: Department
-  owner: User!
-  event: Event
-  Institution: Institution
-  church: Church
-  voluntary_users: [VoluntariesOnProjects!]
-  activities: [ProjectActivity!]
-  subsidies: [SubsidyRequest!]
-  special_projects: [SpecialProjects!]
-  _count: ProjectCount!
-  Church: Church
-  churchDepartment: Department
-  kpis: ProjectKPIsDto!
-}
-
-"""Idioma preferencial da instituição"""
-enum LanguagePreference {
-  en
-  nl
-}
-
-enum ProjectType {
-  Local
-  Global
-}
-
-enum ProjectStatus {
-  DRAFT
-  IN_PROGRESS
-  IN_REVIEW
-  ON_HOLD
-  EXPIRED
-  CONCLUDED
-}
-
-type EventCount {
-  event_recipients: Int!
-  event_registrations: Int!
-  projects: Int!
-}
-
-type Event {
-  id: ID!
-  target_type: EventTargetType!
-  target_id: String
-  title: String!
-  description: String!
-  contact_id: String!
-  type: EventType!
-  language_preference: LanguagePreference!
-  max_participants: Int!
-  ticket_amount: Decimal!
-  location: String
-  is_private: Boolean!
-  required_volunteers: Boolean!
-  start_at: DateTime
-  end_at: DateTime
-  subscription_expires_at: DateTime!
-  created_at: DateTime!
-  updated_at: DateTime!
-  created_by: String!
-  updated_by: String!
-  is_deleted: Boolean!
-  deleted_at: DateTime
-  deleted_by: String
-  contact: Contact!
-  event_recipients: [EventRecipient!]
-  event_registrations: [EventRegistration!]
-  projects: [Project!]
-  _count: EventCount!
-}
-
-enum EventType {
-  show
-  evangelism
-}
-
-type EventRegistration {
-  id: ID!
-  user_id: String!
-  event_id: String!
-  status: EventRegistrationStatus!
-  created_at: DateTime!
-  updated_at: DateTime!
-  created_by: String!
-  updated_by: String!
-  is_deleted: Boolean!
-  deleted_at: DateTime
-  deleted_by: String
-  user: User!
-  event: Event!
-}
-
-enum EventRegistrationStatus {
-  paid
-  pendent
-  reserved
-  approved
-  canceled
-}
-
 type CommunicationRecipient {
   id: ID!
   communication_id: String!
@@ -908,82 +1040,6 @@ type Communication {
   author: User!
   communication_recipients: [CommunicationRecipient!]
   _count: CommunicationCount!
-}
-
-type AnnualBudget {
-  id: ID!
-  year: Int!
-  planned_budget: Decimal!
-  total_expenses: Decimal!
-  balance: Decimal!
-  notes: String
-  description: String
-  justification: String
-  approved_by: String
-  created_at: DateTime!
-  updated_at: DateTime!
-  created_by: String!
-  updated_by: String!
-  is_deleted: Boolean!
-  deleted_at: DateTime
-  deleted_by: String
-  status: AnnualBudgetStatus!
-  institution_id: String
-  church_id: String
-  department_id: String
-  allocated_amount: Decimal!
-  approved_amount: Decimal
-  requested_by: String!
-  reviewed_by: String
-  submitted_date: DateTime!
-  review_date: DateTime
-  approval_date: DateTime
-  priority: AnnualBudgetPriority!
-  category: AnnualBudgetCategory!
-  documents: JSON
-  is_locked: Boolean!
-  has_budget_record: Boolean!
-  entity_type: AnnualBudgetEntityType!
-  approved_user: User
-  institution: Institution
-  church: Church
-  department: Department
-  approvedAmount: Float!
-  spentAmount: Float!
-  usagePercentage: Float!
-  remainingAmount: Float!
-}
-
-enum AnnualBudgetStatus {
-  DRAFT
-  SUBMITTED
-  APPROVED
-  REJECTED
-  REVISION_REQUESTED
-  IN_PROGRESS
-  CLOSED
-}
-
-enum AnnualBudgetPriority {
-  LOW
-  MEDIUM
-  HIGH
-  URGENT
-}
-
-enum AnnualBudgetCategory {
-  OPERATIONAL
-  PROJECT
-  MAINTENANCE
-  EMERGENCY
-  EXPANSION
-}
-
-enum AnnualBudgetEntityType {
-  INSTITUTION
-  CHURCH
-  INSTITUTION_DEPARTMENT
-  CHURCH_DEPARTMENT
 }
 
 type UserCount {
@@ -1043,67 +1099,13 @@ type User {
   activity_assignments: [ProjectActivityAssignee!]
   subsidy_status_history: [SubsidyStatusHistory!]
   led_departments: [Department!]
+  led_church: Church
   _count: UserCount!
 }
 
 enum GenderType {
   MALE
   FEMALE
-}
-
-type AnnualReport {
-  id: ID!
-  department_id: String!
-  text: String!
-  file_path: String!
-  submission_date: DateTime!
-  created_at: DateTime!
-  updated_at: DateTime!
-  created_by: String!
-  updated_by: String!
-  is_deleted: Boolean!
-  deleted_at: DateTime
-  deleted_by: String
-  department: Department!
-}
-
-type DepartmentCount {
-  subsidy_statuses: Int!
-  projects: Int!
-  church_projects: Int!
-  annual_reports: Int!
-  subsidy_requests: Int!
-  users: Int!
-  annual_budgets: Int!
-}
-
-type Department {
-  id: ID!
-  institution_id: String!
-  church_id: String
-  name: String!
-  description: String!
-  leader_id: String!
-  contact_id: String
-  created_at: DateTime!
-  updated_at: DateTime!
-  created_by: String!
-  updated_by: String!
-  is_deleted: Boolean!
-  deleted_at: DateTime
-  deleted_by: String
-  institution: Institution!
-  church: Church
-  leader: User!
-  contact: Contact
-  subsidy_statuses: [SubsidyStatus!]
-  projects: [Project!]
-  church_projects: [Project!]
-  annual_reports: [AnnualReport!]
-  subsidy_requests: [SubsidyRequest!]
-  users: [User!]
-  annual_budgets: [AnnualBudget!]!
-  _count: DepartmentCount!
 }
 
 type ChurchCount {
@@ -1121,6 +1123,7 @@ type Church {
   name: String!
   region_id: String
   contact_id: String
+  leader_id: String!
   created_at: DateTime!
   updated_at: DateTime!
   created_by: String!
@@ -1131,6 +1134,7 @@ type Church {
   institution: Institution!
   region: Region
   contact: Contact
+  leader: User!
   departments: [Department!]
   users: [User!]
   subsidy_requests: [SubsidyRequest!]
@@ -1351,6 +1355,7 @@ type ChurchModel {
   is_deleted: Boolean!
   deleted_at: DateTime
   deleted_by: String
+  leader: UserModel
 }
 
 type UsersByRoleData {
@@ -2060,6 +2065,7 @@ input UserWhereInput {
   activity_assignments: ProjectActivityAssigneeListRelationFilter
   subsidy_status_history: SubsidyStatusHistoryListRelationFilter
   led_departments: DepartmentListRelationFilter
+  led_church: ChurchNullableScalarRelationFilter
 }
 
 input EnumGenderTypeNullableFilter {
@@ -2178,6 +2184,7 @@ input ChurchWhereInput {
   name: StringFilter
   region_id: StringNullableFilter
   contact_id: StringNullableFilter
+  leader_id: StringFilter
   created_at: DateTimeFilter
   updated_at: DateTimeFilter
   created_by: StringFilter
@@ -2188,6 +2195,7 @@ input ChurchWhereInput {
   institution: InstitutionScalarRelationFilter
   region: RegionNullableScalarRelationFilter
   contact: ContactNullableScalarRelationFilter
+  leader: UserScalarRelationFilter
   departments: DepartmentListRelationFilter
   users: UserListRelationFilter
   subsidy_requests: SubsidyRequestListRelationFilter
@@ -2238,6 +2246,11 @@ input RegionWhereInput {
   churches: ChurchListRelationFilter
 }
 
+input UserScalarRelationFilter {
+  is: UserWhereInput
+  isNot: UserWhereInput
+}
+
 input DepartmentListRelationFilter {
   every: DepartmentWhereInput
   some: DepartmentWhereInput
@@ -2278,11 +2291,6 @@ input DepartmentWhereInput {
 input ChurchNullableScalarRelationFilter {
   is: ChurchWhereInput
   isNot: ChurchWhereInput
-}
-
-input UserScalarRelationFilter {
-  is: UserWhereInput
-  isNot: UserWhereInput
 }
 
 input SubsidyStatusListRelationFilter {
@@ -3473,6 +3481,7 @@ input UserOrderByWithRelationInput {
   activity_assignments: ProjectActivityAssigneeOrderByRelationAggregateInput
   subsidy_status_history: SubsidyStatusHistoryOrderByRelationAggregateInput
   led_departments: DepartmentOrderByRelationAggregateInput
+  led_church: ChurchOrderByWithRelationInput
 }
 
 input ContactOrderByWithRelationInput {
@@ -3582,6 +3591,7 @@ input ChurchOrderByWithRelationInput {
   name: SortOrder
   region_id: SortOrderInput
   contact_id: SortOrderInput
+  leader_id: SortOrder
   created_at: SortOrder
   updated_at: SortOrder
   created_by: SortOrder
@@ -3592,6 +3602,7 @@ input ChurchOrderByWithRelationInput {
   institution: InstitutionOrderByWithRelationInput
   region: RegionOrderByWithRelationInput
   contact: ContactOrderByWithRelationInput
+  leader: UserOrderByWithRelationInput
   departments: DepartmentOrderByRelationAggregateInput
   users: UserOrderByRelationAggregateInput
   subsidy_requests: SubsidyRequestOrderByRelationAggregateInput
@@ -3856,6 +3867,7 @@ input LoginInput {
 input ChurchCreateDto {
   institution_id: String!
   name: String!
+  leader_id: String!
   contact: ContactCreateDto
   type: ChurchType
 }
@@ -3878,6 +3890,7 @@ input ContactCreateDto {
 input ChurchUpdateDto {
   institution_id: String
   name: String
+  leader_id: String
   contact: ContactCreateDto
   users: [String!]
   departmens: [String!]

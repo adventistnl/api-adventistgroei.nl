@@ -28,6 +28,7 @@ import { ProjectActivityLogUpdateManyWithoutUserNestedInput } from '../project-a
 import { ProjectActivityAssigneeUpdateManyWithoutUserNestedInput } from '../project-activity-assignee/project-activity-assignee-update-many-without-user-nested.input';
 import { SubsidyStatusHistoryUpdateManyWithoutUserNestedInput } from '../subsidy-status-history/subsidy-status-history-update-many-without-user-nested.input';
 import { DepartmentUpdateManyWithoutLeaderNestedInput } from '../department/department-update-many-without-leader-nested.input';
+import { ChurchUpdateOneWithoutLeaderNestedInput } from '../church/church-update-one-without-leader-nested.input';
 
 @InputType()
 export class UserUpdateInput {
@@ -145,4 +146,8 @@ export class UserUpdateInput {
     @Field(() => DepartmentUpdateManyWithoutLeaderNestedInput, {nullable:true})
     @Type(() => DepartmentUpdateManyWithoutLeaderNestedInput)
     led_departments?: DepartmentUpdateManyWithoutLeaderNestedInput;
+
+    @Field(() => ChurchUpdateOneWithoutLeaderNestedInput, {nullable:true})
+    @Type(() => ChurchUpdateOneWithoutLeaderNestedInput)
+    led_church?: ChurchUpdateOneWithoutLeaderNestedInput;
 }

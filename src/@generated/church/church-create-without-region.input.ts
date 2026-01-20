@@ -4,6 +4,7 @@ import { ChurchType } from '../prisma/church-type.enum';
 import { InstitutionCreateNestedOneWithoutChurchesInput } from '../institution/institution-create-nested-one-without-churches.input';
 import { Type } from 'class-transformer';
 import { ContactCreateNestedOneWithoutChurchInput } from '../contact/contact-create-nested-one-without-church.input';
+import { UserCreateNestedOneWithoutLed_churchInput } from '../user/user-create-nested-one-without-led-church.input';
 import { DepartmentCreateNestedManyWithoutChurchInput } from '../department/department-create-nested-many-without-church.input';
 import { UserCreateNestedManyWithoutChurchInput } from '../user/user-create-nested-many-without-church.input';
 import { SubsidyRequestCreateNestedManyWithoutChurchInput } from '../subsidy-request/subsidy-request-create-nested-many-without-church.input';
@@ -50,6 +51,10 @@ export class ChurchCreateWithoutRegionInput {
     @Field(() => ContactCreateNestedOneWithoutChurchInput, {nullable:true})
     @Type(() => ContactCreateNestedOneWithoutChurchInput)
     contact?: ContactCreateNestedOneWithoutChurchInput;
+
+    @Field(() => UserCreateNestedOneWithoutLed_churchInput, {nullable:false})
+    @Type(() => UserCreateNestedOneWithoutLed_churchInput)
+    leader!: UserCreateNestedOneWithoutLed_churchInput;
 
     @Field(() => DepartmentCreateNestedManyWithoutChurchInput, {nullable:true})
     @Type(() => DepartmentCreateNestedManyWithoutChurchInput)

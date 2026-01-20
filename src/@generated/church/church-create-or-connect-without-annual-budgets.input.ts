@@ -10,7 +10,7 @@ export class ChurchCreateOrConnectWithoutAnnual_budgetsInput {
 
     @Field(() => ChurchWhereUniqueInput, {nullable:false})
     @Type(() => ChurchWhereUniqueInput)
-    where!: Prisma.AtLeast<ChurchWhereUniqueInput, 'id'>;
+    where!: Prisma.AtLeast<ChurchWhereUniqueInput, 'id' | 'leader_id'>;
 
     @Field(() => ChurchCreateWithoutAnnual_budgetsInput, {nullable:false})
     @Type(() => ChurchCreateWithoutAnnual_budgetsInput)

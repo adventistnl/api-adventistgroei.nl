@@ -7,12 +7,17 @@ import { Permission } from '../middlewares/permissions.decorator';
 import { UseGuards } from '@nestjs/common';
 import { PermissionsGuard } from '../middlewares/permissions.guard';
 import { User } from 'src/@generated/user/user.model';
+import { UserModel } from '../models/user.model';
+import { UserService } from '../services/user.service';
 import GraphQLJSON from 'graphql-type-json';
 
 @Resolver(() => ChurchModel)
 @UseGuards(PermissionsGuard)
 export class ChurchResolver {
-  constructor(private readonly churchService: ChurchService) {}
+  constructor(
+    private readonly churchService: ChurchService,
+    private readonly userService: UserService,
+  ) {}
 
   @Permission()
   @Mutation(() => ChurchModel)
@@ -65,6 +70,11 @@ export class ChurchResolver {
     @Args('selectedYear', { nullable: true }) selectedYear?: number
   ): Promise<any[]> {
     return this.churchService.getChurchActivityTimeline(institution_id, selectedYear);
+  }
+
+  @ResolveField(() => UserModel, { nullable: true })
+  async leader(@Parent() church: Church): Promise<Omit<User, 'password'> | null> {
+    return this.userService.getUserById(church.leader_id);
   }
 
 }

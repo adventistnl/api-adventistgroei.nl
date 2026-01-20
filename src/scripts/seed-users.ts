@@ -66,19 +66,7 @@ async function main() {
     });
   }
 
-  // Criar ou encontrar igreja
-  let church = await prisma.church.findFirst({ where: { name: churches.dev.name } });
-  if (!church) {
-    church = await prisma.church.create({
-      data: {
-        ...churches.dev,
-        institution_id: institution.id,
-        ...createAndUpdateUser,
-      },
-    });
-  }
-
-  // Criar usuário system temporário para ser o líder inicial dos departamentos
+  // Criar usuário system temporário para ser o líder inicial dos departamentos e churches
   let systemUser = await prisma.user.findFirst({ where: { email: 'system@adventistgroei.nl' } });
   if (!systemUser) {
     systemUser = await prisma.user.create({
@@ -89,6 +77,19 @@ async function main() {
         language_preference: LanguagePreference.en,
         institution_id: institution.id,
         is_deleted: false,
+        ...createAndUpdateUser,
+      },
+    });
+  }
+
+  // Criar ou encontrar igreja
+  let church = await prisma.church.findFirst({ where: { name: churches.dev.name } });
+  if (!church) {
+    church = await prisma.church.create({
+      data: {
+        ...churches.dev,
+        institution_id: institution.id,
+        leader_id: systemUser.id,
         ...createAndUpdateUser,
       },
     });

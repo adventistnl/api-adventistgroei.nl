@@ -52,6 +52,7 @@ enum PermissionResolverName {
   updateUser
   updateOwnUser
   updateUserDepartment
+  updateChurchLeader
   deleteUser
   addRoleToUser
   removeRoleFromUser
@@ -369,6 +370,8 @@ model Church {
   region           Region?                @relation(fields: [region_id], references: [id])
   contact_id       String?
   contact          Contact?               @relation(fields: [contact_id], references: [id])
+  leader_id        String                 @unique
+  leader           User                   @relation("ChurchLeader", fields: [leader_id], references: [id])
   created_at       DateTime               @default(now())
   updated_at       DateTime               @updatedAt
   created_by       String
@@ -519,6 +522,7 @@ model User {
   activity_assignments      ProjectActivityAssignee[] @relation("ActivityAssignees")
   subsidy_status_history    SubsidyStatusHistory[]
   led_departments           Department[]             @relation("DepartmentLeader")
+  led_church                Church?                  @relation("ChurchLeader")
 }
 
 model Project {

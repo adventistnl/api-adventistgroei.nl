@@ -152,4 +152,8 @@ export class UserOrderByWithRelationInput {
     @Field(() => DepartmentOrderByRelationAggregateInput, {nullable:true})
     @Type(() => DepartmentOrderByRelationAggregateInput)
     led_departments?: DepartmentOrderByRelationAggregateInput;
+
+    @Field(() => ChurchOrderByWithRelationInput, {nullable:true})
+    @Type(() => ChurchOrderByWithRelationInput)
+    led_church?: ChurchOrderByWithRelationInput;
 }

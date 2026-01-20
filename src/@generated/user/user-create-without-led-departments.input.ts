@@ -22,6 +22,7 @@ import { AnnualBudgetCreateNestedManyWithoutApproved_userInput } from '../annual
 import { ProjectActivityLogCreateNestedManyWithoutUserInput } from '../project-activity-log/project-activity-log-create-nested-many-without-user.input';
 import { ProjectActivityAssigneeCreateNestedManyWithoutUserInput } from '../project-activity-assignee/project-activity-assignee-create-nested-many-without-user.input';
 import { SubsidyStatusHistoryCreateNestedManyWithoutUserInput } from '../subsidy-status-history/subsidy-status-history-create-nested-many-without-user.input';
+import { ChurchCreateNestedOneWithoutLeaderInput } from '../church/church-create-nested-one-without-leader.input';
 
 @InputType()
 export class UserCreateWithoutLed_departmentsInput {
@@ -135,4 +136,8 @@ export class UserCreateWithoutLed_departmentsInput {
     @Field(() => SubsidyStatusHistoryCreateNestedManyWithoutUserInput, {nullable:true})
     @Type(() => SubsidyStatusHistoryCreateNestedManyWithoutUserInput)
     subsidy_status_history?: SubsidyStatusHistoryCreateNestedManyWithoutUserInput;
+
+    @Field(() => ChurchCreateNestedOneWithoutLeaderInput, {nullable:true})
+    @Type(() => ChurchCreateNestedOneWithoutLeaderInput)
+    led_church?: ChurchCreateNestedOneWithoutLeaderInput;
 }

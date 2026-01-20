@@ -5,8 +5,8 @@ import { ChurchType } from '../prisma/church-type.enum';
 import { Institution } from '../institution/institution.model';
 import { Region } from '../region/region.model';
 import { Contact } from '../contact/contact.model';
-import { Department } from '../department/department.model';
 import { User } from '../user/user.model';
+import { Department } from '../department/department.model';
 import { SubsidyRequest } from '../subsidy-request/subsidy-request.model';
 import { AnnualBudget } from '../annual-budget/annual-budget.model';
 import { Project } from '../project/project.model';
@@ -32,6 +32,9 @@ export class Church {
 
     @Field(() => String, {nullable:true})
     contact_id!: string | null;
+
+    @Field(() => String, {nullable:false})
+    leader_id!: string;
 
     @Field(() => Date, {nullable:false})
     created_at!: Date;
@@ -62,6 +65,9 @@ export class Church {
 
     @Field(() => Contact, {nullable:true})
     contact?: Contact | null;
+
+    @Field(() => User, {nullable:false})
+    leader?: User;
 
     @Field(() => [Department], {nullable:true})
     departments?: Array<Department>;

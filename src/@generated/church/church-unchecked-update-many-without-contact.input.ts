@@ -25,6 +25,9 @@ export class ChurchUncheckedUpdateManyWithoutContactInput {
     @Field(() => NullableStringFieldUpdateOperationsInput, {nullable:true})
     region_id?: NullableStringFieldUpdateOperationsInput;
 
+    @Field(() => StringFieldUpdateOperationsInput, {nullable:true})
+    leader_id?: StringFieldUpdateOperationsInput;
+
     @Field(() => DateTimeFieldUpdateOperationsInput, {nullable:true})
     created_at?: DateTimeFieldUpdateOperationsInput;
 

@@ -10,7 +10,7 @@ export class ChurchCreateOrConnectWithoutContactInput {
 
     @Field(() => ChurchWhereUniqueInput, {nullable:false})
     @Type(() => ChurchWhereUniqueInput)
-    where!: Prisma.AtLeast<ChurchWhereUniqueInput, 'id'>;
+    where!: Prisma.AtLeast<ChurchWhereUniqueInput, 'id' | 'leader_id'>;
 
     @Field(() => ChurchCreateWithoutContactInput, {nullable:false})
     @Type(() => ChurchCreateWithoutContactInput)

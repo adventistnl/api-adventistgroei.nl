@@ -40,6 +40,7 @@ const permissionsDisabledToClient = [
   { name: 'remove project voluntary', description: 'Remover voluntário do projeto', resolver_name: 'removeProjectVoluntary' as PermissionResolverName, group: 'PROJECT' as PermissionGroup, key_code: 'PROJECT_VOLUNTARY_REMOVE', disabled_to_client: true },
   { name: 'update own user', description: 'Update own user profile', resolver_name: 'updateOwnUser' as PermissionResolverName, group: 'USER' as PermissionGroup, key_code: 'USER_OWN_UPDATE', disabled_to_client: true },
   { name: 'update user department', description: 'Update or remove user department assignment (admin/developer only)', resolver_name: 'updateUserDepartment' as PermissionResolverName, group: 'USER' as PermissionGroup, key_code: 'USER_DEPARTMENT_UPDATE', disabled_to_client: true },
+  { name: 'update church leader', description: 'Update church leader assignment (admin/developer only)', resolver_name: 'updateChurchLeader' as PermissionResolverName, group: 'CHURCH' as PermissionGroup, key_code: 'CHURCH_LEADER_UPDATE', disabled_to_client: true },
 ];
 
 const permissionsEnabledToClient = [

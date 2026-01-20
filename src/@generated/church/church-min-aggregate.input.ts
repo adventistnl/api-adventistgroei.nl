@@ -23,6 +23,9 @@ export class ChurchMinAggregateInput {
     contact_id?: true;
 
     @Field(() => Boolean, {nullable:true})
+    leader_id?: true;
+
+    @Field(() => Boolean, {nullable:true})
     created_at?: true;
 
     @Field(() => Boolean, {nullable:true})
