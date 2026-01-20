@@ -3,6 +3,7 @@ import { registerEnumType } from '@nestjs/graphql';
 export enum ProjectScalarFieldEnum {
     id = "id",
     department_id = "department_id",
+    church_department_id = "church_department_id",
     title = "title",
     description = "description",
     budget = "budget",

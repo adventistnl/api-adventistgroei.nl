@@ -15,6 +15,9 @@ export class ProjectCreateManyDepartmentInput {
     @Field(() => String, {nullable:true})
     id?: string;
 
+    @Field(() => String, {nullable:true})
+    church_department_id?: string;
+
     @Field(() => String, {nullable:false})
     title!: string;
 

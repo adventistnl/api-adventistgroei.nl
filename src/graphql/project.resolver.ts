@@ -10,8 +10,10 @@ import { ProjectKPIService } from '../services/project-kpi.service';
 import { ProjectKPIsDto } from '../dto/project-kpi.dto';
 import { Permission } from '../middlewares';
 import { PermissionsGuard } from '../middlewares/permissions.guard';
+import { DepartmentService } from '../services/department.service';
 
 import { Church } from '../@generated/church/church.model';
+import { Department } from '../@generated/department/department.model';
 
 @Resolver(() => Project)
 export class ProjectResolver {
@@ -19,6 +21,7 @@ export class ProjectResolver {
     private readonly projectService: ProjectService,
     private readonly subsidyRequestRepository: SubsidyRequestRepository,
     private readonly projectKPIService: ProjectKPIService,
+    private readonly departmentService: DepartmentService,
   ) {}
 
   @ResolveField(() => Church, { nullable: true, name: 'Church' })
@@ -37,6 +40,14 @@ export class ProjectResolver {
     }
 
     return null;
+  }
+
+  @ResolveField(() => Department, { nullable: true, name: 'churchDepartment' })
+  async getChurchDepartment(@Parent() project: Project): Promise<Department | null> {
+    if (!project.church_department_id) {
+      return null;
+    }
+    return this.departmentService.getDepartmentById(project.church_department_id as string);
   }
 
   @Query(() => [Project])

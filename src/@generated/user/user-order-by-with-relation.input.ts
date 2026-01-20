@@ -22,6 +22,7 @@ import { AnnualBudgetOrderByRelationAggregateInput } from '../annual-budget/annu
 import { ProjectActivityLogOrderByRelationAggregateInput } from '../project-activity-log/project-activity-log-order-by-relation-aggregate.input';
 import { ProjectActivityAssigneeOrderByRelationAggregateInput } from '../project-activity-assignee/project-activity-assignee-order-by-relation-aggregate.input';
 import { SubsidyStatusHistoryOrderByRelationAggregateInput } from '../subsidy-status-history/subsidy-status-history-order-by-relation-aggregate.input';
+import { DepartmentOrderByRelationAggregateInput } from '../department/department-order-by-relation-aggregate.input';
 
 @InputType()
 export class UserOrderByWithRelationInput {
@@ -147,4 +148,8 @@ export class UserOrderByWithRelationInput {
     @Field(() => SubsidyStatusHistoryOrderByRelationAggregateInput, {nullable:true})
     @Type(() => SubsidyStatusHistoryOrderByRelationAggregateInput)
     subsidy_status_history?: SubsidyStatusHistoryOrderByRelationAggregateInput;
+
+    @Field(() => DepartmentOrderByRelationAggregateInput, {nullable:true})
+    @Type(() => DepartmentOrderByRelationAggregateInput)
+    led_departments?: DepartmentOrderByRelationAggregateInput;
 }

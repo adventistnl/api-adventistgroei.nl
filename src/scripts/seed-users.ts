@@ -78,13 +78,33 @@ async function main() {
     });
   }
 
+  // Criar usuário system temporário para ser o líder inicial dos departamentos
+  let systemUser = await prisma.user.findFirst({ where: { email: 'system@adventistgroei.nl' } });
+  if (!systemUser) {
+    systemUser = await prisma.user.create({
+      data: {
+        email: 'system@adventistgroei.nl',
+        password: hash,
+        name: 'System User',
+        language_preference: LanguagePreference.en,
+        institution_id: institution.id,
+        is_deleted: false,
+        ...createAndUpdateUser,
+      },
+    });
+  }
+
   // Criar ou encontrar departamento institucional
   let institutionDepartment = await prisma.department.findFirst({ where: { name: institutionDepartments.dev.name } });
   if (!institutionDepartment) {
     institutionDepartment = await prisma.department.create({
       data: {
-        ...institutionDepartments.dev,
+        name: institutionDepartments.dev.name,
+        description: institutionDepartments.dev.description,
         institution_id: institution.id,
+        leader_id: systemUser.id,
+        contact_id: institutionDepartments.dev.contact_id,
+        is_deleted: institutionDepartments.dev.is_deleted,
         ...createAndUpdateUser,
       },
     });
@@ -95,9 +115,13 @@ async function main() {
   if (!churchDepartment) {
     churchDepartment = await prisma.department.create({
       data: {
-        ...churchDepartments.dev,
+        name: churchDepartments.dev.name,
+        description: churchDepartments.dev.description,
         institution_id: institution.id,
         church_id: church.id,
+        leader_id: systemUser.id,
+        contact_id: null,
+        is_deleted: churchDepartments.dev.is_deleted,
         ...createAndUpdateUser,
       },
     });
@@ -222,6 +246,23 @@ async function main() {
         role_id: role.id,
         ...createAndUpdateUser,
       },
+    });
+  }
+
+  // Atualizar líderes dos departamentos com usuários apropriados
+  const instDeptLeader = await prisma.user.findFirst({ where: { email: 'instdeptleader@mail.com' } });
+  if (instDeptLeader && institutionDepartment) {
+    await prisma.department.update({
+      where: { id: institutionDepartment.id },
+      data: { leader_id: instDeptLeader.id },
+    });
+  }
+
+  const churchDeptLeader = await prisma.user.findFirst({ where: { email: 'deptchurchleader@mail.com' } });
+  if (churchDeptLeader && churchDepartment) {
+    await prisma.department.update({
+      where: { id: churchDepartment.id },
+      data: { leader_id: churchDeptLeader.id },
     });
   }
 

@@ -135,6 +135,9 @@ export class User {
     @Field(() => [SubsidyStatusHistory], {nullable:true})
     subsidy_status_history?: Array<SubsidyStatusHistory>;
 
+    @Field(() => [Department], {nullable:true})
+    led_departments?: Array<Department>;
+
     @Field(() => UserCount, {nullable:false})
     _count?: UserCount;
 }

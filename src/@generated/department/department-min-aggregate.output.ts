@@ -20,6 +20,9 @@ export class DepartmentMinAggregate {
     description?: string;
 
     @Field(() => String, {nullable:true})
+    leader_id?: string;
+
+    @Field(() => String, {nullable:true})
     contact_id?: string;
 
     @Field(() => Date, {nullable:true})

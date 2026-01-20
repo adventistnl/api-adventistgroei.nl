@@ -21,6 +21,9 @@ export class DepartmentCountAggregate {
     description!: number;
 
     @Field(() => Int, {nullable:false})
+    leader_id!: number;
+
+    @Field(() => Int, {nullable:false})
     contact_id!: number;
 
     @Field(() => Int, {nullable:false})

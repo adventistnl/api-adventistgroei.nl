@@ -22,6 +22,9 @@ export class ProjectOrderByWithRelationInput {
     @Field(() => SortOrder, {nullable:true})
     department_id?: `${SortOrder}`;
 
+    @Field(() => SortOrderInput, {nullable:true})
+    church_department_id?: SortOrderInput;
+
     @Field(() => SortOrder, {nullable:true})
     title?: `${SortOrder}`;
 
@@ -97,6 +100,10 @@ export class ProjectOrderByWithRelationInput {
     @Field(() => DepartmentOrderByWithRelationInput, {nullable:true})
     @Type(() => DepartmentOrderByWithRelationInput)
     department?: DepartmentOrderByWithRelationInput;
+
+    @Field(() => DepartmentOrderByWithRelationInput, {nullable:true})
+    @Type(() => DepartmentOrderByWithRelationInput)
+    church_department?: DepartmentOrderByWithRelationInput;
 
     @Field(() => UserOrderByWithRelationInput, {nullable:true})
     @Type(() => UserOrderByWithRelationInput)

@@ -16,6 +16,9 @@ export class ProjectMaxAggregate {
     department_id?: string;
 
     @Field(() => String, {nullable:true})
+    church_department_id?: string;
+
+    @Field(() => String, {nullable:true})
     title?: string;
 
     @Field(() => String, {nullable:true})

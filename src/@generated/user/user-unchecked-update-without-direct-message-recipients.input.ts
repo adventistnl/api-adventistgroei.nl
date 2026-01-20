@@ -22,6 +22,7 @@ import { AnnualBudgetUncheckedUpdateManyWithoutApproved_userNestedInput } from '
 import { ProjectActivityLogUncheckedUpdateManyWithoutUserNestedInput } from '../project-activity-log/project-activity-log-unchecked-update-many-without-user-nested.input';
 import { ProjectActivityAssigneeUncheckedUpdateManyWithoutUserNestedInput } from '../project-activity-assignee/project-activity-assignee-unchecked-update-many-without-user-nested.input';
 import { SubsidyStatusHistoryUncheckedUpdateManyWithoutUserNestedInput } from '../subsidy-status-history/subsidy-status-history-unchecked-update-many-without-user-nested.input';
+import { DepartmentUncheckedUpdateManyWithoutLeaderNestedInput } from '../department/department-unchecked-update-many-without-leader-nested.input';
 
 @InputType()
 export class UserUncheckedUpdateWithoutDirect_message_recipientsInput {
@@ -128,4 +129,8 @@ export class UserUncheckedUpdateWithoutDirect_message_recipientsInput {
     @Field(() => SubsidyStatusHistoryUncheckedUpdateManyWithoutUserNestedInput, {nullable:true})
     @Type(() => SubsidyStatusHistoryUncheckedUpdateManyWithoutUserNestedInput)
     subsidy_status_history?: SubsidyStatusHistoryUncheckedUpdateManyWithoutUserNestedInput;
+
+    @Field(() => DepartmentUncheckedUpdateManyWithoutLeaderNestedInput, {nullable:true})
+    @Type(() => DepartmentUncheckedUpdateManyWithoutLeaderNestedInput)
+    led_departments?: DepartmentUncheckedUpdateManyWithoutLeaderNestedInput;
 }

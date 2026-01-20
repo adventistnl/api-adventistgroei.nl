@@ -5,6 +5,8 @@ export enum PermissionResolverName {
     user = "user",
     createUser = "createUser",
     updateUser = "updateUser",
+    updateOwnUser = "updateOwnUser",
+    updateUserDepartment = "updateUserDepartment",
     deleteUser = "deleteUser",
     addRoleToUser = "addRoleToUser",
     removeRoleFromUser = "removeRoleFromUser",

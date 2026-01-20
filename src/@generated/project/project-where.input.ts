@@ -2,6 +2,7 @@ import { Field } from '@nestjs/graphql';
 import { InputType } from '@nestjs/graphql';
 import { Type } from 'class-transformer';
 import { StringFilter } from '../prisma/string-filter.input';
+import { StringNullableFilter } from '../prisma/string-nullable-filter.input';
 import { DecimalFilter } from '../prisma/decimal-filter.input';
 import { EnumLanguagePreferenceFilter } from '../prisma/enum-language-preference-filter.input';
 import { EnumProjectTypeFilter } from '../prisma/enum-project-type-filter.input';
@@ -9,8 +10,8 @@ import { EnumProjectStatusFilter } from '../prisma/enum-project-status-filter.in
 import { BoolFilter } from '../prisma/bool-filter.input';
 import { DateTimeFilter } from '../prisma/date-time-filter.input';
 import { DateTimeNullableFilter } from '../prisma/date-time-nullable-filter.input';
-import { StringNullableFilter } from '../prisma/string-nullable-filter.input';
 import { DepartmentScalarRelationFilter } from '../department/department-scalar-relation-filter.input';
+import { DepartmentNullableScalarRelationFilter } from '../department/department-nullable-scalar-relation-filter.input';
 import { UserScalarRelationFilter } from '../user/user-scalar-relation-filter.input';
 import { EventNullableScalarRelationFilter } from '../event/event-nullable-scalar-relation-filter.input';
 import { InstitutionNullableScalarRelationFilter } from '../institution/institution-nullable-scalar-relation-filter.input';
@@ -40,6 +41,9 @@ export class ProjectWhereInput {
 
     @Field(() => StringFilter, {nullable:true})
     department_id?: StringFilter;
+
+    @Field(() => StringNullableFilter, {nullable:true})
+    church_department_id?: StringNullableFilter;
 
     @Field(() => StringFilter, {nullable:true})
     title?: StringFilter;
@@ -119,6 +123,10 @@ export class ProjectWhereInput {
     @Field(() => DepartmentScalarRelationFilter, {nullable:true})
     @Type(() => DepartmentScalarRelationFilter)
     department?: DepartmentScalarRelationFilter;
+
+    @Field(() => DepartmentNullableScalarRelationFilter, {nullable:true})
+    @Type(() => DepartmentNullableScalarRelationFilter)
+    church_department?: DepartmentNullableScalarRelationFilter;
 
     @Field(() => UserScalarRelationFilter, {nullable:true})
     @Type(() => UserScalarRelationFilter)

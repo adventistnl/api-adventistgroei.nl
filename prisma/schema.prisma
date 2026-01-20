@@ -50,6 +50,8 @@ enum PermissionResolverName {
   user
   createUser
   updateUser
+  updateOwnUser
+  updateUserDepartment
   deleteUser
   addRoleToUser
   removeRoleFromUser
@@ -382,28 +384,31 @@ model Church {
 }
 
 model Department {
-  id               String           @id @default(uuid())
-  institution_id   String
-  institution      Institution      @relation(fields: [institution_id], references: [id])
-  church_id        String?
-  church           Church?           @relation(fields: [church_id], references: [id])
-  name             String
-  description      String
-  contact_id       String?
-  contact          Contact?         @relation(fields: [contact_id], references: [id])
-  created_at       DateTime         @default(now())
-  updated_at       DateTime         @updatedAt
-  created_by       String
-  updated_by       String
-  is_deleted       Boolean          @default(false)
-  deleted_at       DateTime?
-  deleted_by       String?
-  subsidy_statuses SubsidyStatus[]
-  projects         Project[]
-  annual_reports   AnnualReport[]
-  subsidy_requests SubsidyRequest[]
-  users            User[]
-  annual_budgets   AnnualBudget[]  
+  id                         String           @id @default(uuid())
+  institution_id             String
+  institution                Institution      @relation(fields: [institution_id], references: [id])
+  church_id                  String?
+  church                     Church?           @relation(fields: [church_id], references: [id])
+  name                       String
+  description                String
+  leader_id                  String
+  leader                     User             @relation("DepartmentLeader", fields: [leader_id], references: [id])
+  contact_id                 String?
+  contact                    Contact?         @relation(fields: [contact_id], references: [id])
+  created_at                 DateTime         @default(now())
+  updated_at                 DateTime         @updatedAt
+  created_by                 String
+  updated_by                 String
+  is_deleted                 Boolean          @default(false)
+  deleted_at                 DateTime?
+  deleted_by                 String?
+  subsidy_statuses           SubsidyStatus[]
+  projects                   Project[]        @relation("ProjectDepartment")
+  church_projects            Project[]        @relation("ProjectChurchDepartment")
+  annual_reports             AnnualReport[]
+  subsidy_requests           SubsidyRequest[]
+  users                      User[]
+  annual_budgets             AnnualBudget[]  
 }
 
 // Modelo AnnualBudget
@@ -513,44 +518,47 @@ model User {
   project_activity_logs     ProjectActivityLog[]
   activity_assignments      ProjectActivityAssignee[] @relation("ActivityAssignees")
   subsidy_status_history    SubsidyStatusHistory[]
+  led_departments           Department[]             @relation("DepartmentLeader")
 }
 
 model Project {
-  id                  String                  @id @default(uuid())
-  department_id       String
-  department          Department              @relation(fields: [department_id], references: [id])
-  title               String
-  description         String
-  budget              Decimal
-  subsidized_budget   Decimal             @default(0)
-  balance             Decimal             @default(0)
-  owner_id            String
-  owner               User                    @relation(fields: [owner_id], references: [id])
-  language_preference LanguagePreference
-  type                ProjectType
-  status              ProjectStatus           @default(DRAFT)
-  is_private          Boolean                 @default(false)
-  required_volunteers Boolean                 @default(false)
-  start_at            DateTime
-  end_at              DateTime
-  created_at          DateTime                @default(now())
-  updated_at          DateTime                @updatedAt
-  deadline            DateTime?
-  created_by          String
-  updated_by          String
-  is_deleted          Boolean                 @default(false)
-  deleted_at          DateTime?
-  deleted_by          String?
-  event_id            String?
-  event               Event?                  @relation(fields: [event_id], references: [id])
-  Institution         Institution?            @relation(fields: [institution_id], references: [id])
-  institution_id      String?
-  church_id           String?
-  church              Church?                 @relation(fields: [church_id], references: [id])
-  voluntary_users     VoluntariesOnProjects[]
-  activities          ProjectActivity[]
-  subsidies           SubsidyRequest[]
-  special_projects    SpecialProjects[]
+  id                    String                  @id @default(uuid())
+  department_id         String
+  department            Department              @relation("ProjectDepartment", fields: [department_id], references: [id])
+  church_department_id  String?
+  church_department     Department?             @relation("ProjectChurchDepartment", fields: [church_department_id], references: [id])
+  title                 String
+  description           String
+  budget                Decimal
+  subsidized_budget     Decimal             @default(0)
+  balance               Decimal             @default(0)
+  owner_id              String
+  owner                 User                    @relation(fields: [owner_id], references: [id])
+  language_preference   LanguagePreference
+  type                  ProjectType
+  status                ProjectStatus           @default(DRAFT)
+  is_private            Boolean                 @default(false)
+  required_volunteers   Boolean                 @default(false)
+  start_at              DateTime
+  end_at                DateTime
+  created_at            DateTime                @default(now())
+  updated_at            DateTime                @updatedAt
+  deadline              DateTime?
+  created_by            String
+  updated_by            String
+  is_deleted            Boolean                 @default(false)
+  deleted_at            DateTime?
+  deleted_by            String?
+  event_id              String?
+  event                 Event?                  @relation(fields: [event_id], references: [id])
+  Institution           Institution?            @relation(fields: [institution_id], references: [id])
+  institution_id        String?
+  church_id             String?
+  church                Church?                 @relation(fields: [church_id], references: [id])
+  voluntary_users       VoluntariesOnProjects[]
+  activities            ProjectActivity[]
+  subsidies             SubsidyRequest[]
+  special_projects      SpecialProjects[]
 }
 
 model VoluntariesOnProjects {

@@ -2,6 +2,7 @@ import { Field } from '@nestjs/graphql';
 import { InputType } from '@nestjs/graphql';
 import { Type } from 'class-transformer';
 import { StringFilter } from '../prisma/string-filter.input';
+import { StringNullableFilter } from '../prisma/string-nullable-filter.input';
 import { DecimalFilter } from '../prisma/decimal-filter.input';
 import { EnumLanguagePreferenceFilter } from '../prisma/enum-language-preference-filter.input';
 import { EnumProjectTypeFilter } from '../prisma/enum-project-type-filter.input';
@@ -9,7 +10,6 @@ import { EnumProjectStatusFilter } from '../prisma/enum-project-status-filter.in
 import { BoolFilter } from '../prisma/bool-filter.input';
 import { DateTimeFilter } from '../prisma/date-time-filter.input';
 import { DateTimeNullableFilter } from '../prisma/date-time-nullable-filter.input';
-import { StringNullableFilter } from '../prisma/string-nullable-filter.input';
 
 @InputType()
 export class ProjectScalarWhereInput {
@@ -31,6 +31,9 @@ export class ProjectScalarWhereInput {
 
     @Field(() => StringFilter, {nullable:true})
     department_id?: StringFilter;
+
+    @Field(() => StringNullableFilter, {nullable:true})
+    church_department_id?: StringNullableFilter;
 
     @Field(() => StringFilter, {nullable:true})
     title?: StringFilter;

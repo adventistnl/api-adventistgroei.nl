@@ -1,4 +1,4 @@
-import { LanguagePreference, PrismaClient } from '@prisma/client';
+import { LanguagePreference, PrismaClient, Prisma } from '@prisma/client';
 import * as dotenv from 'dotenv';
 import * as bcrypt from 'bcryptjs';
 // import removido: AnnualBudget não é utilizado
@@ -164,15 +164,33 @@ async function main() {
       });
     }
 
+    // Criar usuário temporário se não existir (será o líder inicial)
+    let tempUser = await prisma.user.findFirst({ where: { email: seed.user.email } });
+    if (!tempUser) {
+      tempUser = await prisma.user.create({
+        data: {
+          ...seed.user,
+          institution_id: institution.id,
+          church_id: church.id,
+          is_deleted: false,
+          ...createAndUpdateUser,
+        },
+      });
+    }
+
     // Criação do institutionDepartment caso não exista
     let institutionDepartment = await prisma.department.findFirst({ where: { name: seed.institutionDepartment.name } });
     if (!institutionDepartment) {
       institutionDepartment = await prisma.department.create({
         data: {
-          ...seed.institutionDepartment,
+          name: seed.institutionDepartment.name,
+          description: seed.institutionDepartment.description,
           institution_id: institution.id,
+          leader_id: tempUser.id,
+          contact_id: seed.institutionDepartment.contact_id,
+          is_deleted: seed.institutionDepartment.is_deleted,
           ...createAndUpdateUser,
-        },
+        } as Prisma.DepartmentUncheckedCreateInput,
       });
     }
 
@@ -181,11 +199,15 @@ async function main() {
     if (!churchDepartment) {
       churchDepartment = await prisma.department.create({
         data: {
-          ...seed.churchDepartment,
+          name: seed.churchDepartment.name,
+          description: seed.churchDepartment.description,
           institution_id: institution.id,
           church_id: church.id,
+          leader_id: tempUser.id,
+          contact_id: seed.churchDepartment.contact_id,
+          is_deleted: seed.churchDepartment.is_deleted,
           ...createAndUpdateUser,
-        },
+        } as Prisma.DepartmentUncheckedCreateInput,
       });
     }
 

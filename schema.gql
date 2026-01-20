@@ -94,6 +94,8 @@ enum PermissionResolverName {
   user
   createUser
   updateUser
+  updateOwnUser
+  updateUserDepartment
   deleteUser
   addRoleToUser
   removeRoleFromUser
@@ -400,19 +402,16 @@ type VoluntariesOnProjects {
   project: Project!
 }
 
-type SubsidyReceipt {
+type SpecialProjects {
   id: ID!
-  project_activities_id: String!
-  file_url: String!
-  drive_file_id: String
-  filename: String!
+  department_id: String!
+  institution_id: String
+  project_id: String
+  justification_note: String
+  budget: Decimal
+  subsidy_status_id: String!
   type: String!
-  amount: Decimal
-  approved: Boolean!
-  is_validated: Boolean!
-  validated_at: DateTime
-  validated_by: String
-  uploaded_by: String!
+  location_church_plant: String
   created_at: DateTime!
   updated_at: DateTime!
   created_by: String!
@@ -420,11 +419,8 @@ type SubsidyReceipt {
   is_deleted: Boolean!
   deleted_at: DateTime
   deleted_by: String
-  subsidy_request_id: String
-  subsidy_request_item_id: String
-  project_activity: ProjectActivity!
-  subsidy_request: SubsidyRequest
-  subsidy_request_item: SubsidyRequestItem
+  project: Project
+  subsidy_status: SubsidyStatus
 }
 
 """An arbitrary-precision Decimal type"""
@@ -455,6 +451,63 @@ enum SubsidyHistoryType {
   PRIORITY_CHANGE
   COMMENT
   DOCUMENT_ACTION
+}
+
+type SubsidyStatusCount {
+  subsidy_requests: Int!
+  special_projects: Int!
+  history_as_current: Int!
+  history_as_previous: Int!
+}
+
+type SubsidyStatus {
+  id: ID!
+  department_id: String!
+  assigned_to: String!
+  name: String!
+  description: String!
+  order: Int!
+  created_at: DateTime!
+  updated_at: DateTime!
+  created_by: String!
+  updated_by: String!
+  is_deleted: Boolean!
+  deleted_at: DateTime
+  deleted_by: String
+  department: Department!
+  assigned_user: User!
+  subsidy_requests: [SubsidyRequest!]
+  special_projects: [SpecialProjects!]
+  history_as_current: [SubsidyStatusHistory!]
+  history_as_previous: [SubsidyStatusHistory!]
+  _count: SubsidyStatusCount!
+}
+
+type SubsidyReceipt {
+  id: ID!
+  project_activities_id: String!
+  file_url: String!
+  drive_file_id: String
+  filename: String!
+  type: String!
+  amount: Decimal
+  approved: Boolean!
+  is_validated: Boolean!
+  validated_at: DateTime
+  validated_by: String
+  uploaded_by: String!
+  created_at: DateTime!
+  updated_at: DateTime!
+  created_by: String!
+  updated_by: String!
+  is_deleted: Boolean!
+  deleted_at: DateTime
+  deleted_by: String
+  subsidy_request_id: String
+  subsidy_request_item_id: String
+  project_activity: ProjectActivity!
+  subsidy_request: SubsidyRequest
+  subsidy_request_item: SubsidyRequestItem
 }
 
 type SubsidyRequestCount {
@@ -676,27 +729,6 @@ enum ActivityPriority {
   LOW
 }
 
-type SpecialProjects {
-  id: ID!
-  department_id: String!
-  institution_id: String
-  project_id: String
-  justification_note: String
-  budget: Decimal
-  subsidy_status_id: String!
-  type: String!
-  location_church_plant: String
-  created_at: DateTime!
-  updated_at: DateTime!
-  created_by: String!
-  updated_by: String!
-  is_deleted: Boolean!
-  deleted_at: DateTime
-  deleted_by: String
-  project: Project
-  subsidy_status: SubsidyStatus
-}
-
 type ProjectCount {
   voluntary_users: Int!
   activities: Int!
@@ -707,6 +739,7 @@ type ProjectCount {
 type Project {
   id: ID!
   department_id: String!
+  church_department_id: String
   title: String!
   description: String!
   budget: Decimal!
@@ -732,6 +765,7 @@ type Project {
   institution_id: String
   church_id: String
   department: Department!
+  church_department: Department
   owner: User!
   event: Event
   Institution: Institution
@@ -742,6 +776,7 @@ type Project {
   special_projects: [SpecialProjects!]
   _count: ProjectCount!
   Church: Church
+  churchDepartment: Department
   kpis: ProjectKPIsDto!
 }
 
@@ -967,6 +1002,7 @@ type UserCount {
   project_activity_logs: Int!
   activity_assignments: Int!
   subsidy_status_history: Int!
+  led_departments: Int!
 }
 
 type User {
@@ -1006,42 +1042,13 @@ type User {
   project_activity_logs: [ProjectActivityLog!]
   activity_assignments: [ProjectActivityAssignee!]
   subsidy_status_history: [SubsidyStatusHistory!]
+  led_departments: [Department!]
   _count: UserCount!
 }
 
 enum GenderType {
   MALE
   FEMALE
-}
-
-type SubsidyStatusCount {
-  subsidy_requests: Int!
-  special_projects: Int!
-  history_as_current: Int!
-  history_as_previous: Int!
-}
-
-type SubsidyStatus {
-  id: ID!
-  department_id: String!
-  assigned_to: String!
-  name: String!
-  description: String!
-  order: Int!
-  created_at: DateTime!
-  updated_at: DateTime!
-  created_by: String!
-  updated_by: String!
-  is_deleted: Boolean!
-  deleted_at: DateTime
-  deleted_by: String
-  department: Department!
-  assigned_user: User!
-  subsidy_requests: [SubsidyRequest!]
-  special_projects: [SpecialProjects!]
-  history_as_current: [SubsidyStatusHistory!]
-  history_as_previous: [SubsidyStatusHistory!]
-  _count: SubsidyStatusCount!
 }
 
 type AnnualReport {
@@ -1063,6 +1070,7 @@ type AnnualReport {
 type DepartmentCount {
   subsidy_statuses: Int!
   projects: Int!
+  church_projects: Int!
   annual_reports: Int!
   subsidy_requests: Int!
   users: Int!
@@ -1075,6 +1083,7 @@ type Department {
   church_id: String
   name: String!
   description: String!
+  leader_id: String!
   contact_id: String
   created_at: DateTime!
   updated_at: DateTime!
@@ -1085,9 +1094,11 @@ type Department {
   deleted_by: String
   institution: Institution!
   church: Church
+  leader: User!
   contact: Contact
   subsidy_statuses: [SubsidyStatus!]
   projects: [Project!]
+  church_projects: [Project!]
   annual_reports: [AnnualReport!]
   subsidy_requests: [SubsidyRequest!]
   users: [User!]
@@ -2048,6 +2059,7 @@ input UserWhereInput {
   project_activity_logs: ProjectActivityLogListRelationFilter
   activity_assignments: ProjectActivityAssigneeListRelationFilter
   subsidy_status_history: SubsidyStatusHistoryListRelationFilter
+  led_departments: DepartmentListRelationFilter
 }
 
 input EnumGenderTypeNullableFilter {
@@ -2241,6 +2253,7 @@ input DepartmentWhereInput {
   church_id: StringNullableFilter
   name: StringFilter
   description: StringFilter
+  leader_id: StringFilter
   contact_id: StringNullableFilter
   created_at: DateTimeFilter
   updated_at: DateTimeFilter
@@ -2251,9 +2264,11 @@ input DepartmentWhereInput {
   deleted_by: StringNullableFilter
   institution: InstitutionScalarRelationFilter
   church: ChurchNullableScalarRelationFilter
+  leader: UserScalarRelationFilter
   contact: ContactNullableScalarRelationFilter
   subsidy_statuses: SubsidyStatusListRelationFilter
   projects: ProjectListRelationFilter
+  church_projects: ProjectListRelationFilter
   annual_reports: AnnualReportListRelationFilter
   subsidy_requests: SubsidyRequestListRelationFilter
   users: UserListRelationFilter
@@ -2263,6 +2278,11 @@ input DepartmentWhereInput {
 input ChurchNullableScalarRelationFilter {
   is: ChurchWhereInput
   isNot: ChurchWhereInput
+}
+
+input UserScalarRelationFilter {
+  is: UserWhereInput
+  isNot: UserWhereInput
 }
 
 input SubsidyStatusListRelationFilter {
@@ -2299,11 +2319,6 @@ input SubsidyStatusWhereInput {
 input DepartmentScalarRelationFilter {
   is: DepartmentWhereInput
   isNot: DepartmentWhereInput
-}
-
-input UserScalarRelationFilter {
-  is: UserWhereInput
-  isNot: UserWhereInput
 }
 
 input SubsidyRequestListRelationFilter {
@@ -2489,6 +2504,7 @@ input ProjectWhereInput {
   NOT: [ProjectWhereInput!]
   id: StringFilter
   department_id: StringFilter
+  church_department_id: StringNullableFilter
   title: StringFilter
   description: StringFilter
   budget: DecimalFilter
@@ -2514,6 +2530,7 @@ input ProjectWhereInput {
   institution_id: StringNullableFilter
   church_id: StringNullableFilter
   department: DepartmentScalarRelationFilter
+  church_department: DepartmentNullableScalarRelationFilter
   owner: UserScalarRelationFilter
   event: EventNullableScalarRelationFilter
   Institution: InstitutionNullableScalarRelationFilter
@@ -2550,6 +2567,11 @@ input NestedEnumProjectStatusFilter {
   in: [ProjectStatus!]
   notIn: [ProjectStatus!]
   not: NestedEnumProjectStatusFilter
+}
+
+input DepartmentNullableScalarRelationFilter {
+  is: DepartmentWhereInput
+  isNot: DepartmentWhereInput
 }
 
 input EventNullableScalarRelationFilter {
@@ -3358,11 +3380,6 @@ input EventListRelationFilter {
   none: EventWhereInput
 }
 
-input DepartmentNullableScalarRelationFilter {
-  is: DepartmentWhereInput
-  isNot: DepartmentWhereInput
-}
-
 input AnnualBudgetOrderByWithRelationInput {
   id: SortOrder
   year: SortOrder
@@ -3455,6 +3472,7 @@ input UserOrderByWithRelationInput {
   project_activity_logs: ProjectActivityLogOrderByRelationAggregateInput
   activity_assignments: ProjectActivityAssigneeOrderByRelationAggregateInput
   subsidy_status_history: SubsidyStatusHistoryOrderByRelationAggregateInput
+  led_departments: DepartmentOrderByRelationAggregateInput
 }
 
 input ContactOrderByWithRelationInput {
@@ -3603,6 +3621,7 @@ input DepartmentOrderByWithRelationInput {
   church_id: SortOrderInput
   name: SortOrder
   description: SortOrder
+  leader_id: SortOrder
   contact_id: SortOrderInput
   created_at: SortOrder
   updated_at: SortOrder
@@ -3613,9 +3632,11 @@ input DepartmentOrderByWithRelationInput {
   deleted_by: SortOrderInput
   institution: InstitutionOrderByWithRelationInput
   church: ChurchOrderByWithRelationInput
+  leader: UserOrderByWithRelationInput
   contact: ContactOrderByWithRelationInput
   subsidy_statuses: SubsidyStatusOrderByRelationAggregateInput
   projects: ProjectOrderByRelationAggregateInput
+  church_projects: ProjectOrderByRelationAggregateInput
   annual_reports: AnnualReportOrderByRelationAggregateInput
   subsidy_requests: SubsidyRequestOrderByRelationAggregateInput
   users: UserOrderByRelationAggregateInput
@@ -3754,6 +3775,8 @@ type Mutation {
   deleteRegion(id: String!): RegionModel!
   createUser(data: UserCreateDto!): UserModel!
   updateUser(id: String!, data: UserUpdateDto!): UserModel!
+  updateOwnUser(data: UserUpdateDto!): UserModel!
+  updateUserDepartment(userId: String!, departmentId: String): UserModel!
   deleteUser(id: String!): UserModel!
   addRoleToUser(userId: String!, roleId: String!): UserModel!
   removeRoleFromUser(userId: String!, roleId: String!): UserModel!
@@ -3959,6 +3982,7 @@ input DepartmentCreateDto {
   name: String!
   description: String!
   institution: String!
+  leader_id: String!
   church: String
   contact: ContactCreateDto
 }
@@ -3967,6 +3991,7 @@ input DepartmentUpdateDto {
   name: String
   description: String
   institution_id: String
+  leader_id: String
   church_id: String
   contact: ContactCreateDto
 }
@@ -4022,6 +4047,7 @@ input ProjectCreateDto {
   department_id: String!
   institution_id: String
   church_id: String
+  church_department_id: String
   owner_id: String
   start_at: String!
   end_at: String!
@@ -4080,6 +4106,7 @@ input ProjectUpdateDto {
   department_id: String
   institution_id: String
   church_id: String
+  church_department_id: String
   owner_id: String
   start_at: String
   end_at: String

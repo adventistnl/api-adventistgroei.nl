@@ -12,6 +12,9 @@ export class ProjectMaxOrderByAggregateInput {
     department_id?: `${SortOrder}`;
 
     @Field(() => SortOrder, {nullable:true})
+    church_department_id?: `${SortOrder}`;
+
+    @Field(() => SortOrder, {nullable:true})
     title?: `${SortOrder}`;
 
     @Field(() => SortOrder, {nullable:true})

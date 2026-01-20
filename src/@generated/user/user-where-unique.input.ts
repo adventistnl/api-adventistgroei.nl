@@ -28,6 +28,7 @@ import { AnnualBudgetListRelationFilter } from '../annual-budget/annual-budget-l
 import { ProjectActivityLogListRelationFilter } from '../project-activity-log/project-activity-log-list-relation-filter.input';
 import { ProjectActivityAssigneeListRelationFilter } from '../project-activity-assignee/project-activity-assignee-list-relation-filter.input';
 import { SubsidyStatusHistoryListRelationFilter } from '../subsidy-status-history/subsidy-status-history-list-relation-filter.input';
+import { DepartmentListRelationFilter } from '../department/department-list-relation-filter.input';
 
 @InputType()
 export class UserWhereUniqueInput {
@@ -162,4 +163,8 @@ export class UserWhereUniqueInput {
     @Field(() => SubsidyStatusHistoryListRelationFilter, {nullable:true})
     @Type(() => SubsidyStatusHistoryListRelationFilter)
     subsidy_status_history?: SubsidyStatusHistoryListRelationFilter;
+
+    @Field(() => DepartmentListRelationFilter, {nullable:true})
+    @Type(() => DepartmentListRelationFilter)
+    led_departments?: DepartmentListRelationFilter;
 }

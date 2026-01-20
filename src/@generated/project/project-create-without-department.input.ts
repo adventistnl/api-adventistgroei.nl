@@ -8,6 +8,7 @@ import { Type } from 'class-transformer';
 import { LanguagePreference } from '../prisma/language-preference.enum';
 import { ProjectType } from '../prisma/project-type.enum';
 import { ProjectStatus } from '../prisma/project-status.enum';
+import { DepartmentCreateNestedOneWithoutChurch_projectsInput } from '../department/department-create-nested-one-without-church-projects.input';
 import { UserCreateNestedOneWithoutProjectInput } from '../user/user-create-nested-one-without-project.input';
 import { EventCreateNestedOneWithoutProjectsInput } from '../event/event-create-nested-one-without-projects.input';
 import { InstitutionCreateNestedOneWithoutProjectsInput } from '../institution/institution-create-nested-one-without-projects.input';
@@ -88,6 +89,10 @@ export class ProjectCreateWithoutDepartmentInput {
 
     @Field(() => String, {nullable:true})
     deleted_by?: string;
+
+    @Field(() => DepartmentCreateNestedOneWithoutChurch_projectsInput, {nullable:true})
+    @Type(() => DepartmentCreateNestedOneWithoutChurch_projectsInput)
+    church_department?: DepartmentCreateNestedOneWithoutChurch_projectsInput;
 
     @Field(() => UserCreateNestedOneWithoutProjectInput, {nullable:false})
     @Type(() => UserCreateNestedOneWithoutProjectInput)

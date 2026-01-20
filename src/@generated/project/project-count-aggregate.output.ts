@@ -12,6 +12,9 @@ export class ProjectCountAggregate {
     department_id!: number;
 
     @Field(() => Int, {nullable:false})
+    church_department_id!: number;
+
+    @Field(() => Int, {nullable:false})
     title!: number;
 
     @Field(() => Int, {nullable:false})
