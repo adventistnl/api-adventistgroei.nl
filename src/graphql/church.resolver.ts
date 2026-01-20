@@ -1,11 +1,13 @@
-import { Resolver, Mutation, Args, Query, Context } from '@nestjs/graphql';
+import { Resolver, Mutation, Args, Query, Context, ResolveField, Parent } from '@nestjs/graphql';
 import { ChurchService } from '../services/church.service';
 import { ChurchModel } from '../models/church.model';
-import { Church } from '@prisma/client';
+import { Church } from 'src/@generated/church/church.model';
 import { ChurchCreateDto, ChurchUpdateDto } from '../dto/church.dto';
 import { Permission } from '../middlewares/permissions.decorator';
 import { UseGuards } from '@nestjs/common';
 import { PermissionsGuard } from '../middlewares/permissions.guard';
+import { User } from 'src/@generated/user/user.model';
+import GraphQLJSON from 'graphql-type-json';
 
 @Resolver(() => ChurchModel)
 @UseGuards(PermissionsGuard)
@@ -24,8 +26,10 @@ export class ChurchResolver {
 
   @Permission()
   @Query(() => [ChurchModel])
-  async churches(): Promise<Church[]> {
-    return await this.churchService.getChurches();
+  async churches(
+    @Args('institution_id', { nullable: true }) institution_id?: string
+  ): Promise<Church[]> {
+    return await this.churchService.getChurches(institution_id);
   }
 
   @Permission()
@@ -52,5 +56,25 @@ export class ChurchResolver {
   ): Promise<Church> {
     const userId = context.userId;
     return await this.churchService.deleteChurch(churchId, userId);
+  }
+
+  @Permission()
+  @Query(() => [GraphQLJSON])
+  async churchActivityTimeline(
+    @Args('institution_id', { nullable: true }) institution_id?: string,
+    @Args('selectedYear', { nullable: true }) selectedYear?: number
+  ): Promise<any[]> {
+    return this.churchService.getChurchActivityTimeline(institution_id, selectedYear);
+  }
+
+}
+
+@Resolver(() => Church)
+export class ChurchGeneratedResolver {
+  constructor(private readonly churchService: ChurchService) {}
+
+  @ResolveField(() => [User])
+  async users(@Parent() church: Church): Promise<User[]> {
+    return this.churchService.getUsersByChurchId(church.id);
   }
 }

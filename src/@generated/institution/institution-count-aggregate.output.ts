@@ -15,6 +15,9 @@ export class InstitutionCountAggregate {
     denomination!: number;
 
     @Field(() => Int, {nullable:false})
+    description!: number;
+
+    @Field(() => Int, {nullable:false})
     language_preference!: number;
 
     @Field(() => Int, {nullable:false})

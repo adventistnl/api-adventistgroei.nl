@@ -9,6 +9,8 @@ import { ContactOrderByWithRelationInput } from '../contact/contact-order-by-wit
 import { DepartmentOrderByRelationAggregateInput } from '../department/department-order-by-relation-aggregate.input';
 import { UserOrderByRelationAggregateInput } from '../user/user-order-by-relation-aggregate.input';
 import { SubsidyRequestOrderByRelationAggregateInput } from '../subsidy-request/subsidy-request-order-by-relation-aggregate.input';
+import { AnnualBudgetOrderByRelationAggregateInput } from '../annual-budget/annual-budget-order-by-relation-aggregate.input';
+import { ProjectOrderByRelationAggregateInput } from '../project/project-order-by-relation-aggregate.input';
 
 @InputType()
 export class ChurchOrderByWithRelationInput {
@@ -17,13 +19,16 @@ export class ChurchOrderByWithRelationInput {
     id?: `${SortOrder}`;
 
     @Field(() => SortOrder, {nullable:true})
+    type?: `${SortOrder}`;
+
+    @Field(() => SortOrder, {nullable:true})
     institution_id?: `${SortOrder}`;
 
     @Field(() => SortOrder, {nullable:true})
     name?: `${SortOrder}`;
 
-    @Field(() => SortOrder, {nullable:true})
-    region_id?: `${SortOrder}`;
+    @Field(() => SortOrderInput, {nullable:true})
+    region_id?: SortOrderInput;
 
     @Field(() => SortOrderInput, {nullable:true})
     contact_id?: SortOrderInput;
@@ -71,4 +76,12 @@ export class ChurchOrderByWithRelationInput {
     @Field(() => SubsidyRequestOrderByRelationAggregateInput, {nullable:true})
     @Type(() => SubsidyRequestOrderByRelationAggregateInput)
     subsidy_requests?: SubsidyRequestOrderByRelationAggregateInput;
+
+    @Field(() => AnnualBudgetOrderByRelationAggregateInput, {nullable:true})
+    @Type(() => AnnualBudgetOrderByRelationAggregateInput)
+    annual_budgets?: AnnualBudgetOrderByRelationAggregateInput;
+
+    @Field(() => ProjectOrderByRelationAggregateInput, {nullable:true})
+    @Type(() => ProjectOrderByRelationAggregateInput)
+    projects?: ProjectOrderByRelationAggregateInput;
 }

@@ -3,7 +3,6 @@ import { ObjectType } from '@nestjs/graphql';
 import { ID } from '@nestjs/graphql';
 import { LanguagePreference } from '../prisma/language-preference.enum';
 import { Contact } from '../contact/contact.model';
-import { Region } from '../region/region.model';
 import { Church } from '../church/church.model';
 import { Department } from '../department/department.model';
 import { User } from '../user/user.model';
@@ -13,6 +12,7 @@ import { Setting } from '../setting/setting.model';
 import { Project } from '../project/project.model';
 import { DirectMessage } from '../direct-message/direct-message.model';
 import { SubsidyRequest } from '../subsidy-request/subsidy-request.model';
+import { AnnualBudget } from '../annual-budget/annual-budget.model';
 import { InstitutionCount } from './institution-count.output';
 
 @ObjectType()
@@ -26,6 +26,9 @@ export class Institution {
 
     @Field(() => String, {nullable:false})
     denomination!: string;
+
+    @Field(() => String, {nullable:true})
+    description!: string | null;
 
     @Field(() => LanguagePreference, {nullable:false})
     language_preference!: `${LanguagePreference}`;
@@ -57,9 +60,6 @@ export class Institution {
     @Field(() => Contact, {nullable:true})
     contact?: Contact | null;
 
-    @Field(() => [Region], {nullable:true})
-    regions?: Array<Region>;
-
     @Field(() => [Church], {nullable:true})
     churches?: Array<Church>;
 
@@ -86,6 +86,9 @@ export class Institution {
 
     @Field(() => [SubsidyRequest], {nullable:true})
     subsidy_requests?: Array<SubsidyRequest>;
+
+    @Field(() => [AnnualBudget], {nullable:true})
+    annual_budgets?: Array<AnnualBudget>;
 
     @Field(() => InstitutionCount, {nullable:false})
     _count?: InstitutionCount;

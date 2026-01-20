@@ -1,7 +1,6 @@
 import { Field } from '@nestjs/graphql';
 import { InputType } from '@nestjs/graphql';
 import { LanguagePreference } from '../prisma/language-preference.enum';
-import { RegionCreateNestedManyWithoutInstitutionInput } from '../region/region-create-nested-many-without-institution.input';
 import { ChurchCreateNestedManyWithoutInstitutionInput } from '../church/church-create-nested-many-without-institution.input';
 import { Type } from 'class-transformer';
 import { DepartmentCreateNestedManyWithoutInstitutionInput } from '../department/department-create-nested-many-without-institution.input';
@@ -12,6 +11,7 @@ import { SettingCreateNestedManyWithoutInstitutionInput } from '../setting/setti
 import { ProjectCreateNestedManyWithoutInstitutionInput } from '../project/project-create-nested-many-without-institution.input';
 import { DirectMessageCreateNestedManyWithoutInstitutionInput } from '../direct-message/direct-message-create-nested-many-without-institution.input';
 import { SubsidyRequestCreateNestedManyWithoutInstitutionInput } from '../subsidy-request/subsidy-request-create-nested-many-without-institution.input';
+import { AnnualBudgetCreateNestedManyWithoutInstitutionInput } from '../annual-budget/annual-budget-create-nested-many-without-institution.input';
 
 @InputType()
 export class InstitutionCreateWithoutContactInput {
@@ -24,6 +24,9 @@ export class InstitutionCreateWithoutContactInput {
 
     @Field(() => String, {nullable:false})
     denomination!: string;
+
+    @Field(() => String, {nullable:true})
+    description?: string;
 
     @Field(() => LanguagePreference, {nullable:false})
     language_preference!: `${LanguagePreference}`;
@@ -48,9 +51,6 @@ export class InstitutionCreateWithoutContactInput {
 
     @Field(() => String, {nullable:true})
     deleted_by?: string;
-
-    @Field(() => RegionCreateNestedManyWithoutInstitutionInput, {nullable:true})
-    regions?: RegionCreateNestedManyWithoutInstitutionInput;
 
     @Field(() => ChurchCreateNestedManyWithoutInstitutionInput, {nullable:true})
     @Type(() => ChurchCreateNestedManyWithoutInstitutionInput)
@@ -83,4 +83,8 @@ export class InstitutionCreateWithoutContactInput {
     @Field(() => SubsidyRequestCreateNestedManyWithoutInstitutionInput, {nullable:true})
     @Type(() => SubsidyRequestCreateNestedManyWithoutInstitutionInput)
     subsidy_requests?: SubsidyRequestCreateNestedManyWithoutInstitutionInput;
+
+    @Field(() => AnnualBudgetCreateNestedManyWithoutInstitutionInput, {nullable:true})
+    @Type(() => AnnualBudgetCreateNestedManyWithoutInstitutionInput)
+    annual_budgets?: AnnualBudgetCreateNestedManyWithoutInstitutionInput;
 }

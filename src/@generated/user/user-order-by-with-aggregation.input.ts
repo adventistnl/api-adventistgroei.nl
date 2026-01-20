@@ -21,6 +21,9 @@ export class UserOrderByWithAggregationInput {
     @Field(() => SortOrder, {nullable:true})
     password?: `${SortOrder}`;
 
+    @Field(() => SortOrderInput, {nullable:true})
+    gender?: SortOrderInput;
+
     @Field(() => SortOrder, {nullable:true})
     language_preference?: `${SortOrder}`;
 
@@ -51,11 +54,11 @@ export class UserOrderByWithAggregationInput {
     @Field(() => SortOrder, {nullable:true})
     institution_id?: `${SortOrder}`;
 
-    @Field(() => SortOrder, {nullable:true})
-    church_id?: `${SortOrder}`;
+    @Field(() => SortOrderInput, {nullable:true})
+    church_id?: SortOrderInput;
 
-    @Field(() => SortOrder, {nullable:true})
-    department_id?: `${SortOrder}`;
+    @Field(() => SortOrderInput, {nullable:true})
+    department_id?: SortOrderInput;
 
     @Field(() => UserCountOrderByAggregateInput, {nullable:true})
     _count?: UserCountOrderByAggregateInput;

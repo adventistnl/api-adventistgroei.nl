@@ -7,12 +7,16 @@ import { Transform } from 'class-transformer';
 import { Type } from 'class-transformer';
 import { LanguagePreference } from '../prisma/language-preference.enum';
 import { ProjectType } from '../prisma/project-type.enum';
+import { ProjectStatus } from '../prisma/project-status.enum';
 
 @InputType()
 export class ProjectCreateManyDepartmentInput {
 
     @Field(() => String, {nullable:true})
     id?: string;
+
+    @Field(() => String, {nullable:true})
+    church_department_id?: string;
 
     @Field(() => String, {nullable:false})
     title!: string;
@@ -25,8 +29,15 @@ export class ProjectCreateManyDepartmentInput {
     @Transform(transformToDecimal)
     budget!: Decimal;
 
-    @Field(() => String, {nullable:false})
-    media_link!: string;
+    @Field(() => GraphQLDecimal, {nullable:true})
+    @Type(() => Object)
+    @Transform(transformToDecimal)
+    subsidized_budget?: Decimal;
+
+    @Field(() => GraphQLDecimal, {nullable:true})
+    @Type(() => Object)
+    @Transform(transformToDecimal)
+    balance?: Decimal;
 
     @Field(() => String, {nullable:false})
     owner_id!: string;
@@ -37,11 +48,29 @@ export class ProjectCreateManyDepartmentInput {
     @Field(() => ProjectType, {nullable:false})
     type!: `${ProjectType}`;
 
+    @Field(() => ProjectStatus, {nullable:true})
+    status?: `${ProjectStatus}`;
+
+    @Field(() => Boolean, {nullable:true})
+    is_private?: boolean;
+
+    @Field(() => Boolean, {nullable:true})
+    required_volunteers?: boolean;
+
+    @Field(() => Date, {nullable:false})
+    start_at!: Date | string;
+
+    @Field(() => Date, {nullable:false})
+    end_at!: Date | string;
+
     @Field(() => Date, {nullable:true})
     created_at?: Date | string;
 
     @Field(() => Date, {nullable:true})
     updated_at?: Date | string;
+
+    @Field(() => Date, {nullable:true})
+    deadline?: Date | string;
 
     @Field(() => String, {nullable:false})
     created_by!: string;
@@ -63,4 +92,7 @@ export class ProjectCreateManyDepartmentInput {
 
     @Field(() => String, {nullable:true})
     institution_id?: string;
+
+    @Field(() => String, {nullable:true})
+    church_id?: string;
 }

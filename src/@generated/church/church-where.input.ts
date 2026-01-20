@@ -1,17 +1,20 @@
 import { Field } from '@nestjs/graphql';
 import { InputType } from '@nestjs/graphql';
 import { StringFilter } from '../prisma/string-filter.input';
+import { EnumChurchTypeFilter } from '../prisma/enum-church-type-filter.input';
 import { StringNullableFilter } from '../prisma/string-nullable-filter.input';
 import { DateTimeFilter } from '../prisma/date-time-filter.input';
 import { BoolFilter } from '../prisma/bool-filter.input';
 import { DateTimeNullableFilter } from '../prisma/date-time-nullable-filter.input';
 import { InstitutionScalarRelationFilter } from '../institution/institution-scalar-relation-filter.input';
 import { Type } from 'class-transformer';
-import { RegionScalarRelationFilter } from '../region/region-scalar-relation-filter.input';
+import { RegionNullableScalarRelationFilter } from '../region/region-nullable-scalar-relation-filter.input';
 import { ContactNullableScalarRelationFilter } from '../contact/contact-nullable-scalar-relation-filter.input';
 import { DepartmentListRelationFilter } from '../department/department-list-relation-filter.input';
 import { UserListRelationFilter } from '../user/user-list-relation-filter.input';
 import { SubsidyRequestListRelationFilter } from '../subsidy-request/subsidy-request-list-relation-filter.input';
+import { AnnualBudgetListRelationFilter } from '../annual-budget/annual-budget-list-relation-filter.input';
+import { ProjectListRelationFilter } from '../project/project-list-relation-filter.input';
 
 @InputType()
 export class ChurchWhereInput {
@@ -28,14 +31,17 @@ export class ChurchWhereInput {
     @Field(() => StringFilter, {nullable:true})
     id?: StringFilter;
 
+    @Field(() => EnumChurchTypeFilter, {nullable:true})
+    type?: EnumChurchTypeFilter;
+
     @Field(() => StringFilter, {nullable:true})
     institution_id?: StringFilter;
 
     @Field(() => StringFilter, {nullable:true})
     name?: StringFilter;
 
-    @Field(() => StringFilter, {nullable:true})
-    region_id?: StringFilter;
+    @Field(() => StringNullableFilter, {nullable:true})
+    region_id?: StringNullableFilter;
 
     @Field(() => StringNullableFilter, {nullable:true})
     contact_id?: StringNullableFilter;
@@ -65,8 +71,8 @@ export class ChurchWhereInput {
     @Type(() => InstitutionScalarRelationFilter)
     institution?: InstitutionScalarRelationFilter;
 
-    @Field(() => RegionScalarRelationFilter, {nullable:true})
-    region?: RegionScalarRelationFilter;
+    @Field(() => RegionNullableScalarRelationFilter, {nullable:true})
+    region?: RegionNullableScalarRelationFilter;
 
     @Field(() => ContactNullableScalarRelationFilter, {nullable:true})
     @Type(() => ContactNullableScalarRelationFilter)
@@ -83,4 +89,12 @@ export class ChurchWhereInput {
     @Field(() => SubsidyRequestListRelationFilter, {nullable:true})
     @Type(() => SubsidyRequestListRelationFilter)
     subsidy_requests?: SubsidyRequestListRelationFilter;
+
+    @Field(() => AnnualBudgetListRelationFilter, {nullable:true})
+    @Type(() => AnnualBudgetListRelationFilter)
+    annual_budgets?: AnnualBudgetListRelationFilter;
+
+    @Field(() => ProjectListRelationFilter, {nullable:true})
+    @Type(() => ProjectListRelationFilter)
+    projects?: ProjectListRelationFilter;
 }

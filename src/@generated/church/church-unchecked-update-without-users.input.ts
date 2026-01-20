@@ -1,6 +1,7 @@
 import { Field } from '@nestjs/graphql';
 import { InputType } from '@nestjs/graphql';
 import { StringFieldUpdateOperationsInput } from '../prisma/string-field-update-operations.input';
+import { EnumChurchTypeFieldUpdateOperationsInput } from '../prisma/enum-church-type-field-update-operations.input';
 import { NullableStringFieldUpdateOperationsInput } from '../prisma/nullable-string-field-update-operations.input';
 import { DateTimeFieldUpdateOperationsInput } from '../prisma/date-time-field-update-operations.input';
 import { BoolFieldUpdateOperationsInput } from '../prisma/bool-field-update-operations.input';
@@ -8,6 +9,8 @@ import { NullableDateTimeFieldUpdateOperationsInput } from '../prisma/nullable-d
 import { DepartmentUncheckedUpdateManyWithoutChurchNestedInput } from '../department/department-unchecked-update-many-without-church-nested.input';
 import { Type } from 'class-transformer';
 import { SubsidyRequestUncheckedUpdateManyWithoutChurchNestedInput } from '../subsidy-request/subsidy-request-unchecked-update-many-without-church-nested.input';
+import { AnnualBudgetUncheckedUpdateManyWithoutChurchNestedInput } from '../annual-budget/annual-budget-unchecked-update-many-without-church-nested.input';
+import { ProjectUncheckedUpdateManyWithoutChurchNestedInput } from '../project/project-unchecked-update-many-without-church-nested.input';
 
 @InputType()
 export class ChurchUncheckedUpdateWithoutUsersInput {
@@ -15,14 +18,17 @@ export class ChurchUncheckedUpdateWithoutUsersInput {
     @Field(() => StringFieldUpdateOperationsInput, {nullable:true})
     id?: StringFieldUpdateOperationsInput;
 
+    @Field(() => EnumChurchTypeFieldUpdateOperationsInput, {nullable:true})
+    type?: EnumChurchTypeFieldUpdateOperationsInput;
+
     @Field(() => StringFieldUpdateOperationsInput, {nullable:true})
     institution_id?: StringFieldUpdateOperationsInput;
 
     @Field(() => StringFieldUpdateOperationsInput, {nullable:true})
     name?: StringFieldUpdateOperationsInput;
 
-    @Field(() => StringFieldUpdateOperationsInput, {nullable:true})
-    region_id?: StringFieldUpdateOperationsInput;
+    @Field(() => NullableStringFieldUpdateOperationsInput, {nullable:true})
+    region_id?: NullableStringFieldUpdateOperationsInput;
 
     @Field(() => NullableStringFieldUpdateOperationsInput, {nullable:true})
     contact_id?: NullableStringFieldUpdateOperationsInput;
@@ -55,4 +61,12 @@ export class ChurchUncheckedUpdateWithoutUsersInput {
     @Field(() => SubsidyRequestUncheckedUpdateManyWithoutChurchNestedInput, {nullable:true})
     @Type(() => SubsidyRequestUncheckedUpdateManyWithoutChurchNestedInput)
     subsidy_requests?: SubsidyRequestUncheckedUpdateManyWithoutChurchNestedInput;
+
+    @Field(() => AnnualBudgetUncheckedUpdateManyWithoutChurchNestedInput, {nullable:true})
+    @Type(() => AnnualBudgetUncheckedUpdateManyWithoutChurchNestedInput)
+    annual_budgets?: AnnualBudgetUncheckedUpdateManyWithoutChurchNestedInput;
+
+    @Field(() => ProjectUncheckedUpdateManyWithoutChurchNestedInput, {nullable:true})
+    @Type(() => ProjectUncheckedUpdateManyWithoutChurchNestedInput)
+    projects?: ProjectUncheckedUpdateManyWithoutChurchNestedInput;
 }

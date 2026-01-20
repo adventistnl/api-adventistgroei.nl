@@ -19,6 +19,9 @@ export class RoleMaxAggregate {
     @Field(() => String, {nullable:true})
     key_code?: string;
 
+    @Field(() => Boolean, {nullable:true})
+    is_fixed?: boolean;
+
     @Field(() => Date, {nullable:true})
     created_at?: Date | string;
 

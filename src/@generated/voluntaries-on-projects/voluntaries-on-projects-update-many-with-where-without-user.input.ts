@@ -2,7 +2,7 @@ import { Field } from '@nestjs/graphql';
 import { InputType } from '@nestjs/graphql';
 import { VoluntariesOnProjectsScalarWhereInput } from './voluntaries-on-projects-scalar-where.input';
 import { Type } from 'class-transformer';
-import { VoluntariesOnProjectsUncheckedUpdateManyWithoutUserInput } from './voluntaries-on-projects-unchecked-update-many-without-user.input';
+import { VoluntariesOnProjectsUpdateManyMutationInput } from './voluntaries-on-projects-update-many-mutation.input';
 
 @InputType()
 export class VoluntariesOnProjectsUpdateManyWithWhereWithoutUserInput {
@@ -11,7 +11,7 @@ export class VoluntariesOnProjectsUpdateManyWithWhereWithoutUserInput {
     @Type(() => VoluntariesOnProjectsScalarWhereInput)
     where!: VoluntariesOnProjectsScalarWhereInput;
 
-    @Field(() => VoluntariesOnProjectsUncheckedUpdateManyWithoutUserInput, {nullable:false})
-    @Type(() => VoluntariesOnProjectsUncheckedUpdateManyWithoutUserInput)
-    data!: VoluntariesOnProjectsUncheckedUpdateManyWithoutUserInput;
+    @Field(() => VoluntariesOnProjectsUpdateManyMutationInput, {nullable:false})
+    @Type(() => VoluntariesOnProjectsUpdateManyMutationInput)
+    data!: VoluntariesOnProjectsUpdateManyMutationInput;
 }

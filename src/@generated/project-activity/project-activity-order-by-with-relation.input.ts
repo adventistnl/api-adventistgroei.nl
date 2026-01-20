@@ -2,10 +2,14 @@ import { Field } from '@nestjs/graphql';
 import { InputType } from '@nestjs/graphql';
 import { SortOrder } from '../prisma/sort-order.enum';
 import { SortOrderInput } from '../prisma/sort-order.input';
-import { SubsidyRequestOrderByRelationAggregateInput } from '../subsidy-request/subsidy-request-order-by-relation-aggregate.input';
+import { SubsidyRequestItemOrderByRelationAggregateInput } from '../subsidy-request-item/subsidy-request-item-order-by-relation-aggregate.input';
 import { Type } from 'class-transformer';
 import { ProjectOrderByWithRelationInput } from '../project/project-order-by-with-relation.input';
 import { SubsidyReceiptOrderByRelationAggregateInput } from '../subsidy-receipt/subsidy-receipt-order-by-relation-aggregate.input';
+import { ActivityDocumentsOrderByRelationAggregateInput } from '../activity-documents/activity-documents-order-by-relation-aggregate.input';
+import { ActivityFundingOrderByWithRelationInput } from '../activity-funding/activity-funding-order-by-with-relation.input';
+import { ProjectActivityLogOrderByRelationAggregateInput } from '../project-activity-log/project-activity-log-order-by-relation-aggregate.input';
+import { ProjectActivityAssigneeOrderByRelationAggregateInput } from '../project-activity-assignee/project-activity-assignee-order-by-relation-aggregate.input';
 
 @InputType()
 export class ProjectActivityOrderByWithRelationInput {
@@ -46,9 +50,27 @@ export class ProjectActivityOrderByWithRelationInput {
     @Field(() => SortOrderInput, {nullable:true})
     deleted_by?: SortOrderInput;
 
-    @Field(() => SubsidyRequestOrderByRelationAggregateInput, {nullable:true})
-    @Type(() => SubsidyRequestOrderByRelationAggregateInput)
-    subsidy_request?: SubsidyRequestOrderByRelationAggregateInput;
+    @Field(() => SortOrder, {nullable:true})
+    deadline?: `${SortOrder}`;
+
+    @Field(() => SortOrder, {nullable:true})
+    tags?: `${SortOrder}`;
+
+    @Field(() => SortOrder, {nullable:true})
+    custom_tags?: `${SortOrder}`;
+
+    @Field(() => SortOrder, {nullable:true})
+    status?: `${SortOrder}`;
+
+    @Field(() => SortOrder, {nullable:true})
+    priority?: `${SortOrder}`;
+
+    @Field(() => SortOrder, {nullable:true})
+    is_subsidized?: `${SortOrder}`;
+
+    @Field(() => SubsidyRequestItemOrderByRelationAggregateInput, {nullable:true})
+    @Type(() => SubsidyRequestItemOrderByRelationAggregateInput)
+    subsidy_request_items?: SubsidyRequestItemOrderByRelationAggregateInput;
 
     @Field(() => ProjectOrderByWithRelationInput, {nullable:true})
     @Type(() => ProjectOrderByWithRelationInput)
@@ -57,4 +79,20 @@ export class ProjectActivityOrderByWithRelationInput {
     @Field(() => SubsidyReceiptOrderByRelationAggregateInput, {nullable:true})
     @Type(() => SubsidyReceiptOrderByRelationAggregateInput)
     subsidy_receipts?: SubsidyReceiptOrderByRelationAggregateInput;
+
+    @Field(() => ActivityDocumentsOrderByRelationAggregateInput, {nullable:true})
+    @Type(() => ActivityDocumentsOrderByRelationAggregateInput)
+    activity_documents?: ActivityDocumentsOrderByRelationAggregateInput;
+
+    @Field(() => ActivityFundingOrderByWithRelationInput, {nullable:true})
+    @Type(() => ActivityFundingOrderByWithRelationInput)
+    activity_funding?: ActivityFundingOrderByWithRelationInput;
+
+    @Field(() => ProjectActivityLogOrderByRelationAggregateInput, {nullable:true})
+    @Type(() => ProjectActivityLogOrderByRelationAggregateInput)
+    logs?: ProjectActivityLogOrderByRelationAggregateInput;
+
+    @Field(() => ProjectActivityAssigneeOrderByRelationAggregateInput, {nullable:true})
+    @Type(() => ProjectActivityAssigneeOrderByRelationAggregateInput)
+    assignees?: ProjectActivityAssigneeOrderByRelationAggregateInput;
 }

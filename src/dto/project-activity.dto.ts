@@ -1,48 +1,190 @@
-import { InputType, Field, Float, ID } from '@nestjs/graphql';
-import { IsNotEmpty, IsOptional, IsString, IsUUID, IsNumber } from 'class-validator';
+import { InputType, Field } from '@nestjs/graphql';
+import { IsOptional, IsString, IsNumber, IsDateString, IsEnum, IsBoolean, IsArray } from 'class-validator';
+import { ActivityTags } from 'src/@generated/prisma/activity-tags.enum';
+import { EntityType } from 'src/@generated/prisma/entity-type.enum';
+import { ActivityStatus } from 'src/@generated/prisma/activity-status.enum';
+import { ActivityPriority } from 'src/@generated/prisma/activity-priority.enum';
+
 
 @InputType()
-export class CreateProjectActivityInput {
-  @Field(() => String)
-  @IsNotEmpty()
+export class ActivityFundingCreateDto {
+  @Field()
+  @IsNumber()
+  entity_contribution_amount: number;
+
+  @Field()
+  @IsNumber()
+  entity_contribution_percent: number;
+
+  @Field(() => EntityType)
+  @IsEnum(EntityType)
+  entity_type: EntityType;
+
+  @Field()
+  @IsString()
+  entity_id: string;
+}
+
+// DTO para criar atividade SEM project_id (usado quando criado junto com projeto)
+@InputType()
+export class ProjectActivityCreateWithoutProjectDto {
+  @Field()
+  @IsString()
   name: string;
 
-  @Field(() => String)
-  @IsNotEmpty()
+  @Field()
+  @IsString()
   description: string;
 
-  @Field(() => Float)
-  @IsNotEmpty()
+  @Field()
+  @IsNumber()
   budget_amount: number;
 
-  @Field(() => String)
-  @IsNotEmpty()
+  @Field()
+  @IsDateString()
+  deadline: string;
+
+  @Field(() => [String], { nullable: true })
+  @IsOptional()
+  @IsArray()
+  assignee_ids?: string[];
+
+  @Field(() => [ActivityTags])
+  tags: ActivityTags[];
+
+  @Field(() => [String], { nullable: true })
+  @IsOptional()
+  @IsArray()
+  custom_tags?: string[];
+
+  @Field(() => ActivityStatus, { nullable: true })
+  @IsOptional()
+  @IsEnum(ActivityStatus)
+  status?: ActivityStatus;
+
+  @Field(() => ActivityPriority, { nullable: true })
+  @IsOptional()
+  @IsEnum(ActivityPriority)
+  priority?: ActivityPriority;
+
+  @Field({ nullable: true })
+  @IsOptional()
+  @IsBoolean()
+  is_subsidized?: boolean;
+
+  @Field(() => ActivityFundingCreateDto)
+  activity_funding: ActivityFundingCreateDto;
+}
+
+// DTO para criar atividade COM project_id (usado para adicionar atividade a projeto existente)
+@InputType()
+export class ProjectActivityCreateDto extends ProjectActivityCreateWithoutProjectDto {
+  @Field()
+  @IsString()
   project_id: string;
 }
 
 @InputType()
-export class UpdateProjectActivityInput {
-  @Field(() => ID)
-  @IsUUID()
+export class ActivityFundingUpdateDto {
+  @Field({ nullable: true })
+  @IsOptional()
+  @IsNumber()
+  entity_contribution_amount?: number;
+
+  @Field({ nullable: true })
+  @IsOptional()
+  @IsNumber()
+  entity_contribution_percent?: number;
+
+  @Field(() => EntityType, { nullable: true })
+  @IsOptional()
+  @IsEnum(EntityType)
+  entity_type?: EntityType;
+
+  @Field({ nullable: true })
+  @IsOptional()
+  @IsString()
+  entity_id?: string;
+}
+
+@InputType()
+export class ProjectActivityUpdateDto {
+  @Field()
+  @IsString()
   id: string;
 
-  @Field(() => String, { nullable: true })
+  @Field({ nullable: true })
   @IsOptional()
   @IsString()
   name?: string;
 
-  @Field(() => String, { nullable: true })
+  @Field({ nullable: true })
   @IsOptional()
   @IsString()
   description?: string;
 
-  @Field(() => Float, { nullable: true })
+  @Field({ nullable: true })
   @IsOptional()
   @IsNumber()
   budget_amount?: number;
 
-  @Field(() => String, { nullable: true })
+  @Field({ nullable: true })
   @IsOptional()
-  @IsUUID()
-  project_id?: string;
+  @IsDateString()
+  deadline?: string;
+
+  @Field(() => [String], { nullable: true })
+  @IsOptional()
+  @IsArray()
+  assignee_ids?: string[];
+
+  @Field(() => [ActivityTags], { nullable: true })
+  @IsOptional()
+  tags?: ActivityTags[];
+
+  @Field(() => [String], { nullable: true })
+  @IsOptional()
+  @IsArray()
+  custom_tags?: string[];
+
+  @Field(() => ActivityStatus, { nullable: true })
+  @IsOptional()
+  @IsEnum(ActivityStatus)
+  status?: ActivityStatus;
+
+  @Field(() => ActivityPriority, { nullable: true })
+  @IsOptional()
+  @IsEnum(ActivityPriority)
+  priority?: ActivityPriority;
+
+  @Field({ nullable: true })
+  @IsOptional()
+  @IsBoolean()
+  is_subsidized?: boolean;
+
+  @Field(() => ActivityFundingUpdateDto, { nullable: true })
+  @IsOptional()
+  activity_funding?: ActivityFundingUpdateDto;
+}
+
+@InputType()
+export class ProjectActivityBatchUpdateDto {
+  @Field(() => [String])
+  @IsArray()
+  ids: string[];
+
+  @Field(() => ActivityStatus, { nullable: true })
+  @IsOptional()
+  @IsEnum(ActivityStatus)
+  status?: ActivityStatus;
+
+  @Field(() => ActivityPriority, { nullable: true })
+  @IsOptional()
+  @IsEnum(ActivityPriority)
+  priority?: ActivityPriority;
+
+  @Field({ nullable: true })
+  @IsOptional()
+  @IsBoolean()
+  is_subsidized?: boolean;
 }

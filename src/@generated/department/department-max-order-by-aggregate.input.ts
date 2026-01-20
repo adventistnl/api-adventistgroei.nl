@@ -21,7 +21,7 @@ export class DepartmentMaxOrderByAggregateInput {
     description?: `${SortOrder}`;
 
     @Field(() => SortOrder, {nullable:true})
-    annual_budget?: `${SortOrder}`;
+    leader_id?: `${SortOrder}`;
 
     @Field(() => SortOrder, {nullable:true})
     contact_id?: `${SortOrder}`;

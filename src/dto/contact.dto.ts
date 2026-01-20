@@ -30,6 +30,9 @@ export class ContactCreateDto {
   city?: string;
 
   @Field({ nullable: true })
+  state?: string;
+  
+  @Field({ nullable: true })
   address?: string;
 
   @Field({ nullable: true })
@@ -49,6 +52,9 @@ export class ContactCreateDto {
 export class ContactUpdateDto extends PartialType(ContactCreateDto) {
   @Field()
   id: string;
+
+  @Field(() => Boolean, { nullable: true })
+  is_primary?: boolean;
 }
 
 @InputType()

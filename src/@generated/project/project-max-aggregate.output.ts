@@ -4,6 +4,7 @@ import { Decimal } from '@prisma/client/runtime/library';
 import { GraphQLDecimal } from 'prisma-graphql-type-decimal';
 import { LanguagePreference } from '../prisma/language-preference.enum';
 import { ProjectType } from '../prisma/project-type.enum';
+import { ProjectStatus } from '../prisma/project-status.enum';
 
 @ObjectType()
 export class ProjectMaxAggregate {
@@ -15,6 +16,9 @@ export class ProjectMaxAggregate {
     department_id?: string;
 
     @Field(() => String, {nullable:true})
+    church_department_id?: string;
+
+    @Field(() => String, {nullable:true})
     title?: string;
 
     @Field(() => String, {nullable:true})
@@ -23,8 +27,11 @@ export class ProjectMaxAggregate {
     @Field(() => GraphQLDecimal, {nullable:true})
     budget?: Decimal;
 
-    @Field(() => String, {nullable:true})
-    media_link?: string;
+    @Field(() => GraphQLDecimal, {nullable:true})
+    subsidized_budget?: Decimal;
+
+    @Field(() => GraphQLDecimal, {nullable:true})
+    balance?: Decimal;
 
     @Field(() => String, {nullable:true})
     owner_id?: string;
@@ -35,11 +42,29 @@ export class ProjectMaxAggregate {
     @Field(() => ProjectType, {nullable:true})
     type?: `${ProjectType}`;
 
+    @Field(() => ProjectStatus, {nullable:true})
+    status?: `${ProjectStatus}`;
+
+    @Field(() => Boolean, {nullable:true})
+    is_private?: boolean;
+
+    @Field(() => Boolean, {nullable:true})
+    required_volunteers?: boolean;
+
+    @Field(() => Date, {nullable:true})
+    start_at?: Date | string;
+
+    @Field(() => Date, {nullable:true})
+    end_at?: Date | string;
+
     @Field(() => Date, {nullable:true})
     created_at?: Date | string;
 
     @Field(() => Date, {nullable:true})
     updated_at?: Date | string;
+
+    @Field(() => Date, {nullable:true})
+    deadline?: Date | string;
 
     @Field(() => String, {nullable:true})
     created_by?: string;
@@ -61,4 +86,7 @@ export class ProjectMaxAggregate {
 
     @Field(() => String, {nullable:true})
     institution_id?: string;
+
+    @Field(() => String, {nullable:true})
+    church_id?: string;
 }

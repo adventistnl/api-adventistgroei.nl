@@ -1,14 +1,13 @@
 import { Field } from '@nestjs/graphql';
 import { InputType } from '@nestjs/graphql';
 import { StringFieldUpdateOperationsInput } from '../prisma/string-field-update-operations.input';
+import { NullableStringFieldUpdateOperationsInput } from '../prisma/nullable-string-field-update-operations.input';
 import { EnumLanguagePreferenceFieldUpdateOperationsInput } from '../prisma/enum-language-preference-field-update-operations.input';
 import { DateTimeFieldUpdateOperationsInput } from '../prisma/date-time-field-update-operations.input';
 import { BoolFieldUpdateOperationsInput } from '../prisma/bool-field-update-operations.input';
 import { NullableDateTimeFieldUpdateOperationsInput } from '../prisma/nullable-date-time-field-update-operations.input';
-import { NullableStringFieldUpdateOperationsInput } from '../prisma/nullable-string-field-update-operations.input';
 import { ContactUpdateOneWithoutInstitutionNestedInput } from '../contact/contact-update-one-without-institution-nested.input';
 import { Type } from 'class-transformer';
-import { RegionUpdateManyWithoutInstitutionNestedInput } from '../region/region-update-many-without-institution-nested.input';
 import { ChurchUpdateManyWithoutInstitutionNestedInput } from '../church/church-update-many-without-institution-nested.input';
 import { UserUpdateManyWithoutInstitutionNestedInput } from '../user/user-update-many-without-institution-nested.input';
 import { CommunicationUpdateManyWithoutInstitutionNestedInput } from '../communication/communication-update-many-without-institution-nested.input';
@@ -17,6 +16,7 @@ import { SettingUpdateManyWithoutInstitutionNestedInput } from '../setting/setti
 import { ProjectUpdateManyWithoutInstitutionNestedInput } from '../project/project-update-many-without-institution-nested.input';
 import { DirectMessageUpdateManyWithoutInstitutionNestedInput } from '../direct-message/direct-message-update-many-without-institution-nested.input';
 import { SubsidyRequestUpdateManyWithoutInstitutionNestedInput } from '../subsidy-request/subsidy-request-update-many-without-institution-nested.input';
+import { AnnualBudgetUpdateManyWithoutInstitutionNestedInput } from '../annual-budget/annual-budget-update-many-without-institution-nested.input';
 
 @InputType()
 export class InstitutionUpdateWithoutDepartmentsInput {
@@ -29,6 +29,9 @@ export class InstitutionUpdateWithoutDepartmentsInput {
 
     @Field(() => StringFieldUpdateOperationsInput, {nullable:true})
     denomination?: StringFieldUpdateOperationsInput;
+
+    @Field(() => NullableStringFieldUpdateOperationsInput, {nullable:true})
+    description?: NullableStringFieldUpdateOperationsInput;
 
     @Field(() => EnumLanguagePreferenceFieldUpdateOperationsInput, {nullable:true})
     language_preference?: EnumLanguagePreferenceFieldUpdateOperationsInput;
@@ -58,9 +61,6 @@ export class InstitutionUpdateWithoutDepartmentsInput {
     @Type(() => ContactUpdateOneWithoutInstitutionNestedInput)
     contact?: ContactUpdateOneWithoutInstitutionNestedInput;
 
-    @Field(() => RegionUpdateManyWithoutInstitutionNestedInput, {nullable:true})
-    regions?: RegionUpdateManyWithoutInstitutionNestedInput;
-
     @Field(() => ChurchUpdateManyWithoutInstitutionNestedInput, {nullable:true})
     @Type(() => ChurchUpdateManyWithoutInstitutionNestedInput)
     churches?: ChurchUpdateManyWithoutInstitutionNestedInput;
@@ -88,4 +88,8 @@ export class InstitutionUpdateWithoutDepartmentsInput {
     @Field(() => SubsidyRequestUpdateManyWithoutInstitutionNestedInput, {nullable:true})
     @Type(() => SubsidyRequestUpdateManyWithoutInstitutionNestedInput)
     subsidy_requests?: SubsidyRequestUpdateManyWithoutInstitutionNestedInput;
+
+    @Field(() => AnnualBudgetUpdateManyWithoutInstitutionNestedInput, {nullable:true})
+    @Type(() => AnnualBudgetUpdateManyWithoutInstitutionNestedInput)
+    annual_budgets?: AnnualBudgetUpdateManyWithoutInstitutionNestedInput;
 }

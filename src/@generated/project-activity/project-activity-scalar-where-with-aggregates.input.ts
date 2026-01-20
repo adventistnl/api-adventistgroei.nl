@@ -7,6 +7,10 @@ import { DateTimeWithAggregatesFilter } from '../prisma/date-time-with-aggregate
 import { BoolWithAggregatesFilter } from '../prisma/bool-with-aggregates-filter.input';
 import { DateTimeNullableWithAggregatesFilter } from '../prisma/date-time-nullable-with-aggregates-filter.input';
 import { StringNullableWithAggregatesFilter } from '../prisma/string-nullable-with-aggregates-filter.input';
+import { EnumActivityTagsNullableListFilter } from '../prisma/enum-activity-tags-nullable-list-filter.input';
+import { StringNullableListFilter } from '../prisma/string-nullable-list-filter.input';
+import { EnumActivityStatusWithAggregatesFilter } from '../prisma/enum-activity-status-with-aggregates-filter.input';
+import { EnumActivityPriorityWithAggregatesFilter } from '../prisma/enum-activity-priority-with-aggregates-filter.input';
 
 @InputType()
 export class ProjectActivityScalarWhereWithAggregatesInput {
@@ -59,4 +63,22 @@ export class ProjectActivityScalarWhereWithAggregatesInput {
 
     @Field(() => StringNullableWithAggregatesFilter, {nullable:true})
     deleted_by?: StringNullableWithAggregatesFilter;
+
+    @Field(() => DateTimeWithAggregatesFilter, {nullable:true})
+    deadline?: DateTimeWithAggregatesFilter;
+
+    @Field(() => EnumActivityTagsNullableListFilter, {nullable:true})
+    tags?: EnumActivityTagsNullableListFilter;
+
+    @Field(() => StringNullableListFilter, {nullable:true})
+    custom_tags?: StringNullableListFilter;
+
+    @Field(() => EnumActivityStatusWithAggregatesFilter, {nullable:true})
+    status?: EnumActivityStatusWithAggregatesFilter;
+
+    @Field(() => EnumActivityPriorityWithAggregatesFilter, {nullable:true})
+    priority?: EnumActivityPriorityWithAggregatesFilter;
+
+    @Field(() => BoolWithAggregatesFilter, {nullable:true})
+    is_subsidized?: BoolWithAggregatesFilter;
 }

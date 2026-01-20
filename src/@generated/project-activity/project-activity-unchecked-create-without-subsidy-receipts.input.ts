@@ -5,7 +5,15 @@ import { GraphQLDecimal } from 'prisma-graphql-type-decimal';
 import { transformToDecimal } from 'prisma-graphql-type-decimal';
 import { Transform } from 'class-transformer';
 import { Type } from 'class-transformer';
-import { SubsidyRequestUncheckedCreateNestedManyWithoutProject_activitiesInput } from '../subsidy-request/subsidy-request-unchecked-create-nested-many-without-project-activities.input';
+import { ProjectActivityCreatetagsInput } from './project-activity-createtags.input';
+import { ProjectActivityCreatecustom_tagsInput } from './project-activity-createcustom-tags.input';
+import { ActivityStatus } from '../prisma/activity-status.enum';
+import { ActivityPriority } from '../prisma/activity-priority.enum';
+import { SubsidyRequestItemUncheckedCreateNestedManyWithoutProject_activityInput } from '../subsidy-request-item/subsidy-request-item-unchecked-create-nested-many-without-project-activity.input';
+import { ActivityDocumentsUncheckedCreateNestedManyWithoutProject_activityInput } from '../activity-documents/activity-documents-unchecked-create-nested-many-without-project-activity.input';
+import { ActivityFundingUncheckedCreateNestedOneWithoutActivityInput } from '../activity-funding/activity-funding-unchecked-create-nested-one-without-activity.input';
+import { ProjectActivityLogUncheckedCreateNestedManyWithoutActivityInput } from '../project-activity-log/project-activity-log-unchecked-create-nested-many-without-activity.input';
+import { ProjectActivityAssigneeUncheckedCreateNestedManyWithoutActivityInput } from '../project-activity-assignee/project-activity-assignee-unchecked-create-nested-many-without-activity.input';
 
 @InputType()
 export class ProjectActivityUncheckedCreateWithoutSubsidy_receiptsInput {
@@ -48,7 +56,43 @@ export class ProjectActivityUncheckedCreateWithoutSubsidy_receiptsInput {
     @Field(() => String, {nullable:true})
     deleted_by?: string;
 
-    @Field(() => SubsidyRequestUncheckedCreateNestedManyWithoutProject_activitiesInput, {nullable:true})
-    @Type(() => SubsidyRequestUncheckedCreateNestedManyWithoutProject_activitiesInput)
-    subsidy_request?: SubsidyRequestUncheckedCreateNestedManyWithoutProject_activitiesInput;
+    @Field(() => Date, {nullable:false})
+    deadline!: Date | string;
+
+    @Field(() => ProjectActivityCreatetagsInput, {nullable:true})
+    @Type(() => ProjectActivityCreatetagsInput)
+    tags?: ProjectActivityCreatetagsInput;
+
+    @Field(() => ProjectActivityCreatecustom_tagsInput, {nullable:true})
+    @Type(() => ProjectActivityCreatecustom_tagsInput)
+    custom_tags?: ProjectActivityCreatecustom_tagsInput;
+
+    @Field(() => ActivityStatus, {nullable:true})
+    status?: `${ActivityStatus}`;
+
+    @Field(() => ActivityPriority, {nullable:true})
+    priority?: `${ActivityPriority}`;
+
+    @Field(() => Boolean, {nullable:true})
+    is_subsidized?: boolean;
+
+    @Field(() => SubsidyRequestItemUncheckedCreateNestedManyWithoutProject_activityInput, {nullable:true})
+    @Type(() => SubsidyRequestItemUncheckedCreateNestedManyWithoutProject_activityInput)
+    subsidy_request_items?: SubsidyRequestItemUncheckedCreateNestedManyWithoutProject_activityInput;
+
+    @Field(() => ActivityDocumentsUncheckedCreateNestedManyWithoutProject_activityInput, {nullable:true})
+    @Type(() => ActivityDocumentsUncheckedCreateNestedManyWithoutProject_activityInput)
+    activity_documents?: ActivityDocumentsUncheckedCreateNestedManyWithoutProject_activityInput;
+
+    @Field(() => ActivityFundingUncheckedCreateNestedOneWithoutActivityInput, {nullable:true})
+    @Type(() => ActivityFundingUncheckedCreateNestedOneWithoutActivityInput)
+    activity_funding?: ActivityFundingUncheckedCreateNestedOneWithoutActivityInput;
+
+    @Field(() => ProjectActivityLogUncheckedCreateNestedManyWithoutActivityInput, {nullable:true})
+    @Type(() => ProjectActivityLogUncheckedCreateNestedManyWithoutActivityInput)
+    logs?: ProjectActivityLogUncheckedCreateNestedManyWithoutActivityInput;
+
+    @Field(() => ProjectActivityAssigneeUncheckedCreateNestedManyWithoutActivityInput, {nullable:true})
+    @Type(() => ProjectActivityAssigneeUncheckedCreateNestedManyWithoutActivityInput)
+    assignees?: ProjectActivityAssigneeUncheckedCreateNestedManyWithoutActivityInput;
 }

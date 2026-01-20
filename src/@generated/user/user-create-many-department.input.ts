@@ -1,5 +1,6 @@
 import { Field } from '@nestjs/graphql';
 import { InputType } from '@nestjs/graphql';
+import { GenderType } from '../prisma/gender-type.enum';
 import { LanguagePreference } from '../prisma/language-preference.enum';
 
 @InputType()
@@ -16,6 +17,9 @@ export class UserCreateManyDepartmentInput {
 
     @Field(() => String, {nullable:false})
     password!: string;
+
+    @Field(() => GenderType, {nullable:true})
+    gender?: `${GenderType}`;
 
     @Field(() => LanguagePreference, {nullable:false})
     language_preference!: `${LanguagePreference}`;
@@ -47,6 +51,6 @@ export class UserCreateManyDepartmentInput {
     @Field(() => String, {nullable:false})
     institution_id!: string;
 
-    @Field(() => String, {nullable:false})
-    church_id!: string;
+    @Field(() => String, {nullable:true})
+    church_id?: string;
 }

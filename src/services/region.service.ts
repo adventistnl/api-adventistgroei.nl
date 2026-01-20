@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { RegionRepository } from '../repositories/region.repository';
 import { RegionCreateDto, RegionUpdateDto } from '../dto/region.dto';
 import { Region } from '@prisma/client';
+import { RegionKPIData } from '../models';
 
 @Injectable()
 export class RegionService {
@@ -26,12 +27,9 @@ export class RegionService {
   async getRegionById(id: string): Promise<Region | null> {
     return await this.regionRepository.findById(id);
   }
-  
-  async getChildren(parentRegionId: string): Promise<Region[]> {
-    return this.regionRepository.findChildren(parentRegionId);
+
+  async getKPIData(regionId: string): Promise<RegionKPIData> {
+    return await this.regionRepository.getKPIData(regionId);
   }
 
-  async getParentRegion(parentRegionId: string): Promise<Region | null> {
-    return this.regionRepository.findById(parentRegionId);
-  } 
 }

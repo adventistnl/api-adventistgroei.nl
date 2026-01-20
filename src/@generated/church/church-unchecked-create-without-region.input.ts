@@ -1,15 +1,21 @@
 import { Field } from '@nestjs/graphql';
 import { InputType } from '@nestjs/graphql';
+import { ChurchType } from '../prisma/church-type.enum';
 import { DepartmentUncheckedCreateNestedManyWithoutChurchInput } from '../department/department-unchecked-create-nested-many-without-church.input';
 import { Type } from 'class-transformer';
 import { UserUncheckedCreateNestedManyWithoutChurchInput } from '../user/user-unchecked-create-nested-many-without-church.input';
 import { SubsidyRequestUncheckedCreateNestedManyWithoutChurchInput } from '../subsidy-request/subsidy-request-unchecked-create-nested-many-without-church.input';
+import { AnnualBudgetUncheckedCreateNestedManyWithoutChurchInput } from '../annual-budget/annual-budget-unchecked-create-nested-many-without-church.input';
+import { ProjectUncheckedCreateNestedManyWithoutChurchInput } from '../project/project-unchecked-create-nested-many-without-church.input';
 
 @InputType()
 export class ChurchUncheckedCreateWithoutRegionInput {
 
     @Field(() => String, {nullable:true})
     id?: string;
+
+    @Field(() => ChurchType, {nullable:true})
+    type?: `${ChurchType}`;
 
     @Field(() => String, {nullable:false})
     institution_id!: string;
@@ -52,4 +58,12 @@ export class ChurchUncheckedCreateWithoutRegionInput {
     @Field(() => SubsidyRequestUncheckedCreateNestedManyWithoutChurchInput, {nullable:true})
     @Type(() => SubsidyRequestUncheckedCreateNestedManyWithoutChurchInput)
     subsidy_requests?: SubsidyRequestUncheckedCreateNestedManyWithoutChurchInput;
+
+    @Field(() => AnnualBudgetUncheckedCreateNestedManyWithoutChurchInput, {nullable:true})
+    @Type(() => AnnualBudgetUncheckedCreateNestedManyWithoutChurchInput)
+    annual_budgets?: AnnualBudgetUncheckedCreateNestedManyWithoutChurchInput;
+
+    @Field(() => ProjectUncheckedCreateNestedManyWithoutChurchInput, {nullable:true})
+    @Type(() => ProjectUncheckedCreateNestedManyWithoutChurchInput)
+    projects?: ProjectUncheckedCreateNestedManyWithoutChurchInput;
 }

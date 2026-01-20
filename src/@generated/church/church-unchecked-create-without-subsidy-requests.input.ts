@@ -1,8 +1,11 @@
 import { Field } from '@nestjs/graphql';
 import { InputType } from '@nestjs/graphql';
+import { ChurchType } from '../prisma/church-type.enum';
 import { DepartmentUncheckedCreateNestedManyWithoutChurchInput } from '../department/department-unchecked-create-nested-many-without-church.input';
 import { Type } from 'class-transformer';
 import { UserUncheckedCreateNestedManyWithoutChurchInput } from '../user/user-unchecked-create-nested-many-without-church.input';
+import { AnnualBudgetUncheckedCreateNestedManyWithoutChurchInput } from '../annual-budget/annual-budget-unchecked-create-nested-many-without-church.input';
+import { ProjectUncheckedCreateNestedManyWithoutChurchInput } from '../project/project-unchecked-create-nested-many-without-church.input';
 
 @InputType()
 export class ChurchUncheckedCreateWithoutSubsidy_requestsInput {
@@ -10,14 +13,17 @@ export class ChurchUncheckedCreateWithoutSubsidy_requestsInput {
     @Field(() => String, {nullable:true})
     id?: string;
 
+    @Field(() => ChurchType, {nullable:true})
+    type?: `${ChurchType}`;
+
     @Field(() => String, {nullable:false})
     institution_id!: string;
 
     @Field(() => String, {nullable:false})
     name!: string;
 
-    @Field(() => String, {nullable:false})
-    region_id!: string;
+    @Field(() => String, {nullable:true})
+    region_id?: string;
 
     @Field(() => String, {nullable:true})
     contact_id?: string;
@@ -50,4 +56,12 @@ export class ChurchUncheckedCreateWithoutSubsidy_requestsInput {
     @Field(() => UserUncheckedCreateNestedManyWithoutChurchInput, {nullable:true})
     @Type(() => UserUncheckedCreateNestedManyWithoutChurchInput)
     users?: UserUncheckedCreateNestedManyWithoutChurchInput;
+
+    @Field(() => AnnualBudgetUncheckedCreateNestedManyWithoutChurchInput, {nullable:true})
+    @Type(() => AnnualBudgetUncheckedCreateNestedManyWithoutChurchInput)
+    annual_budgets?: AnnualBudgetUncheckedCreateNestedManyWithoutChurchInput;
+
+    @Field(() => ProjectUncheckedCreateNestedManyWithoutChurchInput, {nullable:true})
+    @Type(() => ProjectUncheckedCreateNestedManyWithoutChurchInput)
+    projects?: ProjectUncheckedCreateNestedManyWithoutChurchInput;
 }

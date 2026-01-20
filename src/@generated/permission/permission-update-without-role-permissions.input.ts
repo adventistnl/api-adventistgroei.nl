@@ -49,4 +49,7 @@ export class PermissionUpdateWithoutRole_permissionsInput {
 
     @Field(() => NullableStringFieldUpdateOperationsInput, {nullable:true})
     deleted_by?: NullableStringFieldUpdateOperationsInput;
+
+    @Field(() => BoolFieldUpdateOperationsInput, {nullable:true})
+    disabled_to_client?: BoolFieldUpdateOperationsInput;
 }

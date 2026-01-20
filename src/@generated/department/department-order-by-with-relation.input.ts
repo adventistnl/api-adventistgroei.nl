@@ -5,12 +5,14 @@ import { SortOrderInput } from '../prisma/sort-order.input';
 import { InstitutionOrderByWithRelationInput } from '../institution/institution-order-by-with-relation.input';
 import { Type } from 'class-transformer';
 import { ChurchOrderByWithRelationInput } from '../church/church-order-by-with-relation.input';
+import { UserOrderByWithRelationInput } from '../user/user-order-by-with-relation.input';
 import { ContactOrderByWithRelationInput } from '../contact/contact-order-by-with-relation.input';
 import { SubsidyStatusOrderByRelationAggregateInput } from '../subsidy-status/subsidy-status-order-by-relation-aggregate.input';
 import { ProjectOrderByRelationAggregateInput } from '../project/project-order-by-relation-aggregate.input';
 import { AnnualReportOrderByRelationAggregateInput } from '../annual-report/annual-report-order-by-relation-aggregate.input';
 import { SubsidyRequestOrderByRelationAggregateInput } from '../subsidy-request/subsidy-request-order-by-relation-aggregate.input';
 import { UserOrderByRelationAggregateInput } from '../user/user-order-by-relation-aggregate.input';
+import { AnnualBudgetOrderByRelationAggregateInput } from '../annual-budget/annual-budget-order-by-relation-aggregate.input';
 
 @InputType()
 export class DepartmentOrderByWithRelationInput {
@@ -21,8 +23,8 @@ export class DepartmentOrderByWithRelationInput {
     @Field(() => SortOrder, {nullable:true})
     institution_id?: `${SortOrder}`;
 
-    @Field(() => SortOrder, {nullable:true})
-    church_id?: `${SortOrder}`;
+    @Field(() => SortOrderInput, {nullable:true})
+    church_id?: SortOrderInput;
 
     @Field(() => SortOrder, {nullable:true})
     name?: `${SortOrder}`;
@@ -31,7 +33,7 @@ export class DepartmentOrderByWithRelationInput {
     description?: `${SortOrder}`;
 
     @Field(() => SortOrder, {nullable:true})
-    annual_budget?: `${SortOrder}`;
+    leader_id?: `${SortOrder}`;
 
     @Field(() => SortOrderInput, {nullable:true})
     contact_id?: SortOrderInput;
@@ -65,6 +67,10 @@ export class DepartmentOrderByWithRelationInput {
     @Type(() => ChurchOrderByWithRelationInput)
     church?: ChurchOrderByWithRelationInput;
 
+    @Field(() => UserOrderByWithRelationInput, {nullable:true})
+    @Type(() => UserOrderByWithRelationInput)
+    leader?: UserOrderByWithRelationInput;
+
     @Field(() => ContactOrderByWithRelationInput, {nullable:true})
     @Type(() => ContactOrderByWithRelationInput)
     contact?: ContactOrderByWithRelationInput;
@@ -77,8 +83,11 @@ export class DepartmentOrderByWithRelationInput {
     @Type(() => ProjectOrderByRelationAggregateInput)
     projects?: ProjectOrderByRelationAggregateInput;
 
+    @Field(() => ProjectOrderByRelationAggregateInput, {nullable:true})
+    @Type(() => ProjectOrderByRelationAggregateInput)
+    church_projects?: ProjectOrderByRelationAggregateInput;
+
     @Field(() => AnnualReportOrderByRelationAggregateInput, {nullable:true})
-    @Type(() => AnnualReportOrderByRelationAggregateInput)
     annual_reports?: AnnualReportOrderByRelationAggregateInput;
 
     @Field(() => SubsidyRequestOrderByRelationAggregateInput, {nullable:true})
@@ -88,4 +97,8 @@ export class DepartmentOrderByWithRelationInput {
     @Field(() => UserOrderByRelationAggregateInput, {nullable:true})
     @Type(() => UserOrderByRelationAggregateInput)
     users?: UserOrderByRelationAggregateInput;
+
+    @Field(() => AnnualBudgetOrderByRelationAggregateInput, {nullable:true})
+    @Type(() => AnnualBudgetOrderByRelationAggregateInput)
+    annual_budgets?: AnnualBudgetOrderByRelationAggregateInput;
 }

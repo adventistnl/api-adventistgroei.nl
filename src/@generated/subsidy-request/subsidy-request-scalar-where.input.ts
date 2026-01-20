@@ -3,10 +3,11 @@ import { InputType } from '@nestjs/graphql';
 import { Type } from 'class-transformer';
 import { StringFilter } from '../prisma/string-filter.input';
 import { DecimalFilter } from '../prisma/decimal-filter.input';
-import { DateTimeFilter } from '../prisma/date-time-filter.input';
-import { BoolFilter } from '../prisma/bool-filter.input';
-import { DateTimeNullableFilter } from '../prisma/date-time-nullable-filter.input';
 import { StringNullableFilter } from '../prisma/string-nullable-filter.input';
+import { DateTimeFilter } from '../prisma/date-time-filter.input';
+import { DateTimeNullableFilter } from '../prisma/date-time-nullable-filter.input';
+import { BoolFilter } from '../prisma/bool-filter.input';
+import { EnumSubsidyRequestPriorityFilter } from '../prisma/enum-subsidy-request-priority-filter.input';
 
 @InputType()
 export class SubsidyRequestScalarWhereInput {
@@ -33,17 +34,30 @@ export class SubsidyRequestScalarWhereInput {
     @Type(() => DecimalFilter)
     total_budget?: DecimalFilter;
 
+    @Field(() => DecimalFilter, {nullable:true})
+    @Type(() => DecimalFilter)
+    approved_amount?: DecimalFilter;
+
+    @Field(() => StringNullableFilter, {nullable:true})
+    rejection_reason?: StringNullableFilter;
+
     @Field(() => DateTimeFilter, {nullable:true})
     created_at?: DateTimeFilter;
 
     @Field(() => DateTimeFilter, {nullable:true})
     updated_at?: DateTimeFilter;
 
+    @Field(() => DateTimeNullableFilter, {nullable:true})
+    approved_at?: DateTimeNullableFilter;
+
     @Field(() => StringFilter, {nullable:true})
     created_by?: StringFilter;
 
     @Field(() => StringFilter, {nullable:true})
     updated_by?: StringFilter;
+
+    @Field(() => StringNullableFilter, {nullable:true})
+    approved_by?: StringNullableFilter;
 
     @Field(() => BoolFilter, {nullable:true})
     is_deleted?: BoolFilter;
@@ -63,8 +77,11 @@ export class SubsidyRequestScalarWhereInput {
     @Field(() => StringFilter, {nullable:true})
     department_id?: StringFilter;
 
-    @Field(() => StringFilter, {nullable:true})
-    church_id?: StringFilter;
+    @Field(() => StringNullableFilter, {nullable:true})
+    church_id?: StringNullableFilter;
+
+    @Field(() => EnumSubsidyRequestPriorityFilter, {nullable:true})
+    priority?: EnumSubsidyRequestPriorityFilter;
 
     @Field(() => StringFilter, {nullable:true})
     subsidy_statuses_id?: StringFilter;

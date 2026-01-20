@@ -13,8 +13,9 @@ export class SubsidyStatusResolver {
   @Query(() => [SubsidyStatus], { name: 'subsidyStatuses' })
   @Permission()
   @UseGuards(PermissionsGuard)
-  async subsidyStatuses(@Args('filters', { nullable: true, type: () => String }) filters: any) {
-    return this.service.findManyByFilters(filters || {});
+  async subsidyStatuses(@Args('filters', { nullable: true, type: () => String }) filters: string | undefined) {
+    const parsedFilters: Partial<Record<string, any>> = filters ? JSON.parse(filters) : {};
+    return this.service.findManyByFilters(parsedFilters);
   }
 
   @Query(() => SubsidyStatus, { name: 'subsidyStatus', nullable: true })

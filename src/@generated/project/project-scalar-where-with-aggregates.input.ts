@@ -2,13 +2,14 @@ import { Field } from '@nestjs/graphql';
 import { InputType } from '@nestjs/graphql';
 import { Type } from 'class-transformer';
 import { StringWithAggregatesFilter } from '../prisma/string-with-aggregates-filter.input';
+import { StringNullableWithAggregatesFilter } from '../prisma/string-nullable-with-aggregates-filter.input';
 import { DecimalWithAggregatesFilter } from '../prisma/decimal-with-aggregates-filter.input';
 import { EnumLanguagePreferenceWithAggregatesFilter } from '../prisma/enum-language-preference-with-aggregates-filter.input';
 import { EnumProjectTypeWithAggregatesFilter } from '../prisma/enum-project-type-with-aggregates-filter.input';
-import { DateTimeWithAggregatesFilter } from '../prisma/date-time-with-aggregates-filter.input';
+import { EnumProjectStatusWithAggregatesFilter } from '../prisma/enum-project-status-with-aggregates-filter.input';
 import { BoolWithAggregatesFilter } from '../prisma/bool-with-aggregates-filter.input';
+import { DateTimeWithAggregatesFilter } from '../prisma/date-time-with-aggregates-filter.input';
 import { DateTimeNullableWithAggregatesFilter } from '../prisma/date-time-nullable-with-aggregates-filter.input';
-import { StringNullableWithAggregatesFilter } from '../prisma/string-nullable-with-aggregates-filter.input';
 
 @InputType()
 export class ProjectScalarWhereWithAggregatesInput {
@@ -31,6 +32,9 @@ export class ProjectScalarWhereWithAggregatesInput {
     @Field(() => StringWithAggregatesFilter, {nullable:true})
     department_id?: StringWithAggregatesFilter;
 
+    @Field(() => StringNullableWithAggregatesFilter, {nullable:true})
+    church_department_id?: StringNullableWithAggregatesFilter;
+
     @Field(() => StringWithAggregatesFilter, {nullable:true})
     title?: StringWithAggregatesFilter;
 
@@ -41,8 +45,13 @@ export class ProjectScalarWhereWithAggregatesInput {
     @Type(() => DecimalWithAggregatesFilter)
     budget?: DecimalWithAggregatesFilter;
 
-    @Field(() => StringWithAggregatesFilter, {nullable:true})
-    media_link?: StringWithAggregatesFilter;
+    @Field(() => DecimalWithAggregatesFilter, {nullable:true})
+    @Type(() => DecimalWithAggregatesFilter)
+    subsidized_budget?: DecimalWithAggregatesFilter;
+
+    @Field(() => DecimalWithAggregatesFilter, {nullable:true})
+    @Type(() => DecimalWithAggregatesFilter)
+    balance?: DecimalWithAggregatesFilter;
 
     @Field(() => StringWithAggregatesFilter, {nullable:true})
     owner_id?: StringWithAggregatesFilter;
@@ -53,11 +62,29 @@ export class ProjectScalarWhereWithAggregatesInput {
     @Field(() => EnumProjectTypeWithAggregatesFilter, {nullable:true})
     type?: EnumProjectTypeWithAggregatesFilter;
 
+    @Field(() => EnumProjectStatusWithAggregatesFilter, {nullable:true})
+    status?: EnumProjectStatusWithAggregatesFilter;
+
+    @Field(() => BoolWithAggregatesFilter, {nullable:true})
+    is_private?: BoolWithAggregatesFilter;
+
+    @Field(() => BoolWithAggregatesFilter, {nullable:true})
+    required_volunteers?: BoolWithAggregatesFilter;
+
+    @Field(() => DateTimeWithAggregatesFilter, {nullable:true})
+    start_at?: DateTimeWithAggregatesFilter;
+
+    @Field(() => DateTimeWithAggregatesFilter, {nullable:true})
+    end_at?: DateTimeWithAggregatesFilter;
+
     @Field(() => DateTimeWithAggregatesFilter, {nullable:true})
     created_at?: DateTimeWithAggregatesFilter;
 
     @Field(() => DateTimeWithAggregatesFilter, {nullable:true})
     updated_at?: DateTimeWithAggregatesFilter;
+
+    @Field(() => DateTimeNullableWithAggregatesFilter, {nullable:true})
+    deadline?: DateTimeNullableWithAggregatesFilter;
 
     @Field(() => StringWithAggregatesFilter, {nullable:true})
     created_by?: StringWithAggregatesFilter;
@@ -79,4 +106,7 @@ export class ProjectScalarWhereWithAggregatesInput {
 
     @Field(() => StringNullableWithAggregatesFilter, {nullable:true})
     institution_id?: StringNullableWithAggregatesFilter;
+
+    @Field(() => StringNullableWithAggregatesFilter, {nullable:true})
+    church_id?: StringNullableWithAggregatesFilter;
 }

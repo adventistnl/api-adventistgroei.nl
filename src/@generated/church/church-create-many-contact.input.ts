@@ -1,5 +1,6 @@
 import { Field } from '@nestjs/graphql';
 import { InputType } from '@nestjs/graphql';
+import { ChurchType } from '../prisma/church-type.enum';
 
 @InputType()
 export class ChurchCreateManyContactInput {
@@ -7,14 +8,17 @@ export class ChurchCreateManyContactInput {
     @Field(() => String, {nullable:true})
     id?: string;
 
+    @Field(() => ChurchType, {nullable:true})
+    type?: `${ChurchType}`;
+
     @Field(() => String, {nullable:false})
     institution_id!: string;
 
     @Field(() => String, {nullable:false})
     name!: string;
 
-    @Field(() => String, {nullable:false})
-    region_id!: string;
+    @Field(() => String, {nullable:true})
+    region_id?: string;
 
     @Field(() => Date, {nullable:true})
     created_at?: Date | string;

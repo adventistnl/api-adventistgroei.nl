@@ -44,5 +44,8 @@ export class PermissionCountAggregateInput {
     deleted_by?: true;
 
     @Field(() => Boolean, {nullable:true})
+    disabled_to_client?: true;
+
+    @Field(() => Boolean, {nullable:true})
     _all?: true;
 }

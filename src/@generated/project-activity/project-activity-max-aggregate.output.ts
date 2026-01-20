@@ -2,6 +2,8 @@ import { Field } from '@nestjs/graphql';
 import { ObjectType } from '@nestjs/graphql';
 import { Decimal } from '@prisma/client/runtime/library';
 import { GraphQLDecimal } from 'prisma-graphql-type-decimal';
+import { ActivityStatus } from '../prisma/activity-status.enum';
+import { ActivityPriority } from '../prisma/activity-priority.enum';
 
 @ObjectType()
 export class ProjectActivityMaxAggregate {
@@ -41,4 +43,16 @@ export class ProjectActivityMaxAggregate {
 
     @Field(() => String, {nullable:true})
     deleted_by?: string;
+
+    @Field(() => Date, {nullable:true})
+    deadline?: Date | string;
+
+    @Field(() => ActivityStatus, {nullable:true})
+    status?: `${ActivityStatus}`;
+
+    @Field(() => ActivityPriority, {nullable:true})
+    priority?: `${ActivityPriority}`;
+
+    @Field(() => Boolean, {nullable:true})
+    is_subsidized?: boolean;
 }

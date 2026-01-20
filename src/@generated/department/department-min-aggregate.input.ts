@@ -20,7 +20,7 @@ export class DepartmentMinAggregateInput {
     description?: true;
 
     @Field(() => Boolean, {nullable:true})
-    annual_budget?: true;
+    leader_id?: true;
 
     @Field(() => Boolean, {nullable:true})
     contact_id?: true;

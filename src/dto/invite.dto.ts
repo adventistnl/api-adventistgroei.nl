@@ -16,11 +16,6 @@ export class InviteUserDto {
   @Field(() => String)
   @IsNotEmpty()
   @IsString()
-  institution_id: string;
-
-  @Field(() => String)
-  @IsNotEmpty()
-  @IsString()
   inviter_id: string;
 
   @Field(() => String, { nullable: true })
@@ -32,4 +27,24 @@ export class InviteUserDto {
   @IsString()
   @IsOptional()
   message?: string;
+
+  @Field(() => String)
+  @IsNotEmpty()
+  @IsString()
+  institution_id: string;
+  
+  @Field(() => String, { nullable: true })
+  @IsString()
+  @IsOptional()
+  institution_department_id?: string;
+
+  @Field(() => String, { nullable: true })
+  @IsString()
+  @IsOptional()
+  church_id?: string;
+
+  @Field(() => String, { nullable: true })
+  @IsString()
+  @IsOptional()
+  church_department_id?: string;
 }

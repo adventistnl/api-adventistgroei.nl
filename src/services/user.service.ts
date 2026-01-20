@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { UserRepository } from '../repositories/user.repository';
 import { UserCreateDto, UserUpdateDto } from '../dto/user.dto';
 import { User } from '@prisma/client';
-import { UserWithRoles } from 'src/models';
+import { UserWithRoles } from '../models';
 
 @Injectable()
 export class UserService {
@@ -24,8 +24,16 @@ export class UserService {
     return await this.userRepository.findAll();
   }
 
+  async getUsersByInstitution(institution_id: string): Promise<Omit<User, 'password'>[]> {
+    return await this.userRepository.findByInstitution(institution_id);
+  }
+
   async getUserById(id: string): Promise<Omit<User, 'password'> | null> {
     return await this.userRepository.findById(id);
+  }
+
+  async getUserByIdWithRoles(id: string): Promise<UserWithRoles | null> {
+    return await this.userRepository.findByIdWithRoles(id);
   }
 
   async findByEmail(email: string): Promise<UserWithRoles | null> {
@@ -38,5 +46,9 @@ export class UserService {
 
   async removeRoleFromUser(userId: string, roleId: string, requesterId: string): Promise<Omit<User, 'password'>> {
     return await this.userRepository.removeRoleFromUser(userId, roleId, requesterId);
+  }
+
+  async updatePassword(userId: string, newPassword: string, updaterId: string): Promise<Omit<User, 'password'>> {
+    return await this.userRepository.updatePassword(userId, newPassword, updaterId);
   }
 }

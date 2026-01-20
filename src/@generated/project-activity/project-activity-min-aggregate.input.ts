@@ -39,4 +39,16 @@ export class ProjectActivityMinAggregateInput {
 
     @Field(() => Boolean, {nullable:true})
     deleted_by?: true;
+
+    @Field(() => Boolean, {nullable:true})
+    deadline?: true;
+
+    @Field(() => Boolean, {nullable:true})
+    status?: true;
+
+    @Field(() => Boolean, {nullable:true})
+    priority?: true;
+
+    @Field(() => Boolean, {nullable:true})
+    is_subsidized?: true;
 }

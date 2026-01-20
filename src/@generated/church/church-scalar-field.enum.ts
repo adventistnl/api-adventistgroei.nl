@@ -2,6 +2,7 @@ import { registerEnumType } from '@nestjs/graphql';
 
 export enum ChurchScalarFieldEnum {
     id = "id",
+    type = "type",
     institution_id = "institution_id",
     name = "name",
     region_id = "region_id",

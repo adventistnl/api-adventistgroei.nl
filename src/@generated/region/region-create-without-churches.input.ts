@@ -1,10 +1,6 @@
 import { Field } from '@nestjs/graphql';
 import { InputType } from '@nestjs/graphql';
-import { InstitutionCreateNestedOneWithoutRegionsInput } from '../institution/institution-create-nested-one-without-regions.input';
-import { Type } from 'class-transformer';
-import { RegionCreateNestedOneWithoutChildrenInput } from './region-create-nested-one-without-children.input';
-import { RegionCreateNestedManyWithoutParent_regionInput } from './region-create-nested-many-without-parent-region.input';
-import { ContactCreateNestedOneWithoutRegionInput } from '../contact/contact-create-nested-one-without-region.input';
+import { GraphQLJSON } from 'graphql-type-json';
 
 @InputType()
 export class RegionCreateWithoutChurchesInput {
@@ -12,8 +8,17 @@ export class RegionCreateWithoutChurchesInput {
     @Field(() => String, {nullable:true})
     id?: string;
 
+    @Field(() => String, {nullable:true})
+    description?: string;
+
     @Field(() => String, {nullable:false})
     name!: string;
+
+    @Field(() => GraphQLJSON, {nullable:true})
+    territory?: any;
+
+    @Field(() => String, {nullable:true})
+    color?: string;
 
     @Field(() => Date, {nullable:true})
     created_at?: Date | string;
@@ -35,18 +40,4 @@ export class RegionCreateWithoutChurchesInput {
 
     @Field(() => String, {nullable:true})
     deleted_by?: string;
-
-    @Field(() => InstitutionCreateNestedOneWithoutRegionsInput, {nullable:false})
-    @Type(() => InstitutionCreateNestedOneWithoutRegionsInput)
-    institution!: InstitutionCreateNestedOneWithoutRegionsInput;
-
-    @Field(() => RegionCreateNestedOneWithoutChildrenInput, {nullable:true})
-    parent_region?: RegionCreateNestedOneWithoutChildrenInput;
-
-    @Field(() => RegionCreateNestedManyWithoutParent_regionInput, {nullable:true})
-    children?: RegionCreateNestedManyWithoutParent_regionInput;
-
-    @Field(() => ContactCreateNestedOneWithoutRegionInput, {nullable:true})
-    @Type(() => ContactCreateNestedOneWithoutRegionInput)
-    contact?: ContactCreateNestedOneWithoutRegionInput;
 }

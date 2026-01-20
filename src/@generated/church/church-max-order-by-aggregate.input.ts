@@ -9,6 +9,9 @@ export class ChurchMaxOrderByAggregateInput {
     id?: `${SortOrder}`;
 
     @Field(() => SortOrder, {nullable:true})
+    type?: `${SortOrder}`;
+
+    @Field(() => SortOrder, {nullable:true})
     institution_id?: `${SortOrder}`;
 
     @Field(() => SortOrder, {nullable:true})

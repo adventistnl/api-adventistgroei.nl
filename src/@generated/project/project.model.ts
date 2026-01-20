@@ -5,13 +5,16 @@ import { GraphQLDecimal } from 'prisma-graphql-type-decimal';
 import { Decimal } from '@prisma/client/runtime/library';
 import { LanguagePreference } from '../prisma/language-preference.enum';
 import { ProjectType } from '../prisma/project-type.enum';
+import { ProjectStatus } from '../prisma/project-status.enum';
 import { Department } from '../department/department.model';
 import { User } from '../user/user.model';
 import { Event } from '../event/event.model';
 import { Institution } from '../institution/institution.model';
+import { Church } from '../church/church.model';
 import { VoluntariesOnProjects } from '../voluntaries-on-projects/voluntaries-on-projects.model';
 import { ProjectActivity } from '../project-activity/project-activity.model';
 import { SubsidyRequest } from '../subsidy-request/subsidy-request.model';
+import { SpecialProjects } from '../special-projects/special-projects.model';
 import { ProjectCount } from './project-count.output';
 
 @ObjectType()
@@ -23,6 +26,9 @@ export class Project {
     @Field(() => String, {nullable:false})
     department_id!: string;
 
+    @Field(() => String, {nullable:true})
+    church_department_id!: string | null;
+
     @Field(() => String, {nullable:false})
     title!: string;
 
@@ -32,8 +38,11 @@ export class Project {
     @Field(() => GraphQLDecimal, {nullable:false})
     budget!: Decimal;
 
-    @Field(() => String, {nullable:false})
-    media_link!: string;
+    @Field(() => GraphQLDecimal, {defaultValue:0,nullable:false})
+    subsidized_budget!: Decimal;
+
+    @Field(() => GraphQLDecimal, {defaultValue:0,nullable:false})
+    balance!: Decimal;
 
     @Field(() => String, {nullable:false})
     owner_id!: string;
@@ -44,11 +53,29 @@ export class Project {
     @Field(() => ProjectType, {nullable:false})
     type!: `${ProjectType}`;
 
+    @Field(() => ProjectStatus, {defaultValue:'DRAFT',nullable:false})
+    status!: `${ProjectStatus}`;
+
+    @Field(() => Boolean, {defaultValue:false,nullable:false})
+    is_private!: boolean;
+
+    @Field(() => Boolean, {defaultValue:false,nullable:false})
+    required_volunteers!: boolean;
+
+    @Field(() => Date, {nullable:false})
+    start_at!: Date;
+
+    @Field(() => Date, {nullable:false})
+    end_at!: Date;
+
     @Field(() => Date, {nullable:false})
     created_at!: Date;
 
     @Field(() => Date, {nullable:false})
     updated_at!: Date;
+
+    @Field(() => Date, {nullable:true})
+    deadline!: Date | null;
 
     @Field(() => String, {nullable:false})
     created_by!: string;
@@ -71,8 +98,14 @@ export class Project {
     @Field(() => String, {nullable:true})
     institution_id!: string | null;
 
+    @Field(() => String, {nullable:true})
+    church_id!: string | null;
+
     @Field(() => Department, {nullable:false})
     department?: Department;
+
+    @Field(() => Department, {nullable:true})
+    church_department?: Department | null;
 
     @Field(() => User, {nullable:false})
     owner?: User;
@@ -83,6 +116,9 @@ export class Project {
     @Field(() => Institution, {nullable:true})
     Institution?: Institution | null;
 
+    @Field(() => Church, {nullable:true})
+    church?: Church | null;
+
     @Field(() => [VoluntariesOnProjects], {nullable:true})
     voluntary_users?: Array<VoluntariesOnProjects>;
 
@@ -91,6 +127,9 @@ export class Project {
 
     @Field(() => [SubsidyRequest], {nullable:true})
     subsidies?: Array<SubsidyRequest>;
+
+    @Field(() => [SpecialProjects], {nullable:true})
+    special_projects?: Array<SpecialProjects>;
 
     @Field(() => ProjectCount, {nullable:false})
     _count?: ProjectCount;

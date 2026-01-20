@@ -7,9 +7,11 @@ import { Type } from 'class-transformer';
 import { UserOrderByWithRelationInput } from '../user/user-order-by-with-relation.input';
 import { EventOrderByWithRelationInput } from '../event/event-order-by-with-relation.input';
 import { InstitutionOrderByWithRelationInput } from '../institution/institution-order-by-with-relation.input';
+import { ChurchOrderByWithRelationInput } from '../church/church-order-by-with-relation.input';
 import { VoluntariesOnProjectsOrderByRelationAggregateInput } from '../voluntaries-on-projects/voluntaries-on-projects-order-by-relation-aggregate.input';
 import { ProjectActivityOrderByRelationAggregateInput } from '../project-activity/project-activity-order-by-relation-aggregate.input';
 import { SubsidyRequestOrderByRelationAggregateInput } from '../subsidy-request/subsidy-request-order-by-relation-aggregate.input';
+import { SpecialProjectsOrderByRelationAggregateInput } from '../special-projects/special-projects-order-by-relation-aggregate.input';
 
 @InputType()
 export class ProjectOrderByWithRelationInput {
@@ -19,6 +21,9 @@ export class ProjectOrderByWithRelationInput {
 
     @Field(() => SortOrder, {nullable:true})
     department_id?: `${SortOrder}`;
+
+    @Field(() => SortOrderInput, {nullable:true})
+    church_department_id?: SortOrderInput;
 
     @Field(() => SortOrder, {nullable:true})
     title?: `${SortOrder}`;
@@ -30,7 +35,10 @@ export class ProjectOrderByWithRelationInput {
     budget?: `${SortOrder}`;
 
     @Field(() => SortOrder, {nullable:true})
-    media_link?: `${SortOrder}`;
+    subsidized_budget?: `${SortOrder}`;
+
+    @Field(() => SortOrder, {nullable:true})
+    balance?: `${SortOrder}`;
 
     @Field(() => SortOrder, {nullable:true})
     owner_id?: `${SortOrder}`;
@@ -42,10 +50,28 @@ export class ProjectOrderByWithRelationInput {
     type?: `${SortOrder}`;
 
     @Field(() => SortOrder, {nullable:true})
+    status?: `${SortOrder}`;
+
+    @Field(() => SortOrder, {nullable:true})
+    is_private?: `${SortOrder}`;
+
+    @Field(() => SortOrder, {nullable:true})
+    required_volunteers?: `${SortOrder}`;
+
+    @Field(() => SortOrder, {nullable:true})
+    start_at?: `${SortOrder}`;
+
+    @Field(() => SortOrder, {nullable:true})
+    end_at?: `${SortOrder}`;
+
+    @Field(() => SortOrder, {nullable:true})
     created_at?: `${SortOrder}`;
 
     @Field(() => SortOrder, {nullable:true})
     updated_at?: `${SortOrder}`;
+
+    @Field(() => SortOrderInput, {nullable:true})
+    deadline?: SortOrderInput;
 
     @Field(() => SortOrder, {nullable:true})
     created_by?: `${SortOrder}`;
@@ -68,9 +94,16 @@ export class ProjectOrderByWithRelationInput {
     @Field(() => SortOrderInput, {nullable:true})
     institution_id?: SortOrderInput;
 
+    @Field(() => SortOrderInput, {nullable:true})
+    church_id?: SortOrderInput;
+
     @Field(() => DepartmentOrderByWithRelationInput, {nullable:true})
     @Type(() => DepartmentOrderByWithRelationInput)
     department?: DepartmentOrderByWithRelationInput;
+
+    @Field(() => DepartmentOrderByWithRelationInput, {nullable:true})
+    @Type(() => DepartmentOrderByWithRelationInput)
+    church_department?: DepartmentOrderByWithRelationInput;
 
     @Field(() => UserOrderByWithRelationInput, {nullable:true})
     @Type(() => UserOrderByWithRelationInput)
@@ -84,6 +117,10 @@ export class ProjectOrderByWithRelationInput {
     @Type(() => InstitutionOrderByWithRelationInput)
     Institution?: InstitutionOrderByWithRelationInput;
 
+    @Field(() => ChurchOrderByWithRelationInput, {nullable:true})
+    @Type(() => ChurchOrderByWithRelationInput)
+    church?: ChurchOrderByWithRelationInput;
+
     @Field(() => VoluntariesOnProjectsOrderByRelationAggregateInput, {nullable:true})
     @Type(() => VoluntariesOnProjectsOrderByRelationAggregateInput)
     voluntary_users?: VoluntariesOnProjectsOrderByRelationAggregateInput;
@@ -95,4 +132,8 @@ export class ProjectOrderByWithRelationInput {
     @Field(() => SubsidyRequestOrderByRelationAggregateInput, {nullable:true})
     @Type(() => SubsidyRequestOrderByRelationAggregateInput)
     subsidies?: SubsidyRequestOrderByRelationAggregateInput;
+
+    @Field(() => SpecialProjectsOrderByRelationAggregateInput, {nullable:true})
+    @Type(() => SpecialProjectsOrderByRelationAggregateInput)
+    special_projects?: SpecialProjectsOrderByRelationAggregateInput;
 }

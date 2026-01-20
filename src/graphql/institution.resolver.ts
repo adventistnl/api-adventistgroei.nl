@@ -1,11 +1,10 @@
-import { Resolver, Mutation, Args, Query, Context, ResolveField, Parent } from '@nestjs/graphql';
+import { Resolver, Mutation, Args, Query, Context, ResolveField, Parent, Int, Float } from '@nestjs/graphql';
 import { InstitutionService } from '../services/institution.service';
 import { Institution } from '../@generated/institution/institution.model';
 import { Permission } from '../middlewares/permissions.decorator';
 import { UseGuards } from '@nestjs/common';
 import { PermissionsGuard } from '../middlewares/permissions.guard';
 import { InstitutionCreateDto, InstitutionUpdateDto } from '../dto/institution.dto';
-import { Region } from 'src/@generated/region/region.model';
 import { Church } from 'src/@generated/church/church.model';
 import { Department } from 'src/@generated/department/department.model';
 import { User } from 'src/@generated/user/user.model';
@@ -16,11 +15,19 @@ import { Project } from 'src/@generated/project/project.model';
 import { DirectMessage } from 'src/@generated/direct-message/direct-message.model';
 import { SubsidyRequest } from 'src/@generated/subsidy-request/subsidy-request.model';
 import { Contact } from 'src/@generated/contact/contact.model';
+import { AnnualBudget } from 'src/@generated/annual-budget/annual-budget.model';
+import { ChurchKPIData, ChurchChartData, ChurchActivityData } from 'src/models/church.model';
+import { InstitutionChartsData } from 'src/models/institution.model';
+import { PrismaService } from '../services/prisma.service';
+
 
 @Resolver(() => Institution)
 @UseGuards(PermissionsGuard)
 export class InstitutionResolver {
-  constructor(private readonly institutionService: InstitutionService) {}
+  constructor(
+    private readonly institutionService: InstitutionService,
+    private readonly prisma: PrismaService
+  ) {}
 
   @Permission()
   @Mutation(() => Institution)
@@ -38,10 +45,14 @@ export class InstitutionResolver {
     return await this.institutionService.getInstitutions();
   }
 
-  @Permission()
+  // @Permission()
   @Query(() => Institution, { nullable: true })
   async institution(@Args('id') id: string): Promise<Institution | null> {
-    return await this.institutionService.getInstitutionById(id);
+    try {
+      return await this.institutionService.getInstitutionById(id);
+    } catch {
+      return null;
+    }
   }
 
   @Permission()
@@ -63,11 +74,6 @@ export class InstitutionResolver {
   ): Promise<Institution> {
     const userId = context.userId;
     return await this.institutionService.deleteInstitution(id, userId);
-  }
-
-  @ResolveField(() => [Region])
-  async regions(@Parent() institution: Institution) {
-    return this.institutionService.getRegions(institution.id);
   }
 
   @ResolveField(() => [Church])
@@ -118,5 +124,76 @@ export class InstitutionResolver {
   @ResolveField(() => Contact, { nullable: true })
   async contact(@Parent() institution: Institution) {
     return await this.institutionService.getContactByInstitutionId(institution.id);
+  }
+
+  @ResolveField(() => [AnnualBudget], { name: 'annual_budgets' })
+  async annualBudgets(@Parent() institution: Institution) {
+    return await this.institutionService.getAnnualBudgetByInstitutionId(institution.id);
+  }
+
+  @ResolveField(() => Int, { name: 'churches_count' })
+  async churchesCount(@Parent() institution: Institution) {
+    return await this.prisma.church.count({
+      where: {
+        institution_id: institution.id,
+        is_deleted: false
+      }
+    });
+  }
+
+  @ResolveField(() => Int, { name: 'departments_count' })
+  departmentsCount(@Parent() institution: Institution) {
+    return institution._count?.departments ?? 0;
+  }
+
+  @ResolveField(() => Int, { name: 'users_count' })
+  usersCount(@Parent() institution: Institution) {
+    return institution._count?.users ?? 0;
+  }
+
+  @ResolveField(() => Float, { name: 'total_budget' })
+  async totalBudget(@Parent() institution: Institution) {
+    const budgets = await this.institutionService.getAnnualBudgetByInstitutionId(institution.id);
+    return budgets.reduce((total, budget) => total + Number(budget.planned_budget || 0), 0);
+  }
+
+  @ResolveField(() => Float, { name: 'current_year_budget' })
+  async currentYearBudget(@Parent() institution: Institution) {
+    const currentYear = new Date().getFullYear();
+    const budgets = await this.institutionService.getAnnualBudgetByInstitutionId(institution.id);
+
+    // Find budget for current year only
+    const currentYearBudget = budgets.find(
+      budget => budget.year === currentYear && !budget.is_deleted
+    );
+
+    return currentYearBudget ? Number(currentYearBudget.planned_budget || 0) : 0;
+  }
+
+  @ResolveField(() => Boolean, { name: 'has_budget_record' })
+  async hasBudgetRecord(@Parent() institution: Institution) {
+    const budgets = await this.institutionService.getAnnualBudgetByInstitutionId(institution.id);
+    return budgets.length > 0;
+  }
+
+  @ResolveField(() => ChurchKPIData, { name: 'churchesKpiData' })
+  async churchesKpiData(@Parent() institution: Institution) {
+    return await this.institutionService.getChurchesKpiDataForInstitution(institution.id);
+  }
+
+  @Permission()
+  @ResolveField(() => [ChurchActivityData], { name: 'churchesActivityData' })
+  async churchesActivityData(@Parent() institution: Institution) {
+    return await this.institutionService.getChurchesActivityDataForInstitution(institution.id);
+  }
+
+  @ResolveField(() => [ChurchChartData], { name: 'activeChurchesChartData' })
+  async activeChurchesChartData(@Parent() institution: Institution) {
+    return await this.institutionService.getActiveChurchesChartData(institution.id);
+  }
+
+  @ResolveField(() => InstitutionChartsData, { name: 'institutionChartsData' })
+  async institutionChartsData(@Parent() institution: Institution) {
+    return await this.institutionService.getInstitutionChartsData(institution.id);
   }
 }

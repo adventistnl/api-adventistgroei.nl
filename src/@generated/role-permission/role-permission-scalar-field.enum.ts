@@ -4,6 +4,7 @@ export enum RolePermissionScalarFieldEnum {
     id = "id",
     role_id = "role_id",
     permission_id = "permission_id",
+    is_essential = "is_essential",
     created_at = "created_at",
     updated_at = "updated_at",
     created_by = "created_by",

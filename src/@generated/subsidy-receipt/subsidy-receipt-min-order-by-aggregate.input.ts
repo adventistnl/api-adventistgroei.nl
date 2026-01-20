@@ -12,13 +12,34 @@ export class SubsidyReceiptMinOrderByAggregateInput {
     project_activities_id?: `${SortOrder}`;
 
     @Field(() => SortOrder, {nullable:true})
-    file_path?: `${SortOrder}`;
+    file_url?: `${SortOrder}`;
+
+    @Field(() => SortOrder, {nullable:true})
+    drive_file_id?: `${SortOrder}`;
+
+    @Field(() => SortOrder, {nullable:true})
+    filename?: `${SortOrder}`;
+
+    @Field(() => SortOrder, {nullable:true})
+    type?: `${SortOrder}`;
 
     @Field(() => SortOrder, {nullable:true})
     amount?: `${SortOrder}`;
 
     @Field(() => SortOrder, {nullable:true})
     approved?: `${SortOrder}`;
+
+    @Field(() => SortOrder, {nullable:true})
+    is_validated?: `${SortOrder}`;
+
+    @Field(() => SortOrder, {nullable:true})
+    validated_at?: `${SortOrder}`;
+
+    @Field(() => SortOrder, {nullable:true})
+    validated_by?: `${SortOrder}`;
+
+    @Field(() => SortOrder, {nullable:true})
+    uploaded_by?: `${SortOrder}`;
 
     @Field(() => SortOrder, {nullable:true})
     created_at?: `${SortOrder}`;
@@ -40,4 +61,10 @@ export class SubsidyReceiptMinOrderByAggregateInput {
 
     @Field(() => SortOrder, {nullable:true})
     deleted_by?: `${SortOrder}`;
+
+    @Field(() => SortOrder, {nullable:true})
+    subsidy_request_id?: `${SortOrder}`;
+
+    @Field(() => SortOrder, {nullable:true})
+    subsidy_request_item_id?: `${SortOrder}`;
 }

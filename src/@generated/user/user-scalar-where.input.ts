@@ -1,6 +1,7 @@
 import { Field } from '@nestjs/graphql';
 import { InputType } from '@nestjs/graphql';
 import { StringFilter } from '../prisma/string-filter.input';
+import { EnumGenderTypeNullableFilter } from '../prisma/enum-gender-type-nullable-filter.input';
 import { EnumLanguagePreferenceFilter } from '../prisma/enum-language-preference-filter.input';
 import { DateTimeFilter } from '../prisma/date-time-filter.input';
 import { BoolFilter } from '../prisma/bool-filter.input';
@@ -30,6 +31,9 @@ export class UserScalarWhereInput {
 
     @Field(() => StringFilter, {nullable:true})
     password?: StringFilter;
+
+    @Field(() => EnumGenderTypeNullableFilter, {nullable:true})
+    gender?: EnumGenderTypeNullableFilter;
 
     @Field(() => EnumLanguagePreferenceFilter, {nullable:true})
     language_preference?: EnumLanguagePreferenceFilter;
@@ -61,9 +65,9 @@ export class UserScalarWhereInput {
     @Field(() => StringFilter, {nullable:true})
     institution_id?: StringFilter;
 
-    @Field(() => StringFilter, {nullable:true})
-    church_id?: StringFilter;
+    @Field(() => StringNullableFilter, {nullable:true})
+    church_id?: StringNullableFilter;
 
-    @Field(() => StringFilter, {nullable:true})
-    department_id?: StringFilter;
+    @Field(() => StringNullableFilter, {nullable:true})
+    department_id?: StringNullableFilter;
 }

@@ -1,15 +1,11 @@
 import { Field } from '@nestjs/graphql';
 import { InputType } from '@nestjs/graphql';
 import { StringFieldUpdateOperationsInput } from '../prisma/string-field-update-operations.input';
+import { NullableStringFieldUpdateOperationsInput } from '../prisma/nullable-string-field-update-operations.input';
+import { GraphQLJSON } from 'graphql-type-json';
 import { DateTimeFieldUpdateOperationsInput } from '../prisma/date-time-field-update-operations.input';
 import { BoolFieldUpdateOperationsInput } from '../prisma/bool-field-update-operations.input';
 import { NullableDateTimeFieldUpdateOperationsInput } from '../prisma/nullable-date-time-field-update-operations.input';
-import { NullableStringFieldUpdateOperationsInput } from '../prisma/nullable-string-field-update-operations.input';
-import { InstitutionUpdateOneRequiredWithoutRegionsNestedInput } from '../institution/institution-update-one-required-without-regions-nested.input';
-import { Type } from 'class-transformer';
-import { RegionUpdateOneWithoutChildrenNestedInput } from './region-update-one-without-children-nested.input';
-import { RegionUpdateManyWithoutParent_regionNestedInput } from './region-update-many-without-parent-region-nested.input';
-import { ContactUpdateOneWithoutRegionNestedInput } from '../contact/contact-update-one-without-region-nested.input';
 
 @InputType()
 export class RegionUpdateWithoutChurchesInput {
@@ -17,8 +13,17 @@ export class RegionUpdateWithoutChurchesInput {
     @Field(() => StringFieldUpdateOperationsInput, {nullable:true})
     id?: StringFieldUpdateOperationsInput;
 
+    @Field(() => NullableStringFieldUpdateOperationsInput, {nullable:true})
+    description?: NullableStringFieldUpdateOperationsInput;
+
     @Field(() => StringFieldUpdateOperationsInput, {nullable:true})
     name?: StringFieldUpdateOperationsInput;
+
+    @Field(() => GraphQLJSON, {nullable:true})
+    territory?: any;
+
+    @Field(() => NullableStringFieldUpdateOperationsInput, {nullable:true})
+    color?: NullableStringFieldUpdateOperationsInput;
 
     @Field(() => DateTimeFieldUpdateOperationsInput, {nullable:true})
     created_at?: DateTimeFieldUpdateOperationsInput;
@@ -40,18 +45,4 @@ export class RegionUpdateWithoutChurchesInput {
 
     @Field(() => NullableStringFieldUpdateOperationsInput, {nullable:true})
     deleted_by?: NullableStringFieldUpdateOperationsInput;
-
-    @Field(() => InstitutionUpdateOneRequiredWithoutRegionsNestedInput, {nullable:true})
-    @Type(() => InstitutionUpdateOneRequiredWithoutRegionsNestedInput)
-    institution?: InstitutionUpdateOneRequiredWithoutRegionsNestedInput;
-
-    @Field(() => RegionUpdateOneWithoutChildrenNestedInput, {nullable:true})
-    parent_region?: RegionUpdateOneWithoutChildrenNestedInput;
-
-    @Field(() => RegionUpdateManyWithoutParent_regionNestedInput, {nullable:true})
-    children?: RegionUpdateManyWithoutParent_regionNestedInput;
-
-    @Field(() => ContactUpdateOneWithoutRegionNestedInput, {nullable:true})
-    @Type(() => ContactUpdateOneWithoutRegionNestedInput)
-    contact?: ContactUpdateOneWithoutRegionNestedInput;
 }

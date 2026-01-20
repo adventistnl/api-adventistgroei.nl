@@ -16,11 +16,9 @@ export class FindFirstDepartmentOrThrowArgs {
     where?: DepartmentWhereInput;
 
     @Field(() => [DepartmentOrderByWithRelationInput], {nullable:true})
-    @Type(() => DepartmentOrderByWithRelationInput)
     orderBy?: Array<DepartmentOrderByWithRelationInput>;
 
     @Field(() => DepartmentWhereUniqueInput, {nullable:true})
-    @Type(() => DepartmentWhereUniqueInput)
     cursor?: Prisma.AtLeast<DepartmentWhereUniqueInput, 'id'>;
 
     @Field(() => Int, {nullable:true})

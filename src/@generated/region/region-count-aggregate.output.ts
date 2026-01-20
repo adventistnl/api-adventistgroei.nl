@@ -9,16 +9,16 @@ export class RegionCountAggregate {
     id!: number;
 
     @Field(() => Int, {nullable:false})
-    institution_id!: number;
+    description!: number;
 
     @Field(() => Int, {nullable:false})
     name!: number;
 
     @Field(() => Int, {nullable:false})
-    parent_region_id!: number;
+    territory!: number;
 
     @Field(() => Int, {nullable:false})
-    contact_id!: number;
+    color!: number;
 
     @Field(() => Int, {nullable:false})
     created_at!: number;

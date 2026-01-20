@@ -8,16 +8,13 @@ export class RegionMaxAggregate {
     id?: string;
 
     @Field(() => String, {nullable:true})
-    institution_id?: string;
+    description?: string;
 
     @Field(() => String, {nullable:true})
     name?: string;
 
     @Field(() => String, {nullable:true})
-    parent_region_id?: string;
-
-    @Field(() => String, {nullable:true})
-    contact_id?: string;
+    color?: string;
 
     @Field(() => Date, {nullable:true})
     created_at?: Date | string;

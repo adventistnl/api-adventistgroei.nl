@@ -1,8 +1,6 @@
 import { Field } from '@nestjs/graphql';
 import { InputType } from '@nestjs/graphql';
-import { Type } from 'class-transformer';
 import { StringFilter } from '../prisma/string-filter.input';
-import { DecimalFilter } from '../prisma/decimal-filter.input';
 import { StringNullableFilter } from '../prisma/string-nullable-filter.input';
 import { DateTimeFilter } from '../prisma/date-time-filter.input';
 import { BoolFilter } from '../prisma/bool-filter.input';
@@ -12,15 +10,12 @@ import { DateTimeNullableFilter } from '../prisma/date-time-nullable-filter.inpu
 export class DepartmentScalarWhereInput {
 
     @Field(() => [DepartmentScalarWhereInput], {nullable:true})
-    @Type(() => DepartmentScalarWhereInput)
     AND?: Array<DepartmentScalarWhereInput>;
 
     @Field(() => [DepartmentScalarWhereInput], {nullable:true})
-    @Type(() => DepartmentScalarWhereInput)
     OR?: Array<DepartmentScalarWhereInput>;
 
     @Field(() => [DepartmentScalarWhereInput], {nullable:true})
-    @Type(() => DepartmentScalarWhereInput)
     NOT?: Array<DepartmentScalarWhereInput>;
 
     @Field(() => StringFilter, {nullable:true})
@@ -29,8 +24,8 @@ export class DepartmentScalarWhereInput {
     @Field(() => StringFilter, {nullable:true})
     institution_id?: StringFilter;
 
-    @Field(() => StringFilter, {nullable:true})
-    church_id?: StringFilter;
+    @Field(() => StringNullableFilter, {nullable:true})
+    church_id?: StringNullableFilter;
 
     @Field(() => StringFilter, {nullable:true})
     name?: StringFilter;
@@ -38,9 +33,8 @@ export class DepartmentScalarWhereInput {
     @Field(() => StringFilter, {nullable:true})
     description?: StringFilter;
 
-    @Field(() => DecimalFilter, {nullable:true})
-    @Type(() => DecimalFilter)
-    annual_budget?: DecimalFilter;
+    @Field(() => StringFilter, {nullable:true})
+    leader_id?: StringFilter;
 
     @Field(() => StringNullableFilter, {nullable:true})
     contact_id?: StringNullableFilter;

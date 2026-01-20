@@ -12,13 +12,34 @@ export class SubsidyReceiptCountAggregate {
     project_activities_id!: number;
 
     @Field(() => Int, {nullable:false})
-    file_path!: number;
+    file_url!: number;
+
+    @Field(() => Int, {nullable:false})
+    drive_file_id!: number;
+
+    @Field(() => Int, {nullable:false})
+    filename!: number;
+
+    @Field(() => Int, {nullable:false})
+    type!: number;
 
     @Field(() => Int, {nullable:false})
     amount!: number;
 
     @Field(() => Int, {nullable:false})
     approved!: number;
+
+    @Field(() => Int, {nullable:false})
+    is_validated!: number;
+
+    @Field(() => Int, {nullable:false})
+    validated_at!: number;
+
+    @Field(() => Int, {nullable:false})
+    validated_by!: number;
+
+    @Field(() => Int, {nullable:false})
+    uploaded_by!: number;
 
     @Field(() => Int, {nullable:false})
     created_at!: number;
@@ -40,6 +61,12 @@ export class SubsidyReceiptCountAggregate {
 
     @Field(() => Int, {nullable:false})
     deleted_by!: number;
+
+    @Field(() => Int, {nullable:false})
+    subsidy_request_id!: number;
+
+    @Field(() => Int, {nullable:false})
+    subsidy_request_item_id!: number;
 
     @Field(() => Int, {nullable:false})
     _all!: number;

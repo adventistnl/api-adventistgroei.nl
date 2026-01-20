@@ -7,9 +7,17 @@ import { DateTimeFieldUpdateOperationsInput } from '../prisma/date-time-field-up
 import { BoolFieldUpdateOperationsInput } from '../prisma/bool-field-update-operations.input';
 import { NullableDateTimeFieldUpdateOperationsInput } from '../prisma/nullable-date-time-field-update-operations.input';
 import { NullableStringFieldUpdateOperationsInput } from '../prisma/nullable-string-field-update-operations.input';
-import { SubsidyRequestUpdateManyWithoutProject_activitiesNestedInput } from '../subsidy-request/subsidy-request-update-many-without-project-activities-nested.input';
+import { ProjectActivityUpdatetagsInput } from './project-activity-updatetags.input';
+import { ProjectActivityUpdatecustom_tagsInput } from './project-activity-updatecustom-tags.input';
+import { EnumActivityStatusFieldUpdateOperationsInput } from '../prisma/enum-activity-status-field-update-operations.input';
+import { EnumActivityPriorityFieldUpdateOperationsInput } from '../prisma/enum-activity-priority-field-update-operations.input';
+import { SubsidyRequestItemUpdateManyWithoutProject_activityNestedInput } from '../subsidy-request-item/subsidy-request-item-update-many-without-project-activity-nested.input';
 import { ProjectUpdateOneRequiredWithoutActivitiesNestedInput } from '../project/project-update-one-required-without-activities-nested.input';
 import { SubsidyReceiptUpdateManyWithoutProject_activityNestedInput } from '../subsidy-receipt/subsidy-receipt-update-many-without-project-activity-nested.input';
+import { ActivityDocumentsUpdateManyWithoutProject_activityNestedInput } from '../activity-documents/activity-documents-update-many-without-project-activity-nested.input';
+import { ActivityFundingUpdateOneWithoutActivityNestedInput } from '../activity-funding/activity-funding-update-one-without-activity-nested.input';
+import { ProjectActivityLogUpdateManyWithoutActivityNestedInput } from '../project-activity-log/project-activity-log-update-many-without-activity-nested.input';
+import { ProjectActivityAssigneeUpdateManyWithoutActivityNestedInput } from '../project-activity-assignee/project-activity-assignee-update-many-without-activity-nested.input';
 
 @InputType()
 export class ProjectActivityUpdateInput {
@@ -48,9 +56,29 @@ export class ProjectActivityUpdateInput {
     @Field(() => NullableStringFieldUpdateOperationsInput, {nullable:true})
     deleted_by?: NullableStringFieldUpdateOperationsInput;
 
-    @Field(() => SubsidyRequestUpdateManyWithoutProject_activitiesNestedInput, {nullable:true})
-    @Type(() => SubsidyRequestUpdateManyWithoutProject_activitiesNestedInput)
-    subsidy_request?: SubsidyRequestUpdateManyWithoutProject_activitiesNestedInput;
+    @Field(() => DateTimeFieldUpdateOperationsInput, {nullable:true})
+    deadline?: DateTimeFieldUpdateOperationsInput;
+
+    @Field(() => ProjectActivityUpdatetagsInput, {nullable:true})
+    @Type(() => ProjectActivityUpdatetagsInput)
+    tags?: ProjectActivityUpdatetagsInput;
+
+    @Field(() => ProjectActivityUpdatecustom_tagsInput, {nullable:true})
+    @Type(() => ProjectActivityUpdatecustom_tagsInput)
+    custom_tags?: ProjectActivityUpdatecustom_tagsInput;
+
+    @Field(() => EnumActivityStatusFieldUpdateOperationsInput, {nullable:true})
+    status?: EnumActivityStatusFieldUpdateOperationsInput;
+
+    @Field(() => EnumActivityPriorityFieldUpdateOperationsInput, {nullable:true})
+    priority?: EnumActivityPriorityFieldUpdateOperationsInput;
+
+    @Field(() => BoolFieldUpdateOperationsInput, {nullable:true})
+    is_subsidized?: BoolFieldUpdateOperationsInput;
+
+    @Field(() => SubsidyRequestItemUpdateManyWithoutProject_activityNestedInput, {nullable:true})
+    @Type(() => SubsidyRequestItemUpdateManyWithoutProject_activityNestedInput)
+    subsidy_request_items?: SubsidyRequestItemUpdateManyWithoutProject_activityNestedInput;
 
     @Field(() => ProjectUpdateOneRequiredWithoutActivitiesNestedInput, {nullable:true})
     @Type(() => ProjectUpdateOneRequiredWithoutActivitiesNestedInput)
@@ -59,4 +87,20 @@ export class ProjectActivityUpdateInput {
     @Field(() => SubsidyReceiptUpdateManyWithoutProject_activityNestedInput, {nullable:true})
     @Type(() => SubsidyReceiptUpdateManyWithoutProject_activityNestedInput)
     subsidy_receipts?: SubsidyReceiptUpdateManyWithoutProject_activityNestedInput;
+
+    @Field(() => ActivityDocumentsUpdateManyWithoutProject_activityNestedInput, {nullable:true})
+    @Type(() => ActivityDocumentsUpdateManyWithoutProject_activityNestedInput)
+    activity_documents?: ActivityDocumentsUpdateManyWithoutProject_activityNestedInput;
+
+    @Field(() => ActivityFundingUpdateOneWithoutActivityNestedInput, {nullable:true})
+    @Type(() => ActivityFundingUpdateOneWithoutActivityNestedInput)
+    activity_funding?: ActivityFundingUpdateOneWithoutActivityNestedInput;
+
+    @Field(() => ProjectActivityLogUpdateManyWithoutActivityNestedInput, {nullable:true})
+    @Type(() => ProjectActivityLogUpdateManyWithoutActivityNestedInput)
+    logs?: ProjectActivityLogUpdateManyWithoutActivityNestedInput;
+
+    @Field(() => ProjectActivityAssigneeUpdateManyWithoutActivityNestedInput, {nullable:true})
+    @Type(() => ProjectActivityAssigneeUpdateManyWithoutActivityNestedInput)
+    assignees?: ProjectActivityAssigneeUpdateManyWithoutActivityNestedInput;
 }

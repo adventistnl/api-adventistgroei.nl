@@ -4,6 +4,7 @@ import { Decimal } from '@prisma/client/runtime/library';
 import { GraphQLDecimal } from 'prisma-graphql-type-decimal';
 import { LanguagePreference } from '../prisma/language-preference.enum';
 import { ProjectType } from '../prisma/project-type.enum';
+import { ProjectStatus } from '../prisma/project-status.enum';
 import { ProjectCountAggregate } from './project-count-aggregate.output';
 import { ProjectAvgAggregate } from './project-avg-aggregate.output';
 import { ProjectSumAggregate } from './project-sum-aggregate.output';
@@ -19,6 +20,9 @@ export class ProjectGroupBy {
     @Field(() => String, {nullable:false})
     department_id!: string;
 
+    @Field(() => String, {nullable:true})
+    church_department_id?: string;
+
     @Field(() => String, {nullable:false})
     title!: string;
 
@@ -28,8 +32,11 @@ export class ProjectGroupBy {
     @Field(() => GraphQLDecimal, {nullable:false})
     budget!: Decimal;
 
-    @Field(() => String, {nullable:false})
-    media_link!: string;
+    @Field(() => GraphQLDecimal, {nullable:false})
+    subsidized_budget!: Decimal;
+
+    @Field(() => GraphQLDecimal, {nullable:false})
+    balance!: Decimal;
 
     @Field(() => String, {nullable:false})
     owner_id!: string;
@@ -40,11 +47,29 @@ export class ProjectGroupBy {
     @Field(() => ProjectType, {nullable:false})
     type!: `${ProjectType}`;
 
+    @Field(() => ProjectStatus, {nullable:false})
+    status!: `${ProjectStatus}`;
+
+    @Field(() => Boolean, {nullable:false})
+    is_private!: boolean;
+
+    @Field(() => Boolean, {nullable:false})
+    required_volunteers!: boolean;
+
+    @Field(() => Date, {nullable:false})
+    start_at!: Date | string;
+
+    @Field(() => Date, {nullable:false})
+    end_at!: Date | string;
+
     @Field(() => Date, {nullable:false})
     created_at!: Date | string;
 
     @Field(() => Date, {nullable:false})
     updated_at!: Date | string;
+
+    @Field(() => Date, {nullable:true})
+    deadline?: Date | string;
 
     @Field(() => String, {nullable:false})
     created_by!: string;
@@ -66,6 +91,9 @@ export class ProjectGroupBy {
 
     @Field(() => String, {nullable:true})
     institution_id?: string;
+
+    @Field(() => String, {nullable:true})
+    church_id?: string;
 
     @Field(() => ProjectCountAggregate, {nullable:true})
     _count?: ProjectCountAggregate;

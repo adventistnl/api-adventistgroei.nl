@@ -48,6 +48,24 @@ export class ProjectActivityOrderByWithAggregationInput {
     @Field(() => SortOrderInput, {nullable:true})
     deleted_by?: SortOrderInput;
 
+    @Field(() => SortOrder, {nullable:true})
+    deadline?: `${SortOrder}`;
+
+    @Field(() => SortOrder, {nullable:true})
+    tags?: `${SortOrder}`;
+
+    @Field(() => SortOrder, {nullable:true})
+    custom_tags?: `${SortOrder}`;
+
+    @Field(() => SortOrder, {nullable:true})
+    status?: `${SortOrder}`;
+
+    @Field(() => SortOrder, {nullable:true})
+    priority?: `${SortOrder}`;
+
+    @Field(() => SortOrder, {nullable:true})
+    is_subsidized?: `${SortOrder}`;
+
     @Field(() => ProjectActivityCountOrderByAggregateInput, {nullable:true})
     @Type(() => ProjectActivityCountOrderByAggregateInput)
     _count?: ProjectActivityCountOrderByAggregateInput;

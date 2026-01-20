@@ -1,0 +1,42 @@
+import { Field } from '@nestjs/graphql';
+import { InputType } from '@nestjs/graphql';
+import { RegionCreateWithoutChurchesInput } from './region-create-without-churches.input';
+import { Type } from 'class-transformer';
+import { RegionCreateOrConnectWithoutChurchesInput } from './region-create-or-connect-without-churches.input';
+import { RegionUpsertWithoutChurchesInput } from './region-upsert-without-churches.input';
+import { RegionWhereInput } from './region-where.input';
+import { Prisma } from '@prisma/client';
+import { RegionWhereUniqueInput } from './region-where-unique.input';
+import { RegionUpdateToOneWithWhereWithoutChurchesInput } from './region-update-to-one-with-where-without-churches.input';
+
+@InputType()
+export class RegionUpdateOneWithoutChurchesNestedInput {
+
+    @Field(() => RegionCreateWithoutChurchesInput, {nullable:true})
+    @Type(() => RegionCreateWithoutChurchesInput)
+    create?: RegionCreateWithoutChurchesInput;
+
+    @Field(() => RegionCreateOrConnectWithoutChurchesInput, {nullable:true})
+    @Type(() => RegionCreateOrConnectWithoutChurchesInput)
+    connectOrCreate?: RegionCreateOrConnectWithoutChurchesInput;
+
+    @Field(() => RegionUpsertWithoutChurchesInput, {nullable:true})
+    @Type(() => RegionUpsertWithoutChurchesInput)
+    upsert?: RegionUpsertWithoutChurchesInput;
+
+    @Field(() => RegionWhereInput, {nullable:true})
+    @Type(() => RegionWhereInput)
+    disconnect?: RegionWhereInput;
+
+    @Field(() => RegionWhereInput, {nullable:true})
+    @Type(() => RegionWhereInput)
+    delete?: RegionWhereInput;
+
+    @Field(() => RegionWhereUniqueInput, {nullable:true})
+    @Type(() => RegionWhereUniqueInput)
+    connect?: Prisma.AtLeast<RegionWhereUniqueInput, 'id'>;
+
+    @Field(() => RegionUpdateToOneWithWhereWithoutChurchesInput, {nullable:true})
+    @Type(() => RegionUpdateToOneWithWhereWithoutChurchesInput)
+    update?: RegionUpdateToOneWithWhereWithoutChurchesInput;
+}

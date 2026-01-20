@@ -60,6 +60,9 @@ export class PermissionWhereInput {
     @Field(() => StringNullableFilter, {nullable:true})
     deleted_by?: StringNullableFilter;
 
+    @Field(() => BoolFilter, {nullable:true})
+    disabled_to_client?: BoolFilter;
+
     @Field(() => RolePermissionListRelationFilter, {nullable:true})
     role_permissions?: RolePermissionListRelationFilter;
 }

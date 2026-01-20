@@ -2,6 +2,7 @@ import { Field } from '@nestjs/graphql';
 import { ObjectType } from '@nestjs/graphql';
 import { Decimal } from '@prisma/client/runtime/library';
 import { GraphQLDecimal } from 'prisma-graphql-type-decimal';
+import { SubsidyRequestPriority } from '../prisma/subsidy-request-priority.enum';
 import { SubsidyRequestCountAggregate } from './subsidy-request-count-aggregate.output';
 import { SubsidyRequestAvgAggregate } from './subsidy-request-avg-aggregate.output';
 import { SubsidyRequestSumAggregate } from './subsidy-request-sum-aggregate.output';
@@ -20,17 +21,29 @@ export class SubsidyRequestGroupBy {
     @Field(() => GraphQLDecimal, {nullable:false})
     total_budget!: Decimal;
 
+    @Field(() => GraphQLDecimal, {nullable:false})
+    approved_amount!: Decimal;
+
+    @Field(() => String, {nullable:true})
+    rejection_reason?: string;
+
     @Field(() => Date, {nullable:false})
     created_at!: Date | string;
 
     @Field(() => Date, {nullable:false})
     updated_at!: Date | string;
 
+    @Field(() => Date, {nullable:true})
+    approved_at?: Date | string;
+
     @Field(() => String, {nullable:false})
     created_by!: string;
 
     @Field(() => String, {nullable:false})
     updated_by!: string;
+
+    @Field(() => String, {nullable:true})
+    approved_by?: string;
 
     @Field(() => Boolean, {nullable:false})
     is_deleted!: boolean;
@@ -50,8 +63,11 @@ export class SubsidyRequestGroupBy {
     @Field(() => String, {nullable:false})
     department_id!: string;
 
-    @Field(() => String, {nullable:false})
-    church_id!: string;
+    @Field(() => String, {nullable:true})
+    church_id?: string;
+
+    @Field(() => SubsidyRequestPriority, {nullable:false})
+    priority!: `${SubsidyRequestPriority}`;
 
     @Field(() => String, {nullable:false})
     subsidy_statuses_id!: string;

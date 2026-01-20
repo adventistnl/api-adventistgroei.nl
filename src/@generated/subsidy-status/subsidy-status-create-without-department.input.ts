@@ -4,6 +4,9 @@ import { Int } from '@nestjs/graphql';
 import { UserCreateNestedOneWithoutSubsidyStatusInput } from '../user/user-create-nested-one-without-subsidy-status.input';
 import { Type } from 'class-transformer';
 import { SubsidyRequestCreateNestedManyWithoutSubsidy_statusInput } from '../subsidy-request/subsidy-request-create-nested-many-without-subsidy-status.input';
+import { SpecialProjectsCreateNestedManyWithoutSubsidy_statusInput } from '../special-projects/special-projects-create-nested-many-without-subsidy-status.input';
+import { SubsidyStatusHistoryCreateNestedManyWithoutStatusInput } from '../subsidy-status-history/subsidy-status-history-create-nested-many-without-status.input';
+import { SubsidyStatusHistoryCreateNestedManyWithoutPrevious_statusInput } from '../subsidy-status-history/subsidy-status-history-create-nested-many-without-previous-status.input';
 
 @InputType()
 export class SubsidyStatusCreateWithoutDepartmentInput {
@@ -48,4 +51,16 @@ export class SubsidyStatusCreateWithoutDepartmentInput {
     @Field(() => SubsidyRequestCreateNestedManyWithoutSubsidy_statusInput, {nullable:true})
     @Type(() => SubsidyRequestCreateNestedManyWithoutSubsidy_statusInput)
     subsidy_requests?: SubsidyRequestCreateNestedManyWithoutSubsidy_statusInput;
+
+    @Field(() => SpecialProjectsCreateNestedManyWithoutSubsidy_statusInput, {nullable:true})
+    @Type(() => SpecialProjectsCreateNestedManyWithoutSubsidy_statusInput)
+    special_projects?: SpecialProjectsCreateNestedManyWithoutSubsidy_statusInput;
+
+    @Field(() => SubsidyStatusHistoryCreateNestedManyWithoutStatusInput, {nullable:true})
+    @Type(() => SubsidyStatusHistoryCreateNestedManyWithoutStatusInput)
+    history_as_current?: SubsidyStatusHistoryCreateNestedManyWithoutStatusInput;
+
+    @Field(() => SubsidyStatusHistoryCreateNestedManyWithoutPrevious_statusInput, {nullable:true})
+    @Type(() => SubsidyStatusHistoryCreateNestedManyWithoutPrevious_statusInput)
+    history_as_previous?: SubsidyStatusHistoryCreateNestedManyWithoutPrevious_statusInput;
 }

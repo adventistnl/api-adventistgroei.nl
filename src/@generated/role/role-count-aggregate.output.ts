@@ -21,6 +21,9 @@ export class RoleCountAggregate {
     key_code!: number;
 
     @Field(() => Int, {nullable:false})
+    is_fixed!: number;
+
+    @Field(() => Int, {nullable:false})
     created_at!: number;
 
     @Field(() => Int, {nullable:false})

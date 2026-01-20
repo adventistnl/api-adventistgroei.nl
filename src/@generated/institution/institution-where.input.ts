@@ -1,14 +1,13 @@
 import { Field } from '@nestjs/graphql';
 import { InputType } from '@nestjs/graphql';
 import { StringFilter } from '../prisma/string-filter.input';
-import { EnumLanguagePreferenceFilter } from '../prisma/enum-language-preference-filter.input';
 import { StringNullableFilter } from '../prisma/string-nullable-filter.input';
+import { EnumLanguagePreferenceFilter } from '../prisma/enum-language-preference-filter.input';
 import { DateTimeFilter } from '../prisma/date-time-filter.input';
 import { BoolFilter } from '../prisma/bool-filter.input';
 import { DateTimeNullableFilter } from '../prisma/date-time-nullable-filter.input';
 import { ContactNullableScalarRelationFilter } from '../contact/contact-nullable-scalar-relation-filter.input';
 import { Type } from 'class-transformer';
-import { RegionListRelationFilter } from '../region/region-list-relation-filter.input';
 import { ChurchListRelationFilter } from '../church/church-list-relation-filter.input';
 import { DepartmentListRelationFilter } from '../department/department-list-relation-filter.input';
 import { UserListRelationFilter } from '../user/user-list-relation-filter.input';
@@ -18,6 +17,7 @@ import { SettingListRelationFilter } from '../setting/setting-list-relation-filt
 import { ProjectListRelationFilter } from '../project/project-list-relation-filter.input';
 import { DirectMessageListRelationFilter } from '../direct-message/direct-message-list-relation-filter.input';
 import { SubsidyRequestListRelationFilter } from '../subsidy-request/subsidy-request-list-relation-filter.input';
+import { AnnualBudgetListRelationFilter } from '../annual-budget/annual-budget-list-relation-filter.input';
 
 @InputType()
 export class InstitutionWhereInput {
@@ -39,6 +39,9 @@ export class InstitutionWhereInput {
 
     @Field(() => StringFilter, {nullable:true})
     denomination?: StringFilter;
+
+    @Field(() => StringNullableFilter, {nullable:true})
+    description?: StringNullableFilter;
 
     @Field(() => EnumLanguagePreferenceFilter, {nullable:true})
     language_preference?: EnumLanguagePreferenceFilter;
@@ -71,9 +74,6 @@ export class InstitutionWhereInput {
     @Type(() => ContactNullableScalarRelationFilter)
     contact?: ContactNullableScalarRelationFilter;
 
-    @Field(() => RegionListRelationFilter, {nullable:true})
-    regions?: RegionListRelationFilter;
-
     @Field(() => ChurchListRelationFilter, {nullable:true})
     @Type(() => ChurchListRelationFilter)
     churches?: ChurchListRelationFilter;
@@ -105,4 +105,8 @@ export class InstitutionWhereInput {
     @Field(() => SubsidyRequestListRelationFilter, {nullable:true})
     @Type(() => SubsidyRequestListRelationFilter)
     subsidy_requests?: SubsidyRequestListRelationFilter;
+
+    @Field(() => AnnualBudgetListRelationFilter, {nullable:true})
+    @Type(() => AnnualBudgetListRelationFilter)
+    annual_budgets?: AnnualBudgetListRelationFilter;
 }

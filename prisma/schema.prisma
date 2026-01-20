@@ -50,6 +50,8 @@ enum PermissionResolverName {
   user
   createUser
   updateUser
+  updateOwnUser
+  updateUserDepartment
   deleteUser
   addRoleToUser
   removeRoleFromUser
@@ -68,6 +70,7 @@ enum PermissionResolverName {
   createChurch
   updateChurch
   deleteChurch
+  churchActivityTimeline
   permissions
   createRole
   updateRole
@@ -110,11 +113,14 @@ enum PermissionResolverName {
   createSubsidyRequest
   updateSubsidyRequest
   deleteSubsidyRequest
+  approveSubsidyRequest
+  rejectSubsidyRequest
   subsidyStatuses
   subsidyStatus
   createSubsidyStatus
   updateSubsidyStatus
   deleteSubsidyStatus
+  getSubsidyStatusHistory
   addProjectVoluntary
   removeProjectVoluntary
   projectActivities
@@ -122,9 +128,52 @@ enum PermissionResolverName {
   createProjectActivity
   updateProjectActivity
   deleteProjectActivity
+  batchUpdateProjectActivities
+  projectActivityLogs
+  uploadActivityDocument
+  downloadActivityDocument
+  deleteActivityDocument
+  validateActivityDocument
+  getActivityDocuments
   sendInviteEmail
   inviteUser
   validateInviteToken
+  annualBudgets
+  annualBudget
+  deleteAnnualBudget
+  approveAnnualBudget
+  rejectAnnualBudget
+  requestRevisionAnnualBudget
+  toggleBudgetLock
+  budgetKPIs
+  departmentSpending
+  spendingOverTime
+  entityDistribution
+  budgetDistribution
+  institutionalDepartmentsKPIs
+  recalculateInstitutionAllocatedAmounts
+  createInstitutionBudget
+  updateInstitutionBudget
+  createDepartmentBudget
+  updateDepartmentBudget
+  churchesActivityData
+  projectKPIs
+  projectsByDepartment
+  subsidyStatusDistribution
+  projectsTimeline
+  getSpecificProjectKPIs
+  departmentKPIs
+  departmentActivityData
+  departmentBudgetTimeline
+  uploadSubsidyReceipt
+  downloadSubsidyReceipt
+  deleteSubsidyReceipt
+  validateSubsidyReceipt
+  getSubsidyReceipts
+  subsidyKPIs
+  subsidyByDepartment
+  subsidyByMonth
+  subsidyByStatus
 }
 
 enum PermissionGroup {
@@ -140,12 +189,15 @@ enum PermissionGroup {
   DIRECT_MESSAGE
   PROJECT
   ACTIVITY
+  ACTIVITY_DOCUMENT
   NOTIFICATION
   SETTING
   SUBSIDY_REQUEST
   SUBSIDY_STATUS
+  SUBSIDY_RECEIPT
   EMAIL_SEND
   INVITE
+  ANNUAL_BUDGET
 }
 
 enum CommunicationType {
@@ -169,11 +221,98 @@ enum CommunicationStatus {
   FAILED
 }
 
+enum ProjectStatus {
+  DRAFT
+  IN_PROGRESS
+  IN_REVIEW
+  ON_HOLD
+  EXPIRED
+  CONCLUDED
+}
+
 enum ProjectType {
-  MISSION
-  EVANGELISM
-  SOCIAL
-  OTHER
+  Local
+  Global
+}
+
+enum AnnualBudgetStatus {
+  DRAFT
+  SUBMITTED
+  APPROVED
+  REJECTED
+  REVISION_REQUESTED
+  IN_PROGRESS
+  CLOSED
+}
+
+enum AnnualBudgetPriority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+}
+
+enum AnnualBudgetCategory {
+  OPERATIONAL
+  PROJECT
+  MAINTENANCE
+  EMERGENCY
+  EXPANSION
+}
+
+enum AnnualBudgetEntityType {
+  INSTITUTION
+  CHURCH
+  INSTITUTION_DEPARTMENT
+  CHURCH_DEPARTMENT
+}
+
+enum ActivityTags {
+  EQUIPMENT
+  MATERIALS
+  SERVICES
+  TRAVEL
+  EVENT
+  TRANSPORT
+  MARKETING
+  REFORM
+  TRAINING
+  FEEDING
+  ACCOMMODATION
+}
+
+enum ActivityStatus {
+  TODO
+  IN_PROGRESS
+  COMPLETED
+  ON_HOLD
+}
+
+enum ActivityPriority {
+  URGENT
+  HIGH
+  MEDIUM
+  LOW
+}
+
+enum EntityType {
+  INSTITUTION
+  REGION
+  CHURCH
+  INSTITUTION_DEPARTMENT
+  CHURCH_DEPARTMENT
+  USER
+}
+
+enum ChurchType  {
+  PLANT
+  COMPANY
+  STANDARD
+}
+
+enum GenderType {
+  MALE
+  FEMALE
 }
 
 // Models
@@ -181,6 +320,7 @@ model Institution {
   id                  String             @id @default(uuid())
   name                String
   denomination        String
+  description         String?
   language_preference LanguagePreference
   contact_id          String?            @unique
   contact             Contact?           @relation(fields: [contact_id], references: [id])
@@ -191,7 +331,6 @@ model Institution {
   is_deleted          Boolean            @default(false)
   deleted_at          DateTime?
   deleted_by          String?
-  regions             Region[]
   churches            Church[]
   departments         Department[]
   users               User[]
@@ -201,72 +340,116 @@ model Institution {
   projects            Project[]
   direct_messages     DirectMessage[]
   subsidy_requests    SubsidyRequest[]
+  annual_budgets      AnnualBudget[]    
 }
 
 model Region {
-  id               String      @id @default(uuid())
-  institution_id   String
-  institution      Institution @relation(fields: [institution_id], references: [id])
+  id               String        @id @default(uuid())
+  description      String?
   name             String
-  parent_region_id String?
-  parent_region    Region?     @relation("ParentRegion", fields: [parent_region_id], references: [id])
-  children         Region[]    @relation("ParentRegion")
-  contact_id       String?
-  contact          Contact?    @relation(fields: [contact_id], references: [id])
-  created_at       DateTime    @default(now())
-  updated_at       DateTime    @updatedAt
+  territory        Json?
+  color            String?       @default("#9810fa")
+  created_at       DateTime      @default(now())
+  updated_at       DateTime      @updatedAt
   created_by       String
   updated_by       String
-  is_deleted       Boolean     @default(false)
+  is_deleted       Boolean       @default(false)
   deleted_at       DateTime?
   deleted_by       String?
   churches         Church[]
 }
 
 model Church {
-  id               String           @id @default(uuid())
+  id               String                 @id @default(uuid())
+  type             ChurchType             @default(STANDARD)
   institution_id   String
-  institution      Institution      @relation(fields: [institution_id], references: [id])
+  institution      Institution            @relation(fields: [institution_id], references: [id])
   name             String
-  region_id        String
-  region           Region           @relation(fields: [region_id], references: [id])
+  region_id        String?
+  region           Region?                @relation(fields: [region_id], references: [id])
   contact_id       String?
-  contact          Contact?         @relation(fields: [contact_id], references: [id])
-  created_at       DateTime         @default(now())
-  updated_at       DateTime         @updatedAt
+  contact          Contact?               @relation(fields: [contact_id], references: [id])
+  created_at       DateTime               @default(now())
+  updated_at       DateTime               @updatedAt
   created_by       String
   updated_by       String
-  is_deleted       Boolean          @default(false)
+  is_deleted       Boolean                @default(false)
   deleted_at       DateTime?
   deleted_by       String?
   departments      Department[]
   users            User[]
   subsidy_requests SubsidyRequest[]
+  annual_budgets   AnnualBudget[]
+  projects         Project[]
 }
 
 model Department {
-  id               String           @id @default(uuid())
-  institution_id   String
-  institution      Institution      @relation(fields: [institution_id], references: [id])
-  church_id        String
-  church           Church           @relation(fields: [church_id], references: [id])
-  name             String
-  description      String
-  annual_budget    Decimal
-  contact_id       String?
-  contact          Contact?         @relation(fields: [contact_id], references: [id])
-  created_at       DateTime         @default(now())
-  updated_at       DateTime         @updatedAt
-  created_by       String
-  updated_by       String
-  is_deleted       Boolean          @default(false)
-  deleted_at       DateTime?
-  deleted_by       String?
-  subsidy_statuses SubsidyStatus[]
-  projects         Project[]
-  annual_reports   AnnualReport[]
-  subsidy_requests SubsidyRequest[]
-  users            User[]
+  id                         String           @id @default(uuid())
+  institution_id             String
+  institution                Institution      @relation(fields: [institution_id], references: [id])
+  church_id                  String?
+  church                     Church?           @relation(fields: [church_id], references: [id])
+  name                       String
+  description                String
+  leader_id                  String
+  leader                     User             @relation("DepartmentLeader", fields: [leader_id], references: [id])
+  contact_id                 String?
+  contact                    Contact?         @relation(fields: [contact_id], references: [id])
+  created_at                 DateTime         @default(now())
+  updated_at                 DateTime         @updatedAt
+  created_by                 String
+  updated_by                 String
+  is_deleted                 Boolean          @default(false)
+  deleted_at                 DateTime?
+  deleted_by                 String?
+  subsidy_statuses           SubsidyStatus[]
+  projects                   Project[]        @relation("ProjectDepartment")
+  church_projects            Project[]        @relation("ProjectChurchDepartment")
+  annual_reports             AnnualReport[]
+  subsidy_requests           SubsidyRequest[]
+  users                      User[]
+  annual_budgets             AnnualBudget[]  
+}
+
+// Modelo AnnualBudget
+model AnnualBudget {
+  id                    String             @id @default(uuid())
+  year                  Int
+  planned_budget        Decimal
+  total_expenses        Decimal
+  balance               Decimal
+  notes                 String?
+  description           String?
+  justification         String?
+  approved_by           String?
+  created_at            DateTime           @default(now())
+  updated_at            DateTime           @updatedAt
+  created_by            String
+  updated_by            String
+  is_deleted            Boolean            @default(false)
+  deleted_at            DateTime?
+  deleted_by            String?
+  approved_user         User?              @relation("ApprovedAnnualBudgets", fields: [approved_by], references: [id])
+  status                AnnualBudgetStatus @default(DRAFT)
+  institution_id        String?
+  institution           Institution?       @relation(fields: [institution_id], references: [id])
+  church_id             String?
+  church                Church?            @relation(fields: [church_id], references: [id])
+  department_id         String?
+  department            Department?        @relation(fields: [department_id], references: [id])
+  allocated_amount      Decimal
+  approved_amount       Decimal?
+  requested_by          String
+  reviewed_by           String?
+  submitted_date        DateTime  @default(now())
+  review_date           DateTime?
+  approval_date         DateTime?
+  priority              AnnualBudgetPriority @default(MEDIUM)
+  category              AnnualBudgetCategory @default(OPERATIONAL)
+  documents             Json?
+  is_locked             Boolean   @default(false)
+  has_budget_record     Boolean   @default(true)
+  entity_type           AnnualBudgetEntityType
 }
 
 model Contact {
@@ -277,6 +460,7 @@ model Contact {
   email        String?
   country      String?
   city         String?
+  state        String? 
   address      String?
   full_address String?
   postal_code  String?
@@ -291,7 +475,6 @@ model Contact {
   deleted_at   DateTime?
   deleted_by   String?
   Institution  Institution?
-  Region       Region[]
   Church       Church[]
   Department   Department[]
   User         User[]
@@ -303,6 +486,7 @@ model User {
   name                      String
   email                     String                   @unique
   password                  String
+  gender                    GenderType?              @default(MALE)
   language_preference       LanguagePreference
   created_at                DateTime                 @default(now())
   updated_at                DateTime                 @updatedAt
@@ -315,10 +499,10 @@ model User {
   contact                   Contact?                 @relation(fields: [contact_id], references: [id])
   institution_id            String
   institution               Institution              @relation(fields: [institution_id], references: [id])
-  church_id                 String
-  church                    Church                   @relation(fields: [church_id], references: [id])
-  department_id             String
-  department                Department               @relation(fields: [department_id], references: [id])
+  church_id                 String?
+  church                    Church?                  @relation(fields: [church_id], references: [id])
+  department_id             String?
+  department                Department?               @relation(fields: [department_id], references: [id])
   user_roles                UserRole[]
   direct_messages           DirectMessage[]          @relation("SenderMessages")
   direct_message_recipients DirectMessageRecipient[] @relation("RecipientMessages")
@@ -330,34 +514,51 @@ model User {
   SubsidyStatus             SubsidyStatus[]
   voluntary_projects        VoluntariesOnProjects[]
   Project                   Project[]
+  approved_annual_budgets   AnnualBudget[]           @relation("ApprovedAnnualBudgets")
+  project_activity_logs     ProjectActivityLog[]
+  activity_assignments      ProjectActivityAssignee[] @relation("ActivityAssignees")
+  subsidy_status_history    SubsidyStatusHistory[]
+  led_departments           Department[]             @relation("DepartmentLeader")
 }
 
 model Project {
-  id                  String                  @id @default(uuid())
-  department_id       String
-  department          Department              @relation(fields: [department_id], references: [id])
-  title               String
-  description         String
-  budget              Decimal
-  media_link          String
-  owner_id            String
-  owner               User                    @relation(fields: [owner_id], references: [id])
-  language_preference LanguagePreference
-  type                ProjectType
-  created_at          DateTime                @default(now())
-  updated_at          DateTime                @updatedAt
-  created_by          String
-  updated_by          String
-  is_deleted          Boolean                 @default(false)
-  deleted_at          DateTime?
-  deleted_by          String?
-  event_id            String?
-  event               Event?                  @relation(fields: [event_id], references: [id])
-  Institution         Institution?            @relation(fields: [institution_id], references: [id])
-  institution_id      String?
-  voluntary_users     VoluntariesOnProjects[]
-  activities          ProjectActivity[]
-  subsidies           SubsidyRequest[]
+  id                    String                  @id @default(uuid())
+  department_id         String
+  department            Department              @relation("ProjectDepartment", fields: [department_id], references: [id])
+  church_department_id  String?
+  church_department     Department?             @relation("ProjectChurchDepartment", fields: [church_department_id], references: [id])
+  title                 String
+  description           String
+  budget                Decimal
+  subsidized_budget     Decimal             @default(0)
+  balance               Decimal             @default(0)
+  owner_id              String
+  owner                 User                    @relation(fields: [owner_id], references: [id])
+  language_preference   LanguagePreference
+  type                  ProjectType
+  status                ProjectStatus           @default(DRAFT)
+  is_private            Boolean                 @default(false)
+  required_volunteers   Boolean                 @default(false)
+  start_at              DateTime
+  end_at                DateTime
+  created_at            DateTime                @default(now())
+  updated_at            DateTime                @updatedAt
+  deadline              DateTime?
+  created_by            String
+  updated_by            String
+  is_deleted            Boolean                 @default(false)
+  deleted_at            DateTime?
+  deleted_by            String?
+  event_id              String?
+  event                 Event?                  @relation(fields: [event_id], references: [id])
+  Institution           Institution?            @relation(fields: [institution_id], references: [id])
+  institution_id        String?
+  church_id             String?
+  church                Church?                 @relation(fields: [church_id], references: [id])
+  voluntary_users       VoluntariesOnProjects[]
+  activities            ProjectActivity[]
+  subsidies             SubsidyRequest[]
+  special_projects      SpecialProjects[]
 }
 
 model VoluntariesOnProjects {
@@ -365,6 +566,13 @@ model VoluntariesOnProjects {
   user_id    String
   project    Project @relation(fields: [project_id], references: [id])
   project_id String
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  created_by String
+  updated_by String
+  is_deleted Boolean @default(false)
+  deleted_at DateTime?
+  deleted_by String?
 
   @@id([user_id, project_id])
 }
@@ -375,6 +583,7 @@ model Role {
   description               String
   color                     String?                  @default("#3b82f6")
   key_code                  String                   @unique
+  is_fixed                  Boolean                  @default(false)
   created_at                DateTime                 @default(now())
   updated_at                DateTime                 @updatedAt
   created_by                String
@@ -388,20 +597,21 @@ model Role {
 }
 
 model Permission {
-  id               String                 @id @default(uuid())
-  name             String
-  description      String
-  key_code         String                 @unique
-  resolver_name    PermissionResolverName @unique
-  group            PermissionGroup?
-  created_at       DateTime               @default(now())
-  updated_at       DateTime               @updatedAt
-  created_by       String
-  updated_by       String
-  is_deleted       Boolean                @default(false)
-  deleted_at       DateTime?
-  deleted_by       String?
-  role_permissions RolePermission[]
+  id                 String                 @id @default(uuid())
+  name               String
+  description        String
+  key_code           String                 @unique
+  resolver_name      PermissionResolverName @unique
+  group              PermissionGroup?
+  created_at         DateTime               @default(now())
+  updated_at         DateTime               @updatedAt
+  created_by         String
+  updated_by         String
+  is_deleted         Boolean                @default(false)
+  deleted_at         DateTime?
+  deleted_by         String?
+  role_permissions   RolePermission[]
+  disabled_to_client Boolean                @default(false)
 }
 
 model RolePermission {
@@ -410,6 +620,7 @@ model RolePermission {
   role          Role       @relation(fields: [role_id], references: [id], onDelete: Cascade)
   permission_id String
   permission    Permission @relation(fields: [permission_id], references: [id])
+  is_essential  Boolean    @default(false)
   created_at    DateTime   @default(now())
   updated_at    DateTime   @updatedAt
   created_by    String
@@ -435,56 +646,161 @@ model UserRole {
 }
 
 model SubsidyRequest {
-  id                  String            @id @default(uuid())
+  id                  String                  @id @default(uuid())
   description         String
   total_budget        Decimal
-  created_at          DateTime          @default(now())
-  updated_at          DateTime          @updatedAt
+  approved_amount     Decimal                 @default(0)
+  rejection_reason    String?
+  created_at          DateTime                @default(now())
+  updated_at          DateTime                @updatedAt
+  approved_at         DateTime?
   created_by          String
   updated_by          String
-  is_deleted          Boolean           @default(false)
+  approved_by         String?
+  is_deleted          Boolean                 @default(false)
   deleted_at          DateTime?
   deleted_by          String?
   institution_id      String
-  institution         Institution       @relation(fields: [institution_id], references: [id])
+  institution         Institution             @relation(fields: [institution_id], references: [id])
   requester_id        String
-  requester           User              @relation(fields: [requester_id], references: [id])
+  requester           User                    @relation(fields: [requester_id], references: [id])
   department_id       String
-  department          Department        @relation(fields: [department_id], references: [id])
-  church_id           String
-  church              Church            @relation(fields: [church_id], references: [id])
+  department          Department              @relation(fields: [department_id], references: [id])
+  church_id           String?
+  church              Church?                 @relation(fields: [church_id], references: [id])
+  priority            SubsidyRequestPriority  @default(MEDIUM)
   subsidy_statuses_id String
-  subsidy_status      SubsidyStatus     @relation(fields: [subsidy_statuses_id], references: [id])
-  project_activities  ProjectActivity[]
+  subsidy_status      SubsidyStatus           @relation(fields: [subsidy_statuses_id], references: [id])
+  items               SubsidyRequestItem[]
   project_id          String
-  project             Project           @relation(fields: [project_id], references: [id])
+  project             Project                 @relation(fields: [project_id], references: [id])
+  subsidy_receipts    SubsidyReceipt[]
+  status_history      SubsidyStatusHistory[]
+}
+
+enum SubsidyRequestPriority {
+  LOW
+  MEDIUM
+  HIGH
+}
+
+enum SubsidyHistoryType {
+  STATUS_CHANGE
+  PRIORITY_CHANGE
+  COMMENT
+  DOCUMENT_ACTION
+}
+
+model SubsidyRequestItem {
+  id                   String          @id @default(uuid())
+  subsidy_request_id   String
+  subsidy_request      SubsidyRequest  @relation(fields: [subsidy_request_id], references: [id], onDelete: Cascade)
+  project_activity_id  String
+  project_activity     ProjectActivity @relation(fields: [project_activity_id], references: [id])
+  requested_amount     Decimal
+  approved_amount      Decimal         @default(0)
+  notes                String?
+  created_at           DateTime        @default(now())
+  updated_at           DateTime        @updatedAt
+  is_deleted           Boolean         @default(false)
+  deleted_at           DateTime?
+  deleted_by           String?
+  subsidy_receipts     SubsidyReceipt[]
+
+  @@index([subsidy_request_id])
+  @@index([project_activity_id])
 }
 
 model ProjectActivity {
-  id               String           @id @default(uuid())
-  subsidy_request  SubsidyRequest[]
-  project_id       String
-  project          Project          @relation(fields: [project_id], references: [id])
-  name             String
-  description      String
-  budget_amount    Decimal
-  created_at       DateTime         @default(now())
-  updated_at       DateTime         @updatedAt
-  created_by       String
-  updated_by       String
-  is_deleted       Boolean          @default(false)
-  deleted_at       DateTime?
-  deleted_by       String?
-  subsidy_receipts SubsidyReceipt[]
+  id                    String                   @id @default(uuid())
+  subsidy_request_items SubsidyRequestItem[]
+  project_id          String
+  project             Project                  @relation(fields: [project_id], references: [id])
+  name                String
+  description         String
+  budget_amount       Decimal
+  created_at          DateTime                 @default(now())
+  updated_at          DateTime                 @updatedAt
+  created_by          String
+  updated_by          String
+  is_deleted          Boolean                  @default(false)
+  deleted_at          DateTime?
+  deleted_by          String?
+  subsidy_receipts    SubsidyReceipt[]
+  activity_documents  ActivityDocuments[]
+  deadline            DateTime
+  tags                ActivityTags[]
+  custom_tags         String[]                 @default([])
+  activity_funding    ActivityFunding?
+  status              ActivityStatus           @default(TODO)
+  priority            ActivityPriority         @default(MEDIUM)
+  is_subsidized       Boolean                  @default(false)
+  logs                ProjectActivityLog[]
+  assignees           ProjectActivityAssignee[]
+}
+
+// Tabela de relação muitos-para-muitos entre ProjectActivity e User (responsáveis)
+model ProjectActivityAssignee {
+  id                  String          @id @default(uuid())
+  activity_id         String
+  activity            ProjectActivity @relation(fields: [activity_id], references: [id], onDelete: Cascade)
+  user_id             String
+  user                User            @relation("ActivityAssignees", fields: [user_id], references: [id])
+  created_at          DateTime        @default(now())
+  created_by          String
+
+  @@unique([activity_id, user_id])
+  @@index([activity_id])
+  @@index([user_id])
+}
+
+enum ProjectActivityLogAction {
+  CREATED
+  UPDATED
+  DELETED
+  STATUS_CHANGED
+  PRIORITY_CHANGED
+  ASSIGNED
+  UNASSIGNED
+  BUDGET_UPDATED
+  DEADLINE_UPDATED
+  TAG_ADDED
+  TAG_REMOVED
+  SUBSIDIZED_CHANGED
+}
+
+model ProjectActivityLog {
+  id                String                     @id @default(uuid())
+  activity_id       String
+  activity          ProjectActivity            @relation(fields: [activity_id], references: [id], onDelete: Cascade)
+  user_id           String
+  user              User                       @relation(fields: [user_id], references: [id])
+  action            ProjectActivityLogAction
+  field_name        String?                    // Nome do campo alterado (ex: "status", "priority")
+  old_value         String?                    // Valor antigo em formato JSON ou string
+  new_value         String?                    // Valor novo em formato JSON ou string
+  metadata          Json?                      // Metadados adicionais em JSON
+  created_at        DateTime                   @default(now())
+
+  @@index([activity_id])
+  @@index([user_id])
+  @@index([created_at])
 }
 
 model SubsidyReceipt {
   id                    String          @id @default(uuid())
   project_activities_id String
   project_activity      ProjectActivity @relation(fields: [project_activities_id], references: [id])
-  file_path             String
-  amount                Decimal
-  approved              Boolean
+  file_url              String          // Google Drive public URL
+  drive_file_id         String?         // Google Drive file ID
+  filename              String          // Original filename
+  type                  String          // image or pdf
+  amount                Decimal?
+  approved              Boolean         @default(false)
+  is_validated          Boolean         @default(false)
+  validated_at          DateTime?
+  validated_by          String?
+  uploaded_by           String
   created_at            DateTime        @default(now())
   updated_at            DateTime        @updatedAt
   created_by            String
@@ -492,25 +808,59 @@ model SubsidyReceipt {
   is_deleted            Boolean         @default(false)
   deleted_at            DateTime?
   deleted_by            String?
+  subsidy_request_id    String?
+  subsidy_request       SubsidyRequest? @relation(fields: [subsidy_request_id], references: [id])
+  subsidy_request_item_id String?
+  subsidy_request_item    SubsidyRequestItem? @relation(fields: [subsidy_request_item_id], references: [id])
 }
 
 model SubsidyStatus {
-  id               String           @id @default(uuid())
-  department_id    String
-  department       Department       @relation(fields: [department_id], references: [id])
-  assigned_to      String
-  assigned_user    User             @relation(fields: [assigned_to], references: [id])
-  name             String
-  description      String
-  order            Int
-  created_at       DateTime         @default(now())
-  updated_at       DateTime         @updatedAt
-  created_by       String
-  updated_by       String
-  is_deleted       Boolean          @default(false)
-  deleted_at       DateTime?
-  deleted_by       String?
-  subsidy_requests SubsidyRequest[]
+  id                  String                   @id @default(uuid())
+  department_id       String
+  department          Department               @relation(fields: [department_id], references: [id])
+  assigned_to         String
+  assigned_user       User                     @relation(fields: [assigned_to], references: [id])
+  name                String
+  description         String
+  order               Int
+  created_at          DateTime                 @default(now())
+  updated_at          DateTime                 @updatedAt
+  created_by          String
+  updated_by          String
+  is_deleted          Boolean                  @default(false)
+  deleted_at          DateTime?
+  deleted_by          String?
+  subsidy_requests    SubsidyRequest[]
+  special_projects    SpecialProjects[]
+  history_as_current  SubsidyStatusHistory[]   @relation("CurrentStatus")
+  history_as_previous SubsidyStatusHistory[]   @relation("PreviousStatus")
+}
+
+model SubsidyStatusHistory {
+  id                  String         @id @default(uuid())
+  subsidy_request_id  String
+  status_id           String
+  previous_status_id  String?
+  type                SubsidyHistoryType @default(STATUS_CHANGE)
+  reason              String?
+  changed_by          String
+  changed_at          DateTime       @default(now())
+  created_at          DateTime       @default(now())
+  updated_at          DateTime       @updatedAt
+  is_deleted          Boolean        @default(false)
+  deleted_at          DateTime?
+  deleted_by          String?
+
+  subsidy_request     SubsidyRequest @relation(fields: [subsidy_request_id], references: [id])
+  status              SubsidyStatus  @relation("CurrentStatus", fields: [status_id], references: [id])
+  previous_status     SubsidyStatus? @relation("PreviousStatus", fields: [previous_status_id], references: [id])
+  user                User           @relation(fields: [changed_by], references: [id])
+
+  @@index([subsidy_request_id])
+  @@index([status_id])
+  @@index([changed_by])
+  @@index([changed_at])
+  @@map("SubsidyStatusHistory")
 }
 
 model AnnualReport {
@@ -562,7 +912,7 @@ model Event {
 model EventRecipient {
   id          String          @id @default(uuid())
   event_id    String
-  event       Event           @relation(fields: [event_id], references: [id])
+  event       Event           @relation(fields: [event_id], references: [id], onDelete: Cascade)
   target_type EventTargetType
   target_id   String
   created_at  DateTime        @default(now())
@@ -702,4 +1052,95 @@ model Setting {
   is_deleted     Boolean     @default(false)
   deleted_at     DateTime?
   deleted_by     String?
+}
+
+model FundingPolicies {
+  id          String   @id @default(uuid())
+  entity_type EntityType
+  entity_id   String
+  max_percent Decimal
+  annual_cap  Decimal
+  year        Int
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+  created_by  String
+}
+
+model ActivityFunding {
+  id                          String                @id @default(uuid())
+  activity_id                 String                @unique 
+  activity                    ProjectActivity       @relation(fields: [activity_id], references: [id])
+  entity_contribution_amount  Decimal
+  entity_contribution_percent Float
+  entity_type                 EntityType
+  entity_id                   String
+  validated                   Boolean               @default(false)
+  created_at                  DateTime              @default(now())
+  updated_at                  DateTime              @updatedAt
+  created_by                  String?
+  updated_by                  String?
+  is_deleted                  Boolean               @default(false)
+  deleted_at                  DateTime?
+  deleted_by                  String?
+}
+
+model ActivityDocuments {
+  id                  String           @id @default(uuid())
+  activity_id         String
+  file_url            String
+  drive_file_id       String?
+  filename            String           // Nome original do arquivo
+  type                String
+  is_validated        Boolean          @default(false)
+  uploaded_by         String
+  created_at          DateTime         @default(now())
+  validated_at        DateTime?
+  project_activity_id  String?
+  project_activity     ProjectActivity? @relation(fields: [project_activity_id], references: [id])
+  updated_at          DateTime         @updatedAt
+  updated_by          String?
+  is_deleted          Boolean          @default(false)
+  deleted_at          DateTime?
+  deleted_by          String?
+}
+
+model SpecialProjects {
+  id                    String    @id @default(uuid())
+  department_id         String
+  institution_id        String?
+  project_id            String?
+  justification_note    String?
+  budget                Decimal?
+  subsidy_status_id   String
+  type                  String
+  location_church_plant String?
+  created_at            DateTime  @default(now())
+  updated_at            DateTime  @updatedAt
+  created_by            String
+  updated_by            String
+  is_deleted            Boolean   @default(false)
+  deleted_at            DateTime?
+  deleted_by            String?
+
+  // Opposite relations
+  project        Project?       @relation(fields: [project_id], references: [id])
+  subsidy_status SubsidyStatus? @relation(fields: [subsidy_status_id], references: [id])
+}
+
+
+model UsedInviteTokens {
+  id              String      @id @default(cuid())
+  token           String      @unique
+  usedAt          DateTime    @default(now())
+  tokenExpiresAt  DateTime
+}
+
+model VerificationCode {
+  id           String   @id @default(cuid())
+  email        String
+  code         String
+  expiresAt    DateTime
+  attempts     Int      @default(0)
+  createdAt    DateTime @default(now())
+  used         Boolean  @default(false)
 }

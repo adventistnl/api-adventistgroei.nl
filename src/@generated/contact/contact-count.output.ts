@@ -6,9 +6,6 @@ import { Int } from '@nestjs/graphql';
 export class ContactCount {
 
     @Field(() => Int, {nullable:false})
-    Region?: number;
-
-    @Field(() => Int, {nullable:false})
     Church?: number;
 
     @Field(() => Int, {nullable:false})

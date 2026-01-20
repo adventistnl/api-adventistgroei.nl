@@ -17,6 +17,9 @@ export class UserMinAggregateInput {
     password?: true;
 
     @Field(() => Boolean, {nullable:true})
+    gender?: true;
+
+    @Field(() => Boolean, {nullable:true})
     language_preference?: true;
 
     @Field(() => Boolean, {nullable:true})

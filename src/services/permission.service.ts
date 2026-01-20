@@ -7,11 +7,11 @@ import { PermissionRepository } from '../repositories';
 export class PermissionService {
   constructor(private readonly permissionRepository: PermissionRepository) {}
 
-  async findAll(): Promise<Permission[]> {
-    return this.permissionRepository.findAll();
+  async findAll(userRoles: string[]): Promise<Permission[]> {
+    return this.permissionRepository.findAll(userRoles);
   }
 
-  async findAllGrouped(): Promise<PermissionGroupPermissionsModel[]> {
-    return this.permissionRepository.findAllGrouped();
+  async findAllGrouped(userRoles: string[]): Promise<PermissionGroupPermissionsModel[]> {
+    return this.permissionRepository.findAllGrouped(userRoles);
   }
 }

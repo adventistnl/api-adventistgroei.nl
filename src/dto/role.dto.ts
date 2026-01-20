@@ -30,5 +30,8 @@ export class UpdateRoleInput {
   key_code?: string;
 
   @Field(() => [String], { nullable: true })
-  permissionIds?: string[];
+  addPermissionIds?: string[];
+
+  @Field(() => [String], { nullable: true })
+  removePermissionIds?: string[];
 }

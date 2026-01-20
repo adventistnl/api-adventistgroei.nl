@@ -44,4 +44,7 @@ export class PermissionMaxAggregate {
 
     @Field(() => String, {nullable:true})
     deleted_by?: string;
+
+    @Field(() => Boolean, {nullable:true})
+    disabled_to_client?: boolean;
 }

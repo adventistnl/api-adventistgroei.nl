@@ -5,6 +5,10 @@ import { GraphQLDecimal } from 'prisma-graphql-type-decimal';
 import { transformToDecimal } from 'prisma-graphql-type-decimal';
 import { Transform } from 'class-transformer';
 import { Type } from 'class-transformer';
+import { ProjectActivityCreatetagsInput } from './project-activity-createtags.input';
+import { ProjectActivityCreatecustom_tagsInput } from './project-activity-createcustom-tags.input';
+import { ActivityStatus } from '../prisma/activity-status.enum';
+import { ActivityPriority } from '../prisma/activity-priority.enum';
 
 @InputType()
 export class ProjectActivityCreateManyInput {
@@ -46,4 +50,24 @@ export class ProjectActivityCreateManyInput {
 
     @Field(() => String, {nullable:true})
     deleted_by?: string;
+
+    @Field(() => Date, {nullable:false})
+    deadline!: Date | string;
+
+    @Field(() => ProjectActivityCreatetagsInput, {nullable:true})
+    @Type(() => ProjectActivityCreatetagsInput)
+    tags?: ProjectActivityCreatetagsInput;
+
+    @Field(() => ProjectActivityCreatecustom_tagsInput, {nullable:true})
+    @Type(() => ProjectActivityCreatecustom_tagsInput)
+    custom_tags?: ProjectActivityCreatecustom_tagsInput;
+
+    @Field(() => ActivityStatus, {nullable:true})
+    status?: `${ActivityStatus}`;
+
+    @Field(() => ActivityPriority, {nullable:true})
+    priority?: `${ActivityPriority}`;
+
+    @Field(() => Boolean, {nullable:true})
+    is_subsidized?: boolean;
 }

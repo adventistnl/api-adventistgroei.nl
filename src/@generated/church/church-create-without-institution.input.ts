@@ -1,17 +1,23 @@
 import { Field } from '@nestjs/graphql';
 import { InputType } from '@nestjs/graphql';
+import { ChurchType } from '../prisma/church-type.enum';
 import { RegionCreateNestedOneWithoutChurchesInput } from '../region/region-create-nested-one-without-churches.input';
 import { ContactCreateNestedOneWithoutChurchInput } from '../contact/contact-create-nested-one-without-church.input';
 import { Type } from 'class-transformer';
 import { DepartmentCreateNestedManyWithoutChurchInput } from '../department/department-create-nested-many-without-church.input';
 import { UserCreateNestedManyWithoutChurchInput } from '../user/user-create-nested-many-without-church.input';
 import { SubsidyRequestCreateNestedManyWithoutChurchInput } from '../subsidy-request/subsidy-request-create-nested-many-without-church.input';
+import { AnnualBudgetCreateNestedManyWithoutChurchInput } from '../annual-budget/annual-budget-create-nested-many-without-church.input';
+import { ProjectCreateNestedManyWithoutChurchInput } from '../project/project-create-nested-many-without-church.input';
 
 @InputType()
 export class ChurchCreateWithoutInstitutionInput {
 
     @Field(() => String, {nullable:true})
     id?: string;
+
+    @Field(() => ChurchType, {nullable:true})
+    type?: `${ChurchType}`;
 
     @Field(() => String, {nullable:false})
     name!: string;
@@ -37,8 +43,8 @@ export class ChurchCreateWithoutInstitutionInput {
     @Field(() => String, {nullable:true})
     deleted_by?: string;
 
-    @Field(() => RegionCreateNestedOneWithoutChurchesInput, {nullable:false})
-    region!: RegionCreateNestedOneWithoutChurchesInput;
+    @Field(() => RegionCreateNestedOneWithoutChurchesInput, {nullable:true})
+    region?: RegionCreateNestedOneWithoutChurchesInput;
 
     @Field(() => ContactCreateNestedOneWithoutChurchInput, {nullable:true})
     @Type(() => ContactCreateNestedOneWithoutChurchInput)
@@ -55,4 +61,12 @@ export class ChurchCreateWithoutInstitutionInput {
     @Field(() => SubsidyRequestCreateNestedManyWithoutChurchInput, {nullable:true})
     @Type(() => SubsidyRequestCreateNestedManyWithoutChurchInput)
     subsidy_requests?: SubsidyRequestCreateNestedManyWithoutChurchInput;
+
+    @Field(() => AnnualBudgetCreateNestedManyWithoutChurchInput, {nullable:true})
+    @Type(() => AnnualBudgetCreateNestedManyWithoutChurchInput)
+    annual_budgets?: AnnualBudgetCreateNestedManyWithoutChurchInput;
+
+    @Field(() => ProjectCreateNestedManyWithoutChurchInput, {nullable:true})
+    @Type(() => ProjectCreateNestedManyWithoutChurchInput)
+    projects?: ProjectCreateNestedManyWithoutChurchInput;
 }

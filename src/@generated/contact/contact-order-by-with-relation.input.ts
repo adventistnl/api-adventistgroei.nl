@@ -4,7 +4,6 @@ import { SortOrder } from '../prisma/sort-order.enum';
 import { SortOrderInput } from '../prisma/sort-order.input';
 import { InstitutionOrderByWithRelationInput } from '../institution/institution-order-by-with-relation.input';
 import { Type } from 'class-transformer';
-import { RegionOrderByRelationAggregateInput } from '../region/region-order-by-relation-aggregate.input';
 import { ChurchOrderByRelationAggregateInput } from '../church/church-order-by-relation-aggregate.input';
 import { DepartmentOrderByRelationAggregateInput } from '../department/department-order-by-relation-aggregate.input';
 import { UserOrderByRelationAggregateInput } from '../user/user-order-by-relation-aggregate.input';
@@ -33,6 +32,9 @@ export class ContactOrderByWithRelationInput {
 
     @Field(() => SortOrderInput, {nullable:true})
     city?: SortOrderInput;
+
+    @Field(() => SortOrderInput, {nullable:true})
+    state?: SortOrderInput;
 
     @Field(() => SortOrderInput, {nullable:true})
     address?: SortOrderInput;
@@ -76,9 +78,6 @@ export class ContactOrderByWithRelationInput {
     @Field(() => InstitutionOrderByWithRelationInput, {nullable:true})
     @Type(() => InstitutionOrderByWithRelationInput)
     Institution?: InstitutionOrderByWithRelationInput;
-
-    @Field(() => RegionOrderByRelationAggregateInput, {nullable:true})
-    Region?: RegionOrderByRelationAggregateInput;
 
     @Field(() => ChurchOrderByRelationAggregateInput, {nullable:true})
     @Type(() => ChurchOrderByRelationAggregateInput)

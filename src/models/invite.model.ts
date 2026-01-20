@@ -21,10 +21,23 @@ export class ValidateOutputModel {
 
   @Field(() => String)
   institution_id: string;
+    
+  @Field(() => String, { nullable: true })
+  institution_department_id?: string;
+
+  @Field(() => String, { nullable: true })
+  church_id?: string;
+
+  @Field(() => String, { nullable: true })
+  church_department_id?: string;
 
   @Field(() => String)
   inviter_id: string;
 
   @Field(() => LanguagePreference, { nullable: true })
   language_preference?: LanguagePreference;
+
+  @Field(() => Number)
+  exp: number
+
 }

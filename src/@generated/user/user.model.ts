@@ -1,6 +1,7 @@
 import { Field } from '@nestjs/graphql';
 import { ObjectType } from '@nestjs/graphql';
 import { ID } from '@nestjs/graphql';
+import { GenderType } from '../prisma/gender-type.enum';
 import { LanguagePreference } from '../prisma/language-preference.enum';
 import { Contact } from '../contact/contact.model';
 import { Institution } from '../institution/institution.model';
@@ -17,6 +18,10 @@ import { SubsidyRequest } from '../subsidy-request/subsidy-request.model';
 import { SubsidyStatus } from '../subsidy-status/subsidy-status.model';
 import { VoluntariesOnProjects } from '../voluntaries-on-projects/voluntaries-on-projects.model';
 import { Project } from '../project/project.model';
+import { AnnualBudget } from '../annual-budget/annual-budget.model';
+import { ProjectActivityLog } from '../project-activity-log/project-activity-log.model';
+import { ProjectActivityAssignee } from '../project-activity-assignee/project-activity-assignee.model';
+import { SubsidyStatusHistory } from '../subsidy-status-history/subsidy-status-history.model';
 import { UserCount } from './user-count.output';
 
 @ObjectType()
@@ -33,6 +38,9 @@ export class User {
 
     @Field(() => String, {nullable:false})
     password!: string;
+
+    @Field(() => GenderType, {defaultValue:'MALE',nullable:true})
+    gender!: `${GenderType}` | null;
 
     @Field(() => LanguagePreference, {nullable:false})
     language_preference!: `${LanguagePreference}`;
@@ -64,11 +72,11 @@ export class User {
     @Field(() => String, {nullable:false})
     institution_id!: string;
 
-    @Field(() => String, {nullable:false})
-    church_id!: string;
+    @Field(() => String, {nullable:true})
+    church_id!: string | null;
 
-    @Field(() => String, {nullable:false})
-    department_id!: string;
+    @Field(() => String, {nullable:true})
+    department_id!: string | null;
 
     @Field(() => Contact, {nullable:true})
     contact?: Contact | null;
@@ -76,11 +84,11 @@ export class User {
     @Field(() => Institution, {nullable:false})
     institution?: Institution;
 
-    @Field(() => Church, {nullable:false})
-    church?: Church;
+    @Field(() => Church, {nullable:true})
+    church?: Church | null;
 
-    @Field(() => Department, {nullable:false})
-    department?: Department;
+    @Field(() => Department, {nullable:true})
+    department?: Department | null;
 
     @Field(() => [UserRole], {nullable:true})
     user_roles?: Array<UserRole>;
@@ -114,6 +122,21 @@ export class User {
 
     @Field(() => [Project], {nullable:true})
     Project?: Array<Project>;
+
+    @Field(() => [AnnualBudget], {nullable:true})
+    approved_annual_budgets?: Array<AnnualBudget>;
+
+    @Field(() => [ProjectActivityLog], {nullable:true})
+    project_activity_logs?: Array<ProjectActivityLog>;
+
+    @Field(() => [ProjectActivityAssignee], {nullable:true})
+    activity_assignments?: Array<ProjectActivityAssignee>;
+
+    @Field(() => [SubsidyStatusHistory], {nullable:true})
+    subsidy_status_history?: Array<SubsidyStatusHistory>;
+
+    @Field(() => [Department], {nullable:true})
+    led_departments?: Array<Department>;
 
     @Field(() => UserCount, {nullable:false})
     _count?: UserCount;

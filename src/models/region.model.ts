@@ -1,4 +1,21 @@
 import { ObjectType, Field } from '@nestjs/graphql';
+import { GraphQLJSON } from 'graphql-type-json';
+import { TerritoryMap } from 'src/dto/region.dto';
+
+@ObjectType()
+export class RegionKPIData {
+  @Field()
+  totalRegions: number;
+
+  @Field()
+  totalChurches: number;
+
+  @Field()
+  totalProvinces: number;
+
+  @Field()
+  totalCities: number;
+}
 
 @ObjectType()
 export class RegionModel {
@@ -6,16 +23,16 @@ export class RegionModel {
   id: string;
 
   @Field()
-  institution_id: string;
-
-  @Field()
   name: string;
 
   @Field(() => String, { nullable: true })
-  parent_region_id?: string | null;
+  description?: string | null;
+
+  @Field(() => GraphQLJSON, { nullable: true })
+  territory?: TerritoryMap | null;
 
   @Field(() => String, { nullable: true })
-  contact_id?: string | null;
+  color?: string | null;
 
   @Field()
   created_at: Date;

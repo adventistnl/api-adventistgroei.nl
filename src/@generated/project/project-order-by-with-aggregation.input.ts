@@ -18,6 +18,9 @@ export class ProjectOrderByWithAggregationInput {
     @Field(() => SortOrder, {nullable:true})
     department_id?: `${SortOrder}`;
 
+    @Field(() => SortOrderInput, {nullable:true})
+    church_department_id?: SortOrderInput;
+
     @Field(() => SortOrder, {nullable:true})
     title?: `${SortOrder}`;
 
@@ -28,7 +31,10 @@ export class ProjectOrderByWithAggregationInput {
     budget?: `${SortOrder}`;
 
     @Field(() => SortOrder, {nullable:true})
-    media_link?: `${SortOrder}`;
+    subsidized_budget?: `${SortOrder}`;
+
+    @Field(() => SortOrder, {nullable:true})
+    balance?: `${SortOrder}`;
 
     @Field(() => SortOrder, {nullable:true})
     owner_id?: `${SortOrder}`;
@@ -40,10 +46,28 @@ export class ProjectOrderByWithAggregationInput {
     type?: `${SortOrder}`;
 
     @Field(() => SortOrder, {nullable:true})
+    status?: `${SortOrder}`;
+
+    @Field(() => SortOrder, {nullable:true})
+    is_private?: `${SortOrder}`;
+
+    @Field(() => SortOrder, {nullable:true})
+    required_volunteers?: `${SortOrder}`;
+
+    @Field(() => SortOrder, {nullable:true})
+    start_at?: `${SortOrder}`;
+
+    @Field(() => SortOrder, {nullable:true})
+    end_at?: `${SortOrder}`;
+
+    @Field(() => SortOrder, {nullable:true})
     created_at?: `${SortOrder}`;
 
     @Field(() => SortOrder, {nullable:true})
     updated_at?: `${SortOrder}`;
+
+    @Field(() => SortOrderInput, {nullable:true})
+    deadline?: SortOrderInput;
 
     @Field(() => SortOrder, {nullable:true})
     created_by?: `${SortOrder}`;
@@ -65,6 +89,9 @@ export class ProjectOrderByWithAggregationInput {
 
     @Field(() => SortOrderInput, {nullable:true})
     institution_id?: SortOrderInput;
+
+    @Field(() => SortOrderInput, {nullable:true})
+    church_id?: SortOrderInput;
 
     @Field(() => ProjectCountOrderByAggregateInput, {nullable:true})
     @Type(() => ProjectCountOrderByAggregateInput)

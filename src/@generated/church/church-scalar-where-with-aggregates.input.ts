@@ -1,6 +1,7 @@
 import { Field } from '@nestjs/graphql';
 import { InputType } from '@nestjs/graphql';
 import { StringWithAggregatesFilter } from '../prisma/string-with-aggregates-filter.input';
+import { EnumChurchTypeWithAggregatesFilter } from '../prisma/enum-church-type-with-aggregates-filter.input';
 import { StringNullableWithAggregatesFilter } from '../prisma/string-nullable-with-aggregates-filter.input';
 import { DateTimeWithAggregatesFilter } from '../prisma/date-time-with-aggregates-filter.input';
 import { BoolWithAggregatesFilter } from '../prisma/bool-with-aggregates-filter.input';
@@ -21,14 +22,17 @@ export class ChurchScalarWhereWithAggregatesInput {
     @Field(() => StringWithAggregatesFilter, {nullable:true})
     id?: StringWithAggregatesFilter;
 
+    @Field(() => EnumChurchTypeWithAggregatesFilter, {nullable:true})
+    type?: EnumChurchTypeWithAggregatesFilter;
+
     @Field(() => StringWithAggregatesFilter, {nullable:true})
     institution_id?: StringWithAggregatesFilter;
 
     @Field(() => StringWithAggregatesFilter, {nullable:true})
     name?: StringWithAggregatesFilter;
 
-    @Field(() => StringWithAggregatesFilter, {nullable:true})
-    region_id?: StringWithAggregatesFilter;
+    @Field(() => StringNullableWithAggregatesFilter, {nullable:true})
+    region_id?: StringNullableWithAggregatesFilter;
 
     @Field(() => StringNullableWithAggregatesFilter, {nullable:true})
     contact_id?: StringNullableWithAggregatesFilter;

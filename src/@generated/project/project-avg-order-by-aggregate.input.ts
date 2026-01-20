@@ -7,4 +7,10 @@ export class ProjectAvgOrderByAggregateInput {
 
     @Field(() => SortOrder, {nullable:true})
     budget?: `${SortOrder}`;
+
+    @Field(() => SortOrder, {nullable:true})
+    subsidized_budget?: `${SortOrder}`;
+
+    @Field(() => SortOrder, {nullable:true})
+    balance?: `${SortOrder}`;
 }

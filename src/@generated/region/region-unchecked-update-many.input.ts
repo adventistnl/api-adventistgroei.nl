@@ -2,6 +2,7 @@ import { Field } from '@nestjs/graphql';
 import { InputType } from '@nestjs/graphql';
 import { StringFieldUpdateOperationsInput } from '../prisma/string-field-update-operations.input';
 import { NullableStringFieldUpdateOperationsInput } from '../prisma/nullable-string-field-update-operations.input';
+import { GraphQLJSON } from 'graphql-type-json';
 import { DateTimeFieldUpdateOperationsInput } from '../prisma/date-time-field-update-operations.input';
 import { BoolFieldUpdateOperationsInput } from '../prisma/bool-field-update-operations.input';
 import { NullableDateTimeFieldUpdateOperationsInput } from '../prisma/nullable-date-time-field-update-operations.input';
@@ -12,17 +13,17 @@ export class RegionUncheckedUpdateManyInput {
     @Field(() => StringFieldUpdateOperationsInput, {nullable:true})
     id?: StringFieldUpdateOperationsInput;
 
-    @Field(() => StringFieldUpdateOperationsInput, {nullable:true})
-    institution_id?: StringFieldUpdateOperationsInput;
+    @Field(() => NullableStringFieldUpdateOperationsInput, {nullable:true})
+    description?: NullableStringFieldUpdateOperationsInput;
 
     @Field(() => StringFieldUpdateOperationsInput, {nullable:true})
     name?: StringFieldUpdateOperationsInput;
 
-    @Field(() => NullableStringFieldUpdateOperationsInput, {nullable:true})
-    parent_region_id?: NullableStringFieldUpdateOperationsInput;
+    @Field(() => GraphQLJSON, {nullable:true})
+    territory?: any;
 
     @Field(() => NullableStringFieldUpdateOperationsInput, {nullable:true})
-    contact_id?: NullableStringFieldUpdateOperationsInput;
+    color?: NullableStringFieldUpdateOperationsInput;
 
     @Field(() => DateTimeFieldUpdateOperationsInput, {nullable:true})
     created_at?: DateTimeFieldUpdateOperationsInput;

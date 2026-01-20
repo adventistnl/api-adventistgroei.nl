@@ -1,0 +1,4375 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type PermissionModel {
+  id: String!
+  name: String!
+  description: String!
+  key_code: String!
+  resolver_name: String!
+  group: String
+  is_essential: Boolean
+  is_selected: Boolean
+}
+
+type RoleModel {
+  id: String!
+  name: String!
+  description: String!
+  key_code: String!
+  is_fixed: Boolean!
+  color: String
+  permissions: [PermissionGroupPermissionsModel!]!
+  users: [RoleAssignmentModel]
+}
+
+type PermissionGroupPermissionsModel {
+  group: String!
+  data: [PermissionModel!]!
+}
+
+type RoleAssignmentModel {
+  user_id: String!
+  is_deleted: Boolean!
+}
+
+type RegionCount {
+  churches: Int!
+}
+
+type Region {
+  id: ID!
+  description: String
+  name: String!
+  territory: JSON
+  color: String
+  created_at: DateTime!
+  updated_at: DateTime!
+  created_by: String!
+  updated_by: String!
+  is_deleted: Boolean!
+  deleted_at: DateTime
+  deleted_by: String
+  churches: [Church!]
+  _count: RegionCount!
+  kpiData: RegionKPIData!
+}
+
+"""
+The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
+"""
+scalar JSON
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
+type PermissionCount {
+  role_permissions: Int!
+}
+
+type Permission {
+  id: ID!
+  name: String!
+  description: String!
+  key_code: String!
+  resolver_name: PermissionResolverName!
+  group: PermissionGroup
+  created_at: DateTime!
+  updated_at: DateTime!
+  created_by: String!
+  updated_by: String!
+  is_deleted: Boolean!
+  deleted_at: DateTime
+  deleted_by: String
+  disabled_to_client: Boolean!
+  role_permissions: [RolePermission!]
+  _count: PermissionCount!
+}
+
+enum PermissionResolverName {
+  users
+  user
+  createUser
+  updateUser
+  updateOwnUser
+  updateUserDepartment
+  deleteUser
+  addRoleToUser
+  removeRoleFromUser
+  createInstitution
+  institutions
+  institution
+  updateInstitution
+  deleteInstitution
+  regions
+  region
+  createRegion
+  updateRegion
+  deleteRegion
+  churches
+  church
+  createChurch
+  updateChurch
+  deleteChurch
+  churchActivityTimeline
+  permissions
+  createRole
+  updateRole
+  deleteRole
+  roles
+  role
+  auth
+  departments
+  department
+  createDepartment
+  updateDepartment
+  deleteDepartment
+  communications
+  communication
+  createCommunication
+  updateCommunication
+  deleteCommunication
+  directMessages
+  directMessage
+  createDirectMessage
+  updateDirectMessage
+  deleteDirectMessage
+  projects
+  project
+  createProject
+  updateProject
+  deleteProject
+  notifications
+  notification
+  createNotification
+  updateNotification
+  deleteNotification
+  settings
+  setting
+  createSetting
+  updateSetting
+  deleteSetting
+  subsidyRequests
+  subsidyRequest
+  createSubsidyRequest
+  updateSubsidyRequest
+  deleteSubsidyRequest
+  approveSubsidyRequest
+  rejectSubsidyRequest
+  subsidyStatuses
+  subsidyStatus
+  createSubsidyStatus
+  updateSubsidyStatus
+  deleteSubsidyStatus
+  getSubsidyStatusHistory
+  addProjectVoluntary
+  removeProjectVoluntary
+  projectActivities
+  projectActivity
+  createProjectActivity
+  updateProjectActivity
+  deleteProjectActivity
+  batchUpdateProjectActivities
+  projectActivityLogs
+  uploadActivityDocument
+  downloadActivityDocument
+  deleteActivityDocument
+  validateActivityDocument
+  getActivityDocuments
+  sendInviteEmail
+  inviteUser
+  validateInviteToken
+  annualBudgets
+  annualBudget
+  deleteAnnualBudget
+  approveAnnualBudget
+  rejectAnnualBudget
+  requestRevisionAnnualBudget
+  toggleBudgetLock
+  budgetKPIs
+  departmentSpending
+  spendingOverTime
+  entityDistribution
+  budgetDistribution
+  institutionalDepartmentsKPIs
+  recalculateInstitutionAllocatedAmounts
+  createInstitutionBudget
+  updateInstitutionBudget
+  createDepartmentBudget
+  updateDepartmentBudget
+  churchesActivityData
+  projectKPIs
+  projectsByDepartment
+  subsidyStatusDistribution
+  projectsTimeline
+  getSpecificProjectKPIs
+  departmentKPIs
+  departmentActivityData
+  departmentBudgetTimeline
+  uploadSubsidyReceipt
+  downloadSubsidyReceipt
+  deleteSubsidyReceipt
+  validateSubsidyReceipt
+  getSubsidyReceipts
+  subsidyKPIs
+  subsidyByDepartment
+  subsidyByMonth
+  subsidyByStatus
+}
+
+enum PermissionGroup {
+  USER
+  INSTITUTION
+  CHURCH
+  REGION
+  CONTACT
+  ROLE
+  PERMISSION
+  DEPARTMENT
+  COMMUNICATION
+  DIRECT_MESSAGE
+  PROJECT
+  ACTIVITY
+  ACTIVITY_DOCUMENT
+  NOTIFICATION
+  SETTING
+  SUBSIDY_REQUEST
+  SUBSIDY_STATUS
+  SUBSIDY_RECEIPT
+  EMAIL_SEND
+  INVITE
+  ANNUAL_BUDGET
+}
+
+type RolePermission {
+  id: ID!
+  role_id: String!
+  permission_id: String!
+  is_essential: Boolean!
+  created_at: DateTime!
+  updated_at: DateTime!
+  created_by: String!
+  updated_by: String!
+  is_deleted: Boolean!
+  deleted_at: DateTime
+  deleted_by: String
+  role: Role!
+  permission: Permission!
+}
+
+type DirectMessageCount {
+  direct_message_recipients: Int!
+}
+
+type DirectMessage {
+  id: ID!
+  institution_id: String!
+  sender_id: String!
+  title: String!
+  content: String!
+  status: String!
+  sent_at: DateTime!
+  created_at: DateTime!
+  updated_at: DateTime!
+  created_by: String!
+  updated_by: String!
+  is_deleted: Boolean!
+  deleted_at: DateTime
+  deleted_by: String
+  institution: Institution!
+  sender: User!
+  direct_message_recipients: [DirectMessageRecipient!]
+  _count: DirectMessageCount!
+}
+
+type DirectMessageRecipient {
+  id: ID!
+  direct_message_id: String!
+  recipient_user_id: String!
+  recipient_role_id: String!
+  read_at: DateTime!
+  sent_at: DateTime!
+  created_at: DateTime!
+  updated_at: DateTime!
+  created_by: String!
+  updated_by: String!
+  is_deleted: Boolean!
+  deleted_at: DateTime
+  deleted_by: String
+  direct_message: DirectMessage!
+  recipient_user: User!
+  recipient_role: Role!
+}
+
+type RoleCount {
+  user_roles: Int!
+  role_permissions: Int!
+  direct_message_recipients: Int!
+}
+
+type Role {
+  id: ID!
+  name: String!
+  description: String!
+  color: String
+  key_code: String!
+  is_fixed: Boolean!
+  created_at: DateTime!
+  updated_at: DateTime!
+  created_by: String!
+  updated_by: String!
+  is_deleted: Boolean!
+  deleted_at: DateTime
+  deleted_by: String
+  user_roles: [UserRole!]
+  role_permissions: [RolePermission!]
+  direct_message_recipients: [DirectMessageRecipient!]
+  _count: RoleCount!
+}
+
+type UserRole {
+  id: ID!
+  user_id: String!
+  role_id: String!
+  created_at: DateTime!
+  updated_at: DateTime!
+  created_by: String!
+  updated_by: String!
+  is_deleted: Boolean!
+  deleted_at: DateTime
+  deleted_by: String
+  user: User!
+  role: Role!
+}
+
+type Notification {
+  id: ID!
+  institution_id: String!
+  user_id: String!
+  type: String!
+  message: String!
+  read_status: Boolean!
+  created_at: DateTime!
+  updated_at: DateTime!
+  created_by: String!
+  updated_by: String!
+  is_deleted: Boolean!
+  deleted_at: DateTime
+  deleted_by: String
+  institution: Institution!
+  user: User!
+}
+
+type EventRecipient {
+  id: ID!
+  event_id: String!
+  target_type: EventTargetType!
+  target_id: String!
+  created_at: DateTime!
+  updated_at: DateTime!
+  created_by: String!
+  updated_by: String!
+  is_deleted: Boolean!
+  deleted_at: DateTime
+  deleted_by: String
+  userId: String
+  event: Event!
+  User: User
+}
+
+enum EventTargetType {
+  institution
+  region
+  department
+  church
+  user
+}
+
+type VoluntariesOnProjects {
+  user_id: String!
+  project_id: String!
+  created_at: DateTime!
+  updated_at: DateTime!
+  created_by: String!
+  updated_by: String!
+  is_deleted: Boolean!
+  deleted_at: DateTime
+  deleted_by: String
+  user: User!
+  project: Project!
+}
+
+type SpecialProjects {
+  id: ID!
+  department_id: String!
+  institution_id: String
+  project_id: String
+  justification_note: String
+  budget: Decimal
+  subsidy_status_id: String!
+  type: String!
+  location_church_plant: String
+  created_at: DateTime!
+  updated_at: DateTime!
+  created_by: String!
+  updated_by: String!
+  is_deleted: Boolean!
+  deleted_at: DateTime
+  deleted_by: String
+  project: Project
+  subsidy_status: SubsidyStatus
+}
+
+"""An arbitrary-precision Decimal type"""
+scalar Decimal
+
+type SubsidyStatusHistory {
+  id: ID!
+  subsidy_request_id: String!
+  status_id: String!
+  previous_status_id: String
+  type: SubsidyHistoryType!
+  reason: String
+  changed_by: String!
+  changed_at: DateTime!
+  created_at: DateTime!
+  updated_at: DateTime!
+  is_deleted: Boolean!
+  deleted_at: DateTime
+  deleted_by: String
+  subsidy_request: SubsidyRequest!
+  status: SubsidyStatus!
+  previous_status: SubsidyStatus
+  user: User!
+}
+
+enum SubsidyHistoryType {
+  STATUS_CHANGE
+  PRIORITY_CHANGE
+  COMMENT
+  DOCUMENT_ACTION
+}
+
+type SubsidyStatusCount {
+  subsidy_requests: Int!
+  special_projects: Int!
+  history_as_current: Int!
+  history_as_previous: Int!
+}
+
+type SubsidyStatus {
+  id: ID!
+  department_id: String!
+  assigned_to: String!
+  name: String!
+  description: String!
+  order: Int!
+  created_at: DateTime!
+  updated_at: DateTime!
+  created_by: String!
+  updated_by: String!
+  is_deleted: Boolean!
+  deleted_at: DateTime
+  deleted_by: String
+  department: Department!
+  assigned_user: User!
+  subsidy_requests: [SubsidyRequest!]
+  special_projects: [SpecialProjects!]
+  history_as_current: [SubsidyStatusHistory!]
+  history_as_previous: [SubsidyStatusHistory!]
+  _count: SubsidyStatusCount!
+}
+
+type SubsidyReceipt {
+  id: ID!
+  project_activities_id: String!
+  file_url: String!
+  drive_file_id: String
+  filename: String!
+  type: String!
+  amount: Decimal
+  approved: Boolean!
+  is_validated: Boolean!
+  validated_at: DateTime
+  validated_by: String
+  uploaded_by: String!
+  created_at: DateTime!
+  updated_at: DateTime!
+  created_by: String!
+  updated_by: String!
+  is_deleted: Boolean!
+  deleted_at: DateTime
+  deleted_by: String
+  subsidy_request_id: String
+  subsidy_request_item_id: String
+  project_activity: ProjectActivity!
+  subsidy_request: SubsidyRequest
+  subsidy_request_item: SubsidyRequestItem
+}
+
+type SubsidyRequestCount {
+  items: Int!
+  subsidy_receipts: Int!
+  status_history: Int!
+}
+
+type SubsidyRequest {
+  id: ID!
+  description: String!
+  total_budget: Decimal!
+  approved_amount: Decimal!
+  rejection_reason: String
+  created_at: DateTime!
+  updated_at: DateTime!
+  approved_at: DateTime
+  created_by: String!
+  updated_by: String!
+  approved_by: String
+  is_deleted: Boolean!
+  deleted_at: DateTime
+  deleted_by: String
+  institution_id: String!
+  requester_id: String!
+  department_id: String!
+  church_id: String
+  priority: SubsidyRequestPriority!
+  subsidy_statuses_id: String!
+  project_id: String!
+  institution: Institution!
+  requester: User!
+  department: Department!
+  church: Church
+  subsidy_status: SubsidyStatus!
+  items: [SubsidyRequestItem!]
+  project: Project!
+  subsidy_receipts: [SubsidyReceipt!]
+  status_history: [SubsidyStatusHistory!]
+  _count: SubsidyRequestCount!
+}
+
+enum SubsidyRequestPriority {
+  LOW
+  MEDIUM
+  HIGH
+}
+
+type SubsidyRequestItemCount {
+  subsidy_receipts: Int!
+}
+
+type SubsidyRequestItem {
+  id: ID!
+  subsidy_request_id: String!
+  project_activity_id: String!
+  requested_amount: Decimal!
+  approved_amount: Decimal!
+  notes: String
+  created_at: DateTime!
+  updated_at: DateTime!
+  is_deleted: Boolean!
+  deleted_at: DateTime
+  deleted_by: String
+  subsidy_request: SubsidyRequest!
+  project_activity: ProjectActivity!
+  subsidy_receipts: [SubsidyReceipt!]
+  _count: SubsidyRequestItemCount!
+}
+
+type ActivityDocuments {
+  id: ID!
+  activity_id: String!
+  file_url: String!
+  drive_file_id: String
+  filename: String!
+  type: String!
+  is_validated: Boolean!
+  uploaded_by: String!
+  created_at: DateTime!
+  validated_at: DateTime
+  project_activity_id: String
+  updated_at: DateTime!
+  updated_by: String
+  is_deleted: Boolean!
+  deleted_at: DateTime
+  deleted_by: String
+  project_activity: ProjectActivity
+}
+
+type ActivityFunding {
+  id: ID!
+  activity_id: String!
+  entity_contribution_amount: Decimal!
+  entity_contribution_percent: Float!
+  entity_type: EntityType!
+  entity_id: String!
+  validated: Boolean!
+  created_at: DateTime!
+  updated_at: DateTime!
+  created_by: String
+  updated_by: String
+  is_deleted: Boolean!
+  deleted_at: DateTime
+  deleted_by: String
+  activity: ProjectActivity!
+}
+
+enum EntityType {
+  INSTITUTION
+  REGION
+  CHURCH
+  INSTITUTION_DEPARTMENT
+  CHURCH_DEPARTMENT
+  USER
+}
+
+type ProjectActivityLog {
+  id: ID!
+  activity_id: String!
+  user_id: String!
+  action: ProjectActivityLogAction!
+  field_name: String
+  old_value: String
+  new_value: String
+  metadata: JSON
+  created_at: DateTime!
+  activity: ProjectActivity!
+  user: User!
+}
+
+enum ProjectActivityLogAction {
+  CREATED
+  UPDATED
+  DELETED
+  STATUS_CHANGED
+  PRIORITY_CHANGED
+  ASSIGNED
+  UNASSIGNED
+  BUDGET_UPDATED
+  DEADLINE_UPDATED
+  TAG_ADDED
+  TAG_REMOVED
+  SUBSIDIZED_CHANGED
+}
+
+type ProjectActivityAssignee {
+  id: ID!
+  activity_id: String!
+  user_id: String!
+  created_at: DateTime!
+  created_by: String!
+  activity: ProjectActivity!
+  user: User!
+}
+
+type ProjectActivityCount {
+  subsidy_request_items: Int!
+  subsidy_receipts: Int!
+  activity_documents: Int!
+  logs: Int!
+  assignees: Int!
+}
+
+type ProjectActivity {
+  id: ID!
+  project_id: String!
+  name: String!
+  description: String!
+  budget_amount: Decimal!
+  created_at: DateTime!
+  updated_at: DateTime!
+  created_by: String!
+  updated_by: String!
+  is_deleted: Boolean!
+  deleted_at: DateTime
+  deleted_by: String
+  deadline: DateTime!
+  tags: [ActivityTags!]
+  custom_tags: [String!]
+  status: ActivityStatus!
+  priority: ActivityPriority!
+  is_subsidized: Boolean!
+  subsidy_request_items: [SubsidyRequestItem!]
+  project: Project!
+  subsidy_receipts: [SubsidyReceipt!]
+  activity_documents: [ActivityDocuments!]
+  activity_funding: ActivityFunding
+  logs: [ProjectActivityLog!]
+  assignees: [ProjectActivityAssignee!]
+  _count: ProjectActivityCount!
+}
+
+enum ActivityTags {
+  EQUIPMENT
+  MATERIALS
+  SERVICES
+  TRAVEL
+  EVENT
+  TRANSPORT
+  MARKETING
+  REFORM
+  TRAINING
+  FEEDING
+  ACCOMMODATION
+}
+
+enum ActivityStatus {
+  TODO
+  IN_PROGRESS
+  COMPLETED
+  ON_HOLD
+}
+
+enum ActivityPriority {
+  URGENT
+  HIGH
+  MEDIUM
+  LOW
+}
+
+type ProjectCount {
+  voluntary_users: Int!
+  activities: Int!
+  subsidies: Int!
+  special_projects: Int!
+}
+
+type Project {
+  id: ID!
+  department_id: String!
+  church_department_id: String
+  title: String!
+  description: String!
+  budget: Decimal!
+  subsidized_budget: Decimal!
+  balance: Decimal!
+  owner_id: String!
+  language_preference: LanguagePreference!
+  type: ProjectType!
+  status: ProjectStatus!
+  is_private: Boolean!
+  required_volunteers: Boolean!
+  start_at: DateTime!
+  end_at: DateTime!
+  created_at: DateTime!
+  updated_at: DateTime!
+  deadline: DateTime
+  created_by: String!
+  updated_by: String!
+  is_deleted: Boolean!
+  deleted_at: DateTime
+  deleted_by: String
+  event_id: String
+  institution_id: String
+  church_id: String
+  department: Department!
+  church_department: Department
+  owner: User!
+  event: Event
+  Institution: Institution
+  church: Church
+  voluntary_users: [VoluntariesOnProjects!]
+  activities: [ProjectActivity!]
+  subsidies: [SubsidyRequest!]
+  special_projects: [SpecialProjects!]
+  _count: ProjectCount!
+  Church: Church
+  churchDepartment: Department
+  kpis: ProjectKPIsDto!
+}
+
+"""Idioma preferencial da instituição"""
+enum LanguagePreference {
+  en
+  nl
+}
+
+enum ProjectType {
+  Local
+  Global
+}
+
+enum ProjectStatus {
+  DRAFT
+  IN_PROGRESS
+  IN_REVIEW
+  ON_HOLD
+  EXPIRED
+  CONCLUDED
+}
+
+type EventCount {
+  event_recipients: Int!
+  event_registrations: Int!
+  projects: Int!
+}
+
+type Event {
+  id: ID!
+  target_type: EventTargetType!
+  target_id: String
+  title: String!
+  description: String!
+  contact_id: String!
+  type: EventType!
+  language_preference: LanguagePreference!
+  max_participants: Int!
+  ticket_amount: Decimal!
+  location: String
+  is_private: Boolean!
+  required_volunteers: Boolean!
+  start_at: DateTime
+  end_at: DateTime
+  subscription_expires_at: DateTime!
+  created_at: DateTime!
+  updated_at: DateTime!
+  created_by: String!
+  updated_by: String!
+  is_deleted: Boolean!
+  deleted_at: DateTime
+  deleted_by: String
+  contact: Contact!
+  event_recipients: [EventRecipient!]
+  event_registrations: [EventRegistration!]
+  projects: [Project!]
+  _count: EventCount!
+}
+
+enum EventType {
+  show
+  evangelism
+}
+
+type EventRegistration {
+  id: ID!
+  user_id: String!
+  event_id: String!
+  status: EventRegistrationStatus!
+  created_at: DateTime!
+  updated_at: DateTime!
+  created_by: String!
+  updated_by: String!
+  is_deleted: Boolean!
+  deleted_at: DateTime
+  deleted_by: String
+  user: User!
+  event: Event!
+}
+
+enum EventRegistrationStatus {
+  paid
+  pendent
+  reserved
+  approved
+  canceled
+}
+
+type CommunicationRecipient {
+  id: ID!
+  communication_id: String!
+  target_type: EventTargetType!
+  target_id: String
+  created_at: DateTime!
+  updated_at: DateTime!
+  created_by: String!
+  updated_by: String!
+  is_deleted: Boolean!
+  deleted_at: DateTime
+  deleted_by: String
+  communication: Communication!
+}
+
+type CommunicationCount {
+  communication_recipients: Int!
+}
+
+type Communication {
+  id: ID!
+  institution_id: String!
+  title: String!
+  content: String!
+  type: String!
+  priority: String!
+  status: String!
+  language_preference: LanguagePreference!
+  schedule_at: DateTime!
+  published_at: DateTime!
+  author_id: String!
+  created_at: DateTime!
+  updated_at: DateTime!
+  created_by: String!
+  updated_by: String!
+  is_deleted: Boolean!
+  deleted_at: DateTime
+  deleted_by: String
+  institution: Institution!
+  author: User!
+  communication_recipients: [CommunicationRecipient!]
+  _count: CommunicationCount!
+}
+
+type AnnualBudget {
+  id: ID!
+  year: Int!
+  planned_budget: Decimal!
+  total_expenses: Decimal!
+  balance: Decimal!
+  notes: String
+  description: String
+  justification: String
+  approved_by: String
+  created_at: DateTime!
+  updated_at: DateTime!
+  created_by: String!
+  updated_by: String!
+  is_deleted: Boolean!
+  deleted_at: DateTime
+  deleted_by: String
+  status: AnnualBudgetStatus!
+  institution_id: String
+  church_id: String
+  department_id: String
+  allocated_amount: Decimal!
+  approved_amount: Decimal
+  requested_by: String!
+  reviewed_by: String
+  submitted_date: DateTime!
+  review_date: DateTime
+  approval_date: DateTime
+  priority: AnnualBudgetPriority!
+  category: AnnualBudgetCategory!
+  documents: JSON
+  is_locked: Boolean!
+  has_budget_record: Boolean!
+  entity_type: AnnualBudgetEntityType!
+  approved_user: User
+  institution: Institution
+  church: Church
+  department: Department
+  approvedAmount: Float!
+  spentAmount: Float!
+  usagePercentage: Float!
+  remainingAmount: Float!
+}
+
+enum AnnualBudgetStatus {
+  DRAFT
+  SUBMITTED
+  APPROVED
+  REJECTED
+  REVISION_REQUESTED
+  IN_PROGRESS
+  CLOSED
+}
+
+enum AnnualBudgetPriority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+}
+
+enum AnnualBudgetCategory {
+  OPERATIONAL
+  PROJECT
+  MAINTENANCE
+  EMERGENCY
+  EXPANSION
+}
+
+enum AnnualBudgetEntityType {
+  INSTITUTION
+  CHURCH
+  INSTITUTION_DEPARTMENT
+  CHURCH_DEPARTMENT
+}
+
+type UserCount {
+  user_roles: Int!
+  direct_messages: Int!
+  direct_message_recipients: Int!
+  notifications: Int!
+  event_registrations: Int!
+  event_recipients: Int!
+  communications: Int!
+  SubsidyRequest: Int!
+  SubsidyStatus: Int!
+  voluntary_projects: Int!
+  Project: Int!
+  approved_annual_budgets: Int!
+  project_activity_logs: Int!
+  activity_assignments: Int!
+  subsidy_status_history: Int!
+  led_departments: Int!
+}
+
+type User {
+  id: ID!
+  name: String!
+  email: String!
+  password: String!
+  gender: GenderType
+  language_preference: LanguagePreference!
+  created_at: DateTime!
+  updated_at: DateTime!
+  created_by: String!
+  updated_by: String!
+  is_deleted: Boolean!
+  deleted_at: DateTime
+  deleted_by: String
+  contact_id: String
+  institution_id: String!
+  church_id: String
+  department_id: String
+  contact: Contact
+  institution: Institution!
+  church: Church
+  department: Department
+  user_roles: [UserRole!]
+  direct_messages: [DirectMessage!]
+  direct_message_recipients: [DirectMessageRecipient!]
+  notifications: [Notification!]
+  event_registrations: [EventRegistration!]
+  event_recipients: [EventRecipient!]
+  communications: [Communication!]
+  SubsidyRequest: [SubsidyRequest!]
+  SubsidyStatus: [SubsidyStatus!]
+  voluntary_projects: [VoluntariesOnProjects!]
+  Project: [Project!]
+  approved_annual_budgets: [AnnualBudget!]
+  project_activity_logs: [ProjectActivityLog!]
+  activity_assignments: [ProjectActivityAssignee!]
+  subsidy_status_history: [SubsidyStatusHistory!]
+  led_departments: [Department!]
+  _count: UserCount!
+}
+
+enum GenderType {
+  MALE
+  FEMALE
+}
+
+type AnnualReport {
+  id: ID!
+  department_id: String!
+  text: String!
+  file_path: String!
+  submission_date: DateTime!
+  created_at: DateTime!
+  updated_at: DateTime!
+  created_by: String!
+  updated_by: String!
+  is_deleted: Boolean!
+  deleted_at: DateTime
+  deleted_by: String
+  department: Department!
+}
+
+type DepartmentCount {
+  subsidy_statuses: Int!
+  projects: Int!
+  church_projects: Int!
+  annual_reports: Int!
+  subsidy_requests: Int!
+  users: Int!
+  annual_budgets: Int!
+}
+
+type Department {
+  id: ID!
+  institution_id: String!
+  church_id: String
+  name: String!
+  description: String!
+  leader_id: String!
+  contact_id: String
+  created_at: DateTime!
+  updated_at: DateTime!
+  created_by: String!
+  updated_by: String!
+  is_deleted: Boolean!
+  deleted_at: DateTime
+  deleted_by: String
+  institution: Institution!
+  church: Church
+  leader: User!
+  contact: Contact
+  subsidy_statuses: [SubsidyStatus!]
+  projects: [Project!]
+  church_projects: [Project!]
+  annual_reports: [AnnualReport!]
+  subsidy_requests: [SubsidyRequest!]
+  users: [User!]
+  annual_budgets: [AnnualBudget!]!
+  _count: DepartmentCount!
+}
+
+type ChurchCount {
+  departments: Int!
+  users: Int!
+  subsidy_requests: Int!
+  annual_budgets: Int!
+  projects: Int!
+}
+
+type Church {
+  id: ID!
+  type: ChurchType!
+  institution_id: String!
+  name: String!
+  region_id: String
+  contact_id: String
+  created_at: DateTime!
+  updated_at: DateTime!
+  created_by: String!
+  updated_by: String!
+  is_deleted: Boolean!
+  deleted_at: DateTime
+  deleted_by: String
+  institution: Institution!
+  region: Region
+  contact: Contact
+  departments: [Department!]
+  users: [User!]
+  subsidy_requests: [SubsidyRequest!]
+  annual_budgets: [AnnualBudget!]
+  projects: [Project!]
+  _count: ChurchCount!
+}
+
+enum ChurchType {
+  PLANT
+  COMPANY
+  STANDARD
+}
+
+type Setting {
+  id: ID!
+  institution_id: String!
+  key: String!
+  value: String!
+  description: String!
+  created_at: DateTime!
+  updated_at: DateTime!
+  created_by: String!
+  updated_by: String!
+  is_deleted: Boolean!
+  deleted_at: DateTime
+  deleted_by: String
+  institution: Institution!
+}
+
+type InstitutionCount {
+  churches: Int!
+  departments: Int!
+  users: Int!
+  communications: Int!
+  notifications: Int!
+  settings: Int!
+  projects: Int!
+  direct_messages: Int!
+  subsidy_requests: Int!
+  annual_budgets: Int!
+}
+
+type Institution {
+  id: ID!
+  name: String!
+  denomination: String!
+  description: String
+  language_preference: LanguagePreference!
+  contact_id: String
+  created_at: DateTime!
+  updated_at: DateTime!
+  created_by: String!
+  updated_by: String!
+  is_deleted: Boolean!
+  deleted_at: DateTime
+  deleted_by: String
+  contact: Contact
+  churches: [Church!]
+  departments: [Department!]
+  users: [User!]
+  communications: [Communication!]
+  notifications: [Notification!]
+  settings: [Setting!]
+  projects: [Project!]
+  direct_messages: [DirectMessage!]!
+  subsidy_requests: [SubsidyRequest!]!
+  annual_budgets: [AnnualBudget!]!
+  _count: InstitutionCount!
+  churches_count: Int!
+  departments_count: Int!
+  users_count: Int!
+  total_budget: Float!
+  current_year_budget: Float!
+  has_budget_record: Boolean!
+  churchesKpiData: ChurchKPIData!
+  churchesActivityData: [ChurchActivityData!]!
+  activeChurchesChartData: [ChurchChartData!]!
+  institutionChartsData: InstitutionChartsData!
+}
+
+type ContactCount {
+  Church: Int!
+  Department: Int!
+  User: Int!
+  Event: Int!
+}
+
+type Contact {
+  id: ID!
+  name: String
+  phone: String
+  mobile: String
+  email: String
+  country: String
+  city: String
+  state: String
+  address: String
+  full_address: String
+  postal_code: String
+  website: String
+  notes: String
+  is_primary: Boolean!
+  created_at: DateTime!
+  updated_at: DateTime!
+  created_by: String!
+  updated_by: String!
+  is_deleted: Boolean!
+  deleted_at: DateTime
+  deleted_by: String
+  Institution: Institution
+  Church: [Church!]
+  Department: [Department!]
+  User: [User!]
+  Event: [Event!]
+  _count: ContactCount!
+}
+
+type UserModel {
+  id: String!
+  institution_id: String!
+  password: String
+  church_id: String
+  department_id: String
+  name: String!
+  email: String!
+  language_preference: String!
+  contact_id: String
+  created_at: DateTime!
+  updated_at: DateTime!
+  created_by: String!
+  updated_by: String!
+  is_deleted: Boolean!
+  deleted_at: DateTime
+  deleted_by: String
+  contact: Contact
+  institution: Institution
+  church: Church
+}
+
+type UserWithRoles {
+  id: String!
+  institution_id: String!
+  password: String
+  church_id: String
+  department_id: String
+  name: String!
+  email: String!
+  language_preference: String!
+  contact_id: String
+  created_at: DateTime!
+  updated_at: DateTime!
+  created_by: String!
+  updated_by: String!
+  is_deleted: Boolean!
+  deleted_at: DateTime
+  deleted_by: String
+  contact: Contact
+  institution: Institution
+  church: Church
+  user_roles: [RoleModel!]!
+}
+
+type AuthModel {
+  accessToken: String!
+  expiresIn: Float!
+  user: UserWithRoles!
+}
+
+type ChurchKPIData {
+  totalChurches: Float!
+  totalMembers: Float!
+  totalDepartments: Float!
+  totalSubsidyRequests: Float!
+  totalBudget: Float!
+  totalUsedBudget: Float!
+  budgetUtilization: Float!
+  avgMembersPerChurch: Float!
+}
+
+type ChurchActivityData {
+  church_id: String!
+  church_name: String!
+  month: String!
+  year: Float!
+  activity_score: Float!
+  user_count: Float!
+  department_count: Float!
+  project_count: Float!
+  has_recent_activity: Boolean!
+  has_recent_departments: Boolean!
+  has_recent_projects: Boolean!
+  has_updated_church: Boolean!
+  has_new_users: Boolean!
+}
+
+type ChurchChartData {
+  church: String!
+  fullName: String!
+  members: Float!
+  activeMembers: Float!
+  projects: Float!
+  activeProjects: Float!
+  fill: String!
+}
+
+type ChurchModel {
+  id: String!
+  institution_id: String!
+  name: String!
+  region_id: String
+  type: ChurchType
+  contact_id: String
+  created_at: DateTime!
+  updated_at: DateTime!
+  created_by: String!
+  updated_by: String!
+  is_deleted: Boolean!
+  deleted_at: DateTime
+  deleted_by: String
+}
+
+type UsersByRoleData {
+  role: String!
+  count: Float!
+  fill: String!
+}
+
+type ChurchesByRegionData {
+  region: String!
+  name: String!
+  churches: Float!
+  color: String
+  fill: String!
+}
+
+type InstitutionChartsData {
+  usersByRole: [UsersByRoleData!]!
+  monthlyUserGrowth: Float
+  churchesByRegion: [ChurchesByRegionData!]!
+}
+
+type RegionKPIData {
+  totalRegions: Float!
+  totalChurches: Float!
+  totalProvinces: Float!
+  totalCities: Float!
+}
+
+type RegionModel {
+  id: String!
+  name: String!
+  description: String
+  territory: JSON
+  color: String
+  created_at: DateTime!
+  updated_at: DateTime!
+  created_by: String!
+  updated_by: String!
+  is_deleted: Boolean!
+  deleted_at: DateTime
+  deleted_by: String
+}
+
+type InviteModel {
+  token: String!
+  url: String!
+}
+
+type ValidateOutputModel {
+  role_ids: [String!]!
+  email: String!
+  institution_id: String!
+  institution_department_id: String
+  church_id: String
+  church_department_id: String
+  inviter_id: String!
+  language_preference: LanguagePreference
+  exp: Float!
+}
+
+type LinkContactResult {
+  success: Boolean!
+  message: String
+}
+
+type DeleteBudgetResponse {
+  success: Boolean!
+  message: String!
+}
+
+type ApproveBudgetResponse {
+  id: String!
+  status: String!
+  approved_amount: Float
+  approval_date: DateTime
+  approved_by: String
+  notes: String
+  updated_at: DateTime!
+}
+
+type RejectBudgetResponse {
+  id: String!
+  status: String!
+  review_date: DateTime!
+  reviewed_by: String!
+  notes: String
+  updated_at: DateTime!
+}
+
+type RequestRevisionBudgetResponse {
+  id: String!
+  status: String!
+  review_date: DateTime!
+  reviewed_by: String!
+  notes: String
+  updated_at: DateTime!
+}
+
+type ToggleLockBudgetResponse {
+  id: String!
+  is_locked: Boolean!
+  updated_at: DateTime!
+}
+
+type RecalculateAllocatedAmountsResponse {
+  updated: Int!
+  message: String!
+}
+
+type BudgetKPIs {
+  totalInstitutionBudget: Float!
+  totalAllocated: Float!
+  totalSpent: Float!
+  budgetRemaining: Float!
+  budgetUtilization: Float!
+
+  """Número de departments ativos (sempre 0 para budgets da instituição)"""
+  activeDepartments: Int!
+}
+
+type DepartmentSpending {
+  name: String!
+  planned: Float!
+  approved: Float!
+  reserved: Float!
+  spent: Float!
+  available: Float!
+  institution: String!
+}
+
+type DepartmentMonthlySpending {
+  departmentId: String!
+  departmentName: String!
+  amount: Float!
+}
+
+type SpendingOverTime {
+  date: String!
+  month: String!
+  departments: [DepartmentMonthlySpending!]!
+}
+
+type BudgetDistribution {
+  total: Float!
+  spent: Float!
+  allocated: Float!
+  available: Float!
+  percentageUsed: Float!
+}
+
+type EntityDistribution {
+  name: String!
+  amount: Float!
+  percentage: Float!
+  count: Int!
+}
+
+type InstitutionalDepartmentsKPIs {
+  totalPlanned: Float!
+  totalAllocated: Float!
+  totalSpent: Float!
+  totalAvailable: Float!
+  totalDepartments: Int!
+  departmentsWithBudget: Int!
+}
+
+type DepartmentKPIs {
+  totalDepartments: Int!
+  activeDepartments: Int!
+  departmentsWithBudget: Int!
+  totalUsers: Int!
+  totalAllocatedBudget: Float!
+  totalSpentBudget: Float!
+  averageBudgetPerDepartment: Float!
+  averageUsersPerDepartment: Float!
+  totalProjects: Int!
+  openProjects: Int!
+  completedProjects: Int!
+}
+
+type DepartmentActivityData {
+  department_id: String!
+  department_name: String!
+  user_count: Int!
+  allocated_amount: Float!
+  spent_amount: Float!
+  project_count: Int!
+  open_projects: Int!
+  completed_projects: Int!
+  activity_count: Int!
+}
+
+type DepartmentBudgetTimeline {
+  month: String!
+  department_id: String!
+  department_name: String!
+  allocated: Float!
+  spent: Float!
+}
+
+type ProjectKPIs {
+  totalProjects: Int!
+  activeProjects: Int!
+  completedProjects: Int!
+  upcomingProjects: Int!
+  totalBudget: Float!
+  totalSubsidizedBudget: Float!
+  totalSubsidyRequests: Int!
+  totalSubsidyAmount: Float!
+  projectsWithVolunteers: Int!
+  averageBudgetPerProject: Float!
+}
+
+type ProjectsByDepartment {
+  department: String!
+  projects: Int!
+  budget_used: Float!
+  remaining_budget: Float!
+  annual_budget: Float
+}
+
+type SubsidyStatusDistribution {
+  status: String!
+  count: Int!
+  color: String!
+}
+
+type ProjectsTimeline {
+  month: String!
+  created: Int!
+  completed: Int!
+  budget: Float!
+}
+
+type ProjectKPIsDto {
+  totalActivities: Int!
+  completedActivities: Int!
+  inProgressActivities: Int!
+  completionRate: Int!
+  projectBudget: Float!
+  allocatedBudget: Float!
+  subsidizedBudget: Float!
+  balance: Float!
+  subsidizedBudgetPercentage: Int!
+  budgetUtilization: Int!
+  subsidizedActivities: Int!
+  subsidyRate: Int!
+  totalSubsidyAmount: Float!
+  subsidyRequestsCount: Int!
+  approvedSubsidyRequestsCount: Int!
+  daysRemaining: Int!
+  endDate: DateTime!
+  projectStatus: String!
+}
+
+type SubsidyKPIs {
+  totalRequests: Int!
+  pendingRequests: Int!
+  inReviewRequests: Int!
+  approvedRequests: Int!
+  rejectedRequests: Int!
+  closedRequests: Int!
+  totalRequested: Float!
+  totalApproved: Float!
+  approvalRate: Int!
+}
+
+type SubsidyByDepartment {
+  month: String!
+  department: String!
+  amount: Float!
+}
+
+type SubsidyByMonth {
+  month: String!
+  approved: Int!
+  pending: Int!
+  rejected: Int!
+  quarter: Int!
+}
+
+type SubsidyByStatus {
+  status: String!
+  count: Int!
+  fill: String!
+}
+
+type ForgotPasswordResponse {
+  success: Boolean!
+  message: String
+  error: String
+  resetToken: String
+}
+
+type Query {
+  permissions: [PermissionGroupPermissionsModel!]!
+  churches(institution_id: String): [ChurchModel!]!
+  church(id: String!): ChurchModel
+  churchActivityTimeline(institution_id: String, selectedYear: Float): [JSON!]!
+  institutions: [Institution!]!
+  institution(id: String!): Institution
+  regions: [Region!]!
+  region(id: String!): Region
+  users(institution_id: String): [UserModel!]!
+  user(id: String!): UserModel
+  userWithRoles(id: String!): UserWithRoles
+  roles: [RoleModel!]!
+  role(id: String!): RoleModel
+  departments(institution_id: String): [Department!]!
+  department(id: String!): Department
+  departmentKPIs(institution_id: String, church_id: String, selectedYear: Float): DepartmentKPIs!
+  departmentActivityData(institution_id: String, church_id: String, selectedYear: Float): [DepartmentActivityData!]!
+  departmentBudgetTimeline(institution_id: String, church_id: String, selectedYear: Float): [DepartmentBudgetTimeline!]!
+  communications: [Communication!]!
+  communication(id: String!): Communication
+  directMessages: [DirectMessage!]!
+  directMessage(id: String!): DirectMessage
+  projects(institutionId: String): [Project!]!
+  project(id: String!): Project
+  projectKPIs(institutionId: String): ProjectKPIs!
+  projectsByDepartment(institutionId: String): [ProjectsByDepartment!]!
+  subsidyStatusDistribution(institutionId: String): [SubsidyStatusDistribution!]!
+  projectsTimeline(institutionId: String): [ProjectsTimeline!]!
+  notifications: [Notification!]!
+  notification(id: String!): Notification
+  settings: [Setting!]!
+  setting(id: String!): Setting
+  subsidyRequests(project_id: String): [SubsidyRequest!]!
+  subsidyRequest(id: String!): SubsidyRequest
+  subsidyKPIs(institutionId: String): SubsidyKPIs!
+  subsidyByDepartment(institutionId: String): [SubsidyByDepartment!]!
+  subsidyByMonth(institutionId: String): [SubsidyByMonth!]!
+  subsidyByStatus(institutionId: String): [SubsidyByStatus!]!
+  contacts: [Contact!]!
+  contact(id: String!): Contact
+  subsidyStatuses(filters: String): [SubsidyStatus!]!
+  subsidyStatus(id: String!): SubsidyStatus
+  projectActivities(filters: String): [ProjectActivity!]!
+  projectActivity(id: ID!): ProjectActivity!
+  projectActivityLogs(activityId: ID!): [ProjectActivityLog!]!
+  downloadActivityDocument(id: ID!): String!
+  getActivityDocuments(activityId: ID!): [ActivityDocuments!]!
+  downloadSubsidyReceipt(id: ID!): String!
+  getSubsidyReceipts(input: GetSubsidyReceiptsDto!): [SubsidyReceipt!]!
+  getSubsidyReceiptsByRequestId(subsidyRequestId: ID!): [SubsidyReceipt!]!
+  getSubsidyReceiptsByItemId(subsidyRequestItemId: ID!): [SubsidyReceipt!]!
+  getSubsidyStatusHistory(subsidyRequestId: String!): [SubsidyStatusHistory!]!
+  annualBudgets(where: AnnualBudgetWhereInput, orderBy: [AnnualBudgetOrderByWithRelationInput!], cursor: AnnualBudgetWhereUniqueInput, take: Int, skip: Int, distinct: [AnnualBudgetScalarFieldEnum!]): [AnnualBudget!]!
+  annualBudget(id: String!): AnnualBudget
+  budgetKPIs(year: Int!, institutionId: String!): BudgetKPIs!
+  departmentSpending(year: Int!, institutionId: String!): [DepartmentSpending!]!
+  spendingOverTime(year: Int!, institutionId: String!): [SpendingOverTime!]!
+  entityDistribution(year: Int!): [EntityDistribution!]!
+  budgetDistribution(year: Int!, institutionId: String!): BudgetDistribution!
+  institutionalDepartmentsKPIs(year: Int!, institutionId: String!): InstitutionalDepartmentsKPIs!
+}
+
+input GetSubsidyReceiptsDto {
+  subsidy_request_id: String
+  subsidy_request_item_id: String
+  project_activity_id: String
+}
+
+input AnnualBudgetWhereInput {
+  AND: [AnnualBudgetWhereInput!]
+  OR: [AnnualBudgetWhereInput!]
+  NOT: [AnnualBudgetWhereInput!]
+  id: StringFilter
+  year: IntFilter
+  planned_budget: DecimalFilter
+  total_expenses: DecimalFilter
+  balance: DecimalFilter
+  notes: StringNullableFilter
+  description: StringNullableFilter
+  justification: StringNullableFilter
+  approved_by: StringNullableFilter
+  created_at: DateTimeFilter
+  updated_at: DateTimeFilter
+  created_by: StringFilter
+  updated_by: StringFilter
+  is_deleted: BoolFilter
+  deleted_at: DateTimeNullableFilter
+  deleted_by: StringNullableFilter
+  status: EnumAnnualBudgetStatusFilter
+  institution_id: StringNullableFilter
+  church_id: StringNullableFilter
+  department_id: StringNullableFilter
+  allocated_amount: DecimalFilter
+  approved_amount: DecimalNullableFilter
+  requested_by: StringFilter
+  reviewed_by: StringNullableFilter
+  submitted_date: DateTimeFilter
+  review_date: DateTimeNullableFilter
+  approval_date: DateTimeNullableFilter
+  priority: EnumAnnualBudgetPriorityFilter
+  category: EnumAnnualBudgetCategoryFilter
+  documents: JsonNullableFilter
+  is_locked: BoolFilter
+  has_budget_record: BoolFilter
+  entity_type: EnumAnnualBudgetEntityTypeFilter
+  approved_user: UserNullableScalarRelationFilter
+  institution: InstitutionNullableScalarRelationFilter
+  church: ChurchNullableScalarRelationFilter
+  department: DepartmentNullableScalarRelationFilter
+}
+
+input StringFilter {
+  equals: String
+  in: [String!]
+  notIn: [String!]
+  lt: String
+  lte: String
+  gt: String
+  gte: String
+  contains: String
+  startsWith: String
+  endsWith: String
+  mode: QueryMode
+  not: NestedStringFilter
+}
+
+enum QueryMode {
+  default
+  insensitive
+}
+
+input NestedStringFilter {
+  equals: String
+  in: [String!]
+  notIn: [String!]
+  lt: String
+  lte: String
+  gt: String
+  gte: String
+  contains: String
+  startsWith: String
+  endsWith: String
+  not: NestedStringFilter
+}
+
+input IntFilter {
+  equals: Int
+  in: [Int!]
+  notIn: [Int!]
+  lt: Int
+  lte: Int
+  gt: Int
+  gte: Int
+  not: NestedIntFilter
+}
+
+input NestedIntFilter {
+  equals: Int
+  in: [Int!]
+  notIn: [Int!]
+  lt: Int
+  lte: Int
+  gt: Int
+  gte: Int
+  not: NestedIntFilter
+}
+
+input DecimalFilter {
+  equals: Decimal
+  in: [Decimal!]
+  notIn: [Decimal!]
+  lt: Decimal
+  lte: Decimal
+  gt: Decimal
+  gte: Decimal
+  not: NestedDecimalFilter
+}
+
+input NestedDecimalFilter {
+  equals: Decimal
+  in: [Decimal!]
+  notIn: [Decimal!]
+  lt: Decimal
+  lte: Decimal
+  gt: Decimal
+  gte: Decimal
+  not: NestedDecimalFilter
+}
+
+input StringNullableFilter {
+  equals: String
+  in: [String!]
+  notIn: [String!]
+  lt: String
+  lte: String
+  gt: String
+  gte: String
+  contains: String
+  startsWith: String
+  endsWith: String
+  mode: QueryMode
+  not: NestedStringNullableFilter
+}
+
+input NestedStringNullableFilter {
+  equals: String
+  in: [String!]
+  notIn: [String!]
+  lt: String
+  lte: String
+  gt: String
+  gte: String
+  contains: String
+  startsWith: String
+  endsWith: String
+  not: NestedStringNullableFilter
+}
+
+input DateTimeFilter {
+  equals: DateTime
+  in: [DateTime!]
+  notIn: [DateTime!]
+  lt: DateTime
+  lte: DateTime
+  gt: DateTime
+  gte: DateTime
+  not: NestedDateTimeFilter
+}
+
+input NestedDateTimeFilter {
+  equals: DateTime
+  in: [DateTime!]
+  notIn: [DateTime!]
+  lt: DateTime
+  lte: DateTime
+  gt: DateTime
+  gte: DateTime
+  not: NestedDateTimeFilter
+}
+
+input BoolFilter {
+  equals: Boolean
+  not: NestedBoolFilter
+}
+
+input NestedBoolFilter {
+  equals: Boolean
+  not: NestedBoolFilter
+}
+
+input DateTimeNullableFilter {
+  equals: DateTime
+  in: [DateTime!]
+  notIn: [DateTime!]
+  lt: DateTime
+  lte: DateTime
+  gt: DateTime
+  gte: DateTime
+  not: NestedDateTimeNullableFilter
+}
+
+input NestedDateTimeNullableFilter {
+  equals: DateTime
+  in: [DateTime!]
+  notIn: [DateTime!]
+  lt: DateTime
+  lte: DateTime
+  gt: DateTime
+  gte: DateTime
+  not: NestedDateTimeNullableFilter
+}
+
+input EnumAnnualBudgetStatusFilter {
+  equals: AnnualBudgetStatus
+  in: [AnnualBudgetStatus!]
+  notIn: [AnnualBudgetStatus!]
+  not: NestedEnumAnnualBudgetStatusFilter
+}
+
+input NestedEnumAnnualBudgetStatusFilter {
+  equals: AnnualBudgetStatus
+  in: [AnnualBudgetStatus!]
+  notIn: [AnnualBudgetStatus!]
+  not: NestedEnumAnnualBudgetStatusFilter
+}
+
+input DecimalNullableFilter {
+  equals: Decimal
+  in: [Decimal!]
+  notIn: [Decimal!]
+  lt: Decimal
+  lte: Decimal
+  gt: Decimal
+  gte: Decimal
+  not: NestedDecimalNullableFilter
+}
+
+input NestedDecimalNullableFilter {
+  equals: Decimal
+  in: [Decimal!]
+  notIn: [Decimal!]
+  lt: Decimal
+  lte: Decimal
+  gt: Decimal
+  gte: Decimal
+  not: NestedDecimalNullableFilter
+}
+
+input EnumAnnualBudgetPriorityFilter {
+  equals: AnnualBudgetPriority
+  in: [AnnualBudgetPriority!]
+  notIn: [AnnualBudgetPriority!]
+  not: NestedEnumAnnualBudgetPriorityFilter
+}
+
+input NestedEnumAnnualBudgetPriorityFilter {
+  equals: AnnualBudgetPriority
+  in: [AnnualBudgetPriority!]
+  notIn: [AnnualBudgetPriority!]
+  not: NestedEnumAnnualBudgetPriorityFilter
+}
+
+input EnumAnnualBudgetCategoryFilter {
+  equals: AnnualBudgetCategory
+  in: [AnnualBudgetCategory!]
+  notIn: [AnnualBudgetCategory!]
+  not: NestedEnumAnnualBudgetCategoryFilter
+}
+
+input NestedEnumAnnualBudgetCategoryFilter {
+  equals: AnnualBudgetCategory
+  in: [AnnualBudgetCategory!]
+  notIn: [AnnualBudgetCategory!]
+  not: NestedEnumAnnualBudgetCategoryFilter
+}
+
+input JsonNullableFilter {
+  equals: JSON
+  path: [String!]
+  mode: QueryMode
+  string_contains: String
+  string_starts_with: String
+  string_ends_with: String
+  array_starts_with: JSON
+  array_ends_with: JSON
+  array_contains: JSON
+  lt: JSON
+  lte: JSON
+  gt: JSON
+  gte: JSON
+  not: JSON
+}
+
+input EnumAnnualBudgetEntityTypeFilter {
+  equals: AnnualBudgetEntityType
+  in: [AnnualBudgetEntityType!]
+  notIn: [AnnualBudgetEntityType!]
+  not: NestedEnumAnnualBudgetEntityTypeFilter
+}
+
+input NestedEnumAnnualBudgetEntityTypeFilter {
+  equals: AnnualBudgetEntityType
+  in: [AnnualBudgetEntityType!]
+  notIn: [AnnualBudgetEntityType!]
+  not: NestedEnumAnnualBudgetEntityTypeFilter
+}
+
+input UserNullableScalarRelationFilter {
+  is: UserWhereInput
+  isNot: UserWhereInput
+}
+
+input UserWhereInput {
+  AND: [UserWhereInput!]
+  OR: [UserWhereInput!]
+  NOT: [UserWhereInput!]
+  id: StringFilter
+  name: StringFilter
+  email: StringFilter
+  password: StringFilter
+  gender: EnumGenderTypeNullableFilter
+  language_preference: EnumLanguagePreferenceFilter
+  created_at: DateTimeFilter
+  updated_at: DateTimeFilter
+  created_by: StringFilter
+  updated_by: StringFilter
+  is_deleted: BoolFilter
+  deleted_at: DateTimeNullableFilter
+  deleted_by: StringNullableFilter
+  contact_id: StringNullableFilter
+  institution_id: StringFilter
+  church_id: StringNullableFilter
+  department_id: StringNullableFilter
+  contact: ContactNullableScalarRelationFilter
+  institution: InstitutionScalarRelationFilter
+  church: ChurchNullableScalarRelationFilter
+  department: DepartmentNullableScalarRelationFilter
+  user_roles: UserRoleListRelationFilter
+  direct_messages: DirectMessageListRelationFilter
+  direct_message_recipients: DirectMessageRecipientListRelationFilter
+  notifications: NotificationListRelationFilter
+  event_registrations: EventRegistrationListRelationFilter
+  event_recipients: EventRecipientListRelationFilter
+  communications: CommunicationListRelationFilter
+  SubsidyRequest: SubsidyRequestListRelationFilter
+  SubsidyStatus: SubsidyStatusListRelationFilter
+  voluntary_projects: VoluntariesOnProjectsListRelationFilter
+  Project: ProjectListRelationFilter
+  approved_annual_budgets: AnnualBudgetListRelationFilter
+  project_activity_logs: ProjectActivityLogListRelationFilter
+  activity_assignments: ProjectActivityAssigneeListRelationFilter
+  subsidy_status_history: SubsidyStatusHistoryListRelationFilter
+  led_departments: DepartmentListRelationFilter
+}
+
+input EnumGenderTypeNullableFilter {
+  equals: GenderType
+  in: [GenderType!]
+  notIn: [GenderType!]
+  not: NestedEnumGenderTypeNullableFilter
+}
+
+input NestedEnumGenderTypeNullableFilter {
+  equals: GenderType
+  in: [GenderType!]
+  notIn: [GenderType!]
+  not: NestedEnumGenderTypeNullableFilter
+}
+
+input EnumLanguagePreferenceFilter {
+  equals: LanguagePreference
+  in: [LanguagePreference!]
+  notIn: [LanguagePreference!]
+  not: NestedEnumLanguagePreferenceFilter
+}
+
+input NestedEnumLanguagePreferenceFilter {
+  equals: LanguagePreference
+  in: [LanguagePreference!]
+  notIn: [LanguagePreference!]
+  not: NestedEnumLanguagePreferenceFilter
+}
+
+input ContactNullableScalarRelationFilter {
+  is: ContactWhereInput
+  isNot: ContactWhereInput
+}
+
+input ContactWhereInput {
+  AND: [ContactWhereInput!]
+  OR: [ContactWhereInput!]
+  NOT: [ContactWhereInput!]
+  id: StringFilter
+  name: StringNullableFilter
+  phone: StringNullableFilter
+  mobile: StringNullableFilter
+  email: StringNullableFilter
+  country: StringNullableFilter
+  city: StringNullableFilter
+  state: StringNullableFilter
+  address: StringNullableFilter
+  full_address: StringNullableFilter
+  postal_code: StringNullableFilter
+  website: StringNullableFilter
+  notes: StringNullableFilter
+  is_primary: BoolFilter
+  created_at: DateTimeFilter
+  updated_at: DateTimeFilter
+  created_by: StringFilter
+  updated_by: StringFilter
+  is_deleted: BoolFilter
+  deleted_at: DateTimeNullableFilter
+  deleted_by: StringNullableFilter
+  Institution: InstitutionNullableScalarRelationFilter
+  Church: ChurchListRelationFilter
+  Department: DepartmentListRelationFilter
+  User: UserListRelationFilter
+  Event: EventListRelationFilter
+}
+
+input InstitutionNullableScalarRelationFilter {
+  is: InstitutionWhereInput
+  isNot: InstitutionWhereInput
+}
+
+input InstitutionWhereInput {
+  AND: [InstitutionWhereInput!]
+  OR: [InstitutionWhereInput!]
+  NOT: [InstitutionWhereInput!]
+  id: StringFilter
+  name: StringFilter
+  denomination: StringFilter
+  description: StringNullableFilter
+  language_preference: EnumLanguagePreferenceFilter
+  contact_id: StringNullableFilter
+  created_at: DateTimeFilter
+  updated_at: DateTimeFilter
+  created_by: StringFilter
+  updated_by: StringFilter
+  is_deleted: BoolFilter
+  deleted_at: DateTimeNullableFilter
+  deleted_by: StringNullableFilter
+  contact: ContactNullableScalarRelationFilter
+  churches: ChurchListRelationFilter
+  departments: DepartmentListRelationFilter
+  users: UserListRelationFilter
+  communications: CommunicationListRelationFilter
+  notifications: NotificationListRelationFilter
+  settings: SettingListRelationFilter
+  projects: ProjectListRelationFilter
+  direct_messages: DirectMessageListRelationFilter
+  subsidy_requests: SubsidyRequestListRelationFilter
+  annual_budgets: AnnualBudgetListRelationFilter
+}
+
+input ChurchListRelationFilter {
+  every: ChurchWhereInput
+  some: ChurchWhereInput
+  none: ChurchWhereInput
+}
+
+input ChurchWhereInput {
+  AND: [ChurchWhereInput!]
+  OR: [ChurchWhereInput!]
+  NOT: [ChurchWhereInput!]
+  id: StringFilter
+  type: EnumChurchTypeFilter
+  institution_id: StringFilter
+  name: StringFilter
+  region_id: StringNullableFilter
+  contact_id: StringNullableFilter
+  created_at: DateTimeFilter
+  updated_at: DateTimeFilter
+  created_by: StringFilter
+  updated_by: StringFilter
+  is_deleted: BoolFilter
+  deleted_at: DateTimeNullableFilter
+  deleted_by: StringNullableFilter
+  institution: InstitutionScalarRelationFilter
+  region: RegionNullableScalarRelationFilter
+  contact: ContactNullableScalarRelationFilter
+  departments: DepartmentListRelationFilter
+  users: UserListRelationFilter
+  subsidy_requests: SubsidyRequestListRelationFilter
+  annual_budgets: AnnualBudgetListRelationFilter
+  projects: ProjectListRelationFilter
+}
+
+input EnumChurchTypeFilter {
+  equals: ChurchType
+  in: [ChurchType!]
+  notIn: [ChurchType!]
+  not: NestedEnumChurchTypeFilter
+}
+
+input NestedEnumChurchTypeFilter {
+  equals: ChurchType
+  in: [ChurchType!]
+  notIn: [ChurchType!]
+  not: NestedEnumChurchTypeFilter
+}
+
+input InstitutionScalarRelationFilter {
+  is: InstitutionWhereInput
+  isNot: InstitutionWhereInput
+}
+
+input RegionNullableScalarRelationFilter {
+  is: RegionWhereInput
+  isNot: RegionWhereInput
+}
+
+input RegionWhereInput {
+  AND: [RegionWhereInput!]
+  OR: [RegionWhereInput!]
+  NOT: [RegionWhereInput!]
+  id: StringFilter
+  description: StringNullableFilter
+  name: StringFilter
+  territory: JsonNullableFilter
+  color: StringNullableFilter
+  created_at: DateTimeFilter
+  updated_at: DateTimeFilter
+  created_by: StringFilter
+  updated_by: StringFilter
+  is_deleted: BoolFilter
+  deleted_at: DateTimeNullableFilter
+  deleted_by: StringNullableFilter
+  churches: ChurchListRelationFilter
+}
+
+input DepartmentListRelationFilter {
+  every: DepartmentWhereInput
+  some: DepartmentWhereInput
+  none: DepartmentWhereInput
+}
+
+input DepartmentWhereInput {
+  AND: [DepartmentWhereInput!]
+  OR: [DepartmentWhereInput!]
+  NOT: [DepartmentWhereInput!]
+  id: StringFilter
+  institution_id: StringFilter
+  church_id: StringNullableFilter
+  name: StringFilter
+  description: StringFilter
+  leader_id: StringFilter
+  contact_id: StringNullableFilter
+  created_at: DateTimeFilter
+  updated_at: DateTimeFilter
+  created_by: StringFilter
+  updated_by: StringFilter
+  is_deleted: BoolFilter
+  deleted_at: DateTimeNullableFilter
+  deleted_by: StringNullableFilter
+  institution: InstitutionScalarRelationFilter
+  church: ChurchNullableScalarRelationFilter
+  leader: UserScalarRelationFilter
+  contact: ContactNullableScalarRelationFilter
+  subsidy_statuses: SubsidyStatusListRelationFilter
+  projects: ProjectListRelationFilter
+  church_projects: ProjectListRelationFilter
+  annual_reports: AnnualReportListRelationFilter
+  subsidy_requests: SubsidyRequestListRelationFilter
+  users: UserListRelationFilter
+  annual_budgets: AnnualBudgetListRelationFilter
+}
+
+input ChurchNullableScalarRelationFilter {
+  is: ChurchWhereInput
+  isNot: ChurchWhereInput
+}
+
+input UserScalarRelationFilter {
+  is: UserWhereInput
+  isNot: UserWhereInput
+}
+
+input SubsidyStatusListRelationFilter {
+  every: SubsidyStatusWhereInput
+  some: SubsidyStatusWhereInput
+  none: SubsidyStatusWhereInput
+}
+
+input SubsidyStatusWhereInput {
+  AND: [SubsidyStatusWhereInput!]
+  OR: [SubsidyStatusWhereInput!]
+  NOT: [SubsidyStatusWhereInput!]
+  id: StringFilter
+  department_id: StringFilter
+  assigned_to: StringFilter
+  name: StringFilter
+  description: StringFilter
+  order: IntFilter
+  created_at: DateTimeFilter
+  updated_at: DateTimeFilter
+  created_by: StringFilter
+  updated_by: StringFilter
+  is_deleted: BoolFilter
+  deleted_at: DateTimeNullableFilter
+  deleted_by: StringNullableFilter
+  department: DepartmentScalarRelationFilter
+  assigned_user: UserScalarRelationFilter
+  subsidy_requests: SubsidyRequestListRelationFilter
+  special_projects: SpecialProjectsListRelationFilter
+  history_as_current: SubsidyStatusHistoryListRelationFilter
+  history_as_previous: SubsidyStatusHistoryListRelationFilter
+}
+
+input DepartmentScalarRelationFilter {
+  is: DepartmentWhereInput
+  isNot: DepartmentWhereInput
+}
+
+input SubsidyRequestListRelationFilter {
+  every: SubsidyRequestWhereInput
+  some: SubsidyRequestWhereInput
+  none: SubsidyRequestWhereInput
+}
+
+input SubsidyRequestWhereInput {
+  AND: [SubsidyRequestWhereInput!]
+  OR: [SubsidyRequestWhereInput!]
+  NOT: [SubsidyRequestWhereInput!]
+  id: StringFilter
+  description: StringFilter
+  total_budget: DecimalFilter
+  approved_amount: DecimalFilter
+  rejection_reason: StringNullableFilter
+  created_at: DateTimeFilter
+  updated_at: DateTimeFilter
+  approved_at: DateTimeNullableFilter
+  created_by: StringFilter
+  updated_by: StringFilter
+  approved_by: StringNullableFilter
+  is_deleted: BoolFilter
+  deleted_at: DateTimeNullableFilter
+  deleted_by: StringNullableFilter
+  institution_id: StringFilter
+  requester_id: StringFilter
+  department_id: StringFilter
+  church_id: StringNullableFilter
+  priority: EnumSubsidyRequestPriorityFilter
+  subsidy_statuses_id: StringFilter
+  project_id: StringFilter
+  institution: InstitutionScalarRelationFilter
+  requester: UserScalarRelationFilter
+  department: DepartmentScalarRelationFilter
+  church: ChurchNullableScalarRelationFilter
+  subsidy_status: SubsidyStatusScalarRelationFilter
+  items: SubsidyRequestItemListRelationFilter
+  project: ProjectScalarRelationFilter
+  subsidy_receipts: SubsidyReceiptListRelationFilter
+  status_history: SubsidyStatusHistoryListRelationFilter
+}
+
+input EnumSubsidyRequestPriorityFilter {
+  equals: SubsidyRequestPriority
+  in: [SubsidyRequestPriority!]
+  notIn: [SubsidyRequestPriority!]
+  not: NestedEnumSubsidyRequestPriorityFilter
+}
+
+input NestedEnumSubsidyRequestPriorityFilter {
+  equals: SubsidyRequestPriority
+  in: [SubsidyRequestPriority!]
+  notIn: [SubsidyRequestPriority!]
+  not: NestedEnumSubsidyRequestPriorityFilter
+}
+
+input SubsidyStatusScalarRelationFilter {
+  is: SubsidyStatusWhereInput
+  isNot: SubsidyStatusWhereInput
+}
+
+input SubsidyRequestItemListRelationFilter {
+  every: SubsidyRequestItemWhereInput
+  some: SubsidyRequestItemWhereInput
+  none: SubsidyRequestItemWhereInput
+}
+
+input SubsidyRequestItemWhereInput {
+  AND: [SubsidyRequestItemWhereInput!]
+  OR: [SubsidyRequestItemWhereInput!]
+  NOT: [SubsidyRequestItemWhereInput!]
+  id: StringFilter
+  subsidy_request_id: StringFilter
+  project_activity_id: StringFilter
+  requested_amount: DecimalFilter
+  approved_amount: DecimalFilter
+  notes: StringNullableFilter
+  created_at: DateTimeFilter
+  updated_at: DateTimeFilter
+  is_deleted: BoolFilter
+  deleted_at: DateTimeNullableFilter
+  deleted_by: StringNullableFilter
+  subsidy_request: SubsidyRequestScalarRelationFilter
+  project_activity: ProjectActivityScalarRelationFilter
+  subsidy_receipts: SubsidyReceiptListRelationFilter
+}
+
+input SubsidyRequestScalarRelationFilter {
+  is: SubsidyRequestWhereInput
+  isNot: SubsidyRequestWhereInput
+}
+
+input ProjectActivityScalarRelationFilter {
+  is: ProjectActivityWhereInput
+  isNot: ProjectActivityWhereInput
+}
+
+input ProjectActivityWhereInput {
+  AND: [ProjectActivityWhereInput!]
+  OR: [ProjectActivityWhereInput!]
+  NOT: [ProjectActivityWhereInput!]
+  id: StringFilter
+  project_id: StringFilter
+  name: StringFilter
+  description: StringFilter
+  budget_amount: DecimalFilter
+  created_at: DateTimeFilter
+  updated_at: DateTimeFilter
+  created_by: StringFilter
+  updated_by: StringFilter
+  is_deleted: BoolFilter
+  deleted_at: DateTimeNullableFilter
+  deleted_by: StringNullableFilter
+  deadline: DateTimeFilter
+  tags: EnumActivityTagsNullableListFilter
+  custom_tags: StringNullableListFilter
+  status: EnumActivityStatusFilter
+  priority: EnumActivityPriorityFilter
+  is_subsidized: BoolFilter
+  subsidy_request_items: SubsidyRequestItemListRelationFilter
+  project: ProjectScalarRelationFilter
+  subsidy_receipts: SubsidyReceiptListRelationFilter
+  activity_documents: ActivityDocumentsListRelationFilter
+  activity_funding: ActivityFundingNullableScalarRelationFilter
+  logs: ProjectActivityLogListRelationFilter
+  assignees: ProjectActivityAssigneeListRelationFilter
+}
+
+input EnumActivityTagsNullableListFilter {
+  equals: [ActivityTags!]
+  has: ActivityTags
+  hasEvery: [ActivityTags!]
+  hasSome: [ActivityTags!]
+  isEmpty: Boolean
+}
+
+input StringNullableListFilter {
+  equals: [String!]
+  has: String
+  hasEvery: [String!]
+  hasSome: [String!]
+  isEmpty: Boolean
+}
+
+input EnumActivityStatusFilter {
+  equals: ActivityStatus
+  in: [ActivityStatus!]
+  notIn: [ActivityStatus!]
+  not: NestedEnumActivityStatusFilter
+}
+
+input NestedEnumActivityStatusFilter {
+  equals: ActivityStatus
+  in: [ActivityStatus!]
+  notIn: [ActivityStatus!]
+  not: NestedEnumActivityStatusFilter
+}
+
+input EnumActivityPriorityFilter {
+  equals: ActivityPriority
+  in: [ActivityPriority!]
+  notIn: [ActivityPriority!]
+  not: NestedEnumActivityPriorityFilter
+}
+
+input NestedEnumActivityPriorityFilter {
+  equals: ActivityPriority
+  in: [ActivityPriority!]
+  notIn: [ActivityPriority!]
+  not: NestedEnumActivityPriorityFilter
+}
+
+input ProjectScalarRelationFilter {
+  is: ProjectWhereInput
+  isNot: ProjectWhereInput
+}
+
+input ProjectWhereInput {
+  AND: [ProjectWhereInput!]
+  OR: [ProjectWhereInput!]
+  NOT: [ProjectWhereInput!]
+  id: StringFilter
+  department_id: StringFilter
+  church_department_id: StringNullableFilter
+  title: StringFilter
+  description: StringFilter
+  budget: DecimalFilter
+  subsidized_budget: DecimalFilter
+  balance: DecimalFilter
+  owner_id: StringFilter
+  language_preference: EnumLanguagePreferenceFilter
+  type: EnumProjectTypeFilter
+  status: EnumProjectStatusFilter
+  is_private: BoolFilter
+  required_volunteers: BoolFilter
+  start_at: DateTimeFilter
+  end_at: DateTimeFilter
+  created_at: DateTimeFilter
+  updated_at: DateTimeFilter
+  deadline: DateTimeNullableFilter
+  created_by: StringFilter
+  updated_by: StringFilter
+  is_deleted: BoolFilter
+  deleted_at: DateTimeNullableFilter
+  deleted_by: StringNullableFilter
+  event_id: StringNullableFilter
+  institution_id: StringNullableFilter
+  church_id: StringNullableFilter
+  department: DepartmentScalarRelationFilter
+  church_department: DepartmentNullableScalarRelationFilter
+  owner: UserScalarRelationFilter
+  event: EventNullableScalarRelationFilter
+  Institution: InstitutionNullableScalarRelationFilter
+  church: ChurchNullableScalarRelationFilter
+  voluntary_users: VoluntariesOnProjectsListRelationFilter
+  activities: ProjectActivityListRelationFilter
+  subsidies: SubsidyRequestListRelationFilter
+  special_projects: SpecialProjectsListRelationFilter
+}
+
+input EnumProjectTypeFilter {
+  equals: ProjectType
+  in: [ProjectType!]
+  notIn: [ProjectType!]
+  not: NestedEnumProjectTypeFilter
+}
+
+input NestedEnumProjectTypeFilter {
+  equals: ProjectType
+  in: [ProjectType!]
+  notIn: [ProjectType!]
+  not: NestedEnumProjectTypeFilter
+}
+
+input EnumProjectStatusFilter {
+  equals: ProjectStatus
+  in: [ProjectStatus!]
+  notIn: [ProjectStatus!]
+  not: NestedEnumProjectStatusFilter
+}
+
+input NestedEnumProjectStatusFilter {
+  equals: ProjectStatus
+  in: [ProjectStatus!]
+  notIn: [ProjectStatus!]
+  not: NestedEnumProjectStatusFilter
+}
+
+input DepartmentNullableScalarRelationFilter {
+  is: DepartmentWhereInput
+  isNot: DepartmentWhereInput
+}
+
+input EventNullableScalarRelationFilter {
+  is: EventWhereInput
+  isNot: EventWhereInput
+}
+
+input EventWhereInput {
+  AND: [EventWhereInput!]
+  OR: [EventWhereInput!]
+  NOT: [EventWhereInput!]
+  id: StringFilter
+  target_type: EnumEventTargetTypeFilter
+  target_id: StringNullableFilter
+  title: StringFilter
+  description: StringFilter
+  contact_id: StringFilter
+  type: EnumEventTypeFilter
+  language_preference: EnumLanguagePreferenceFilter
+  max_participants: IntFilter
+  ticket_amount: DecimalFilter
+  location: StringNullableFilter
+  is_private: BoolFilter
+  required_volunteers: BoolFilter
+  start_at: DateTimeNullableFilter
+  end_at: DateTimeNullableFilter
+  subscription_expires_at: DateTimeFilter
+  created_at: DateTimeFilter
+  updated_at: DateTimeFilter
+  created_by: StringFilter
+  updated_by: StringFilter
+  is_deleted: BoolFilter
+  deleted_at: DateTimeNullableFilter
+  deleted_by: StringNullableFilter
+  contact: ContactScalarRelationFilter
+  event_recipients: EventRecipientListRelationFilter
+  event_registrations: EventRegistrationListRelationFilter
+  projects: ProjectListRelationFilter
+}
+
+input EnumEventTargetTypeFilter {
+  equals: EventTargetType
+  in: [EventTargetType!]
+  notIn: [EventTargetType!]
+  not: NestedEnumEventTargetTypeFilter
+}
+
+input NestedEnumEventTargetTypeFilter {
+  equals: EventTargetType
+  in: [EventTargetType!]
+  notIn: [EventTargetType!]
+  not: NestedEnumEventTargetTypeFilter
+}
+
+input EnumEventTypeFilter {
+  equals: EventType
+  in: [EventType!]
+  notIn: [EventType!]
+  not: NestedEnumEventTypeFilter
+}
+
+input NestedEnumEventTypeFilter {
+  equals: EventType
+  in: [EventType!]
+  notIn: [EventType!]
+  not: NestedEnumEventTypeFilter
+}
+
+input ContactScalarRelationFilter {
+  is: ContactWhereInput
+  isNot: ContactWhereInput
+}
+
+input EventRecipientListRelationFilter {
+  every: EventRecipientWhereInput
+  some: EventRecipientWhereInput
+  none: EventRecipientWhereInput
+}
+
+input EventRecipientWhereInput {
+  AND: [EventRecipientWhereInput!]
+  OR: [EventRecipientWhereInput!]
+  NOT: [EventRecipientWhereInput!]
+  id: StringFilter
+  event_id: StringFilter
+  target_type: EnumEventTargetTypeFilter
+  target_id: StringFilter
+  created_at: DateTimeFilter
+  updated_at: DateTimeFilter
+  created_by: StringFilter
+  updated_by: StringFilter
+  is_deleted: BoolFilter
+  deleted_at: DateTimeNullableFilter
+  deleted_by: StringNullableFilter
+  userId: StringNullableFilter
+  event: EventScalarRelationFilter
+  User: UserNullableScalarRelationFilter
+}
+
+input EventScalarRelationFilter {
+  is: EventWhereInput
+  isNot: EventWhereInput
+}
+
+input EventRegistrationListRelationFilter {
+  every: EventRegistrationWhereInput
+  some: EventRegistrationWhereInput
+  none: EventRegistrationWhereInput
+}
+
+input EventRegistrationWhereInput {
+  AND: [EventRegistrationWhereInput!]
+  OR: [EventRegistrationWhereInput!]
+  NOT: [EventRegistrationWhereInput!]
+  id: StringFilter
+  user_id: StringFilter
+  event_id: StringFilter
+  status: EnumEventRegistrationStatusFilter
+  created_at: DateTimeFilter
+  updated_at: DateTimeFilter
+  created_by: StringFilter
+  updated_by: StringFilter
+  is_deleted: BoolFilter
+  deleted_at: DateTimeNullableFilter
+  deleted_by: StringNullableFilter
+  user: UserScalarRelationFilter
+  event: EventScalarRelationFilter
+}
+
+input EnumEventRegistrationStatusFilter {
+  equals: EventRegistrationStatus
+  in: [EventRegistrationStatus!]
+  notIn: [EventRegistrationStatus!]
+  not: NestedEnumEventRegistrationStatusFilter
+}
+
+input NestedEnumEventRegistrationStatusFilter {
+  equals: EventRegistrationStatus
+  in: [EventRegistrationStatus!]
+  notIn: [EventRegistrationStatus!]
+  not: NestedEnumEventRegistrationStatusFilter
+}
+
+input ProjectListRelationFilter {
+  every: ProjectWhereInput
+  some: ProjectWhereInput
+  none: ProjectWhereInput
+}
+
+input VoluntariesOnProjectsListRelationFilter {
+  every: VoluntariesOnProjectsWhereInput
+  some: VoluntariesOnProjectsWhereInput
+  none: VoluntariesOnProjectsWhereInput
+}
+
+input VoluntariesOnProjectsWhereInput {
+  AND: [VoluntariesOnProjectsWhereInput!]
+  OR: [VoluntariesOnProjectsWhereInput!]
+  NOT: [VoluntariesOnProjectsWhereInput!]
+  user_id: StringFilter
+  project_id: StringFilter
+  created_at: DateTimeFilter
+  updated_at: DateTimeFilter
+  created_by: StringFilter
+  updated_by: StringFilter
+  is_deleted: BoolFilter
+  deleted_at: DateTimeNullableFilter
+  deleted_by: StringNullableFilter
+  user: UserScalarRelationFilter
+  project: ProjectScalarRelationFilter
+}
+
+input ProjectActivityListRelationFilter {
+  every: ProjectActivityWhereInput
+  some: ProjectActivityWhereInput
+  none: ProjectActivityWhereInput
+}
+
+input SpecialProjectsListRelationFilter {
+  every: SpecialProjectsWhereInput
+  some: SpecialProjectsWhereInput
+  none: SpecialProjectsWhereInput
+}
+
+input SpecialProjectsWhereInput {
+  AND: [SpecialProjectsWhereInput!]
+  OR: [SpecialProjectsWhereInput!]
+  NOT: [SpecialProjectsWhereInput!]
+  id: StringFilter
+  department_id: StringFilter
+  institution_id: StringNullableFilter
+  project_id: StringNullableFilter
+  justification_note: StringNullableFilter
+  budget: DecimalNullableFilter
+  subsidy_status_id: StringFilter
+  type: StringFilter
+  location_church_plant: StringNullableFilter
+  created_at: DateTimeFilter
+  updated_at: DateTimeFilter
+  created_by: StringFilter
+  updated_by: StringFilter
+  is_deleted: BoolFilter
+  deleted_at: DateTimeNullableFilter
+  deleted_by: StringNullableFilter
+  project: ProjectNullableScalarRelationFilter
+  subsidy_status: SubsidyStatusNullableScalarRelationFilter
+}
+
+input ProjectNullableScalarRelationFilter {
+  is: ProjectWhereInput
+  isNot: ProjectWhereInput
+}
+
+input SubsidyStatusNullableScalarRelationFilter {
+  is: SubsidyStatusWhereInput
+  isNot: SubsidyStatusWhereInput
+}
+
+input SubsidyReceiptListRelationFilter {
+  every: SubsidyReceiptWhereInput
+  some: SubsidyReceiptWhereInput
+  none: SubsidyReceiptWhereInput
+}
+
+input SubsidyReceiptWhereInput {
+  AND: [SubsidyReceiptWhereInput!]
+  OR: [SubsidyReceiptWhereInput!]
+  NOT: [SubsidyReceiptWhereInput!]
+  id: StringFilter
+  project_activities_id: StringFilter
+  file_url: StringFilter
+  drive_file_id: StringNullableFilter
+  filename: StringFilter
+  type: StringFilter
+  amount: DecimalNullableFilter
+  approved: BoolFilter
+  is_validated: BoolFilter
+  validated_at: DateTimeNullableFilter
+  validated_by: StringNullableFilter
+  uploaded_by: StringFilter
+  created_at: DateTimeFilter
+  updated_at: DateTimeFilter
+  created_by: StringFilter
+  updated_by: StringFilter
+  is_deleted: BoolFilter
+  deleted_at: DateTimeNullableFilter
+  deleted_by: StringNullableFilter
+  subsidy_request_id: StringNullableFilter
+  subsidy_request_item_id: StringNullableFilter
+  project_activity: ProjectActivityScalarRelationFilter
+  subsidy_request: SubsidyRequestNullableScalarRelationFilter
+  subsidy_request_item: SubsidyRequestItemNullableScalarRelationFilter
+}
+
+input SubsidyRequestNullableScalarRelationFilter {
+  is: SubsidyRequestWhereInput
+  isNot: SubsidyRequestWhereInput
+}
+
+input SubsidyRequestItemNullableScalarRelationFilter {
+  is: SubsidyRequestItemWhereInput
+  isNot: SubsidyRequestItemWhereInput
+}
+
+input ActivityDocumentsListRelationFilter {
+  every: ActivityDocumentsWhereInput
+  some: ActivityDocumentsWhereInput
+  none: ActivityDocumentsWhereInput
+}
+
+input ActivityDocumentsWhereInput {
+  AND: [ActivityDocumentsWhereInput!]
+  OR: [ActivityDocumentsWhereInput!]
+  NOT: [ActivityDocumentsWhereInput!]
+  id: StringFilter
+  activity_id: StringFilter
+  file_url: StringFilter
+  drive_file_id: StringNullableFilter
+  filename: StringFilter
+  type: StringFilter
+  is_validated: BoolFilter
+  uploaded_by: StringFilter
+  created_at: DateTimeFilter
+  validated_at: DateTimeNullableFilter
+  project_activity_id: StringNullableFilter
+  updated_at: DateTimeFilter
+  updated_by: StringNullableFilter
+  is_deleted: BoolFilter
+  deleted_at: DateTimeNullableFilter
+  deleted_by: StringNullableFilter
+  project_activity: ProjectActivityNullableScalarRelationFilter
+}
+
+input ProjectActivityNullableScalarRelationFilter {
+  is: ProjectActivityWhereInput
+  isNot: ProjectActivityWhereInput
+}
+
+input ActivityFundingNullableScalarRelationFilter {
+  is: ActivityFundingWhereInput
+  isNot: ActivityFundingWhereInput
+}
+
+input ActivityFundingWhereInput {
+  AND: [ActivityFundingWhereInput!]
+  OR: [ActivityFundingWhereInput!]
+  NOT: [ActivityFundingWhereInput!]
+  id: StringFilter
+  activity_id: StringFilter
+  entity_contribution_amount: DecimalFilter
+  entity_contribution_percent: FloatFilter
+  entity_type: EnumEntityTypeFilter
+  entity_id: StringFilter
+  validated: BoolFilter
+  created_at: DateTimeFilter
+  updated_at: DateTimeFilter
+  created_by: StringNullableFilter
+  updated_by: StringNullableFilter
+  is_deleted: BoolFilter
+  deleted_at: DateTimeNullableFilter
+  deleted_by: StringNullableFilter
+  activity: ProjectActivityScalarRelationFilter
+}
+
+input FloatFilter {
+  equals: Float
+  in: [Float!]
+  notIn: [Float!]
+  lt: Float
+  lte: Float
+  gt: Float
+  gte: Float
+  not: NestedFloatFilter
+}
+
+input NestedFloatFilter {
+  equals: Float
+  in: [Float!]
+  notIn: [Float!]
+  lt: Float
+  lte: Float
+  gt: Float
+  gte: Float
+  not: NestedFloatFilter
+}
+
+input EnumEntityTypeFilter {
+  equals: EntityType
+  in: [EntityType!]
+  notIn: [EntityType!]
+  not: NestedEnumEntityTypeFilter
+}
+
+input NestedEnumEntityTypeFilter {
+  equals: EntityType
+  in: [EntityType!]
+  notIn: [EntityType!]
+  not: NestedEnumEntityTypeFilter
+}
+
+input ProjectActivityLogListRelationFilter {
+  every: ProjectActivityLogWhereInput
+  some: ProjectActivityLogWhereInput
+  none: ProjectActivityLogWhereInput
+}
+
+input ProjectActivityLogWhereInput {
+  AND: [ProjectActivityLogWhereInput!]
+  OR: [ProjectActivityLogWhereInput!]
+  NOT: [ProjectActivityLogWhereInput!]
+  id: StringFilter
+  activity_id: StringFilter
+  user_id: StringFilter
+  action: EnumProjectActivityLogActionFilter
+  field_name: StringNullableFilter
+  old_value: StringNullableFilter
+  new_value: StringNullableFilter
+  metadata: JsonNullableFilter
+  created_at: DateTimeFilter
+  activity: ProjectActivityScalarRelationFilter
+  user: UserScalarRelationFilter
+}
+
+input EnumProjectActivityLogActionFilter {
+  equals: ProjectActivityLogAction
+  in: [ProjectActivityLogAction!]
+  notIn: [ProjectActivityLogAction!]
+  not: NestedEnumProjectActivityLogActionFilter
+}
+
+input NestedEnumProjectActivityLogActionFilter {
+  equals: ProjectActivityLogAction
+  in: [ProjectActivityLogAction!]
+  notIn: [ProjectActivityLogAction!]
+  not: NestedEnumProjectActivityLogActionFilter
+}
+
+input ProjectActivityAssigneeListRelationFilter {
+  every: ProjectActivityAssigneeWhereInput
+  some: ProjectActivityAssigneeWhereInput
+  none: ProjectActivityAssigneeWhereInput
+}
+
+input ProjectActivityAssigneeWhereInput {
+  AND: [ProjectActivityAssigneeWhereInput!]
+  OR: [ProjectActivityAssigneeWhereInput!]
+  NOT: [ProjectActivityAssigneeWhereInput!]
+  id: StringFilter
+  activity_id: StringFilter
+  user_id: StringFilter
+  created_at: DateTimeFilter
+  created_by: StringFilter
+  activity: ProjectActivityScalarRelationFilter
+  user: UserScalarRelationFilter
+}
+
+input SubsidyStatusHistoryListRelationFilter {
+  every: SubsidyStatusHistoryWhereInput
+  some: SubsidyStatusHistoryWhereInput
+  none: SubsidyStatusHistoryWhereInput
+}
+
+input SubsidyStatusHistoryWhereInput {
+  AND: [SubsidyStatusHistoryWhereInput!]
+  OR: [SubsidyStatusHistoryWhereInput!]
+  NOT: [SubsidyStatusHistoryWhereInput!]
+  id: StringFilter
+  subsidy_request_id: StringFilter
+  status_id: StringFilter
+  previous_status_id: StringNullableFilter
+  type: EnumSubsidyHistoryTypeFilter
+  reason: StringNullableFilter
+  changed_by: StringFilter
+  changed_at: DateTimeFilter
+  created_at: DateTimeFilter
+  updated_at: DateTimeFilter
+  is_deleted: BoolFilter
+  deleted_at: DateTimeNullableFilter
+  deleted_by: StringNullableFilter
+  subsidy_request: SubsidyRequestScalarRelationFilter
+  status: SubsidyStatusScalarRelationFilter
+  previous_status: SubsidyStatusNullableScalarRelationFilter
+  user: UserScalarRelationFilter
+}
+
+input EnumSubsidyHistoryTypeFilter {
+  equals: SubsidyHistoryType
+  in: [SubsidyHistoryType!]
+  notIn: [SubsidyHistoryType!]
+  not: NestedEnumSubsidyHistoryTypeFilter
+}
+
+input NestedEnumSubsidyHistoryTypeFilter {
+  equals: SubsidyHistoryType
+  in: [SubsidyHistoryType!]
+  notIn: [SubsidyHistoryType!]
+  not: NestedEnumSubsidyHistoryTypeFilter
+}
+
+input AnnualReportListRelationFilter {
+  every: AnnualReportWhereInput
+  some: AnnualReportWhereInput
+  none: AnnualReportWhereInput
+}
+
+input AnnualReportWhereInput {
+  AND: [AnnualReportWhereInput!]
+  OR: [AnnualReportWhereInput!]
+  NOT: [AnnualReportWhereInput!]
+  id: StringFilter
+  department_id: StringFilter
+  text: StringFilter
+  file_path: StringFilter
+  submission_date: DateTimeFilter
+  created_at: DateTimeFilter
+  updated_at: DateTimeFilter
+  created_by: StringFilter
+  updated_by: StringFilter
+  is_deleted: BoolFilter
+  deleted_at: DateTimeNullableFilter
+  deleted_by: StringNullableFilter
+  department: DepartmentScalarRelationFilter
+}
+
+input UserListRelationFilter {
+  every: UserWhereInput
+  some: UserWhereInput
+  none: UserWhereInput
+}
+
+input AnnualBudgetListRelationFilter {
+  every: AnnualBudgetWhereInput
+  some: AnnualBudgetWhereInput
+  none: AnnualBudgetWhereInput
+}
+
+input CommunicationListRelationFilter {
+  every: CommunicationWhereInput
+  some: CommunicationWhereInput
+  none: CommunicationWhereInput
+}
+
+input CommunicationWhereInput {
+  AND: [CommunicationWhereInput!]
+  OR: [CommunicationWhereInput!]
+  NOT: [CommunicationWhereInput!]
+  id: StringFilter
+  institution_id: StringFilter
+  title: StringFilter
+  content: StringFilter
+  type: StringFilter
+  priority: StringFilter
+  status: StringFilter
+  language_preference: EnumLanguagePreferenceFilter
+  schedule_at: DateTimeFilter
+  published_at: DateTimeFilter
+  author_id: StringFilter
+  created_at: DateTimeFilter
+  updated_at: DateTimeFilter
+  created_by: StringFilter
+  updated_by: StringFilter
+  is_deleted: BoolFilter
+  deleted_at: DateTimeNullableFilter
+  deleted_by: StringNullableFilter
+  institution: InstitutionScalarRelationFilter
+  author: UserScalarRelationFilter
+  communication_recipients: CommunicationRecipientListRelationFilter
+}
+
+input CommunicationRecipientListRelationFilter {
+  every: CommunicationRecipientWhereInput
+  some: CommunicationRecipientWhereInput
+  none: CommunicationRecipientWhereInput
+}
+
+input CommunicationRecipientWhereInput {
+  AND: [CommunicationRecipientWhereInput!]
+  OR: [CommunicationRecipientWhereInput!]
+  NOT: [CommunicationRecipientWhereInput!]
+  id: StringFilter
+  communication_id: StringFilter
+  target_type: EnumEventTargetTypeFilter
+  target_id: StringNullableFilter
+  created_at: DateTimeFilter
+  updated_at: DateTimeFilter
+  created_by: StringFilter
+  updated_by: StringFilter
+  is_deleted: BoolFilter
+  deleted_at: DateTimeNullableFilter
+  deleted_by: StringNullableFilter
+  communication: CommunicationScalarRelationFilter
+}
+
+input CommunicationScalarRelationFilter {
+  is: CommunicationWhereInput
+  isNot: CommunicationWhereInput
+}
+
+input NotificationListRelationFilter {
+  every: NotificationWhereInput
+  some: NotificationWhereInput
+  none: NotificationWhereInput
+}
+
+input NotificationWhereInput {
+  AND: [NotificationWhereInput!]
+  OR: [NotificationWhereInput!]
+  NOT: [NotificationWhereInput!]
+  id: StringFilter
+  institution_id: StringFilter
+  user_id: StringFilter
+  type: StringFilter
+  message: StringFilter
+  read_status: BoolFilter
+  created_at: DateTimeFilter
+  updated_at: DateTimeFilter
+  created_by: StringFilter
+  updated_by: StringFilter
+  is_deleted: BoolFilter
+  deleted_at: DateTimeNullableFilter
+  deleted_by: StringNullableFilter
+  institution: InstitutionScalarRelationFilter
+  user: UserScalarRelationFilter
+}
+
+input SettingListRelationFilter {
+  every: SettingWhereInput
+  some: SettingWhereInput
+  none: SettingWhereInput
+}
+
+input SettingWhereInput {
+  AND: [SettingWhereInput!]
+  OR: [SettingWhereInput!]
+  NOT: [SettingWhereInput!]
+  id: StringFilter
+  institution_id: StringFilter
+  key: StringFilter
+  value: StringFilter
+  description: StringFilter
+  created_at: DateTimeFilter
+  updated_at: DateTimeFilter
+  created_by: StringFilter
+  updated_by: StringFilter
+  is_deleted: BoolFilter
+  deleted_at: DateTimeNullableFilter
+  deleted_by: StringNullableFilter
+  institution: InstitutionScalarRelationFilter
+}
+
+input DirectMessageListRelationFilter {
+  every: DirectMessageWhereInput
+  some: DirectMessageWhereInput
+  none: DirectMessageWhereInput
+}
+
+input DirectMessageWhereInput {
+  AND: [DirectMessageWhereInput!]
+  OR: [DirectMessageWhereInput!]
+  NOT: [DirectMessageWhereInput!]
+  id: StringFilter
+  institution_id: StringFilter
+  sender_id: StringFilter
+  title: StringFilter
+  content: StringFilter
+  status: StringFilter
+  sent_at: DateTimeFilter
+  created_at: DateTimeFilter
+  updated_at: DateTimeFilter
+  created_by: StringFilter
+  updated_by: StringFilter
+  is_deleted: BoolFilter
+  deleted_at: DateTimeNullableFilter
+  deleted_by: StringNullableFilter
+  institution: InstitutionScalarRelationFilter
+  sender: UserScalarRelationFilter
+  direct_message_recipients: DirectMessageRecipientListRelationFilter
+}
+
+input DirectMessageRecipientListRelationFilter {
+  every: DirectMessageRecipientWhereInput
+  some: DirectMessageRecipientWhereInput
+  none: DirectMessageRecipientWhereInput
+}
+
+input DirectMessageRecipientWhereInput {
+  AND: [DirectMessageRecipientWhereInput!]
+  OR: [DirectMessageRecipientWhereInput!]
+  NOT: [DirectMessageRecipientWhereInput!]
+  id: StringFilter
+  direct_message_id: StringFilter
+  recipient_user_id: StringFilter
+  recipient_role_id: StringFilter
+  read_at: DateTimeFilter
+  sent_at: DateTimeFilter
+  created_at: DateTimeFilter
+  updated_at: DateTimeFilter
+  created_by: StringFilter
+  updated_by: StringFilter
+  is_deleted: BoolFilter
+  deleted_at: DateTimeNullableFilter
+  deleted_by: StringNullableFilter
+  direct_message: DirectMessageScalarRelationFilter
+  recipient_user: UserScalarRelationFilter
+  recipient_role: RoleScalarRelationFilter
+}
+
+input DirectMessageScalarRelationFilter {
+  is: DirectMessageWhereInput
+  isNot: DirectMessageWhereInput
+}
+
+input RoleScalarRelationFilter {
+  is: RoleWhereInput
+  isNot: RoleWhereInput
+}
+
+input RoleWhereInput {
+  AND: [RoleWhereInput!]
+  OR: [RoleWhereInput!]
+  NOT: [RoleWhereInput!]
+  id: StringFilter
+  name: StringFilter
+  description: StringFilter
+  color: StringNullableFilter
+  key_code: StringFilter
+  is_fixed: BoolFilter
+  created_at: DateTimeFilter
+  updated_at: DateTimeFilter
+  created_by: StringFilter
+  updated_by: StringFilter
+  is_deleted: BoolFilter
+  deleted_at: DateTimeNullableFilter
+  deleted_by: StringNullableFilter
+  user_roles: UserRoleListRelationFilter
+  role_permissions: RolePermissionListRelationFilter
+  direct_message_recipients: DirectMessageRecipientListRelationFilter
+}
+
+input UserRoleListRelationFilter {
+  every: UserRoleWhereInput
+  some: UserRoleWhereInput
+  none: UserRoleWhereInput
+}
+
+input UserRoleWhereInput {
+  AND: [UserRoleWhereInput!]
+  OR: [UserRoleWhereInput!]
+  NOT: [UserRoleWhereInput!]
+  id: StringFilter
+  user_id: StringFilter
+  role_id: StringFilter
+  created_at: DateTimeFilter
+  updated_at: DateTimeFilter
+  created_by: StringFilter
+  updated_by: StringFilter
+  is_deleted: BoolFilter
+  deleted_at: DateTimeNullableFilter
+  deleted_by: StringNullableFilter
+  user: UserScalarRelationFilter
+  role: RoleScalarRelationFilter
+}
+
+input RolePermissionListRelationFilter {
+  every: RolePermissionWhereInput
+  some: RolePermissionWhereInput
+  none: RolePermissionWhereInput
+}
+
+input RolePermissionWhereInput {
+  AND: [RolePermissionWhereInput!]
+  OR: [RolePermissionWhereInput!]
+  NOT: [RolePermissionWhereInput!]
+  id: StringFilter
+  role_id: StringFilter
+  permission_id: StringFilter
+  is_essential: BoolFilter
+  created_at: DateTimeFilter
+  updated_at: DateTimeFilter
+  created_by: StringFilter
+  updated_by: StringFilter
+  is_deleted: BoolFilter
+  deleted_at: DateTimeNullableFilter
+  deleted_by: StringNullableFilter
+  role: RoleScalarRelationFilter
+  permission: PermissionScalarRelationFilter
+}
+
+input PermissionScalarRelationFilter {
+  is: PermissionWhereInput
+  isNot: PermissionWhereInput
+}
+
+input PermissionWhereInput {
+  AND: [PermissionWhereInput!]
+  OR: [PermissionWhereInput!]
+  NOT: [PermissionWhereInput!]
+  id: StringFilter
+  name: StringFilter
+  description: StringFilter
+  key_code: StringFilter
+  resolver_name: EnumPermissionResolverNameFilter
+  group: EnumPermissionGroupNullableFilter
+  created_at: DateTimeFilter
+  updated_at: DateTimeFilter
+  created_by: StringFilter
+  updated_by: StringFilter
+  is_deleted: BoolFilter
+  deleted_at: DateTimeNullableFilter
+  deleted_by: StringNullableFilter
+  disabled_to_client: BoolFilter
+  role_permissions: RolePermissionListRelationFilter
+}
+
+input EnumPermissionResolverNameFilter {
+  equals: PermissionResolverName
+  in: [PermissionResolverName!]
+  notIn: [PermissionResolverName!]
+  not: NestedEnumPermissionResolverNameFilter
+}
+
+input NestedEnumPermissionResolverNameFilter {
+  equals: PermissionResolverName
+  in: [PermissionResolverName!]
+  notIn: [PermissionResolverName!]
+  not: NestedEnumPermissionResolverNameFilter
+}
+
+input EnumPermissionGroupNullableFilter {
+  equals: PermissionGroup
+  in: [PermissionGroup!]
+  notIn: [PermissionGroup!]
+  not: NestedEnumPermissionGroupNullableFilter
+}
+
+input NestedEnumPermissionGroupNullableFilter {
+  equals: PermissionGroup
+  in: [PermissionGroup!]
+  notIn: [PermissionGroup!]
+  not: NestedEnumPermissionGroupNullableFilter
+}
+
+input EventListRelationFilter {
+  every: EventWhereInput
+  some: EventWhereInput
+  none: EventWhereInput
+}
+
+input AnnualBudgetOrderByWithRelationInput {
+  id: SortOrder
+  year: SortOrder
+  planned_budget: SortOrder
+  total_expenses: SortOrder
+  balance: SortOrder
+  notes: SortOrderInput
+  description: SortOrderInput
+  justification: SortOrderInput
+  approved_by: SortOrderInput
+  created_at: SortOrder
+  updated_at: SortOrder
+  created_by: SortOrder
+  updated_by: SortOrder
+  is_deleted: SortOrder
+  deleted_at: SortOrderInput
+  deleted_by: SortOrderInput
+  status: SortOrder
+  institution_id: SortOrderInput
+  church_id: SortOrderInput
+  department_id: SortOrderInput
+  allocated_amount: SortOrder
+  approved_amount: SortOrderInput
+  requested_by: SortOrder
+  reviewed_by: SortOrderInput
+  submitted_date: SortOrder
+  review_date: SortOrderInput
+  approval_date: SortOrderInput
+  priority: SortOrder
+  category: SortOrder
+  documents: SortOrderInput
+  is_locked: SortOrder
+  has_budget_record: SortOrder
+  entity_type: SortOrder
+  approved_user: UserOrderByWithRelationInput
+  institution: InstitutionOrderByWithRelationInput
+  church: ChurchOrderByWithRelationInput
+  department: DepartmentOrderByWithRelationInput
+}
+
+enum SortOrder {
+  asc
+  desc
+}
+
+input SortOrderInput {
+  sort: SortOrder!
+  nulls: NullsOrder
+}
+
+enum NullsOrder {
+  first
+  last
+}
+
+input UserOrderByWithRelationInput {
+  id: SortOrder
+  name: SortOrder
+  email: SortOrder
+  password: SortOrder
+  gender: SortOrderInput
+  language_preference: SortOrder
+  created_at: SortOrder
+  updated_at: SortOrder
+  created_by: SortOrder
+  updated_by: SortOrder
+  is_deleted: SortOrder
+  deleted_at: SortOrderInput
+  deleted_by: SortOrderInput
+  contact_id: SortOrderInput
+  institution_id: SortOrder
+  church_id: SortOrderInput
+  department_id: SortOrderInput
+  contact: ContactOrderByWithRelationInput
+  institution: InstitutionOrderByWithRelationInput
+  church: ChurchOrderByWithRelationInput
+  department: DepartmentOrderByWithRelationInput
+  user_roles: UserRoleOrderByRelationAggregateInput
+  direct_messages: DirectMessageOrderByRelationAggregateInput
+  direct_message_recipients: DirectMessageRecipientOrderByRelationAggregateInput
+  notifications: NotificationOrderByRelationAggregateInput
+  event_registrations: EventRegistrationOrderByRelationAggregateInput
+  event_recipients: EventRecipientOrderByRelationAggregateInput
+  communications: CommunicationOrderByRelationAggregateInput
+  SubsidyRequest: SubsidyRequestOrderByRelationAggregateInput
+  SubsidyStatus: SubsidyStatusOrderByRelationAggregateInput
+  voluntary_projects: VoluntariesOnProjectsOrderByRelationAggregateInput
+  Project: ProjectOrderByRelationAggregateInput
+  approved_annual_budgets: AnnualBudgetOrderByRelationAggregateInput
+  project_activity_logs: ProjectActivityLogOrderByRelationAggregateInput
+  activity_assignments: ProjectActivityAssigneeOrderByRelationAggregateInput
+  subsidy_status_history: SubsidyStatusHistoryOrderByRelationAggregateInput
+  led_departments: DepartmentOrderByRelationAggregateInput
+}
+
+input ContactOrderByWithRelationInput {
+  id: SortOrder
+  name: SortOrderInput
+  phone: SortOrderInput
+  mobile: SortOrderInput
+  email: SortOrderInput
+  country: SortOrderInput
+  city: SortOrderInput
+  state: SortOrderInput
+  address: SortOrderInput
+  full_address: SortOrderInput
+  postal_code: SortOrderInput
+  website: SortOrderInput
+  notes: SortOrderInput
+  is_primary: SortOrder
+  created_at: SortOrder
+  updated_at: SortOrder
+  created_by: SortOrder
+  updated_by: SortOrder
+  is_deleted: SortOrder
+  deleted_at: SortOrderInput
+  deleted_by: SortOrderInput
+  Institution: InstitutionOrderByWithRelationInput
+  Church: ChurchOrderByRelationAggregateInput
+  Department: DepartmentOrderByRelationAggregateInput
+  User: UserOrderByRelationAggregateInput
+  Event: EventOrderByRelationAggregateInput
+}
+
+input InstitutionOrderByWithRelationInput {
+  id: SortOrder
+  name: SortOrder
+  denomination: SortOrder
+  description: SortOrderInput
+  language_preference: SortOrder
+  contact_id: SortOrderInput
+  created_at: SortOrder
+  updated_at: SortOrder
+  created_by: SortOrder
+  updated_by: SortOrder
+  is_deleted: SortOrder
+  deleted_at: SortOrderInput
+  deleted_by: SortOrderInput
+  contact: ContactOrderByWithRelationInput
+  churches: ChurchOrderByRelationAggregateInput
+  departments: DepartmentOrderByRelationAggregateInput
+  users: UserOrderByRelationAggregateInput
+  communications: CommunicationOrderByRelationAggregateInput
+  notifications: NotificationOrderByRelationAggregateInput
+  settings: SettingOrderByRelationAggregateInput
+  projects: ProjectOrderByRelationAggregateInput
+  direct_messages: DirectMessageOrderByRelationAggregateInput
+  subsidy_requests: SubsidyRequestOrderByRelationAggregateInput
+  annual_budgets: AnnualBudgetOrderByRelationAggregateInput
+}
+
+input ChurchOrderByRelationAggregateInput {
+  _count: SortOrder
+}
+
+input DepartmentOrderByRelationAggregateInput {
+  _count: SortOrder
+}
+
+input UserOrderByRelationAggregateInput {
+  _count: SortOrder
+}
+
+input CommunicationOrderByRelationAggregateInput {
+  _count: SortOrder
+}
+
+input NotificationOrderByRelationAggregateInput {
+  _count: SortOrder
+}
+
+input SettingOrderByRelationAggregateInput {
+  _count: SortOrder
+}
+
+input ProjectOrderByRelationAggregateInput {
+  _count: SortOrder
+}
+
+input DirectMessageOrderByRelationAggregateInput {
+  _count: SortOrder
+}
+
+input SubsidyRequestOrderByRelationAggregateInput {
+  _count: SortOrder
+}
+
+input AnnualBudgetOrderByRelationAggregateInput {
+  _count: SortOrder
+}
+
+input EventOrderByRelationAggregateInput {
+  _count: SortOrder
+}
+
+input ChurchOrderByWithRelationInput {
+  id: SortOrder
+  type: SortOrder
+  institution_id: SortOrder
+  name: SortOrder
+  region_id: SortOrderInput
+  contact_id: SortOrderInput
+  created_at: SortOrder
+  updated_at: SortOrder
+  created_by: SortOrder
+  updated_by: SortOrder
+  is_deleted: SortOrder
+  deleted_at: SortOrderInput
+  deleted_by: SortOrderInput
+  institution: InstitutionOrderByWithRelationInput
+  region: RegionOrderByWithRelationInput
+  contact: ContactOrderByWithRelationInput
+  departments: DepartmentOrderByRelationAggregateInput
+  users: UserOrderByRelationAggregateInput
+  subsidy_requests: SubsidyRequestOrderByRelationAggregateInput
+  annual_budgets: AnnualBudgetOrderByRelationAggregateInput
+  projects: ProjectOrderByRelationAggregateInput
+}
+
+input RegionOrderByWithRelationInput {
+  id: SortOrder
+  description: SortOrderInput
+  name: SortOrder
+  territory: SortOrderInput
+  color: SortOrderInput
+  created_at: SortOrder
+  updated_at: SortOrder
+  created_by: SortOrder
+  updated_by: SortOrder
+  is_deleted: SortOrder
+  deleted_at: SortOrderInput
+  deleted_by: SortOrderInput
+  churches: ChurchOrderByRelationAggregateInput
+}
+
+input DepartmentOrderByWithRelationInput {
+  id: SortOrder
+  institution_id: SortOrder
+  church_id: SortOrderInput
+  name: SortOrder
+  description: SortOrder
+  leader_id: SortOrder
+  contact_id: SortOrderInput
+  created_at: SortOrder
+  updated_at: SortOrder
+  created_by: SortOrder
+  updated_by: SortOrder
+  is_deleted: SortOrder
+  deleted_at: SortOrderInput
+  deleted_by: SortOrderInput
+  institution: InstitutionOrderByWithRelationInput
+  church: ChurchOrderByWithRelationInput
+  leader: UserOrderByWithRelationInput
+  contact: ContactOrderByWithRelationInput
+  subsidy_statuses: SubsidyStatusOrderByRelationAggregateInput
+  projects: ProjectOrderByRelationAggregateInput
+  church_projects: ProjectOrderByRelationAggregateInput
+  annual_reports: AnnualReportOrderByRelationAggregateInput
+  subsidy_requests: SubsidyRequestOrderByRelationAggregateInput
+  users: UserOrderByRelationAggregateInput
+  annual_budgets: AnnualBudgetOrderByRelationAggregateInput
+}
+
+input SubsidyStatusOrderByRelationAggregateInput {
+  _count: SortOrder
+}
+
+input AnnualReportOrderByRelationAggregateInput {
+  _count: SortOrder
+}
+
+input UserRoleOrderByRelationAggregateInput {
+  _count: SortOrder
+}
+
+input DirectMessageRecipientOrderByRelationAggregateInput {
+  _count: SortOrder
+}
+
+input EventRegistrationOrderByRelationAggregateInput {
+  _count: SortOrder
+}
+
+input EventRecipientOrderByRelationAggregateInput {
+  _count: SortOrder
+}
+
+input VoluntariesOnProjectsOrderByRelationAggregateInput {
+  _count: SortOrder
+}
+
+input ProjectActivityLogOrderByRelationAggregateInput {
+  _count: SortOrder
+}
+
+input ProjectActivityAssigneeOrderByRelationAggregateInput {
+  _count: SortOrder
+}
+
+input SubsidyStatusHistoryOrderByRelationAggregateInput {
+  _count: SortOrder
+}
+
+input AnnualBudgetWhereUniqueInput {
+  id: String
+  AND: [AnnualBudgetWhereInput!]
+  OR: [AnnualBudgetWhereInput!]
+  NOT: [AnnualBudgetWhereInput!]
+  year: IntFilter
+  planned_budget: DecimalFilter
+  total_expenses: DecimalFilter
+  balance: DecimalFilter
+  notes: StringNullableFilter
+  description: StringNullableFilter
+  justification: StringNullableFilter
+  approved_by: StringNullableFilter
+  created_at: DateTimeFilter
+  updated_at: DateTimeFilter
+  created_by: StringFilter
+  updated_by: StringFilter
+  is_deleted: BoolFilter
+  deleted_at: DateTimeNullableFilter
+  deleted_by: StringNullableFilter
+  status: EnumAnnualBudgetStatusFilter
+  institution_id: StringNullableFilter
+  church_id: StringNullableFilter
+  department_id: StringNullableFilter
+  allocated_amount: DecimalFilter
+  approved_amount: DecimalNullableFilter
+  requested_by: StringFilter
+  reviewed_by: StringNullableFilter
+  submitted_date: DateTimeFilter
+  review_date: DateTimeNullableFilter
+  approval_date: DateTimeNullableFilter
+  priority: EnumAnnualBudgetPriorityFilter
+  category: EnumAnnualBudgetCategoryFilter
+  documents: JsonNullableFilter
+  is_locked: BoolFilter
+  has_budget_record: BoolFilter
+  entity_type: EnumAnnualBudgetEntityTypeFilter
+  approved_user: UserNullableScalarRelationFilter
+  institution: InstitutionNullableScalarRelationFilter
+  church: ChurchNullableScalarRelationFilter
+  department: DepartmentNullableScalarRelationFilter
+}
+
+enum AnnualBudgetScalarFieldEnum {
+  id
+  year
+  planned_budget
+  total_expenses
+  balance
+  notes
+  description
+  justification
+  approved_by
+  created_at
+  updated_at
+  created_by
+  updated_by
+  is_deleted
+  deleted_at
+  deleted_by
+  status
+  institution_id
+  church_id
+  department_id
+  allocated_amount
+  approved_amount
+  requested_by
+  reviewed_by
+  submitted_date
+  review_date
+  approval_date
+  priority
+  category
+  documents
+  is_locked
+  has_budget_record
+  entity_type
+}
+
+type Mutation {
+  login(input: LoginInput!): AuthModel!
+  createChurch(data: ChurchCreateDto!): ChurchModel!
+  updateChurch(id: String!, data: ChurchUpdateDto!): ChurchModel!
+  deleteChurch(id: String!): ChurchModel!
+  createInstitution(data: InstitutionCreateDto!): Institution!
+  updateInstitution(data: InstitutionUpdateDto!, id: String!): Institution!
+  deleteInstitution(id: String!): Institution!
+  createRegion(data: RegionCreateDto!): RegionModel!
+  updateRegion(data: RegionUpdateDto!, id: String!): RegionModel!
+  deleteRegion(id: String!): RegionModel!
+  createUser(data: UserCreateDto!): UserModel!
+  updateUser(id: String!, data: UserUpdateDto!): UserModel!
+  updateOwnUser(data: UserUpdateDto!): UserModel!
+  updateUserDepartment(userId: String!, departmentId: String): UserModel!
+  deleteUser(id: String!): UserModel!
+  addRoleToUser(userId: String!, roleId: String!): UserModel!
+  removeRoleFromUser(userId: String!, roleId: String!): UserModel!
+  createRole(input: CreateRoleInput!): RoleModel!
+  updateRole(input: UpdateRoleInput!): RoleModel!
+  deleteRole(id: String!): RoleModel!
+  createDepartment(data: DepartmentCreateDto!): Department!
+  updateDepartment(id: String!, data: DepartmentUpdateDto!): Department!
+  deleteDepartment(id: String!): Department!
+  createCommunication(data: CommunicationCreateDto!): Communication!
+  updateCommunication(id: String!, data: CommunicationUpdateDto!): Communication!
+  deleteCommunication(id: String!): Communication!
+  createDirectMessage(data: DirectMessageCreateDto!): DirectMessage!
+  updateDirectMessage(id: String!, data: DirectMessageUpdateDto!): DirectMessage!
+  deleteDirectMessage(id: String!): DirectMessage!
+  createProject(data: ProjectCreateDto!): Project!
+  updateProject(id: String!, data: ProjectUpdateDto!): Project!
+  deleteProject(id: String!): Project!
+  createNotification(data: NotificationCreateDto!): Notification!
+  updateNotification(id: String!, data: NotificationUpdateDto!): Notification!
+  deleteNotification(id: String!): Notification!
+  createSetting(data: SettingCreateDto!): Setting!
+  updateSetting(id: String!, data: SettingUpdateDto!): Setting!
+  deleteSetting(id: String!): Setting!
+  createSubsidyRequest(data: SubsidyRequestCreateDto!): SubsidyRequest!
+  updateSubsidyRequest(id: String!, data: SubsidyRequestUpdateDto!): SubsidyRequest!
+  deleteSubsidyRequest(id: String!): SubsidyRequest!
+  approveSubsidyRequest(id: String!, approved_amount: Float!): SubsidyRequest!
+  rejectSubsidyRequest(id: String!, rejection_reason: String!): SubsidyRequest!
+  addSubsidyRequestMessage(id: String!, message: String!): SubsidyStatusHistory!
+  createContact(data: ContactCreateDto!, userId: String!): Contact!
+  updateContact(data: ContactUpdateDto!): Contact!
+  deleteContact(id: String!, userId: String!): Contact!
+  linkContact(data: LinkContactDto!): LinkContactResult!
+  createSubsidyStatus(input: CreateSubsidyStatusDto!): SubsidyStatus!
+  updateSubsidyStatus(input: UpdateSubsidyStatusDto!): SubsidyStatus!
+  deleteSubsidyStatus(id: String!): SubsidyStatus!
+  addProjectVoluntary(data: AddProjectVoluntaryDto!): VoluntariesOnProjects!
+  removeProjectVoluntary(data: RemoveProjectVoluntaryDto!): VoluntariesOnProjects!
+  createProjectActivity(input: ProjectActivityCreateDto!): ProjectActivity!
+  updateProjectActivity(input: ProjectActivityUpdateDto!): ProjectActivity!
+  deleteProjectActivity(id: ID!): ProjectActivity!
+  batchUpdateProjectActivities(data: ProjectActivityBatchUpdateDto!): [ProjectActivity!]!
+  uploadActivityDocument(input: UploadActivityDocumentDto!, file: Upload!): ActivityDocuments!
+  deleteActivityDocument(id: ID!): ActivityDocuments!
+  validateActivityDocument(id: ID!): ActivityDocuments!
+  uploadSubsidyReceipt(input: UploadSubsidyReceiptDto!, file: Upload!): SubsidyReceipt!
+  deleteSubsidyReceipt(id: ID!): SubsidyReceipt!
+  validateSubsidyReceipt(id: ID!): SubsidyReceipt!
+  updateSubsidyRequestMessage(id: String!, message: String!): SubsidyStatusHistory!
+  deleteSubsidyRequestMessage(id: String!): SubsidyStatusHistory!
+  inviteUser(data: InviteUserDto!): InviteModel!
+  validateInviteToken(token: String!): ValidateOutputModel!
+
+  """Send an invitation email"""
+  sendInviteEmail(data: InviteEmailDto!): Boolean!
+  deleteAnnualBudget(id: String!): DeleteBudgetResponse!
+  approveAnnualBudget(id: String!, data: ApproveAnnualBudgetDto!): ApproveBudgetResponse!
+  rejectAnnualBudget(id: String!, data: RejectAnnualBudgetDto!): RejectBudgetResponse!
+  requestRevisionAnnualBudget(id: String!, data: RequestRevisionAnnualBudgetDto!): RequestRevisionBudgetResponse!
+  toggleBudgetLock(id: String!): ToggleLockBudgetResponse!
+  recalculateInstitutionAllocatedAmounts: RecalculateAllocatedAmountsResponse!
+  createInstitutionBudget(data: InstitutionBudgetCreateDto!): AnnualBudget!
+  updateInstitutionBudget(id: String!, data: InstitutionBudgetUpdateDto!): AnnualBudget!
+  createDepartmentBudget(data: DepartmentBudgetCreateDto!): AnnualBudget!
+  updateDepartmentBudget(id: String!, data: DepartmentBudgetUpdateDto!): AnnualBudget!
+  sendForgotPasswordCode(input: SendCodeInput!): ForgotPasswordResponse!
+  verifyForgotPasswordCode(input: VerifyCodeInput!): ForgotPasswordResponse!
+  resetPassword(input: ResetPasswordInput!): ForgotPasswordResponse!
+}
+
+input LoginInput {
+  email: String!
+  password: String!
+}
+
+input ChurchCreateDto {
+  institution_id: String!
+  name: String!
+  contact: ContactCreateDto
+  type: ChurchType
+}
+
+input ContactCreateDto {
+  name: String
+  phone: String
+  mobile: String
+  email: String
+  country: String
+  city: String
+  state: String
+  address: String
+  full_address: String
+  postal_code: String
+  website: String
+  notes: String
+}
+
+input ChurchUpdateDto {
+  institution_id: String
+  name: String
+  contact: ContactCreateDto
+  users: [String!]
+  departmens: [String!]
+  subsidy_requests: [String!]
+  type: ChurchType
+}
+
+input InstitutionCreateDto {
+  name: String!
+  denomination: String!
+  language_preference: String!
+  description: String
+  contact: ContactCreateDto
+}
+
+input InstitutionUpdateDto {
+  name: String
+  denomination: String
+  description: String
+  language_preference: String
+  contact: ContactUpdateDto
+}
+
+input ContactUpdateDto {
+  name: String
+  phone: String
+  mobile: String
+  email: String
+  country: String
+  city: String
+  state: String
+  address: String
+  full_address: String
+  postal_code: String
+  website: String
+  notes: String
+  id: String!
+  is_primary: Boolean
+}
+
+input RegionCreateDto {
+  name: String!
+  description: String
+  territory: JSON
+  color: String
+}
+
+input RegionUpdateDto {
+  name: String
+  description: String
+  territory: JSON
+  color: String
+}
+
+input UserCreateDto {
+  name: String!
+  email: String!
+  password: String!
+  language_preference: String!
+  institution_id: String!
+  church_id: String
+  church_department_id: String
+  institution_department_id: String
+  contact: ContactCreateDto
+  roles: [String!]!
+  gender: GenderType!
+  invite_token: String!
+}
+
+input UserUpdateDto {
+  name: String
+  email: String
+  language_preference: String
+  institution_id: String
+  church_id: String
+  department_id: String
+  contact_id: String
+  is_deleted: Boolean
+  contact: ContactUpdateDto
+  gender: GenderType
+  phone: String
+  address: String
+}
+
+input CreateRoleInput {
+  name: String!
+  description: String!
+  key_code: String!
+  permissionIds: [String!]
+}
+
+input UpdateRoleInput {
+  id: String!
+  name: String
+  description: String
+  key_code: String
+  addPermissionIds: [String!]
+  removePermissionIds: [String!]
+}
+
+input DepartmentCreateDto {
+  name: String!
+  description: String!
+  institution: String!
+  leader_id: String!
+  church: String
+  contact: ContactCreateDto
+}
+
+input DepartmentUpdateDto {
+  name: String
+  description: String
+  institution_id: String
+  leader_id: String
+  church_id: String
+  contact: ContactCreateDto
+}
+
+input CommunicationCreateDto {
+  institution_id: String!
+  title: String!
+  content: String!
+  type: String!
+  priority: String!
+  status: String!
+  language_preference: LanguagePreference!
+  schedule_at: DateTime!
+  published_at: DateTime!
+  author_id: String!
+}
+
+input CommunicationUpdateDto {
+  institution_id: String
+  title: String
+  content: String
+  type: String
+  priority: String
+  status: String
+  language_preference: LanguagePreference
+  schedule_at: DateTime
+  published_at: DateTime
+  author_id: String
+}
+
+input DirectMessageCreateDto {
+  content: String!
+  sender_id: String!
+  recipient_id: String!
+  institution_id: String!
+  title: String!
+  status: String!
+}
+
+input DirectMessageUpdateDto {
+  content: String
+  recipient_id: String
+}
+
+input ProjectCreateDto {
+  title: String!
+  description: String!
+  language_preference: LanguagePreference!
+  budget: Float!
+  subsidized_budget: Float! = 0
+  balance: Float! = 0
+  type: ProjectType!
+  department_id: String!
+  institution_id: String
+  church_id: String
+  church_department_id: String
+  owner_id: String
+  start_at: String!
+  end_at: String!
+  deadline: String
+  is_private: Boolean! = false
+  required_volunteers: Boolean! = false
+  is_event: Boolean! = false
+  event: EventCreateDto
+  activities: [ProjectActivityCreateWithoutProjectDto!]
+  is_special_case: Boolean! = false
+  special_case_reason: String
+  location_church_plant: String
+  special_budget: Float
+}
+
+input EventCreateDto {
+  title: String!
+  description: String!
+  type: EventType!
+  max_participants: Float!
+  ticket_amount: Float!
+  location: String!
+  subscription_expires_at: String!
+}
+
+input ProjectActivityCreateWithoutProjectDto {
+  name: String!
+  description: String!
+  budget_amount: Float!
+  deadline: String!
+  assignee_ids: [String!]
+  tags: [ActivityTags!]!
+  custom_tags: [String!]
+  status: ActivityStatus
+  priority: ActivityPriority
+  is_subsidized: Boolean
+  activity_funding: ActivityFundingCreateDto!
+}
+
+input ActivityFundingCreateDto {
+  entity_contribution_amount: Float!
+  entity_contribution_percent: Float!
+  entity_type: EntityType!
+  entity_id: String!
+}
+
+input ProjectUpdateDto {
+  title: String
+  description: String
+  language_preference: LanguagePreference
+  budget: Float
+  subsidized_budget: Float
+  balance: Float
+  type: ProjectType
+  status: ProjectStatus
+  department_id: String
+  institution_id: String
+  church_id: String
+  church_department_id: String
+  owner_id: String
+  start_at: String
+  end_at: String
+  deadline: String
+  is_private: Boolean
+  required_volunteers: Boolean
+  activities: [ProjectActivityUpdateDto!]
+}
+
+input ProjectActivityUpdateDto {
+  id: String!
+  name: String
+  description: String
+  budget_amount: Float
+  deadline: String
+  assignee_ids: [String!]
+  tags: [ActivityTags!]
+  custom_tags: [String!]
+  status: ActivityStatus
+  priority: ActivityPriority
+  is_subsidized: Boolean
+  activity_funding: ActivityFundingUpdateDto
+}
+
+input ActivityFundingUpdateDto {
+  entity_contribution_amount: Float
+  entity_contribution_percent: Float
+  entity_type: EntityType
+  entity_id: String
+}
+
+input NotificationCreateDto {
+  institution_id: String!
+  user_id: String!
+  type: String!
+  message: String!
+  read_status: Boolean!
+}
+
+input NotificationUpdateDto {
+  institution_id: String
+  user_id: String
+  type: String
+  message: String
+  read_status: Boolean
+}
+
+input SettingCreateDto {
+  institution_id: String!
+  key: String!
+  value: String!
+  description: String!
+}
+
+input SettingUpdateDto {
+  institution_id: String
+  key: String
+  value: String
+  description: String
+}
+
+input SubsidyRequestCreateDto {
+  description: String!
+  total_budget: Float!
+  institution_id: String
+  requester_id: String!
+  department_id: String!
+  church_id: String
+  subsidy_status_id: String
+  items: [SubsidyRequestItemInput!]!
+  project_id: String!
+  notes: String
+}
+
+input SubsidyRequestItemInput {
+  project_activity_id: String!
+  requested_amount: Float!
+  notes: String
+  linked_activity_document_ids: [String!]
+  linked_document_amounts: [Float!]
+}
+
+input SubsidyRequestUpdateDto {
+  description: String
+  total_budget: Float
+  institution_id: String
+  requester_id: String
+  department_id: String
+  church_id: String
+  subsidy_status_id: String
+  items: [SubsidyRequestItemInput!]
+  approved_amount: Float
+  rejection_reason: String
+  notes: String
+  priority: SubsidyRequestPriority
+}
+
+input LinkContactDto {
+  contact_id: String!
+  target: String!
+  target_id: String!
+}
+
+input CreateSubsidyStatusDto {
+  name: String!
+  description: String!
+  order: Int!
+  department_id: String!
+  assigned_to: String!
+}
+
+input UpdateSubsidyStatusDto {
+  id: String!
+  name: String
+  description: String
+  order: Int
+  department_id: String
+  assigned_to: String
+}
+
+input AddProjectVoluntaryDto {
+  project_id: String!
+  user_id: String!
+}
+
+input RemoveProjectVoluntaryDto {
+  project_id: String!
+  user_id: String!
+}
+
+input ProjectActivityCreateDto {
+  name: String!
+  description: String!
+  budget_amount: Float!
+  deadline: String!
+  assignee_ids: [String!]
+  tags: [ActivityTags!]!
+  custom_tags: [String!]
+  status: ActivityStatus
+  priority: ActivityPriority
+  is_subsidized: Boolean
+  activity_funding: ActivityFundingCreateDto!
+  project_id: String!
+}
+
+input ProjectActivityBatchUpdateDto {
+  ids: [String!]!
+  status: ActivityStatus
+  priority: ActivityPriority
+  is_subsidized: Boolean
+}
+
+input UploadActivityDocumentDto {
+  activity_id: String!
+  project_activity_id: String!
+  type: String!
+}
+
+"""The `Upload` scalar type represents a file upload."""
+scalar Upload
+
+input UploadSubsidyReceiptDto {
+  subsidy_request_id: String!
+  subsidy_request_item_id: String
+  project_activity_id: String!
+  type: String!
+  amount: Float
+}
+
+input InviteUserDto {
+  role_ids: [String!]!
+  email: String!
+  inviter_id: String!
+  language_preference: String
+  message: String
+  institution_id: String!
+  institution_department_id: String
+  church_id: String
+  church_department_id: String
+}
+
+input InviteEmailDto {
+  inviter_id: String!
+  to: String!
+  message: String
+  url: String!
+}
+
+input ApproveAnnualBudgetDto {
+  approved_amount: Float
+  notes: String
+}
+
+input RejectAnnualBudgetDto {
+  reason: String!
+}
+
+input RequestRevisionAnnualBudgetDto {
+  revision_notes: String!
+}
+
+input InstitutionBudgetCreateDto {
+  institution_id: String!
+  year: Int!
+  planned_budget: Float!
+  total_expenses: Float = 0
+  allocated_amount: Float = 0
+  description: String
+  justification: String
+  priority: AnnualBudgetPriority
+  category: AnnualBudgetCategory
+  notes: String
+}
+
+input InstitutionBudgetUpdateDto {
+  planned_budget: Float
+  total_expenses: Float
+  allocated_amount: Float
+  description: String
+  justification: String
+  priority: AnnualBudgetPriority
+  category: AnnualBudgetCategory
+  notes: String
+  documents: [String!]
+}
+
+input DepartmentBudgetCreateDto {
+  department_id: String!
+  year: Int!
+  planned_budget: Float!
+  total_expenses: Float = 0
+  allocated_amount: Float = 0
+  description: String
+  justification: String
+  priority: AnnualBudgetPriority
+  category: AnnualBudgetCategory
+  notes: String
+}
+
+input DepartmentBudgetUpdateDto {
+  planned_budget: Float
+  total_expenses: Float
+  allocated_amount: Float
+  description: String
+  justification: String
+  priority: AnnualBudgetPriority
+  category: AnnualBudgetCategory
+  notes: String
+  documents: [String!]
+}
+
+input SendCodeInput {
+  email: String!
+}
+
+input VerifyCodeInput {
+  email: String!
+  code: String!
+}
+
+input ResetPasswordInput {
+  email: String!
+  code: String!
+  newPassword: String!
+  resetToken: String!
+}

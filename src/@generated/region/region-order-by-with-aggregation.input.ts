@@ -12,17 +12,17 @@ export class RegionOrderByWithAggregationInput {
     @Field(() => SortOrder, {nullable:true})
     id?: `${SortOrder}`;
 
-    @Field(() => SortOrder, {nullable:true})
-    institution_id?: `${SortOrder}`;
+    @Field(() => SortOrderInput, {nullable:true})
+    description?: SortOrderInput;
 
     @Field(() => SortOrder, {nullable:true})
     name?: `${SortOrder}`;
 
     @Field(() => SortOrderInput, {nullable:true})
-    parent_region_id?: SortOrderInput;
+    territory?: SortOrderInput;
 
     @Field(() => SortOrderInput, {nullable:true})
-    contact_id?: SortOrderInput;
+    color?: SortOrderInput;
 
     @Field(() => SortOrder, {nullable:true})
     created_at?: `${SortOrder}`;

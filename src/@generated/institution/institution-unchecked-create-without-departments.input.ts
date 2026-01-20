@@ -1,7 +1,6 @@
 import { Field } from '@nestjs/graphql';
 import { InputType } from '@nestjs/graphql';
 import { LanguagePreference } from '../prisma/language-preference.enum';
-import { RegionUncheckedCreateNestedManyWithoutInstitutionInput } from '../region/region-unchecked-create-nested-many-without-institution.input';
 import { ChurchUncheckedCreateNestedManyWithoutInstitutionInput } from '../church/church-unchecked-create-nested-many-without-institution.input';
 import { Type } from 'class-transformer';
 import { UserUncheckedCreateNestedManyWithoutInstitutionInput } from '../user/user-unchecked-create-nested-many-without-institution.input';
@@ -11,6 +10,7 @@ import { SettingUncheckedCreateNestedManyWithoutInstitutionInput } from '../sett
 import { ProjectUncheckedCreateNestedManyWithoutInstitutionInput } from '../project/project-unchecked-create-nested-many-without-institution.input';
 import { DirectMessageUncheckedCreateNestedManyWithoutInstitutionInput } from '../direct-message/direct-message-unchecked-create-nested-many-without-institution.input';
 import { SubsidyRequestUncheckedCreateNestedManyWithoutInstitutionInput } from '../subsidy-request/subsidy-request-unchecked-create-nested-many-without-institution.input';
+import { AnnualBudgetUncheckedCreateNestedManyWithoutInstitutionInput } from '../annual-budget/annual-budget-unchecked-create-nested-many-without-institution.input';
 
 @InputType()
 export class InstitutionUncheckedCreateWithoutDepartmentsInput {
@@ -23,6 +23,9 @@ export class InstitutionUncheckedCreateWithoutDepartmentsInput {
 
     @Field(() => String, {nullable:false})
     denomination!: string;
+
+    @Field(() => String, {nullable:true})
+    description?: string;
 
     @Field(() => LanguagePreference, {nullable:false})
     language_preference!: `${LanguagePreference}`;
@@ -51,9 +54,6 @@ export class InstitutionUncheckedCreateWithoutDepartmentsInput {
     @Field(() => String, {nullable:true})
     deleted_by?: string;
 
-    @Field(() => RegionUncheckedCreateNestedManyWithoutInstitutionInput, {nullable:true})
-    regions?: RegionUncheckedCreateNestedManyWithoutInstitutionInput;
-
     @Field(() => ChurchUncheckedCreateNestedManyWithoutInstitutionInput, {nullable:true})
     @Type(() => ChurchUncheckedCreateNestedManyWithoutInstitutionInput)
     churches?: ChurchUncheckedCreateNestedManyWithoutInstitutionInput;
@@ -81,4 +81,8 @@ export class InstitutionUncheckedCreateWithoutDepartmentsInput {
     @Field(() => SubsidyRequestUncheckedCreateNestedManyWithoutInstitutionInput, {nullable:true})
     @Type(() => SubsidyRequestUncheckedCreateNestedManyWithoutInstitutionInput)
     subsidy_requests?: SubsidyRequestUncheckedCreateNestedManyWithoutInstitutionInput;
+
+    @Field(() => AnnualBudgetUncheckedCreateNestedManyWithoutInstitutionInput, {nullable:true})
+    @Type(() => AnnualBudgetUncheckedCreateNestedManyWithoutInstitutionInput)
+    annual_budgets?: AnnualBudgetUncheckedCreateNestedManyWithoutInstitutionInput;
 }

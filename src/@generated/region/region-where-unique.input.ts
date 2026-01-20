@@ -1,17 +1,14 @@
 import { Field } from '@nestjs/graphql';
 import { InputType } from '@nestjs/graphql';
 import { RegionWhereInput } from './region-where.input';
-import { StringFilter } from '../prisma/string-filter.input';
 import { StringNullableFilter } from '../prisma/string-nullable-filter.input';
+import { StringFilter } from '../prisma/string-filter.input';
+import { JsonNullableFilter } from '../prisma/json-nullable-filter.input';
 import { DateTimeFilter } from '../prisma/date-time-filter.input';
 import { BoolFilter } from '../prisma/bool-filter.input';
 import { DateTimeNullableFilter } from '../prisma/date-time-nullable-filter.input';
-import { InstitutionScalarRelationFilter } from '../institution/institution-scalar-relation-filter.input';
-import { Type } from 'class-transformer';
-import { RegionNullableScalarRelationFilter } from './region-nullable-scalar-relation-filter.input';
-import { RegionListRelationFilter } from './region-list-relation-filter.input';
-import { ContactNullableScalarRelationFilter } from '../contact/contact-nullable-scalar-relation-filter.input';
 import { ChurchListRelationFilter } from '../church/church-list-relation-filter.input';
+import { Type } from 'class-transformer';
 
 @InputType()
 export class RegionWhereUniqueInput {
@@ -28,17 +25,17 @@ export class RegionWhereUniqueInput {
     @Field(() => [RegionWhereInput], {nullable:true})
     NOT?: Array<RegionWhereInput>;
 
-    @Field(() => StringFilter, {nullable:true})
-    institution_id?: StringFilter;
+    @Field(() => StringNullableFilter, {nullable:true})
+    description?: StringNullableFilter;
 
     @Field(() => StringFilter, {nullable:true})
     name?: StringFilter;
 
-    @Field(() => StringNullableFilter, {nullable:true})
-    parent_region_id?: StringNullableFilter;
+    @Field(() => JsonNullableFilter, {nullable:true})
+    territory?: JsonNullableFilter;
 
     @Field(() => StringNullableFilter, {nullable:true})
-    contact_id?: StringNullableFilter;
+    color?: StringNullableFilter;
 
     @Field(() => DateTimeFilter, {nullable:true})
     created_at?: DateTimeFilter;
@@ -60,20 +57,6 @@ export class RegionWhereUniqueInput {
 
     @Field(() => StringNullableFilter, {nullable:true})
     deleted_by?: StringNullableFilter;
-
-    @Field(() => InstitutionScalarRelationFilter, {nullable:true})
-    @Type(() => InstitutionScalarRelationFilter)
-    institution?: InstitutionScalarRelationFilter;
-
-    @Field(() => RegionNullableScalarRelationFilter, {nullable:true})
-    parent_region?: RegionNullableScalarRelationFilter;
-
-    @Field(() => RegionListRelationFilter, {nullable:true})
-    children?: RegionListRelationFilter;
-
-    @Field(() => ContactNullableScalarRelationFilter, {nullable:true})
-    @Type(() => ContactNullableScalarRelationFilter)
-    contact?: ContactNullableScalarRelationFilter;
 
     @Field(() => ChurchListRelationFilter, {nullable:true})
     @Type(() => ChurchListRelationFilter)

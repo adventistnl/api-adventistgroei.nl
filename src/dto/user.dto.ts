@@ -1,7 +1,7 @@
 import { InputType, Field } from '@nestjs/graphql';
-import { LanguagePreference } from 'src/@generated/prisma/language-preference.enum';
-import { ContactCreateDto } from './contact.dto';
-import { IsString  } from 'class-validator';
+import { ContactCreateDto, ContactUpdateDto } from './contact.dto';
+import { IsOptional, IsString  } from 'class-validator';
+import { GenderType } from 'src/@generated/prisma/gender-type.enum';
 
 @InputType()
 export class UserCreateDto {
@@ -24,16 +24,32 @@ export class UserCreateDto {
   @IsString()
   institution_id: string;
 
-  @Field()
+  @Field(() => String, { nullable: true })
   @IsString()
-  church_id: string;
+  @IsOptional()
+  church_id?: string;
 
-  @Field()
+  @Field(() => String, { nullable: true })
+  @IsOptional()
   @IsString()
-  department_id: string;
+  church_department_id?: string;
+
+  @Field(() => String, { nullable: true })
+  @IsOptional()
+  @IsString()
+  institution_department_id?: string;
 
   @Field(() => ContactCreateDto, { nullable: true })
   contact?: ContactCreateDto;
+
+  @Field(() => [String])
+  roles: string[];
+
+  @Field(() => GenderType)
+  gender: GenderType;
+
+  @Field(() => String)
+  invite_token: string;
 }
 
 @InputType()
@@ -46,8 +62,8 @@ export class UserUpdateDto {
   @IsString()
   email?: string;
   
-  @Field(() => LanguagePreference, { nullable: true })
-  language_preference?: LanguagePreference;
+  @Field(() => String, { nullable: true })
+  language_preference?: string;
 
   @Field({ nullable: true })
   @IsString()
@@ -63,7 +79,19 @@ export class UserUpdateDto {
 
   @Field({ nullable: true })
   contact_id?: string;
-  
-  @Field(() => ContactCreateDto, { nullable: true })
-  contact?: ContactCreateDto;
+
+  @Field(() => Boolean, { nullable: true })
+  is_deleted?: boolean;
+
+  @Field(() => ContactUpdateDto, { nullable: true })
+  contact?: ContactUpdateDto;
+
+  @Field(() => GenderType, { nullable: true })
+  gender?: GenderType;
+
+  @Field(() => String, { nullable: true })
+  phone?: string;
+
+  @Field(() => String, { nullable: true })
+  address?: string;
 }

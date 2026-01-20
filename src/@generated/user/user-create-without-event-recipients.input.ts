@@ -1,5 +1,6 @@
 import { Field } from '@nestjs/graphql';
 import { InputType } from '@nestjs/graphql';
+import { GenderType } from '../prisma/gender-type.enum';
 import { LanguagePreference } from '../prisma/language-preference.enum';
 import { ContactCreateNestedOneWithoutUserInput } from '../contact/contact-create-nested-one-without-user.input';
 import { Type } from 'class-transformer';
@@ -16,6 +17,11 @@ import { SubsidyRequestCreateNestedManyWithoutRequesterInput } from '../subsidy-
 import { SubsidyStatusCreateNestedManyWithoutAssigned_userInput } from '../subsidy-status/subsidy-status-create-nested-many-without-assigned-user.input';
 import { VoluntariesOnProjectsCreateNestedManyWithoutUserInput } from '../voluntaries-on-projects/voluntaries-on-projects-create-nested-many-without-user.input';
 import { ProjectCreateNestedManyWithoutOwnerInput } from '../project/project-create-nested-many-without-owner.input';
+import { AnnualBudgetCreateNestedManyWithoutApproved_userInput } from '../annual-budget/annual-budget-create-nested-many-without-approved-user.input';
+import { ProjectActivityLogCreateNestedManyWithoutUserInput } from '../project-activity-log/project-activity-log-create-nested-many-without-user.input';
+import { ProjectActivityAssigneeCreateNestedManyWithoutUserInput } from '../project-activity-assignee/project-activity-assignee-create-nested-many-without-user.input';
+import { SubsidyStatusHistoryCreateNestedManyWithoutUserInput } from '../subsidy-status-history/subsidy-status-history-create-nested-many-without-user.input';
+import { DepartmentCreateNestedManyWithoutLeaderInput } from '../department/department-create-nested-many-without-leader.input';
 
 @InputType()
 export class UserCreateWithoutEvent_recipientsInput {
@@ -31,6 +37,9 @@ export class UserCreateWithoutEvent_recipientsInput {
 
     @Field(() => String, {nullable:false})
     password!: string;
+
+    @Field(() => GenderType, {nullable:true})
+    gender?: `${GenderType}`;
 
     @Field(() => LanguagePreference, {nullable:false})
     language_preference!: `${LanguagePreference}`;
@@ -64,13 +73,13 @@ export class UserCreateWithoutEvent_recipientsInput {
     @Type(() => InstitutionCreateNestedOneWithoutUsersInput)
     institution!: InstitutionCreateNestedOneWithoutUsersInput;
 
-    @Field(() => ChurchCreateNestedOneWithoutUsersInput, {nullable:false})
+    @Field(() => ChurchCreateNestedOneWithoutUsersInput, {nullable:true})
     @Type(() => ChurchCreateNestedOneWithoutUsersInput)
-    church!: ChurchCreateNestedOneWithoutUsersInput;
+    church?: ChurchCreateNestedOneWithoutUsersInput;
 
-    @Field(() => DepartmentCreateNestedOneWithoutUsersInput, {nullable:false})
+    @Field(() => DepartmentCreateNestedOneWithoutUsersInput, {nullable:true})
     @Type(() => DepartmentCreateNestedOneWithoutUsersInput)
-    department!: DepartmentCreateNestedOneWithoutUsersInput;
+    department?: DepartmentCreateNestedOneWithoutUsersInput;
 
     @Field(() => UserRoleCreateNestedManyWithoutUserInput, {nullable:true})
     user_roles?: UserRoleCreateNestedManyWithoutUserInput;
@@ -106,4 +115,24 @@ export class UserCreateWithoutEvent_recipientsInput {
     @Field(() => ProjectCreateNestedManyWithoutOwnerInput, {nullable:true})
     @Type(() => ProjectCreateNestedManyWithoutOwnerInput)
     Project?: ProjectCreateNestedManyWithoutOwnerInput;
+
+    @Field(() => AnnualBudgetCreateNestedManyWithoutApproved_userInput, {nullable:true})
+    @Type(() => AnnualBudgetCreateNestedManyWithoutApproved_userInput)
+    approved_annual_budgets?: AnnualBudgetCreateNestedManyWithoutApproved_userInput;
+
+    @Field(() => ProjectActivityLogCreateNestedManyWithoutUserInput, {nullable:true})
+    @Type(() => ProjectActivityLogCreateNestedManyWithoutUserInput)
+    project_activity_logs?: ProjectActivityLogCreateNestedManyWithoutUserInput;
+
+    @Field(() => ProjectActivityAssigneeCreateNestedManyWithoutUserInput, {nullable:true})
+    @Type(() => ProjectActivityAssigneeCreateNestedManyWithoutUserInput)
+    activity_assignments?: ProjectActivityAssigneeCreateNestedManyWithoutUserInput;
+
+    @Field(() => SubsidyStatusHistoryCreateNestedManyWithoutUserInput, {nullable:true})
+    @Type(() => SubsidyStatusHistoryCreateNestedManyWithoutUserInput)
+    subsidy_status_history?: SubsidyStatusHistoryCreateNestedManyWithoutUserInput;
+
+    @Field(() => DepartmentCreateNestedManyWithoutLeaderInput, {nullable:true})
+    @Type(() => DepartmentCreateNestedManyWithoutLeaderInput)
+    led_departments?: DepartmentCreateNestedManyWithoutLeaderInput;
 }

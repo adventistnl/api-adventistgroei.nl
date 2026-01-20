@@ -12,6 +12,9 @@ export class ProjectCountAggregate {
     department_id!: number;
 
     @Field(() => Int, {nullable:false})
+    church_department_id!: number;
+
+    @Field(() => Int, {nullable:false})
     title!: number;
 
     @Field(() => Int, {nullable:false})
@@ -21,7 +24,10 @@ export class ProjectCountAggregate {
     budget!: number;
 
     @Field(() => Int, {nullable:false})
-    media_link!: number;
+    subsidized_budget!: number;
+
+    @Field(() => Int, {nullable:false})
+    balance!: number;
 
     @Field(() => Int, {nullable:false})
     owner_id!: number;
@@ -33,10 +39,28 @@ export class ProjectCountAggregate {
     type!: number;
 
     @Field(() => Int, {nullable:false})
+    status!: number;
+
+    @Field(() => Int, {nullable:false})
+    is_private!: number;
+
+    @Field(() => Int, {nullable:false})
+    required_volunteers!: number;
+
+    @Field(() => Int, {nullable:false})
+    start_at!: number;
+
+    @Field(() => Int, {nullable:false})
+    end_at!: number;
+
+    @Field(() => Int, {nullable:false})
     created_at!: number;
 
     @Field(() => Int, {nullable:false})
     updated_at!: number;
+
+    @Field(() => Int, {nullable:false})
+    deadline!: number;
 
     @Field(() => Int, {nullable:false})
     created_by!: number;
@@ -58,6 +82,9 @@ export class ProjectCountAggregate {
 
     @Field(() => Int, {nullable:false})
     institution_id!: number;
+
+    @Field(() => Int, {nullable:false})
+    church_id!: number;
 
     @Field(() => Int, {nullable:false})
     _all!: number;

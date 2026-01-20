@@ -2,10 +2,10 @@ import { registerEnumType } from '@nestjs/graphql';
 
 export enum RegionScalarFieldEnum {
     id = "id",
-    institution_id = "institution_id",
+    description = "description",
     name = "name",
-    parent_region_id = "parent_region_id",
-    contact_id = "contact_id",
+    territory = "territory",
+    color = "color",
     created_at = "created_at",
     updated_at = "updated_at",
     created_by = "created_by",

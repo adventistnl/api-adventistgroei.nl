@@ -18,6 +18,11 @@ import { SubsidyRequestOrderByRelationAggregateInput } from '../subsidy-request/
 import { SubsidyStatusOrderByRelationAggregateInput } from '../subsidy-status/subsidy-status-order-by-relation-aggregate.input';
 import { VoluntariesOnProjectsOrderByRelationAggregateInput } from '../voluntaries-on-projects/voluntaries-on-projects-order-by-relation-aggregate.input';
 import { ProjectOrderByRelationAggregateInput } from '../project/project-order-by-relation-aggregate.input';
+import { AnnualBudgetOrderByRelationAggregateInput } from '../annual-budget/annual-budget-order-by-relation-aggregate.input';
+import { ProjectActivityLogOrderByRelationAggregateInput } from '../project-activity-log/project-activity-log-order-by-relation-aggregate.input';
+import { ProjectActivityAssigneeOrderByRelationAggregateInput } from '../project-activity-assignee/project-activity-assignee-order-by-relation-aggregate.input';
+import { SubsidyStatusHistoryOrderByRelationAggregateInput } from '../subsidy-status-history/subsidy-status-history-order-by-relation-aggregate.input';
+import { DepartmentOrderByRelationAggregateInput } from '../department/department-order-by-relation-aggregate.input';
 
 @InputType()
 export class UserOrderByWithRelationInput {
@@ -33,6 +38,9 @@ export class UserOrderByWithRelationInput {
 
     @Field(() => SortOrder, {nullable:true})
     password?: `${SortOrder}`;
+
+    @Field(() => SortOrderInput, {nullable:true})
+    gender?: SortOrderInput;
 
     @Field(() => SortOrder, {nullable:true})
     language_preference?: `${SortOrder}`;
@@ -64,11 +72,11 @@ export class UserOrderByWithRelationInput {
     @Field(() => SortOrder, {nullable:true})
     institution_id?: `${SortOrder}`;
 
-    @Field(() => SortOrder, {nullable:true})
-    church_id?: `${SortOrder}`;
+    @Field(() => SortOrderInput, {nullable:true})
+    church_id?: SortOrderInput;
 
-    @Field(() => SortOrder, {nullable:true})
-    department_id?: `${SortOrder}`;
+    @Field(() => SortOrderInput, {nullable:true})
+    department_id?: SortOrderInput;
 
     @Field(() => ContactOrderByWithRelationInput, {nullable:true})
     @Type(() => ContactOrderByWithRelationInput)
@@ -124,4 +132,24 @@ export class UserOrderByWithRelationInput {
     @Field(() => ProjectOrderByRelationAggregateInput, {nullable:true})
     @Type(() => ProjectOrderByRelationAggregateInput)
     Project?: ProjectOrderByRelationAggregateInput;
+
+    @Field(() => AnnualBudgetOrderByRelationAggregateInput, {nullable:true})
+    @Type(() => AnnualBudgetOrderByRelationAggregateInput)
+    approved_annual_budgets?: AnnualBudgetOrderByRelationAggregateInput;
+
+    @Field(() => ProjectActivityLogOrderByRelationAggregateInput, {nullable:true})
+    @Type(() => ProjectActivityLogOrderByRelationAggregateInput)
+    project_activity_logs?: ProjectActivityLogOrderByRelationAggregateInput;
+
+    @Field(() => ProjectActivityAssigneeOrderByRelationAggregateInput, {nullable:true})
+    @Type(() => ProjectActivityAssigneeOrderByRelationAggregateInput)
+    activity_assignments?: ProjectActivityAssigneeOrderByRelationAggregateInput;
+
+    @Field(() => SubsidyStatusHistoryOrderByRelationAggregateInput, {nullable:true})
+    @Type(() => SubsidyStatusHistoryOrderByRelationAggregateInput)
+    subsidy_status_history?: SubsidyStatusHistoryOrderByRelationAggregateInput;
+
+    @Field(() => DepartmentOrderByRelationAggregateInput, {nullable:true})
+    @Type(() => DepartmentOrderByRelationAggregateInput)
+    led_departments?: DepartmentOrderByRelationAggregateInput;
 }

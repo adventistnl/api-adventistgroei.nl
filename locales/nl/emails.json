@@ -1,0 +1,15 @@
+{
+  "invite.subject": "Uitnodiging voor Adventist Groei",
+  "invite.greeting": "Hallo!",
+  "invite.body": "Je bent uitgenodigd door {{inviterName}} om je te registreren op ons platform.",
+  "invite.cta": "Voltooi je registratie",
+  "invite.expiry": "Deze link verloopt over 2 dagen.",
+  "invite.ignore": "Als je deze uitnodiging niet verwachtte, negeer deze e-mail dan.",
+  "invite.footer": "Met vriendelijke groet,\nHet Adventist Groei Team",
+  "forgotPassword.subject": "Uw wachtwoord herstellen",
+  "forgotPassword.greeting": "Hallo!",
+  "forgotPassword.body": "Uw verificatiecode is: {{code}}\n\nDeze code verloopt over {{expiresIn}}.",
+  "forgotPassword.expiry": "Deze code verloopt over {{expiresIn}}.",
+  "forgotPassword.ignore": "Als u geen verzoek tot wachtwoordherstel hebt ingediend, negeer deze e-mail dan.",
+  "forgotPassword.footer": "Met vriendelijke groet,\nHet Adventist Groei Team"
+}

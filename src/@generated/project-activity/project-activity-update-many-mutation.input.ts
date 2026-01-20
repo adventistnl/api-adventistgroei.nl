@@ -7,6 +7,10 @@ import { DateTimeFieldUpdateOperationsInput } from '../prisma/date-time-field-up
 import { BoolFieldUpdateOperationsInput } from '../prisma/bool-field-update-operations.input';
 import { NullableDateTimeFieldUpdateOperationsInput } from '../prisma/nullable-date-time-field-update-operations.input';
 import { NullableStringFieldUpdateOperationsInput } from '../prisma/nullable-string-field-update-operations.input';
+import { ProjectActivityUpdatetagsInput } from './project-activity-updatetags.input';
+import { ProjectActivityUpdatecustom_tagsInput } from './project-activity-updatecustom-tags.input';
+import { EnumActivityStatusFieldUpdateOperationsInput } from '../prisma/enum-activity-status-field-update-operations.input';
+import { EnumActivityPriorityFieldUpdateOperationsInput } from '../prisma/enum-activity-priority-field-update-operations.input';
 
 @InputType()
 export class ProjectActivityUpdateManyMutationInput {
@@ -44,4 +48,24 @@ export class ProjectActivityUpdateManyMutationInput {
 
     @Field(() => NullableStringFieldUpdateOperationsInput, {nullable:true})
     deleted_by?: NullableStringFieldUpdateOperationsInput;
+
+    @Field(() => DateTimeFieldUpdateOperationsInput, {nullable:true})
+    deadline?: DateTimeFieldUpdateOperationsInput;
+
+    @Field(() => ProjectActivityUpdatetagsInput, {nullable:true})
+    @Type(() => ProjectActivityUpdatetagsInput)
+    tags?: ProjectActivityUpdatetagsInput;
+
+    @Field(() => ProjectActivityUpdatecustom_tagsInput, {nullable:true})
+    @Type(() => ProjectActivityUpdatecustom_tagsInput)
+    custom_tags?: ProjectActivityUpdatecustom_tagsInput;
+
+    @Field(() => EnumActivityStatusFieldUpdateOperationsInput, {nullable:true})
+    status?: EnumActivityStatusFieldUpdateOperationsInput;
+
+    @Field(() => EnumActivityPriorityFieldUpdateOperationsInput, {nullable:true})
+    priority?: EnumActivityPriorityFieldUpdateOperationsInput;
+
+    @Field(() => BoolFieldUpdateOperationsInput, {nullable:true})
+    is_subsidized?: BoolFieldUpdateOperationsInput;
 }

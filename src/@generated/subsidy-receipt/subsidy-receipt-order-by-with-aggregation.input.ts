@@ -2,8 +2,8 @@ import { Field } from '@nestjs/graphql';
 import { InputType } from '@nestjs/graphql';
 import { SortOrder } from '../prisma/sort-order.enum';
 import { SortOrderInput } from '../prisma/sort-order.input';
-import { SubsidyReceiptCountOrderByAggregateInput } from './subsidy-receipt-count-order-by-aggregate.input';
 import { Type } from 'class-transformer';
+import { SubsidyReceiptCountOrderByAggregateInput } from './subsidy-receipt-count-order-by-aggregate.input';
 import { SubsidyReceiptAvgOrderByAggregateInput } from './subsidy-receipt-avg-order-by-aggregate.input';
 import { SubsidyReceiptMaxOrderByAggregateInput } from './subsidy-receipt-max-order-by-aggregate.input';
 import { SubsidyReceiptMinOrderByAggregateInput } from './subsidy-receipt-min-order-by-aggregate.input';
@@ -19,13 +19,35 @@ export class SubsidyReceiptOrderByWithAggregationInput {
     project_activities_id?: `${SortOrder}`;
 
     @Field(() => SortOrder, {nullable:true})
-    file_path?: `${SortOrder}`;
+    file_url?: `${SortOrder}`;
+
+    @Field(() => SortOrderInput, {nullable:true})
+    drive_file_id?: SortOrderInput;
 
     @Field(() => SortOrder, {nullable:true})
-    amount?: `${SortOrder}`;
+    filename?: `${SortOrder}`;
+
+    @Field(() => SortOrder, {nullable:true})
+    type?: `${SortOrder}`;
+
+    @Field(() => SortOrderInput, {nullable:true})
+    @Type(() => SortOrderInput)
+    amount?: SortOrderInput;
 
     @Field(() => SortOrder, {nullable:true})
     approved?: `${SortOrder}`;
+
+    @Field(() => SortOrder, {nullable:true})
+    is_validated?: `${SortOrder}`;
+
+    @Field(() => SortOrderInput, {nullable:true})
+    validated_at?: SortOrderInput;
+
+    @Field(() => SortOrderInput, {nullable:true})
+    validated_by?: SortOrderInput;
+
+    @Field(() => SortOrder, {nullable:true})
+    uploaded_by?: `${SortOrder}`;
 
     @Field(() => SortOrder, {nullable:true})
     created_at?: `${SortOrder}`;
@@ -47,6 +69,12 @@ export class SubsidyReceiptOrderByWithAggregationInput {
 
     @Field(() => SortOrderInput, {nullable:true})
     deleted_by?: SortOrderInput;
+
+    @Field(() => SortOrderInput, {nullable:true})
+    subsidy_request_id?: SortOrderInput;
+
+    @Field(() => SortOrderInput, {nullable:true})
+    subsidy_request_item_id?: SortOrderInput;
 
     @Field(() => SubsidyReceiptCountOrderByAggregateInput, {nullable:true})
     @Type(() => SubsidyReceiptCountOrderByAggregateInput)

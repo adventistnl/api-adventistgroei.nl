@@ -16,6 +16,9 @@ export class RoleModel {
   @Field()
   key_code: string;
 
+  @Field()
+  is_fixed: boolean;
+
   @Field({ nullable: true })
   color?: string;
 

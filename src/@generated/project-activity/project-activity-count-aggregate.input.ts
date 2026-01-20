@@ -41,5 +41,23 @@ export class ProjectActivityCountAggregateInput {
     deleted_by?: true;
 
     @Field(() => Boolean, {nullable:true})
+    deadline?: true;
+
+    @Field(() => Boolean, {nullable:true})
+    tags?: true;
+
+    @Field(() => Boolean, {nullable:true})
+    custom_tags?: true;
+
+    @Field(() => Boolean, {nullable:true})
+    status?: true;
+
+    @Field(() => Boolean, {nullable:true})
+    priority?: true;
+
+    @Field(() => Boolean, {nullable:true})
+    is_subsidized?: true;
+
+    @Field(() => Boolean, {nullable:true})
     _all?: true;
 }

@@ -1,6 +1,7 @@
 import { Field } from '@nestjs/graphql';
 import { InputType } from '@nestjs/graphql';
 import { StringFieldUpdateOperationsInput } from '../prisma/string-field-update-operations.input';
+import { NullableEnumGenderTypeFieldUpdateOperationsInput } from '../prisma/nullable-enum-gender-type-field-update-operations.input';
 import { EnumLanguagePreferenceFieldUpdateOperationsInput } from '../prisma/enum-language-preference-field-update-operations.input';
 import { DateTimeFieldUpdateOperationsInput } from '../prisma/date-time-field-update-operations.input';
 import { BoolFieldUpdateOperationsInput } from '../prisma/bool-field-update-operations.input';
@@ -18,6 +19,11 @@ import { SubsidyRequestUncheckedUpdateManyWithoutRequesterNestedInput } from '..
 import { SubsidyStatusUncheckedUpdateManyWithoutAssigned_userNestedInput } from '../subsidy-status/subsidy-status-unchecked-update-many-without-assigned-user-nested.input';
 import { VoluntariesOnProjectsUncheckedUpdateManyWithoutUserNestedInput } from '../voluntaries-on-projects/voluntaries-on-projects-unchecked-update-many-without-user-nested.input';
 import { ProjectUncheckedUpdateManyWithoutOwnerNestedInput } from '../project/project-unchecked-update-many-without-owner-nested.input';
+import { AnnualBudgetUncheckedUpdateManyWithoutApproved_userNestedInput } from '../annual-budget/annual-budget-unchecked-update-many-without-approved-user-nested.input';
+import { ProjectActivityLogUncheckedUpdateManyWithoutUserNestedInput } from '../project-activity-log/project-activity-log-unchecked-update-many-without-user-nested.input';
+import { ProjectActivityAssigneeUncheckedUpdateManyWithoutUserNestedInput } from '../project-activity-assignee/project-activity-assignee-unchecked-update-many-without-user-nested.input';
+import { SubsidyStatusHistoryUncheckedUpdateManyWithoutUserNestedInput } from '../subsidy-status-history/subsidy-status-history-unchecked-update-many-without-user-nested.input';
+import { DepartmentUncheckedUpdateManyWithoutLeaderNestedInput } from '../department/department-unchecked-update-many-without-leader-nested.input';
 
 @InputType()
 export class UserUncheckedUpdateWithoutChurchInput {
@@ -33,6 +39,9 @@ export class UserUncheckedUpdateWithoutChurchInput {
 
     @Field(() => StringFieldUpdateOperationsInput, {nullable:true})
     password?: StringFieldUpdateOperationsInput;
+
+    @Field(() => NullableEnumGenderTypeFieldUpdateOperationsInput, {nullable:true})
+    gender?: NullableEnumGenderTypeFieldUpdateOperationsInput;
 
     @Field(() => EnumLanguagePreferenceFieldUpdateOperationsInput, {nullable:true})
     language_preference?: EnumLanguagePreferenceFieldUpdateOperationsInput;
@@ -64,8 +73,8 @@ export class UserUncheckedUpdateWithoutChurchInput {
     @Field(() => StringFieldUpdateOperationsInput, {nullable:true})
     institution_id?: StringFieldUpdateOperationsInput;
 
-    @Field(() => StringFieldUpdateOperationsInput, {nullable:true})
-    department_id?: StringFieldUpdateOperationsInput;
+    @Field(() => NullableStringFieldUpdateOperationsInput, {nullable:true})
+    department_id?: NullableStringFieldUpdateOperationsInput;
 
     @Field(() => UserRoleUncheckedUpdateManyWithoutUserNestedInput, {nullable:true})
     user_roles?: UserRoleUncheckedUpdateManyWithoutUserNestedInput;
@@ -105,4 +114,24 @@ export class UserUncheckedUpdateWithoutChurchInput {
     @Field(() => ProjectUncheckedUpdateManyWithoutOwnerNestedInput, {nullable:true})
     @Type(() => ProjectUncheckedUpdateManyWithoutOwnerNestedInput)
     Project?: ProjectUncheckedUpdateManyWithoutOwnerNestedInput;
+
+    @Field(() => AnnualBudgetUncheckedUpdateManyWithoutApproved_userNestedInput, {nullable:true})
+    @Type(() => AnnualBudgetUncheckedUpdateManyWithoutApproved_userNestedInput)
+    approved_annual_budgets?: AnnualBudgetUncheckedUpdateManyWithoutApproved_userNestedInput;
+
+    @Field(() => ProjectActivityLogUncheckedUpdateManyWithoutUserNestedInput, {nullable:true})
+    @Type(() => ProjectActivityLogUncheckedUpdateManyWithoutUserNestedInput)
+    project_activity_logs?: ProjectActivityLogUncheckedUpdateManyWithoutUserNestedInput;
+
+    @Field(() => ProjectActivityAssigneeUncheckedUpdateManyWithoutUserNestedInput, {nullable:true})
+    @Type(() => ProjectActivityAssigneeUncheckedUpdateManyWithoutUserNestedInput)
+    activity_assignments?: ProjectActivityAssigneeUncheckedUpdateManyWithoutUserNestedInput;
+
+    @Field(() => SubsidyStatusHistoryUncheckedUpdateManyWithoutUserNestedInput, {nullable:true})
+    @Type(() => SubsidyStatusHistoryUncheckedUpdateManyWithoutUserNestedInput)
+    subsidy_status_history?: SubsidyStatusHistoryUncheckedUpdateManyWithoutUserNestedInput;
+
+    @Field(() => DepartmentUncheckedUpdateManyWithoutLeaderNestedInput, {nullable:true})
+    @Type(() => DepartmentUncheckedUpdateManyWithoutLeaderNestedInput)
+    led_departments?: DepartmentUncheckedUpdateManyWithoutLeaderNestedInput;
 }

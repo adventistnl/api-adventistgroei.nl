@@ -15,16 +15,28 @@ export class SubsidyRequestMinOrderByAggregateInput {
     total_budget?: `${SortOrder}`;
 
     @Field(() => SortOrder, {nullable:true})
+    approved_amount?: `${SortOrder}`;
+
+    @Field(() => SortOrder, {nullable:true})
+    rejection_reason?: `${SortOrder}`;
+
+    @Field(() => SortOrder, {nullable:true})
     created_at?: `${SortOrder}`;
 
     @Field(() => SortOrder, {nullable:true})
     updated_at?: `${SortOrder}`;
 
     @Field(() => SortOrder, {nullable:true})
+    approved_at?: `${SortOrder}`;
+
+    @Field(() => SortOrder, {nullable:true})
     created_by?: `${SortOrder}`;
 
     @Field(() => SortOrder, {nullable:true})
     updated_by?: `${SortOrder}`;
+
+    @Field(() => SortOrder, {nullable:true})
+    approved_by?: `${SortOrder}`;
 
     @Field(() => SortOrder, {nullable:true})
     is_deleted?: `${SortOrder}`;
@@ -46,6 +58,9 @@ export class SubsidyRequestMinOrderByAggregateInput {
 
     @Field(() => SortOrder, {nullable:true})
     church_id?: `${SortOrder}`;
+
+    @Field(() => SortOrder, {nullable:true})
+    priority?: `${SortOrder}`;
 
     @Field(() => SortOrder, {nullable:true})
     subsidy_statuses_id?: `${SortOrder}`;

@@ -16,6 +16,9 @@ export class RolePermission {
     @Field(() => String, {nullable:false})
     permission_id!: string;
 
+    @Field(() => Boolean, {defaultValue:false,nullable:false})
+    is_essential!: boolean;
+
     @Field(() => Date, {nullable:false})
     created_at!: Date;
 

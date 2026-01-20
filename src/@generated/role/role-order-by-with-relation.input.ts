@@ -25,6 +25,9 @@ export class RoleOrderByWithRelationInput {
     key_code?: `${SortOrder}`;
 
     @Field(() => SortOrder, {nullable:true})
+    is_fixed?: `${SortOrder}`;
+
+    @Field(() => SortOrder, {nullable:true})
     created_at?: `${SortOrder}`;
 
     @Field(() => SortOrder, {nullable:true})

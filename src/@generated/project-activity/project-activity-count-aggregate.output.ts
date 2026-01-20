@@ -42,5 +42,23 @@ export class ProjectActivityCountAggregate {
     deleted_by!: number;
 
     @Field(() => Int, {nullable:false})
+    deadline!: number;
+
+    @Field(() => Int, {nullable:false})
+    tags!: number;
+
+    @Field(() => Int, {nullable:false})
+    custom_tags!: number;
+
+    @Field(() => Int, {nullable:false})
+    status!: number;
+
+    @Field(() => Int, {nullable:false})
+    priority!: number;
+
+    @Field(() => Int, {nullable:false})
+    is_subsidized!: number;
+
+    @Field(() => Int, {nullable:false})
     _all!: number;
 }

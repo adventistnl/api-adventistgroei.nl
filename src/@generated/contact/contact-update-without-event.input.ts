@@ -7,7 +7,6 @@ import { DateTimeFieldUpdateOperationsInput } from '../prisma/date-time-field-up
 import { NullableDateTimeFieldUpdateOperationsInput } from '../prisma/nullable-date-time-field-update-operations.input';
 import { InstitutionUpdateOneWithoutContactNestedInput } from '../institution/institution-update-one-without-contact-nested.input';
 import { Type } from 'class-transformer';
-import { RegionUpdateManyWithoutContactNestedInput } from '../region/region-update-many-without-contact-nested.input';
 import { ChurchUpdateManyWithoutContactNestedInput } from '../church/church-update-many-without-contact-nested.input';
 import { DepartmentUpdateManyWithoutContactNestedInput } from '../department/department-update-many-without-contact-nested.input';
 import { UserUpdateManyWithoutContactNestedInput } from '../user/user-update-many-without-contact-nested.input';
@@ -35,6 +34,9 @@ export class ContactUpdateWithoutEventInput {
 
     @Field(() => NullableStringFieldUpdateOperationsInput, {nullable:true})
     city?: NullableStringFieldUpdateOperationsInput;
+
+    @Field(() => NullableStringFieldUpdateOperationsInput, {nullable:true})
+    state?: NullableStringFieldUpdateOperationsInput;
 
     @Field(() => NullableStringFieldUpdateOperationsInput, {nullable:true})
     address?: NullableStringFieldUpdateOperationsInput;
@@ -78,9 +80,6 @@ export class ContactUpdateWithoutEventInput {
     @Field(() => InstitutionUpdateOneWithoutContactNestedInput, {nullable:true})
     @Type(() => InstitutionUpdateOneWithoutContactNestedInput)
     Institution?: InstitutionUpdateOneWithoutContactNestedInput;
-
-    @Field(() => RegionUpdateManyWithoutContactNestedInput, {nullable:true})
-    Region?: RegionUpdateManyWithoutContactNestedInput;
 
     @Field(() => ChurchUpdateManyWithoutContactNestedInput, {nullable:true})
     @Type(() => ChurchUpdateManyWithoutContactNestedInput)

@@ -5,17 +5,21 @@ import { DecimalFieldUpdateOperationsInput } from '../prisma/decimal-field-updat
 import { Type } from 'class-transformer';
 import { EnumLanguagePreferenceFieldUpdateOperationsInput } from '../prisma/enum-language-preference-field-update-operations.input';
 import { EnumProjectTypeFieldUpdateOperationsInput } from '../prisma/enum-project-type-field-update-operations.input';
-import { DateTimeFieldUpdateOperationsInput } from '../prisma/date-time-field-update-operations.input';
+import { EnumProjectStatusFieldUpdateOperationsInput } from '../prisma/enum-project-status-field-update-operations.input';
 import { BoolFieldUpdateOperationsInput } from '../prisma/bool-field-update-operations.input';
+import { DateTimeFieldUpdateOperationsInput } from '../prisma/date-time-field-update-operations.input';
 import { NullableDateTimeFieldUpdateOperationsInput } from '../prisma/nullable-date-time-field-update-operations.input';
 import { NullableStringFieldUpdateOperationsInput } from '../prisma/nullable-string-field-update-operations.input';
 import { DepartmentUpdateOneRequiredWithoutProjectsNestedInput } from '../department/department-update-one-required-without-projects-nested.input';
+import { DepartmentUpdateOneWithoutChurch_projectsNestedInput } from '../department/department-update-one-without-church-projects-nested.input';
 import { UserUpdateOneRequiredWithoutProjectNestedInput } from '../user/user-update-one-required-without-project-nested.input';
 import { EventUpdateOneWithoutProjectsNestedInput } from '../event/event-update-one-without-projects-nested.input';
 import { InstitutionUpdateOneWithoutProjectsNestedInput } from '../institution/institution-update-one-without-projects-nested.input';
+import { ChurchUpdateOneWithoutProjectsNestedInput } from '../church/church-update-one-without-projects-nested.input';
 import { VoluntariesOnProjectsUpdateManyWithoutProjectNestedInput } from '../voluntaries-on-projects/voluntaries-on-projects-update-many-without-project-nested.input';
 import { ProjectActivityUpdateManyWithoutProjectNestedInput } from '../project-activity/project-activity-update-many-without-project-nested.input';
 import { SubsidyRequestUpdateManyWithoutProjectNestedInput } from '../subsidy-request/subsidy-request-update-many-without-project-nested.input';
+import { SpecialProjectsUpdateManyWithoutProjectNestedInput } from '../special-projects/special-projects-update-many-without-project-nested.input';
 
 @InputType()
 export class ProjectUpdateInput {
@@ -33,8 +37,13 @@ export class ProjectUpdateInput {
     @Type(() => DecimalFieldUpdateOperationsInput)
     budget?: DecimalFieldUpdateOperationsInput;
 
-    @Field(() => StringFieldUpdateOperationsInput, {nullable:true})
-    media_link?: StringFieldUpdateOperationsInput;
+    @Field(() => DecimalFieldUpdateOperationsInput, {nullable:true})
+    @Type(() => DecimalFieldUpdateOperationsInput)
+    subsidized_budget?: DecimalFieldUpdateOperationsInput;
+
+    @Field(() => DecimalFieldUpdateOperationsInput, {nullable:true})
+    @Type(() => DecimalFieldUpdateOperationsInput)
+    balance?: DecimalFieldUpdateOperationsInput;
 
     @Field(() => EnumLanguagePreferenceFieldUpdateOperationsInput, {nullable:true})
     language_preference?: EnumLanguagePreferenceFieldUpdateOperationsInput;
@@ -42,11 +51,29 @@ export class ProjectUpdateInput {
     @Field(() => EnumProjectTypeFieldUpdateOperationsInput, {nullable:true})
     type?: EnumProjectTypeFieldUpdateOperationsInput;
 
+    @Field(() => EnumProjectStatusFieldUpdateOperationsInput, {nullable:true})
+    status?: EnumProjectStatusFieldUpdateOperationsInput;
+
+    @Field(() => BoolFieldUpdateOperationsInput, {nullable:true})
+    is_private?: BoolFieldUpdateOperationsInput;
+
+    @Field(() => BoolFieldUpdateOperationsInput, {nullable:true})
+    required_volunteers?: BoolFieldUpdateOperationsInput;
+
+    @Field(() => DateTimeFieldUpdateOperationsInput, {nullable:true})
+    start_at?: DateTimeFieldUpdateOperationsInput;
+
+    @Field(() => DateTimeFieldUpdateOperationsInput, {nullable:true})
+    end_at?: DateTimeFieldUpdateOperationsInput;
+
     @Field(() => DateTimeFieldUpdateOperationsInput, {nullable:true})
     created_at?: DateTimeFieldUpdateOperationsInput;
 
     @Field(() => DateTimeFieldUpdateOperationsInput, {nullable:true})
     updated_at?: DateTimeFieldUpdateOperationsInput;
+
+    @Field(() => NullableDateTimeFieldUpdateOperationsInput, {nullable:true})
+    deadline?: NullableDateTimeFieldUpdateOperationsInput;
 
     @Field(() => StringFieldUpdateOperationsInput, {nullable:true})
     created_by?: StringFieldUpdateOperationsInput;
@@ -67,6 +94,10 @@ export class ProjectUpdateInput {
     @Type(() => DepartmentUpdateOneRequiredWithoutProjectsNestedInput)
     department?: DepartmentUpdateOneRequiredWithoutProjectsNestedInput;
 
+    @Field(() => DepartmentUpdateOneWithoutChurch_projectsNestedInput, {nullable:true})
+    @Type(() => DepartmentUpdateOneWithoutChurch_projectsNestedInput)
+    church_department?: DepartmentUpdateOneWithoutChurch_projectsNestedInput;
+
     @Field(() => UserUpdateOneRequiredWithoutProjectNestedInput, {nullable:true})
     @Type(() => UserUpdateOneRequiredWithoutProjectNestedInput)
     owner?: UserUpdateOneRequiredWithoutProjectNestedInput;
@@ -79,6 +110,10 @@ export class ProjectUpdateInput {
     @Type(() => InstitutionUpdateOneWithoutProjectsNestedInput)
     Institution?: InstitutionUpdateOneWithoutProjectsNestedInput;
 
+    @Field(() => ChurchUpdateOneWithoutProjectsNestedInput, {nullable:true})
+    @Type(() => ChurchUpdateOneWithoutProjectsNestedInput)
+    church?: ChurchUpdateOneWithoutProjectsNestedInput;
+
     @Field(() => VoluntariesOnProjectsUpdateManyWithoutProjectNestedInput, {nullable:true})
     @Type(() => VoluntariesOnProjectsUpdateManyWithoutProjectNestedInput)
     voluntary_users?: VoluntariesOnProjectsUpdateManyWithoutProjectNestedInput;
@@ -90,4 +125,8 @@ export class ProjectUpdateInput {
     @Field(() => SubsidyRequestUpdateManyWithoutProjectNestedInput, {nullable:true})
     @Type(() => SubsidyRequestUpdateManyWithoutProjectNestedInput)
     subsidies?: SubsidyRequestUpdateManyWithoutProjectNestedInput;
+
+    @Field(() => SpecialProjectsUpdateManyWithoutProjectNestedInput, {nullable:true})
+    @Type(() => SpecialProjectsUpdateManyWithoutProjectNestedInput)
+    special_projects?: SpecialProjectsUpdateManyWithoutProjectNestedInput;
 }

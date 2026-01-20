@@ -5,6 +5,8 @@ import { GraphQLDecimal } from 'prisma-graphql-type-decimal';
 import { transformToDecimal } from 'prisma-graphql-type-decimal';
 import { Transform } from 'class-transformer';
 import { Type } from 'class-transformer';
+import { SubsidyRequestCreateNestedOneWithoutSubsidy_receiptsInput } from '../subsidy-request/subsidy-request-create-nested-one-without-subsidy-receipts.input';
+import { SubsidyRequestItemCreateNestedOneWithoutSubsidy_receiptsInput } from '../subsidy-request-item/subsidy-request-item-create-nested-one-without-subsidy-receipts.input';
 
 @InputType()
 export class SubsidyReceiptCreateWithoutProject_activityInput {
@@ -13,15 +15,36 @@ export class SubsidyReceiptCreateWithoutProject_activityInput {
     id?: string;
 
     @Field(() => String, {nullable:false})
-    file_path!: string;
+    file_url!: string;
 
-    @Field(() => GraphQLDecimal, {nullable:false})
+    @Field(() => String, {nullable:true})
+    drive_file_id?: string;
+
+    @Field(() => String, {nullable:false})
+    filename!: string;
+
+    @Field(() => String, {nullable:false})
+    type!: string;
+
+    @Field(() => GraphQLDecimal, {nullable:true})
     @Type(() => Object)
     @Transform(transformToDecimal)
-    amount!: Decimal;
+    amount?: Decimal;
 
-    @Field(() => Boolean, {nullable:false})
-    approved!: boolean;
+    @Field(() => Boolean, {nullable:true})
+    approved?: boolean;
+
+    @Field(() => Boolean, {nullable:true})
+    is_validated?: boolean;
+
+    @Field(() => Date, {nullable:true})
+    validated_at?: Date | string;
+
+    @Field(() => String, {nullable:true})
+    validated_by?: string;
+
+    @Field(() => String, {nullable:false})
+    uploaded_by!: string;
 
     @Field(() => Date, {nullable:true})
     created_at?: Date | string;
@@ -43,4 +66,12 @@ export class SubsidyReceiptCreateWithoutProject_activityInput {
 
     @Field(() => String, {nullable:true})
     deleted_by?: string;
+
+    @Field(() => SubsidyRequestCreateNestedOneWithoutSubsidy_receiptsInput, {nullable:true})
+    @Type(() => SubsidyRequestCreateNestedOneWithoutSubsidy_receiptsInput)
+    subsidy_request?: SubsidyRequestCreateNestedOneWithoutSubsidy_receiptsInput;
+
+    @Field(() => SubsidyRequestItemCreateNestedOneWithoutSubsidy_receiptsInput, {nullable:true})
+    @Type(() => SubsidyRequestItemCreateNestedOneWithoutSubsidy_receiptsInput)
+    subsidy_request_item?: SubsidyRequestItemCreateNestedOneWithoutSubsidy_receiptsInput;
 }

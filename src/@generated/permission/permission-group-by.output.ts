@@ -48,6 +48,9 @@ export class PermissionGroupBy {
     @Field(() => String, {nullable:true})
     deleted_by?: string;
 
+    @Field(() => Boolean, {nullable:false})
+    disabled_to_client!: boolean;
+
     @Field(() => PermissionCountAggregate, {nullable:true})
     _count?: PermissionCountAggregate;
 

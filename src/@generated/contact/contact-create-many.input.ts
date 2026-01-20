@@ -26,6 +26,9 @@ export class ContactCreateManyInput {
     city?: string;
 
     @Field(() => String, {nullable:true})
+    state?: string;
+
+    @Field(() => String, {nullable:true})
     address?: string;
 
     @Field(() => String, {nullable:true})

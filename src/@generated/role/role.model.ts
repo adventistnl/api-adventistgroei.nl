@@ -24,6 +24,9 @@ export class Role {
     @Field(() => String, {nullable:false})
     key_code!: string;
 
+    @Field(() => Boolean, {defaultValue:false,nullable:false})
+    is_fixed!: boolean;
+
     @Field(() => Date, {nullable:false})
     created_at!: Date;
 

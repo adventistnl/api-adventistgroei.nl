@@ -1,10 +1,6 @@
 import { Field } from '@nestjs/graphql';
 import { ObjectType } from '@nestjs/graphql';
-import { Decimal } from '@prisma/client/runtime/library';
-import { GraphQLDecimal } from 'prisma-graphql-type-decimal';
 import { DepartmentCountAggregate } from './department-count-aggregate.output';
-import { DepartmentAvgAggregate } from './department-avg-aggregate.output';
-import { DepartmentSumAggregate } from './department-sum-aggregate.output';
 import { DepartmentMinAggregate } from './department-min-aggregate.output';
 import { DepartmentMaxAggregate } from './department-max-aggregate.output';
 
@@ -17,8 +13,8 @@ export class DepartmentGroupBy {
     @Field(() => String, {nullable:false})
     institution_id!: string;
 
-    @Field(() => String, {nullable:false})
-    church_id!: string;
+    @Field(() => String, {nullable:true})
+    church_id?: string;
 
     @Field(() => String, {nullable:false})
     name!: string;
@@ -26,8 +22,8 @@ export class DepartmentGroupBy {
     @Field(() => String, {nullable:false})
     description!: string;
 
-    @Field(() => GraphQLDecimal, {nullable:false})
-    annual_budget!: Decimal;
+    @Field(() => String, {nullable:false})
+    leader_id!: string;
 
     @Field(() => String, {nullable:true})
     contact_id?: string;
@@ -55,12 +51,6 @@ export class DepartmentGroupBy {
 
     @Field(() => DepartmentCountAggregate, {nullable:true})
     _count?: DepartmentCountAggregate;
-
-    @Field(() => DepartmentAvgAggregate, {nullable:true})
-    _avg?: DepartmentAvgAggregate;
-
-    @Field(() => DepartmentSumAggregate, {nullable:true})
-    _sum?: DepartmentSumAggregate;
 
     @Field(() => DepartmentMinAggregate, {nullable:true})
     _min?: DepartmentMinAggregate;

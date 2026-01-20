@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../services/prisma.service';
-import { Role } from '@prisma/client';
+import { Role } from '../@generated/role/role.model';
 
 @Injectable()
 export class RoleRepository {
@@ -40,7 +40,8 @@ export class RoleRepository {
     name?: string;
     description?: string;
     key_code?: string;
-    permissionIds?: string[];
+    addPermissionIds?: string[];
+    removePermissionIds?: string[];
     updated_by: string;
   }): Promise<Role> {
     // Atualiza dados básicos
@@ -53,18 +54,46 @@ export class RoleRepository {
         updated_by: data.updated_by,
       },
     });
-    // Atualiza permissões (remove todas e recria)
-    if (data.permissionIds) {
-      await this.prisma.rolePermission.deleteMany({ where: { role_id: id } });
-      await this.prisma.rolePermission.createMany({
-        data: data.permissionIds.map((permissionId) => ({
+
+    // Atualiza permissões incrementalmente
+    if (data.addPermissionIds && data.addPermissionIds.length > 0) {
+      // Busca permissões já conectadas à role
+      const existingPermissions = await this.prisma.rolePermission.findMany({
+        where: { role_id: id },
+        select: { permission_id: true, is_essential: true },
+      });
+
+      const existingPermissionIds = existingPermissions.map((p) => p.permission_id);
+
+      // Filtra permissões que ainda não estão conectadas
+      const newPermissions = data.addPermissionIds.filter(
+        (permissionId) => !existingPermissionIds.includes(permissionId),
+      );
+
+      // Adiciona apenas permissões novas
+      if (newPermissions.length > 0) {
+        await this.prisma.rolePermission.createMany({
+          data: newPermissions.map((permissionId) => ({
+            role_id: id,
+            permission_id: permissionId,
+            created_by: data.updated_by,
+            updated_by: data.updated_by,
+          })),
+          skipDuplicates: true, // evita erro caso já exista a relação
+        });
+      }
+    }
+
+    if (data.removePermissionIds && data.removePermissionIds.length > 0) {
+      await this.prisma.rolePermission.deleteMany({
+        where: {
           role_id: id,
-          permission_id: permissionId,
-          created_by: data.updated_by,
-          updated_by: data.updated_by,
-        })),
+          permission_id: { in: data.removePermissionIds },
+          is_essential: false, // só remove se não for essencial
+        },
       });
     }
+
     return (await this.prisma.role.findUnique({
       where: { id },
       include: { role_permissions: { include: { permission: true } } },
@@ -93,17 +122,65 @@ export class RoleRepository {
     });
   }
 
-  async findAll(): Promise<Role[]> {
-    return this.prisma.role.findMany({
-      where: { is_deleted: false },
+  async findByIdWithPermissions(id: string): Promise<Role | null> {
+    return this.prisma.role.findUnique({
+      where: { id },
       include: {
         role_permissions: {
           include: { permission: true },
         },
-        user_roles: { select: { user_id: true, is_deleted: false }},
       },
-      
     });
+  }
+
+  /**
+   * Retorna a role junto com todas as permissões disponíveis no sistema.
+   * Cada permissão inclui a relação role_permissions apenas para a role passada
+   * para que possamos saber se ela está selecionada e se é essencial.
+   */
+  async findByIdWithAllPermissions(id: string, userRoles: string[]): Promise<{
+    role: Role | null;
+    permissions: Array<
+      (import('@prisma/client').Permission & {
+        role_permissions: Array<import('@prisma/client').RolePermission>;
+      })
+    >;
+  }> {
+  const role = await this.prisma.role.findUnique({ where: { id } });
+
+    const permissions = await this.prisma.permission.findMany({
+      where: { is_deleted: false, disabled_to_client: userRoles.includes('dev') ? undefined : false },
+      include: {
+  // trazemos apenas os role_permissions relacionados com a role para marcar is_selected/is_essential
+        role_permissions: {
+          where: { role_id: id },
+        },
+      },
+    });
+
+    return { role, permissions };
+  }
+
+  async findAll(_userId: string, userRoles: string[]): Promise<Role[]> {
+    // Se o usuário tem a role DEV, retorna todas as roles
+    // Caso contrário, exclui a role DEV da lista
+    const whereCondition = userRoles.includes('DEV')
+      ? { is_deleted: false }
+      : {
+          is_deleted: false,
+          key_code: { not: 'DEV' },
+        };
+
+    const res = await this.prisma.role.findMany({
+      where: whereCondition,
+      include: {
+        role_permissions: {
+          include: { permission: true },
+        },
+        user_roles: true,
+      },
+    });
+    return res;
   }
 
   async getUserRolesByRoleId(roleId: string): Promise<Array<{ user_id: string; is_deleted: boolean }>> {

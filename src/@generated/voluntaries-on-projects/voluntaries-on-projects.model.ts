@@ -12,6 +12,27 @@ export class VoluntariesOnProjects {
     @Field(() => String, {nullable:false})
     project_id!: string;
 
+    @Field(() => Date, {nullable:false})
+    created_at!: Date;
+
+    @Field(() => Date, {nullable:false})
+    updated_at!: Date;
+
+    @Field(() => String, {nullable:false})
+    created_by!: string;
+
+    @Field(() => String, {nullable:false})
+    updated_by!: string;
+
+    @Field(() => Boolean, {defaultValue:false,nullable:false})
+    is_deleted!: boolean;
+
+    @Field(() => Date, {nullable:true})
+    deleted_at!: Date | null;
+
+    @Field(() => String, {nullable:true})
+    deleted_by!: string | null;
+
     @Field(() => User, {nullable:false})
     user?: User;
 

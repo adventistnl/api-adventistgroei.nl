@@ -2,6 +2,7 @@ import { Field } from '@nestjs/graphql';
 import { InputType } from '@nestjs/graphql';
 import { UserWhereInput } from './user-where.input';
 import { StringFilter } from '../prisma/string-filter.input';
+import { EnumGenderTypeNullableFilter } from '../prisma/enum-gender-type-nullable-filter.input';
 import { EnumLanguagePreferenceFilter } from '../prisma/enum-language-preference-filter.input';
 import { DateTimeFilter } from '../prisma/date-time-filter.input';
 import { BoolFilter } from '../prisma/bool-filter.input';
@@ -10,8 +11,8 @@ import { StringNullableFilter } from '../prisma/string-nullable-filter.input';
 import { ContactNullableScalarRelationFilter } from '../contact/contact-nullable-scalar-relation-filter.input';
 import { Type } from 'class-transformer';
 import { InstitutionScalarRelationFilter } from '../institution/institution-scalar-relation-filter.input';
-import { ChurchScalarRelationFilter } from '../church/church-scalar-relation-filter.input';
-import { DepartmentScalarRelationFilter } from '../department/department-scalar-relation-filter.input';
+import { ChurchNullableScalarRelationFilter } from '../church/church-nullable-scalar-relation-filter.input';
+import { DepartmentNullableScalarRelationFilter } from '../department/department-nullable-scalar-relation-filter.input';
 import { UserRoleListRelationFilter } from '../user-role/user-role-list-relation-filter.input';
 import { DirectMessageListRelationFilter } from '../direct-message/direct-message-list-relation-filter.input';
 import { DirectMessageRecipientListRelationFilter } from '../direct-message-recipient/direct-message-recipient-list-relation-filter.input';
@@ -23,6 +24,11 @@ import { SubsidyRequestListRelationFilter } from '../subsidy-request/subsidy-req
 import { SubsidyStatusListRelationFilter } from '../subsidy-status/subsidy-status-list-relation-filter.input';
 import { VoluntariesOnProjectsListRelationFilter } from '../voluntaries-on-projects/voluntaries-on-projects-list-relation-filter.input';
 import { ProjectListRelationFilter } from '../project/project-list-relation-filter.input';
+import { AnnualBudgetListRelationFilter } from '../annual-budget/annual-budget-list-relation-filter.input';
+import { ProjectActivityLogListRelationFilter } from '../project-activity-log/project-activity-log-list-relation-filter.input';
+import { ProjectActivityAssigneeListRelationFilter } from '../project-activity-assignee/project-activity-assignee-list-relation-filter.input';
+import { SubsidyStatusHistoryListRelationFilter } from '../subsidy-status-history/subsidy-status-history-list-relation-filter.input';
+import { DepartmentListRelationFilter } from '../department/department-list-relation-filter.input';
 
 @InputType()
 export class UserWhereUniqueInput {
@@ -47,6 +53,9 @@ export class UserWhereUniqueInput {
 
     @Field(() => StringFilter, {nullable:true})
     password?: StringFilter;
+
+    @Field(() => EnumGenderTypeNullableFilter, {nullable:true})
+    gender?: EnumGenderTypeNullableFilter;
 
     @Field(() => EnumLanguagePreferenceFilter, {nullable:true})
     language_preference?: EnumLanguagePreferenceFilter;
@@ -78,11 +87,11 @@ export class UserWhereUniqueInput {
     @Field(() => StringFilter, {nullable:true})
     institution_id?: StringFilter;
 
-    @Field(() => StringFilter, {nullable:true})
-    church_id?: StringFilter;
+    @Field(() => StringNullableFilter, {nullable:true})
+    church_id?: StringNullableFilter;
 
-    @Field(() => StringFilter, {nullable:true})
-    department_id?: StringFilter;
+    @Field(() => StringNullableFilter, {nullable:true})
+    department_id?: StringNullableFilter;
 
     @Field(() => ContactNullableScalarRelationFilter, {nullable:true})
     @Type(() => ContactNullableScalarRelationFilter)
@@ -92,13 +101,13 @@ export class UserWhereUniqueInput {
     @Type(() => InstitutionScalarRelationFilter)
     institution?: InstitutionScalarRelationFilter;
 
-    @Field(() => ChurchScalarRelationFilter, {nullable:true})
-    @Type(() => ChurchScalarRelationFilter)
-    church?: ChurchScalarRelationFilter;
+    @Field(() => ChurchNullableScalarRelationFilter, {nullable:true})
+    @Type(() => ChurchNullableScalarRelationFilter)
+    church?: ChurchNullableScalarRelationFilter;
 
-    @Field(() => DepartmentScalarRelationFilter, {nullable:true})
-    @Type(() => DepartmentScalarRelationFilter)
-    department?: DepartmentScalarRelationFilter;
+    @Field(() => DepartmentNullableScalarRelationFilter, {nullable:true})
+    @Type(() => DepartmentNullableScalarRelationFilter)
+    department?: DepartmentNullableScalarRelationFilter;
 
     @Field(() => UserRoleListRelationFilter, {nullable:true})
     user_roles?: UserRoleListRelationFilter;
@@ -138,4 +147,24 @@ export class UserWhereUniqueInput {
     @Field(() => ProjectListRelationFilter, {nullable:true})
     @Type(() => ProjectListRelationFilter)
     Project?: ProjectListRelationFilter;
+
+    @Field(() => AnnualBudgetListRelationFilter, {nullable:true})
+    @Type(() => AnnualBudgetListRelationFilter)
+    approved_annual_budgets?: AnnualBudgetListRelationFilter;
+
+    @Field(() => ProjectActivityLogListRelationFilter, {nullable:true})
+    @Type(() => ProjectActivityLogListRelationFilter)
+    project_activity_logs?: ProjectActivityLogListRelationFilter;
+
+    @Field(() => ProjectActivityAssigneeListRelationFilter, {nullable:true})
+    @Type(() => ProjectActivityAssigneeListRelationFilter)
+    activity_assignments?: ProjectActivityAssigneeListRelationFilter;
+
+    @Field(() => SubsidyStatusHistoryListRelationFilter, {nullable:true})
+    @Type(() => SubsidyStatusHistoryListRelationFilter)
+    subsidy_status_history?: SubsidyStatusHistoryListRelationFilter;
+
+    @Field(() => DepartmentListRelationFilter, {nullable:true})
+    @Type(() => DepartmentListRelationFilter)
+    led_departments?: DepartmentListRelationFilter;
 }

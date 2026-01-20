@@ -1,10 +1,5 @@
 import { Field } from '@nestjs/graphql';
 import { InputType } from '@nestjs/graphql';
-import { Decimal } from '@prisma/client/runtime/library';
-import { GraphQLDecimal } from 'prisma-graphql-type-decimal';
-import { transformToDecimal } from 'prisma-graphql-type-decimal';
-import { Transform } from 'class-transformer';
-import { Type } from 'class-transformer';
 
 @InputType()
 export class DepartmentCreateManyContactInput {
@@ -15,8 +10,8 @@ export class DepartmentCreateManyContactInput {
     @Field(() => String, {nullable:false})
     institution_id!: string;
 
-    @Field(() => String, {nullable:false})
-    church_id!: string;
+    @Field(() => String, {nullable:true})
+    church_id?: string;
 
     @Field(() => String, {nullable:false})
     name!: string;
@@ -24,10 +19,8 @@ export class DepartmentCreateManyContactInput {
     @Field(() => String, {nullable:false})
     description!: string;
 
-    @Field(() => GraphQLDecimal, {nullable:false})
-    @Type(() => Object)
-    @Transform(transformToDecimal)
-    annual_budget!: Decimal;
+    @Field(() => String, {nullable:false})
+    leader_id!: string;
 
     @Field(() => Date, {nullable:true})
     created_at?: Date | string;

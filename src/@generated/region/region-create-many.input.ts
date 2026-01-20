@@ -1,5 +1,6 @@
 import { Field } from '@nestjs/graphql';
 import { InputType } from '@nestjs/graphql';
+import { GraphQLJSON } from 'graphql-type-json';
 
 @InputType()
 export class RegionCreateManyInput {
@@ -7,17 +8,17 @@ export class RegionCreateManyInput {
     @Field(() => String, {nullable:true})
     id?: string;
 
-    @Field(() => String, {nullable:false})
-    institution_id!: string;
+    @Field(() => String, {nullable:true})
+    description?: string;
 
     @Field(() => String, {nullable:false})
     name!: string;
 
-    @Field(() => String, {nullable:true})
-    parent_region_id?: string;
+    @Field(() => GraphQLJSON, {nullable:true})
+    territory?: any;
 
     @Field(() => String, {nullable:true})
-    contact_id?: string;
+    color?: string;
 
     @Field(() => Date, {nullable:true})
     created_at?: Date | string;

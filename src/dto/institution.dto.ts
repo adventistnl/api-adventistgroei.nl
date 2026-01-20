@@ -1,7 +1,6 @@
 import { IsNotEmpty, IsString, IsOptional } from 'class-validator';
-import { InputType, Field, PartialType } from '@nestjs/graphql';
-import { ContactCreateDto } from './contact.dto';
-import { LanguagePreference } from 'src/@generated/prisma/language-preference.enum';
+import { InputType, Field } from '@nestjs/graphql';
+import { ContactCreateDto, ContactUpdateDto } from './contact.dto';
 
 @InputType()
 export class InstitutionCreateDto {
@@ -15,15 +14,22 @@ export class InstitutionCreateDto {
   @IsString()
   denomination: string;
 
-  @Field(() => LanguagePreference, { nullable: true })
-  language_preference: LanguagePreference;
+  @Field()
+  @IsOptional()
+  @IsString()
+  language_preference: string;
+
+  @Field({ nullable: true })
+  @IsOptional()
+  @IsString()
+  description?: string;
 
   @Field(() => ContactCreateDto, { nullable: true })
   contact?: ContactCreateDto;
 }
 
 @InputType()
-export class InstitutionUpdateDto extends PartialType(InstitutionCreateDto) {
+export class InstitutionUpdateDto {
   @Field({ nullable: true })
   @IsOptional()
   @IsString()
@@ -34,7 +40,16 @@ export class InstitutionUpdateDto extends PartialType(InstitutionCreateDto) {
   @IsString()
   denomination?: string;
 
-  @Field(() => LanguagePreference, { nullable: true })
+  @Field({ nullable: true })
   @IsOptional()
-  language_preference?: LanguagePreference;
+  @IsString()
+  description?: string;
+
+  @Field({ nullable: true })
+  @IsOptional()
+  @IsString()
+  language_preference?: string;
+
+  @Field(() => ContactUpdateDto, { nullable: true })
+  contact?: ContactUpdateDto;
 }

@@ -1,12 +1,11 @@
 import { Field } from '@nestjs/graphql';
 import { InputType } from '@nestjs/graphql';
 import { StringFieldUpdateOperationsInput } from '../prisma/string-field-update-operations.input';
-import { EnumLanguagePreferenceFieldUpdateOperationsInput } from '../prisma/enum-language-preference-field-update-operations.input';
 import { NullableStringFieldUpdateOperationsInput } from '../prisma/nullable-string-field-update-operations.input';
+import { EnumLanguagePreferenceFieldUpdateOperationsInput } from '../prisma/enum-language-preference-field-update-operations.input';
 import { DateTimeFieldUpdateOperationsInput } from '../prisma/date-time-field-update-operations.input';
 import { BoolFieldUpdateOperationsInput } from '../prisma/bool-field-update-operations.input';
 import { NullableDateTimeFieldUpdateOperationsInput } from '../prisma/nullable-date-time-field-update-operations.input';
-import { RegionUncheckedUpdateManyWithoutInstitutionNestedInput } from '../region/region-unchecked-update-many-without-institution-nested.input';
 import { DepartmentUncheckedUpdateManyWithoutInstitutionNestedInput } from '../department/department-unchecked-update-many-without-institution-nested.input';
 import { Type } from 'class-transformer';
 import { UserUncheckedUpdateManyWithoutInstitutionNestedInput } from '../user/user-unchecked-update-many-without-institution-nested.input';
@@ -16,6 +15,7 @@ import { SettingUncheckedUpdateManyWithoutInstitutionNestedInput } from '../sett
 import { ProjectUncheckedUpdateManyWithoutInstitutionNestedInput } from '../project/project-unchecked-update-many-without-institution-nested.input';
 import { DirectMessageUncheckedUpdateManyWithoutInstitutionNestedInput } from '../direct-message/direct-message-unchecked-update-many-without-institution-nested.input';
 import { SubsidyRequestUncheckedUpdateManyWithoutInstitutionNestedInput } from '../subsidy-request/subsidy-request-unchecked-update-many-without-institution-nested.input';
+import { AnnualBudgetUncheckedUpdateManyWithoutInstitutionNestedInput } from '../annual-budget/annual-budget-unchecked-update-many-without-institution-nested.input';
 
 @InputType()
 export class InstitutionUncheckedUpdateWithoutChurchesInput {
@@ -28,6 +28,9 @@ export class InstitutionUncheckedUpdateWithoutChurchesInput {
 
     @Field(() => StringFieldUpdateOperationsInput, {nullable:true})
     denomination?: StringFieldUpdateOperationsInput;
+
+    @Field(() => NullableStringFieldUpdateOperationsInput, {nullable:true})
+    description?: NullableStringFieldUpdateOperationsInput;
 
     @Field(() => EnumLanguagePreferenceFieldUpdateOperationsInput, {nullable:true})
     language_preference?: EnumLanguagePreferenceFieldUpdateOperationsInput;
@@ -56,9 +59,6 @@ export class InstitutionUncheckedUpdateWithoutChurchesInput {
     @Field(() => NullableStringFieldUpdateOperationsInput, {nullable:true})
     deleted_by?: NullableStringFieldUpdateOperationsInput;
 
-    @Field(() => RegionUncheckedUpdateManyWithoutInstitutionNestedInput, {nullable:true})
-    regions?: RegionUncheckedUpdateManyWithoutInstitutionNestedInput;
-
     @Field(() => DepartmentUncheckedUpdateManyWithoutInstitutionNestedInput, {nullable:true})
     @Type(() => DepartmentUncheckedUpdateManyWithoutInstitutionNestedInput)
     departments?: DepartmentUncheckedUpdateManyWithoutInstitutionNestedInput;
@@ -86,4 +86,8 @@ export class InstitutionUncheckedUpdateWithoutChurchesInput {
     @Field(() => SubsidyRequestUncheckedUpdateManyWithoutInstitutionNestedInput, {nullable:true})
     @Type(() => SubsidyRequestUncheckedUpdateManyWithoutInstitutionNestedInput)
     subsidy_requests?: SubsidyRequestUncheckedUpdateManyWithoutInstitutionNestedInput;
+
+    @Field(() => AnnualBudgetUncheckedUpdateManyWithoutInstitutionNestedInput, {nullable:true})
+    @Type(() => AnnualBudgetUncheckedUpdateManyWithoutInstitutionNestedInput)
+    annual_budgets?: AnnualBudgetUncheckedUpdateManyWithoutInstitutionNestedInput;
 }

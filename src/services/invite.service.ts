@@ -16,8 +16,8 @@ export class InviteService {
     return res;
   }
 
-  validateInviteToken(token: string): ValidateOutputModel {
-    const payload = this.inviteRepository.validateInviteToken(token);
+  async validateInviteToken(token: string): Promise<ValidateOutputModel> {
+    const payload = await this.inviteRepository.validateInviteToken(token);
     return payload;
   }
 }

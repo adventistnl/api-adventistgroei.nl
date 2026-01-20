@@ -3,11 +3,14 @@ import { InputType } from '@nestjs/graphql';
 import { StringFieldUpdateOperationsInput } from '../prisma/string-field-update-operations.input';
 import { DecimalFieldUpdateOperationsInput } from '../prisma/decimal-field-update-operations.input';
 import { Type } from 'class-transformer';
-import { DateTimeFieldUpdateOperationsInput } from '../prisma/date-time-field-update-operations.input';
-import { BoolFieldUpdateOperationsInput } from '../prisma/bool-field-update-operations.input';
-import { NullableDateTimeFieldUpdateOperationsInput } from '../prisma/nullable-date-time-field-update-operations.input';
 import { NullableStringFieldUpdateOperationsInput } from '../prisma/nullable-string-field-update-operations.input';
-import { ProjectActivityUncheckedUpdateManyWithoutSubsidy_requestNestedInput } from '../project-activity/project-activity-unchecked-update-many-without-subsidy-request-nested.input';
+import { DateTimeFieldUpdateOperationsInput } from '../prisma/date-time-field-update-operations.input';
+import { NullableDateTimeFieldUpdateOperationsInput } from '../prisma/nullable-date-time-field-update-operations.input';
+import { BoolFieldUpdateOperationsInput } from '../prisma/bool-field-update-operations.input';
+import { EnumSubsidyRequestPriorityFieldUpdateOperationsInput } from '../prisma/enum-subsidy-request-priority-field-update-operations.input';
+import { SubsidyRequestItemUncheckedUpdateManyWithoutSubsidy_requestNestedInput } from '../subsidy-request-item/subsidy-request-item-unchecked-update-many-without-subsidy-request-nested.input';
+import { SubsidyReceiptUncheckedUpdateManyWithoutSubsidy_requestNestedInput } from '../subsidy-receipt/subsidy-receipt-unchecked-update-many-without-subsidy-request-nested.input';
+import { SubsidyStatusHistoryUncheckedUpdateManyWithoutSubsidy_requestNestedInput } from '../subsidy-status-history/subsidy-status-history-unchecked-update-many-without-subsidy-request-nested.input';
 
 @InputType()
 export class SubsidyRequestUncheckedUpdateWithoutRequesterInput {
@@ -22,17 +25,30 @@ export class SubsidyRequestUncheckedUpdateWithoutRequesterInput {
     @Type(() => DecimalFieldUpdateOperationsInput)
     total_budget?: DecimalFieldUpdateOperationsInput;
 
+    @Field(() => DecimalFieldUpdateOperationsInput, {nullable:true})
+    @Type(() => DecimalFieldUpdateOperationsInput)
+    approved_amount?: DecimalFieldUpdateOperationsInput;
+
+    @Field(() => NullableStringFieldUpdateOperationsInput, {nullable:true})
+    rejection_reason?: NullableStringFieldUpdateOperationsInput;
+
     @Field(() => DateTimeFieldUpdateOperationsInput, {nullable:true})
     created_at?: DateTimeFieldUpdateOperationsInput;
 
     @Field(() => DateTimeFieldUpdateOperationsInput, {nullable:true})
     updated_at?: DateTimeFieldUpdateOperationsInput;
 
+    @Field(() => NullableDateTimeFieldUpdateOperationsInput, {nullable:true})
+    approved_at?: NullableDateTimeFieldUpdateOperationsInput;
+
     @Field(() => StringFieldUpdateOperationsInput, {nullable:true})
     created_by?: StringFieldUpdateOperationsInput;
 
     @Field(() => StringFieldUpdateOperationsInput, {nullable:true})
     updated_by?: StringFieldUpdateOperationsInput;
+
+    @Field(() => NullableStringFieldUpdateOperationsInput, {nullable:true})
+    approved_by?: NullableStringFieldUpdateOperationsInput;
 
     @Field(() => BoolFieldUpdateOperationsInput, {nullable:true})
     is_deleted?: BoolFieldUpdateOperationsInput;
@@ -49,8 +65,11 @@ export class SubsidyRequestUncheckedUpdateWithoutRequesterInput {
     @Field(() => StringFieldUpdateOperationsInput, {nullable:true})
     department_id?: StringFieldUpdateOperationsInput;
 
-    @Field(() => StringFieldUpdateOperationsInput, {nullable:true})
-    church_id?: StringFieldUpdateOperationsInput;
+    @Field(() => NullableStringFieldUpdateOperationsInput, {nullable:true})
+    church_id?: NullableStringFieldUpdateOperationsInput;
+
+    @Field(() => EnumSubsidyRequestPriorityFieldUpdateOperationsInput, {nullable:true})
+    priority?: EnumSubsidyRequestPriorityFieldUpdateOperationsInput;
 
     @Field(() => StringFieldUpdateOperationsInput, {nullable:true})
     subsidy_statuses_id?: StringFieldUpdateOperationsInput;
@@ -58,7 +77,15 @@ export class SubsidyRequestUncheckedUpdateWithoutRequesterInput {
     @Field(() => StringFieldUpdateOperationsInput, {nullable:true})
     project_id?: StringFieldUpdateOperationsInput;
 
-    @Field(() => ProjectActivityUncheckedUpdateManyWithoutSubsidy_requestNestedInput, {nullable:true})
-    @Type(() => ProjectActivityUncheckedUpdateManyWithoutSubsidy_requestNestedInput)
-    project_activities?: ProjectActivityUncheckedUpdateManyWithoutSubsidy_requestNestedInput;
+    @Field(() => SubsidyRequestItemUncheckedUpdateManyWithoutSubsidy_requestNestedInput, {nullable:true})
+    @Type(() => SubsidyRequestItemUncheckedUpdateManyWithoutSubsidy_requestNestedInput)
+    items?: SubsidyRequestItemUncheckedUpdateManyWithoutSubsidy_requestNestedInput;
+
+    @Field(() => SubsidyReceiptUncheckedUpdateManyWithoutSubsidy_requestNestedInput, {nullable:true})
+    @Type(() => SubsidyReceiptUncheckedUpdateManyWithoutSubsidy_requestNestedInput)
+    subsidy_receipts?: SubsidyReceiptUncheckedUpdateManyWithoutSubsidy_requestNestedInput;
+
+    @Field(() => SubsidyStatusHistoryUncheckedUpdateManyWithoutSubsidy_requestNestedInput, {nullable:true})
+    @Type(() => SubsidyStatusHistoryUncheckedUpdateManyWithoutSubsidy_requestNestedInput)
+    status_history?: SubsidyStatusHistoryUncheckedUpdateManyWithoutSubsidy_requestNestedInput;
 }

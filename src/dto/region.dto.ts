@@ -1,24 +1,33 @@
 import { InputType, Field } from '@nestjs/graphql';
-import { ContactCreateDto } from './contact.dto';
-import { IsOptional, IsString } from 'class-validator';
+import { IsOptional, IsString, IsObject } from 'class-validator';
+import { GraphQLJSON } from 'graphql-type-json';
+
+export interface TerritoryMap {
+  [country: string]: {
+    [state: string]: string[];
+  };
+}
 
 @InputType()
 export class RegionCreateDto {
   @Field()
   @IsString()
-  institution_id: string;
-
-  @Field()
-  @IsString()
   name: string;
 
-  @Field({ nullable: true })
-  @IsString()
-  parent_region_id?: string;
-
-  @Field(() => ContactCreateDto, { nullable: true })
+  @Field(() => String, { nullable: true })
   @IsOptional()
-  contact?: ContactCreateDto;
+  @IsString()
+  description?: string;
+
+  @Field(() => GraphQLJSON, { nullable: true })
+  @IsOptional()
+  @IsObject()
+  territory?: TerritoryMap;
+
+  @Field(() => String, { nullable: true })
+  @IsOptional()
+  @IsString()
+  color?: string;
 }
 
 @InputType()
@@ -26,19 +35,20 @@ export class RegionUpdateDto {
   @Field({ nullable: true })
   @IsString()
   @IsOptional()
-  institution_id?: string;
-
-  @Field({ nullable: true })
-  @IsString()
-  @IsOptional()
   name?: string;
 
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
+  @IsOptional()
   @IsString()
-  @IsOptional()
-  parent_region_id?: string;
+  description?: string;
 
-  @Field(() => ContactCreateDto, { nullable: true })
+  @Field(() => GraphQLJSON, { nullable: true })
   @IsOptional()
-  contact?: ContactCreateDto;
+  @IsObject()
+  territory?: TerritoryMap;
+
+  @Field(() => String, { nullable: true })
+  @IsOptional()
+  @IsString()
+  color?: string;
 }

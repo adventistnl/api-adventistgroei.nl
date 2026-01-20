@@ -1,8 +1,7 @@
 import { Field } from '@nestjs/graphql';
 import { ObjectType } from '@nestjs/graphql';
 import { ID } from '@nestjs/graphql';
-import { Institution } from '../institution/institution.model';
-import { Contact } from '../contact/contact.model';
+import { GraphQLJSON } from 'graphql-type-json';
 import { Church } from '../church/church.model';
 import { RegionCount } from './region-count.output';
 
@@ -12,17 +11,17 @@ export class Region {
     @Field(() => ID, {nullable:false})
     id!: string;
 
-    @Field(() => String, {nullable:false})
-    institution_id!: string;
+    @Field(() => String, {nullable:true})
+    description!: string | null;
 
     @Field(() => String, {nullable:false})
     name!: string;
 
-    @Field(() => String, {nullable:true})
-    parent_region_id!: string | null;
+    @Field(() => GraphQLJSON, {nullable:true})
+    territory!: any | null;
 
-    @Field(() => String, {nullable:true})
-    contact_id!: string | null;
+    @Field(() => String, {defaultValue:'#9810fa',nullable:true})
+    color!: string | null;
 
     @Field(() => Date, {nullable:false})
     created_at!: Date;
@@ -44,18 +43,6 @@ export class Region {
 
     @Field(() => String, {nullable:true})
     deleted_by!: string | null;
-
-    @Field(() => Institution, {nullable:false})
-    institution?: Institution;
-
-    @Field(() => Region, {nullable:true})
-    parent_region?: Region | null;
-
-    @Field(() => [Region], {nullable:true})
-    children?: Array<Region>;
-
-    @Field(() => Contact, {nullable:true})
-    contact?: Contact | null;
 
     @Field(() => [Church], {nullable:true})
     churches?: Array<Church>;

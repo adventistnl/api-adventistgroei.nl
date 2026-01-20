@@ -14,6 +14,9 @@ export class InstitutionMinAggregate {
     @Field(() => String, {nullable:true})
     denomination?: string;
 
+    @Field(() => String, {nullable:true})
+    description?: string;
+
     @Field(() => LanguagePreference, {nullable:true})
     language_preference?: `${LanguagePreference}`;
 

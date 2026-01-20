@@ -5,6 +5,7 @@ import { RoleAssignmentModel, RoleModel } from '../models/role.model';
 import { Permission } from '../middlewares/permissions.decorator';
 import { UseGuards } from '@nestjs/common';
 import { PermissionsGuard } from '../middlewares/permissions.guard';
+import { ContextDto } from '../dto/context.dto';
 
 @Resolver(() => RoleModel)
 @UseGuards(PermissionsGuard)
@@ -15,39 +16,41 @@ export class RoleResolver {
   @Permission()
   async createRole(
     @Args('input') input: CreateRoleInput,
-    @Context() ctx: { userId?: string },
+    @Context() ctx: ContextDto,
   ): Promise<RoleModel> {
-    return this.roleService.create(input, ctx.userId!);
+    return this.roleService.create(input, ctx.userId, ctx.userRoles);
   }
 
   @Mutation(() => RoleModel)
   @Permission()
   async updateRole(
     @Args('input') input: UpdateRoleInput,
-    @Context() ctx: { userId?: string },
+    @Context() ctx: ContextDto,
   ): Promise<RoleModel> {
-    return this.roleService.update(input, ctx.userId!);
+    return this.roleService.update(input, ctx.userId, ctx.userRoles);
   }
 
   @Mutation(() => RoleModel)
   @Permission()
   async deleteRole(
     @Args('id') id: string,
-    @Context() ctx: { userId?: string },
+    @Context() ctx: ContextDto,
   ): Promise<RoleModel> {
-    return this.roleService.delete(id, ctx.userId!);
+    return this.roleService.delete(id, ctx.userId);
   }
 
   @Query(() => [RoleModel])
   @Permission()
-  async roles(): Promise<RoleModel[]> {
-    return this.roleService.findAll();
+  async roles(
+    @Context() ctx: ContextDto,
+  ): Promise<RoleModel[]> {
+    return this.roleService.findAll(ctx.userId, ctx.userRoles);
   }
 
   @Query(() => RoleModel, { nullable: true })
   @Permission()
-  async role(@Args('id') id: string): Promise<RoleModel | null> {
-    return this.roleService.findById(id);
+  async role(@Args('id') id: string, @Context() ctx: ContextDto): Promise<RoleModel | null> {
+    return this.roleService.findById(id, ctx.userRoles);
   }
 
   @ResolveField(() => [RoleAssignmentModel], { nullable: 'itemsAndList' })

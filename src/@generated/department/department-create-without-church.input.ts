@@ -1,17 +1,16 @@
 import { Field } from '@nestjs/graphql';
 import { InputType } from '@nestjs/graphql';
-import { Decimal } from '@prisma/client/runtime/library';
-import { GraphQLDecimal } from 'prisma-graphql-type-decimal';
-import { transformToDecimal } from 'prisma-graphql-type-decimal';
-import { Transform } from 'class-transformer';
-import { Type } from 'class-transformer';
 import { InstitutionCreateNestedOneWithoutDepartmentsInput } from '../institution/institution-create-nested-one-without-departments.input';
+import { Type } from 'class-transformer';
+import { UserCreateNestedOneWithoutLed_departmentsInput } from '../user/user-create-nested-one-without-led-departments.input';
 import { ContactCreateNestedOneWithoutDepartmentInput } from '../contact/contact-create-nested-one-without-department.input';
 import { SubsidyStatusCreateNestedManyWithoutDepartmentInput } from '../subsidy-status/subsidy-status-create-nested-many-without-department.input';
 import { ProjectCreateNestedManyWithoutDepartmentInput } from '../project/project-create-nested-many-without-department.input';
+import { ProjectCreateNestedManyWithoutChurch_departmentInput } from '../project/project-create-nested-many-without-church-department.input';
 import { AnnualReportCreateNestedManyWithoutDepartmentInput } from '../annual-report/annual-report-create-nested-many-without-department.input';
 import { SubsidyRequestCreateNestedManyWithoutDepartmentInput } from '../subsidy-request/subsidy-request-create-nested-many-without-department.input';
 import { UserCreateNestedManyWithoutDepartmentInput } from '../user/user-create-nested-many-without-department.input';
+import { AnnualBudgetCreateNestedManyWithoutDepartmentInput } from '../annual-budget/annual-budget-create-nested-many-without-department.input';
 
 @InputType()
 export class DepartmentCreateWithoutChurchInput {
@@ -24,11 +23,6 @@ export class DepartmentCreateWithoutChurchInput {
 
     @Field(() => String, {nullable:false})
     description!: string;
-
-    @Field(() => GraphQLDecimal, {nullable:false})
-    @Type(() => Object)
-    @Transform(transformToDecimal)
-    annual_budget!: Decimal;
 
     @Field(() => Date, {nullable:true})
     created_at?: Date | string;
@@ -55,6 +49,10 @@ export class DepartmentCreateWithoutChurchInput {
     @Type(() => InstitutionCreateNestedOneWithoutDepartmentsInput)
     institution!: InstitutionCreateNestedOneWithoutDepartmentsInput;
 
+    @Field(() => UserCreateNestedOneWithoutLed_departmentsInput, {nullable:false})
+    @Type(() => UserCreateNestedOneWithoutLed_departmentsInput)
+    leader!: UserCreateNestedOneWithoutLed_departmentsInput;
+
     @Field(() => ContactCreateNestedOneWithoutDepartmentInput, {nullable:true})
     @Type(() => ContactCreateNestedOneWithoutDepartmentInput)
     contact?: ContactCreateNestedOneWithoutDepartmentInput;
@@ -67,8 +65,11 @@ export class DepartmentCreateWithoutChurchInput {
     @Type(() => ProjectCreateNestedManyWithoutDepartmentInput)
     projects?: ProjectCreateNestedManyWithoutDepartmentInput;
 
+    @Field(() => ProjectCreateNestedManyWithoutChurch_departmentInput, {nullable:true})
+    @Type(() => ProjectCreateNestedManyWithoutChurch_departmentInput)
+    church_projects?: ProjectCreateNestedManyWithoutChurch_departmentInput;
+
     @Field(() => AnnualReportCreateNestedManyWithoutDepartmentInput, {nullable:true})
-    @Type(() => AnnualReportCreateNestedManyWithoutDepartmentInput)
     annual_reports?: AnnualReportCreateNestedManyWithoutDepartmentInput;
 
     @Field(() => SubsidyRequestCreateNestedManyWithoutDepartmentInput, {nullable:true})
@@ -78,4 +79,8 @@ export class DepartmentCreateWithoutChurchInput {
     @Field(() => UserCreateNestedManyWithoutDepartmentInput, {nullable:true})
     @Type(() => UserCreateNestedManyWithoutDepartmentInput)
     users?: UserCreateNestedManyWithoutDepartmentInput;
+
+    @Field(() => AnnualBudgetCreateNestedManyWithoutDepartmentInput, {nullable:true})
+    @Type(() => AnnualBudgetCreateNestedManyWithoutDepartmentInput)
+    annual_budgets?: AnnualBudgetCreateNestedManyWithoutDepartmentInput;
 }

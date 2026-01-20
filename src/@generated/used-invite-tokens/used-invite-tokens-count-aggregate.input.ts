@@ -1,0 +1,21 @@
+import { Field } from '@nestjs/graphql';
+import { InputType } from '@nestjs/graphql';
+
+@InputType()
+export class UsedInviteTokensCountAggregateInput {
+
+    @Field(() => Boolean, {nullable:true})
+    id?: true;
+
+    @Field(() => Boolean, {nullable:true})
+    token?: true;
+
+    @Field(() => Boolean, {nullable:true})
+    usedAt?: true;
+
+    @Field(() => Boolean, {nullable:true})
+    tokenExpiresAt?: true;
+
+    @Field(() => Boolean, {nullable:true})
+    _all?: true;
+}

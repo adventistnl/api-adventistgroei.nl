@@ -5,7 +5,6 @@ import { NullableStringFieldUpdateOperationsInput } from '../prisma/nullable-str
 import { BoolFieldUpdateOperationsInput } from '../prisma/bool-field-update-operations.input';
 import { DateTimeFieldUpdateOperationsInput } from '../prisma/date-time-field-update-operations.input';
 import { NullableDateTimeFieldUpdateOperationsInput } from '../prisma/nullable-date-time-field-update-operations.input';
-import { RegionUncheckedUpdateManyWithoutContactNestedInput } from '../region/region-unchecked-update-many-without-contact-nested.input';
 import { ChurchUncheckedUpdateManyWithoutContactNestedInput } from '../church/church-unchecked-update-many-without-contact-nested.input';
 import { Type } from 'class-transformer';
 import { DepartmentUncheckedUpdateManyWithoutContactNestedInput } from '../department/department-unchecked-update-many-without-contact-nested.input';
@@ -35,6 +34,9 @@ export class ContactUncheckedUpdateWithoutInstitutionInput {
 
     @Field(() => NullableStringFieldUpdateOperationsInput, {nullable:true})
     city?: NullableStringFieldUpdateOperationsInput;
+
+    @Field(() => NullableStringFieldUpdateOperationsInput, {nullable:true})
+    state?: NullableStringFieldUpdateOperationsInput;
 
     @Field(() => NullableStringFieldUpdateOperationsInput, {nullable:true})
     address?: NullableStringFieldUpdateOperationsInput;
@@ -74,9 +76,6 @@ export class ContactUncheckedUpdateWithoutInstitutionInput {
 
     @Field(() => NullableStringFieldUpdateOperationsInput, {nullable:true})
     deleted_by?: NullableStringFieldUpdateOperationsInput;
-
-    @Field(() => RegionUncheckedUpdateManyWithoutContactNestedInput, {nullable:true})
-    Region?: RegionUncheckedUpdateManyWithoutContactNestedInput;
 
     @Field(() => ChurchUncheckedUpdateManyWithoutContactNestedInput, {nullable:true})
     @Type(() => ChurchUncheckedUpdateManyWithoutContactNestedInput)

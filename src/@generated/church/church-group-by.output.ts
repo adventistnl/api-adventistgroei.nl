@@ -1,5 +1,6 @@
 import { Field } from '@nestjs/graphql';
 import { ObjectType } from '@nestjs/graphql';
+import { ChurchType } from '../prisma/church-type.enum';
 import { ChurchCountAggregate } from './church-count-aggregate.output';
 import { ChurchMinAggregate } from './church-min-aggregate.output';
 import { ChurchMaxAggregate } from './church-max-aggregate.output';
@@ -10,14 +11,17 @@ export class ChurchGroupBy {
     @Field(() => String, {nullable:false})
     id!: string;
 
+    @Field(() => ChurchType, {nullable:false})
+    type!: `${ChurchType}`;
+
     @Field(() => String, {nullable:false})
     institution_id!: string;
 
     @Field(() => String, {nullable:false})
     name!: string;
 
-    @Field(() => String, {nullable:false})
-    region_id!: string;
+    @Field(() => String, {nullable:true})
+    region_id?: string;
 
     @Field(() => String, {nullable:true})
     contact_id?: string;

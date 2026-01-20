@@ -43,4 +43,7 @@ export class PermissionMaxOrderByAggregateInput {
 
     @Field(() => SortOrder, {nullable:true})
     deleted_by?: `${SortOrder}`;
+
+    @Field(() => SortOrder, {nullable:true})
+    disabled_to_client?: `${SortOrder}`;
 }

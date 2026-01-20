@@ -14,6 +14,9 @@ export class RolePermissionMaxAggregateInput {
     permission_id?: true;
 
     @Field(() => Boolean, {nullable:true})
+    is_essential?: true;
+
+    @Field(() => Boolean, {nullable:true})
     created_at?: true;
 
     @Field(() => Boolean, {nullable:true})

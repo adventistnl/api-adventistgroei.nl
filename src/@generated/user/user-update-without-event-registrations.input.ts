@@ -1,6 +1,7 @@
 import { Field } from '@nestjs/graphql';
 import { InputType } from '@nestjs/graphql';
 import { StringFieldUpdateOperationsInput } from '../prisma/string-field-update-operations.input';
+import { NullableEnumGenderTypeFieldUpdateOperationsInput } from '../prisma/nullable-enum-gender-type-field-update-operations.input';
 import { EnumLanguagePreferenceFieldUpdateOperationsInput } from '../prisma/enum-language-preference-field-update-operations.input';
 import { DateTimeFieldUpdateOperationsInput } from '../prisma/date-time-field-update-operations.input';
 import { BoolFieldUpdateOperationsInput } from '../prisma/bool-field-update-operations.input';
@@ -9,8 +10,8 @@ import { NullableStringFieldUpdateOperationsInput } from '../prisma/nullable-str
 import { ContactUpdateOneWithoutUserNestedInput } from '../contact/contact-update-one-without-user-nested.input';
 import { Type } from 'class-transformer';
 import { InstitutionUpdateOneRequiredWithoutUsersNestedInput } from '../institution/institution-update-one-required-without-users-nested.input';
-import { ChurchUpdateOneRequiredWithoutUsersNestedInput } from '../church/church-update-one-required-without-users-nested.input';
-import { DepartmentUpdateOneRequiredWithoutUsersNestedInput } from '../department/department-update-one-required-without-users-nested.input';
+import { ChurchUpdateOneWithoutUsersNestedInput } from '../church/church-update-one-without-users-nested.input';
+import { DepartmentUpdateOneWithoutUsersNestedInput } from '../department/department-update-one-without-users-nested.input';
 import { UserRoleUpdateManyWithoutUserNestedInput } from '../user-role/user-role-update-many-without-user-nested.input';
 import { DirectMessageUpdateManyWithoutSenderNestedInput } from '../direct-message/direct-message-update-many-without-sender-nested.input';
 import { DirectMessageRecipientUpdateManyWithoutRecipient_userNestedInput } from '../direct-message-recipient/direct-message-recipient-update-many-without-recipient-user-nested.input';
@@ -21,6 +22,11 @@ import { SubsidyRequestUpdateManyWithoutRequesterNestedInput } from '../subsidy-
 import { SubsidyStatusUpdateManyWithoutAssigned_userNestedInput } from '../subsidy-status/subsidy-status-update-many-without-assigned-user-nested.input';
 import { VoluntariesOnProjectsUpdateManyWithoutUserNestedInput } from '../voluntaries-on-projects/voluntaries-on-projects-update-many-without-user-nested.input';
 import { ProjectUpdateManyWithoutOwnerNestedInput } from '../project/project-update-many-without-owner-nested.input';
+import { AnnualBudgetUpdateManyWithoutApproved_userNestedInput } from '../annual-budget/annual-budget-update-many-without-approved-user-nested.input';
+import { ProjectActivityLogUpdateManyWithoutUserNestedInput } from '../project-activity-log/project-activity-log-update-many-without-user-nested.input';
+import { ProjectActivityAssigneeUpdateManyWithoutUserNestedInput } from '../project-activity-assignee/project-activity-assignee-update-many-without-user-nested.input';
+import { SubsidyStatusHistoryUpdateManyWithoutUserNestedInput } from '../subsidy-status-history/subsidy-status-history-update-many-without-user-nested.input';
+import { DepartmentUpdateManyWithoutLeaderNestedInput } from '../department/department-update-many-without-leader-nested.input';
 
 @InputType()
 export class UserUpdateWithoutEvent_registrationsInput {
@@ -36,6 +42,9 @@ export class UserUpdateWithoutEvent_registrationsInput {
 
     @Field(() => StringFieldUpdateOperationsInput, {nullable:true})
     password?: StringFieldUpdateOperationsInput;
+
+    @Field(() => NullableEnumGenderTypeFieldUpdateOperationsInput, {nullable:true})
+    gender?: NullableEnumGenderTypeFieldUpdateOperationsInput;
 
     @Field(() => EnumLanguagePreferenceFieldUpdateOperationsInput, {nullable:true})
     language_preference?: EnumLanguagePreferenceFieldUpdateOperationsInput;
@@ -69,13 +78,13 @@ export class UserUpdateWithoutEvent_registrationsInput {
     @Type(() => InstitutionUpdateOneRequiredWithoutUsersNestedInput)
     institution?: InstitutionUpdateOneRequiredWithoutUsersNestedInput;
 
-    @Field(() => ChurchUpdateOneRequiredWithoutUsersNestedInput, {nullable:true})
-    @Type(() => ChurchUpdateOneRequiredWithoutUsersNestedInput)
-    church?: ChurchUpdateOneRequiredWithoutUsersNestedInput;
+    @Field(() => ChurchUpdateOneWithoutUsersNestedInput, {nullable:true})
+    @Type(() => ChurchUpdateOneWithoutUsersNestedInput)
+    church?: ChurchUpdateOneWithoutUsersNestedInput;
 
-    @Field(() => DepartmentUpdateOneRequiredWithoutUsersNestedInput, {nullable:true})
-    @Type(() => DepartmentUpdateOneRequiredWithoutUsersNestedInput)
-    department?: DepartmentUpdateOneRequiredWithoutUsersNestedInput;
+    @Field(() => DepartmentUpdateOneWithoutUsersNestedInput, {nullable:true})
+    @Type(() => DepartmentUpdateOneWithoutUsersNestedInput)
+    department?: DepartmentUpdateOneWithoutUsersNestedInput;
 
     @Field(() => UserRoleUpdateManyWithoutUserNestedInput, {nullable:true})
     user_roles?: UserRoleUpdateManyWithoutUserNestedInput;
@@ -111,4 +120,24 @@ export class UserUpdateWithoutEvent_registrationsInput {
     @Field(() => ProjectUpdateManyWithoutOwnerNestedInput, {nullable:true})
     @Type(() => ProjectUpdateManyWithoutOwnerNestedInput)
     Project?: ProjectUpdateManyWithoutOwnerNestedInput;
+
+    @Field(() => AnnualBudgetUpdateManyWithoutApproved_userNestedInput, {nullable:true})
+    @Type(() => AnnualBudgetUpdateManyWithoutApproved_userNestedInput)
+    approved_annual_budgets?: AnnualBudgetUpdateManyWithoutApproved_userNestedInput;
+
+    @Field(() => ProjectActivityLogUpdateManyWithoutUserNestedInput, {nullable:true})
+    @Type(() => ProjectActivityLogUpdateManyWithoutUserNestedInput)
+    project_activity_logs?: ProjectActivityLogUpdateManyWithoutUserNestedInput;
+
+    @Field(() => ProjectActivityAssigneeUpdateManyWithoutUserNestedInput, {nullable:true})
+    @Type(() => ProjectActivityAssigneeUpdateManyWithoutUserNestedInput)
+    activity_assignments?: ProjectActivityAssigneeUpdateManyWithoutUserNestedInput;
+
+    @Field(() => SubsidyStatusHistoryUpdateManyWithoutUserNestedInput, {nullable:true})
+    @Type(() => SubsidyStatusHistoryUpdateManyWithoutUserNestedInput)
+    subsidy_status_history?: SubsidyStatusHistoryUpdateManyWithoutUserNestedInput;
+
+    @Field(() => DepartmentUpdateManyWithoutLeaderNestedInput, {nullable:true})
+    @Type(() => DepartmentUpdateManyWithoutLeaderNestedInput)
+    led_departments?: DepartmentUpdateManyWithoutLeaderNestedInput;
 }
