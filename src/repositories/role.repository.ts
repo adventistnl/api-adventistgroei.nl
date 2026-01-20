@@ -162,21 +162,17 @@ export class RoleRepository {
   }
 
   async findAll(_userId: string, userRoles: string[]): Promise<Role[]> {
+    // Se o usuário tem a role DEV, retorna todas as roles
+    // Caso contrário, exclui a role DEV da lista
+    const whereCondition = userRoles.includes('DEV')
+      ? { is_deleted: false }
+      : {
+          is_deleted: false,
+          key_code: { not: 'DEV' },
+        };
+
     const res = await this.prisma.role.findMany({
-      where: {
-        AND: [
-          { is_deleted: false },
-          {
-            OR: [
-              { key_code: { not: 'dev' } }, // Inclui todas as roles exceto 'dev'
-              {
-                key_code: 'dev',
-                ...(userRoles.includes('dev') ? {} : { key_code: undefined }), // Inclui 'dev' apenas se o usuário tiver a role 'dev'
-              },
-            ],
-          },
-        ],
-      },
+      where: whereCondition,
       include: {
         role_permissions: {
           include: { permission: true },

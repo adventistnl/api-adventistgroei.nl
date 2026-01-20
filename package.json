@@ -30,6 +30,8 @@
     "seed:users": "ts-node -r tsconfig-paths/register src/scripts/seed-users.ts",
     "seed:subsidy-statuses": "ts-node -r tsconfig-paths/register src/scripts/seed-subsidy-statuses.ts",
     "seed:dev": "ts-node -r tsconfig-paths/register src/scripts/seed-developer-role.ts",
+    "seed:prod:admin": "ts-node -r tsconfig-paths/register src/scripts/seed-admin-prod.ts",
+    "seed:prod:developer": "ts-node -r tsconfig-paths/register src/scripts/seed-developer-prod.ts",
     "seed:all": "pnpm run seed:permissions && pnpm run seed:roles && pnpm run seed:users && pnpm run seed:subsidy-statuses"
   },
   "dependencies": {
