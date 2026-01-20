@@ -32,19 +32,19 @@ export class ChurchUncheckedUpdateManyWithoutContactNestedInput {
 
     @Field(() => [ChurchWhereUniqueInput], {nullable:true})
     @Type(() => ChurchWhereUniqueInput)
-    set?: Array<Prisma.AtLeast<ChurchWhereUniqueInput, 'id'>>;
+    set?: Array<Prisma.AtLeast<ChurchWhereUniqueInput, 'id' | 'leader_id'>>;
 
     @Field(() => [ChurchWhereUniqueInput], {nullable:true})
     @Type(() => ChurchWhereUniqueInput)
-    disconnect?: Array<Prisma.AtLeast<ChurchWhereUniqueInput, 'id'>>;
+    disconnect?: Array<Prisma.AtLeast<ChurchWhereUniqueInput, 'id' | 'leader_id'>>;
 
     @Field(() => [ChurchWhereUniqueInput], {nullable:true})
     @Type(() => ChurchWhereUniqueInput)
-    delete?: Array<Prisma.AtLeast<ChurchWhereUniqueInput, 'id'>>;
+    delete?: Array<Prisma.AtLeast<ChurchWhereUniqueInput, 'id' | 'leader_id'>>;
 
     @Field(() => [ChurchWhereUniqueInput], {nullable:true})
     @Type(() => ChurchWhereUniqueInput)
-    connect?: Array<Prisma.AtLeast<ChurchWhereUniqueInput, 'id'>>;
+    connect?: Array<Prisma.AtLeast<ChurchWhereUniqueInput, 'id' | 'leader_id'>>;
 
     @Field(() => [ChurchUpdateWithWhereUniqueWithoutContactInput], {nullable:true})
     @Type(() => ChurchUpdateWithWhereUniqueWithoutContactInput)

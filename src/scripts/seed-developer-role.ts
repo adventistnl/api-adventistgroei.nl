@@ -151,6 +151,19 @@ async function main() {
       });
     }
 
+    // Criar usuário temporário se não existir (será o líder inicial)
+    let tempUser = await prisma.user.findFirst({ where: { email: seed.user.email } });
+    if (!tempUser) {
+      tempUser = await prisma.user.create({
+        data: {
+          ...seed.user,
+          institution_id: institution.id,
+          is_deleted: false,
+          ...createAndUpdateUser,
+        },
+      });
+    }
+
     // Criação da church caso não exista
     let church = await prisma.church.findFirst({ where: { name: seed.church.name } });
     if (!church) {
@@ -159,22 +172,17 @@ async function main() {
           ...seed.church,
           institution_id: institution.id,
           region_id: region.id,
+          leader_id: tempUser.id,
           ...createAndUpdateUser,
-        },
+        } as Prisma.ChurchUncheckedCreateInput,
       });
     }
 
-    // Criar usuário temporário se não existir (será o líder inicial)
-    let tempUser = await prisma.user.findFirst({ where: { email: seed.user.email } });
-    if (!tempUser) {
-      tempUser = await prisma.user.create({
-        data: {
-          ...seed.user,
-          institution_id: institution.id,
-          church_id: church.id,
-          is_deleted: false,
-          ...createAndUpdateUser,
-        },
+    // Atualizar tempUser com church_id após criar church
+    if (tempUser && church) {
+      await prisma.user.update({
+        where: { id: tempUser.id },
+        data: { church_id: church.id },
       });
     }
 

@@ -19,7 +19,7 @@ export class FindManyChurchArgs {
     orderBy?: Array<ChurchOrderByWithRelationInput>;
 
     @Field(() => ChurchWhereUniqueInput, {nullable:true})
-    cursor?: Prisma.AtLeast<ChurchWhereUniqueInput, 'id'>;
+    cursor?: Prisma.AtLeast<ChurchWhereUniqueInput, 'id' | 'leader_id'>;
 
     @Field(() => Int, {nullable:true})
     take?: number;

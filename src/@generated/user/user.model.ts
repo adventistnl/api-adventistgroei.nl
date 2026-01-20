@@ -138,6 +138,9 @@ export class User {
     @Field(() => [Department], {nullable:true})
     led_departments?: Array<Department>;
 
+    @Field(() => Church, {nullable:true})
+    led_church?: Church | null;
+
     @Field(() => UserCount, {nullable:false})
     _count?: UserCount;
 }

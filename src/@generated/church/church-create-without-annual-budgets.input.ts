@@ -5,6 +5,7 @@ import { InstitutionCreateNestedOneWithoutChurchesInput } from '../institution/i
 import { Type } from 'class-transformer';
 import { RegionCreateNestedOneWithoutChurchesInput } from '../region/region-create-nested-one-without-churches.input';
 import { ContactCreateNestedOneWithoutChurchInput } from '../contact/contact-create-nested-one-without-church.input';
+import { UserCreateNestedOneWithoutLed_churchInput } from '../user/user-create-nested-one-without-led-church.input';
 import { DepartmentCreateNestedManyWithoutChurchInput } from '../department/department-create-nested-many-without-church.input';
 import { UserCreateNestedManyWithoutChurchInput } from '../user/user-create-nested-many-without-church.input';
 import { SubsidyRequestCreateNestedManyWithoutChurchInput } from '../subsidy-request/subsidy-request-create-nested-many-without-church.input';
@@ -53,6 +54,10 @@ export class ChurchCreateWithoutAnnual_budgetsInput {
     @Field(() => ContactCreateNestedOneWithoutChurchInput, {nullable:true})
     @Type(() => ContactCreateNestedOneWithoutChurchInput)
     contact?: ContactCreateNestedOneWithoutChurchInput;
+
+    @Field(() => UserCreateNestedOneWithoutLed_churchInput, {nullable:false})
+    @Type(() => UserCreateNestedOneWithoutLed_churchInput)
+    leader!: UserCreateNestedOneWithoutLed_churchInput;
 
     @Field(() => DepartmentCreateNestedManyWithoutChurchInput, {nullable:true})
     @Type(() => DepartmentCreateNestedManyWithoutChurchInput)

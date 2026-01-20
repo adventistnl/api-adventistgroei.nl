@@ -10,7 +10,7 @@ export class ChurchUpdateWithWhereUniqueWithoutRegionInput {
 
     @Field(() => ChurchWhereUniqueInput, {nullable:false})
     @Type(() => ChurchWhereUniqueInput)
-    where!: Prisma.AtLeast<ChurchWhereUniqueInput, 'id'>;
+    where!: Prisma.AtLeast<ChurchWhereUniqueInput, 'id' | 'leader_id'>;
 
     @Field(() => ChurchUpdateWithoutRegionInput, {nullable:false})
     @Type(() => ChurchUpdateWithoutRegionInput)

@@ -7,6 +7,7 @@ export enum ChurchScalarFieldEnum {
     name = "name",
     region_id = "region_id",
     contact_id = "contact_id",
+    leader_id = "leader_id",
     created_at = "created_at",
     updated_at = "updated_at",
     created_by = "created_by",

@@ -167,4 +167,8 @@ export class UserWhereUniqueInput {
     @Field(() => DepartmentListRelationFilter, {nullable:true})
     @Type(() => DepartmentListRelationFilter)
     led_departments?: DepartmentListRelationFilter;
+
+    @Field(() => ChurchNullableScalarRelationFilter, {nullable:true})
+    @Type(() => ChurchNullableScalarRelationFilter)
+    led_church?: ChurchNullableScalarRelationFilter;
 }

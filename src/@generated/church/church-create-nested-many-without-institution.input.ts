@@ -24,5 +24,5 @@ export class ChurchCreateNestedManyWithoutInstitutionInput {
 
     @Field(() => [ChurchWhereUniqueInput], {nullable:true})
     @Type(() => ChurchWhereUniqueInput)
-    connect?: Array<Prisma.AtLeast<ChurchWhereUniqueInput, 'id'>>;
+    connect?: Array<Prisma.AtLeast<ChurchWhereUniqueInput, 'id' | 'leader_id'>>;
 }

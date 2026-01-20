@@ -9,5 +9,5 @@ export class DeleteOneChurchArgs {
 
     @Field(() => ChurchWhereUniqueInput, {nullable:false})
     @Type(() => ChurchWhereUniqueInput)
-    where!: Prisma.AtLeast<ChurchWhereUniqueInput, 'id'>;
+    where!: Prisma.AtLeast<ChurchWhereUniqueInput, 'id' | 'leader_id'>;
 }

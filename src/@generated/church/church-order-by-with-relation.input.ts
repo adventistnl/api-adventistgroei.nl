@@ -6,6 +6,7 @@ import { InstitutionOrderByWithRelationInput } from '../institution/institution-
 import { Type } from 'class-transformer';
 import { RegionOrderByWithRelationInput } from '../region/region-order-by-with-relation.input';
 import { ContactOrderByWithRelationInput } from '../contact/contact-order-by-with-relation.input';
+import { UserOrderByWithRelationInput } from '../user/user-order-by-with-relation.input';
 import { DepartmentOrderByRelationAggregateInput } from '../department/department-order-by-relation-aggregate.input';
 import { UserOrderByRelationAggregateInput } from '../user/user-order-by-relation-aggregate.input';
 import { SubsidyRequestOrderByRelationAggregateInput } from '../subsidy-request/subsidy-request-order-by-relation-aggregate.input';
@@ -32,6 +33,9 @@ export class ChurchOrderByWithRelationInput {
 
     @Field(() => SortOrderInput, {nullable:true})
     contact_id?: SortOrderInput;
+
+    @Field(() => SortOrder, {nullable:true})
+    leader_id?: `${SortOrder}`;
 
     @Field(() => SortOrder, {nullable:true})
     created_at?: `${SortOrder}`;
@@ -64,6 +68,10 @@ export class ChurchOrderByWithRelationInput {
     @Field(() => ContactOrderByWithRelationInput, {nullable:true})
     @Type(() => ContactOrderByWithRelationInput)
     contact?: ContactOrderByWithRelationInput;
+
+    @Field(() => UserOrderByWithRelationInput, {nullable:true})
+    @Type(() => UserOrderByWithRelationInput)
+    leader?: UserOrderByWithRelationInput;
 
     @Field(() => DepartmentOrderByRelationAggregateInput, {nullable:true})
     @Type(() => DepartmentOrderByRelationAggregateInput)

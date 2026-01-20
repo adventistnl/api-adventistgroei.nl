@@ -19,5 +19,5 @@ export class ChurchCreateNestedOneWithoutSubsidy_requestsInput {
 
     @Field(() => ChurchWhereUniqueInput, {nullable:true})
     @Type(() => ChurchWhereUniqueInput)
-    connect?: Prisma.AtLeast<ChurchWhereUniqueInput, 'id'>;
+    connect?: Prisma.AtLeast<ChurchWhereUniqueInput, 'id' | 'leader_id'>;
 }

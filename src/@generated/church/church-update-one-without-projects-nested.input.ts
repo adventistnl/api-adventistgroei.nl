@@ -34,7 +34,7 @@ export class ChurchUpdateOneWithoutProjectsNestedInput {
 
     @Field(() => ChurchWhereUniqueInput, {nullable:true})
     @Type(() => ChurchWhereUniqueInput)
-    connect?: Prisma.AtLeast<ChurchWhereUniqueInput, 'id'>;
+    connect?: Prisma.AtLeast<ChurchWhereUniqueInput, 'id' | 'leader_id'>;
 
     @Field(() => ChurchUpdateToOneWithWhereWithoutProjectsInput, {nullable:true})
     @Type(() => ChurchUpdateToOneWithWhereWithoutProjectsInput)
