@@ -22,6 +22,7 @@ import { ProjectUncheckedUpdateManyWithoutOwnerNestedInput } from '../project/pr
 import { AnnualBudgetUncheckedUpdateManyWithoutApproved_userNestedInput } from '../annual-budget/annual-budget-unchecked-update-many-without-approved-user-nested.input';
 import { ProjectActivityLogUncheckedUpdateManyWithoutUserNestedInput } from '../project-activity-log/project-activity-log-unchecked-update-many-without-user-nested.input';
 import { ProjectActivityAssigneeUncheckedUpdateManyWithoutUserNestedInput } from '../project-activity-assignee/project-activity-assignee-unchecked-update-many-without-user-nested.input';
+import { DepartmentUncheckedUpdateManyWithoutLeaderNestedInput } from '../department/department-unchecked-update-many-without-leader-nested.input';
 
 @InputType()
 export class UserUncheckedUpdateWithoutSubsidy_status_historyInput {
@@ -127,4 +128,8 @@ export class UserUncheckedUpdateWithoutSubsidy_status_historyInput {
     @Field(() => ProjectActivityAssigneeUncheckedUpdateManyWithoutUserNestedInput, {nullable:true})
     @Type(() => ProjectActivityAssigneeUncheckedUpdateManyWithoutUserNestedInput)
     activity_assignments?: ProjectActivityAssigneeUncheckedUpdateManyWithoutUserNestedInput;
+
+    @Field(() => DepartmentUncheckedUpdateManyWithoutLeaderNestedInput, {nullable:true})
+    @Type(() => DepartmentUncheckedUpdateManyWithoutLeaderNestedInput)
+    led_departments?: DepartmentUncheckedUpdateManyWithoutLeaderNestedInput;
 }

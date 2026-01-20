@@ -33,6 +33,9 @@ export class DepartmentScalarWhereWithAggregatesInput {
     @Field(() => StringWithAggregatesFilter, {nullable:true})
     description?: StringWithAggregatesFilter;
 
+    @Field(() => StringWithAggregatesFilter, {nullable:true})
+    leader_id?: StringWithAggregatesFilter;
+
     @Field(() => StringNullableWithAggregatesFilter, {nullable:true})
     contact_id?: StringNullableWithAggregatesFilter;
 

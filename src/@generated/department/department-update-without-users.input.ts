@@ -8,9 +8,11 @@ import { NullableStringFieldUpdateOperationsInput } from '../prisma/nullable-str
 import { InstitutionUpdateOneRequiredWithoutDepartmentsNestedInput } from '../institution/institution-update-one-required-without-departments-nested.input';
 import { Type } from 'class-transformer';
 import { ChurchUpdateOneWithoutDepartmentsNestedInput } from '../church/church-update-one-without-departments-nested.input';
+import { UserUpdateOneRequiredWithoutLed_departmentsNestedInput } from '../user/user-update-one-required-without-led-departments-nested.input';
 import { ContactUpdateOneWithoutDepartmentNestedInput } from '../contact/contact-update-one-without-department-nested.input';
 import { SubsidyStatusUpdateManyWithoutDepartmentNestedInput } from '../subsidy-status/subsidy-status-update-many-without-department-nested.input';
 import { ProjectUpdateManyWithoutDepartmentNestedInput } from '../project/project-update-many-without-department-nested.input';
+import { ProjectUpdateManyWithoutChurch_departmentNestedInput } from '../project/project-update-many-without-church-department-nested.input';
 import { AnnualReportUpdateManyWithoutDepartmentNestedInput } from '../annual-report/annual-report-update-many-without-department-nested.input';
 import { SubsidyRequestUpdateManyWithoutDepartmentNestedInput } from '../subsidy-request/subsidy-request-update-many-without-department-nested.input';
 import { AnnualBudgetUpdateManyWithoutDepartmentNestedInput } from '../annual-budget/annual-budget-update-many-without-department-nested.input';
@@ -56,6 +58,10 @@ export class DepartmentUpdateWithoutUsersInput {
     @Type(() => ChurchUpdateOneWithoutDepartmentsNestedInput)
     church?: ChurchUpdateOneWithoutDepartmentsNestedInput;
 
+    @Field(() => UserUpdateOneRequiredWithoutLed_departmentsNestedInput, {nullable:true})
+    @Type(() => UserUpdateOneRequiredWithoutLed_departmentsNestedInput)
+    leader?: UserUpdateOneRequiredWithoutLed_departmentsNestedInput;
+
     @Field(() => ContactUpdateOneWithoutDepartmentNestedInput, {nullable:true})
     @Type(() => ContactUpdateOneWithoutDepartmentNestedInput)
     contact?: ContactUpdateOneWithoutDepartmentNestedInput;
@@ -67,6 +73,10 @@ export class DepartmentUpdateWithoutUsersInput {
     @Field(() => ProjectUpdateManyWithoutDepartmentNestedInput, {nullable:true})
     @Type(() => ProjectUpdateManyWithoutDepartmentNestedInput)
     projects?: ProjectUpdateManyWithoutDepartmentNestedInput;
+
+    @Field(() => ProjectUpdateManyWithoutChurch_departmentNestedInput, {nullable:true})
+    @Type(() => ProjectUpdateManyWithoutChurch_departmentNestedInput)
+    church_projects?: ProjectUpdateManyWithoutChurch_departmentNestedInput;
 
     @Field(() => AnnualReportUpdateManyWithoutDepartmentNestedInput, {nullable:true})
     annual_reports?: AnnualReportUpdateManyWithoutDepartmentNestedInput;

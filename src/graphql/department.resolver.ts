@@ -1,18 +1,23 @@
 import { Resolver, Query, Mutation, Args, Context, ResolveField, Parent } from '@nestjs/graphql';
 import { DepartmentService } from '../services/department.service';
+import { UserService } from '../services/user.service';
 import { Department } from '../@generated/department/department.model';
 import { Permission } from '../middlewares/permissions.decorator';
 import { UseGuards } from '@nestjs/common';
 import { PermissionsGuard } from '../middlewares/permissions.guard';
 import { DepartmentCreateDto, DepartmentUpdateDto } from 'src/dto';
 import { User } from 'src/@generated/user/user.model';
+import { UserModel } from '../models/user.model';
 import { AnnualBudget } from 'src/@generated/annual-budget/annual-budget.model';
 import { DepartmentKPIs, DepartmentActivityData, DepartmentBudgetTimeline } from '../dto/department-analytics.dto';
 
 @Resolver(() => Department)
 @UseGuards(PermissionsGuard)
 export class DepartmentResolver {
-  constructor(private readonly departmentService: DepartmentService) {}
+  constructor(
+    private readonly departmentService: DepartmentService,
+    private readonly userService: UserService,
+  ) {}
 
   @Permission()
   @Query(() => [Department])
@@ -62,6 +67,11 @@ export class DepartmentResolver {
   @ResolveField(() => [User])
   async users(@Parent() department: Department): Promise<User[]> {
     return this.departmentService.getUsersByDepartmentId(department.id);
+  }
+
+  @ResolveField(() => UserModel, { nullable: true })
+  async leader(@Parent() department: Department): Promise<Omit<User, 'password'> | null> {
+    return this.userService.getUserById(department.leader_id);
   }
 
   @ResolveField(() => [AnnualBudget], { name: 'annual_budgets' })

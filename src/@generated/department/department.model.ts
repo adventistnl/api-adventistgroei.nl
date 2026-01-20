@@ -3,12 +3,12 @@ import { ObjectType } from '@nestjs/graphql';
 import { ID } from '@nestjs/graphql';
 import { Institution } from '../institution/institution.model';
 import { Church } from '../church/church.model';
+import { User } from '../user/user.model';
 import { Contact } from '../contact/contact.model';
 import { SubsidyStatus } from '../subsidy-status/subsidy-status.model';
 import { Project } from '../project/project.model';
 import { AnnualReport } from '../annual-report/annual-report.model';
 import { SubsidyRequest } from '../subsidy-request/subsidy-request.model';
-import { User } from '../user/user.model';
 import { AnnualBudget } from '../annual-budget/annual-budget.model';
 import { DepartmentCount } from './department-count.output';
 
@@ -29,6 +29,9 @@ export class Department {
 
     @Field(() => String, {nullable:false})
     description!: string;
+
+    @Field(() => String, {nullable:false})
+    leader_id!: string;
 
     @Field(() => String, {nullable:true})
     contact_id!: string | null;
@@ -60,6 +63,9 @@ export class Department {
     @Field(() => Church, {nullable:true})
     church?: Church | null;
 
+    @Field(() => User, {nullable:false})
+    leader?: User;
+
     @Field(() => Contact, {nullable:true})
     contact?: Contact | null;
 
@@ -68,6 +74,9 @@ export class Department {
 
     @Field(() => [Project], {nullable:true})
     projects?: Array<Project>;
+
+    @Field(() => [Project], {nullable:true})
+    church_projects?: Array<Project>;
 
     @Field(() => [AnnualReport], {nullable:true})
     annual_reports?: Array<AnnualReport>;

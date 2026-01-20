@@ -2,6 +2,7 @@ import { Field } from '@nestjs/graphql';
 import { InputType } from '@nestjs/graphql';
 import { Type } from 'class-transformer';
 import { StringWithAggregatesFilter } from '../prisma/string-with-aggregates-filter.input';
+import { StringNullableWithAggregatesFilter } from '../prisma/string-nullable-with-aggregates-filter.input';
 import { DecimalWithAggregatesFilter } from '../prisma/decimal-with-aggregates-filter.input';
 import { EnumLanguagePreferenceWithAggregatesFilter } from '../prisma/enum-language-preference-with-aggregates-filter.input';
 import { EnumProjectTypeWithAggregatesFilter } from '../prisma/enum-project-type-with-aggregates-filter.input';
@@ -9,7 +10,6 @@ import { EnumProjectStatusWithAggregatesFilter } from '../prisma/enum-project-st
 import { BoolWithAggregatesFilter } from '../prisma/bool-with-aggregates-filter.input';
 import { DateTimeWithAggregatesFilter } from '../prisma/date-time-with-aggregates-filter.input';
 import { DateTimeNullableWithAggregatesFilter } from '../prisma/date-time-nullable-with-aggregates-filter.input';
-import { StringNullableWithAggregatesFilter } from '../prisma/string-nullable-with-aggregates-filter.input';
 
 @InputType()
 export class ProjectScalarWhereWithAggregatesInput {
@@ -31,6 +31,9 @@ export class ProjectScalarWhereWithAggregatesInput {
 
     @Field(() => StringWithAggregatesFilter, {nullable:true})
     department_id?: StringWithAggregatesFilter;
+
+    @Field(() => StringNullableWithAggregatesFilter, {nullable:true})
+    church_department_id?: StringNullableWithAggregatesFilter;
 
     @Field(() => StringWithAggregatesFilter, {nullable:true})
     title?: StringWithAggregatesFilter;

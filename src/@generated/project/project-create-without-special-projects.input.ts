@@ -9,6 +9,7 @@ import { LanguagePreference } from '../prisma/language-preference.enum';
 import { ProjectType } from '../prisma/project-type.enum';
 import { ProjectStatus } from '../prisma/project-status.enum';
 import { DepartmentCreateNestedOneWithoutProjectsInput } from '../department/department-create-nested-one-without-projects.input';
+import { DepartmentCreateNestedOneWithoutChurch_projectsInput } from '../department/department-create-nested-one-without-church-projects.input';
 import { UserCreateNestedOneWithoutProjectInput } from '../user/user-create-nested-one-without-project.input';
 import { EventCreateNestedOneWithoutProjectsInput } from '../event/event-create-nested-one-without-projects.input';
 import { InstitutionCreateNestedOneWithoutProjectsInput } from '../institution/institution-create-nested-one-without-projects.input';
@@ -92,6 +93,10 @@ export class ProjectCreateWithoutSpecial_projectsInput {
     @Field(() => DepartmentCreateNestedOneWithoutProjectsInput, {nullable:false})
     @Type(() => DepartmentCreateNestedOneWithoutProjectsInput)
     department!: DepartmentCreateNestedOneWithoutProjectsInput;
+
+    @Field(() => DepartmentCreateNestedOneWithoutChurch_projectsInput, {nullable:true})
+    @Type(() => DepartmentCreateNestedOneWithoutChurch_projectsInput)
+    church_department?: DepartmentCreateNestedOneWithoutChurch_projectsInput;
 
     @Field(() => UserCreateNestedOneWithoutProjectInput, {nullable:false})
     @Type(() => UserCreateNestedOneWithoutProjectInput)

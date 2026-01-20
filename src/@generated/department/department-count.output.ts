@@ -12,6 +12,9 @@ export class DepartmentCount {
     projects?: number;
 
     @Field(() => Int, {nullable:false})
+    church_projects?: number;
+
+    @Field(() => Int, {nullable:false})
     annual_reports?: number;
 
     @Field(() => Int, {nullable:false})

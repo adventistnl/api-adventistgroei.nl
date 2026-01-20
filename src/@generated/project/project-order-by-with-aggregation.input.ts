@@ -18,6 +18,9 @@ export class ProjectOrderByWithAggregationInput {
     @Field(() => SortOrder, {nullable:true})
     department_id?: `${SortOrder}`;
 
+    @Field(() => SortOrderInput, {nullable:true})
+    church_department_id?: SortOrderInput;
+
     @Field(() => SortOrder, {nullable:true})
     title?: `${SortOrder}`;
 

@@ -22,6 +22,9 @@ export class ProjectUncheckedCreateWithoutInstitutionInput {
     @Field(() => String, {nullable:false})
     department_id!: string;
 
+    @Field(() => String, {nullable:true})
+    church_department_id?: string;
+
     @Field(() => String, {nullable:false})
     title!: string;
 

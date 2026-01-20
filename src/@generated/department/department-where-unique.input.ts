@@ -9,6 +9,7 @@ import { DateTimeNullableFilter } from '../prisma/date-time-nullable-filter.inpu
 import { InstitutionScalarRelationFilter } from '../institution/institution-scalar-relation-filter.input';
 import { Type } from 'class-transformer';
 import { ChurchNullableScalarRelationFilter } from '../church/church-nullable-scalar-relation-filter.input';
+import { UserScalarRelationFilter } from '../user/user-scalar-relation-filter.input';
 import { ContactNullableScalarRelationFilter } from '../contact/contact-nullable-scalar-relation-filter.input';
 import { SubsidyStatusListRelationFilter } from '../subsidy-status/subsidy-status-list-relation-filter.input';
 import { ProjectListRelationFilter } from '../project/project-list-relation-filter.input';
@@ -44,6 +45,9 @@ export class DepartmentWhereUniqueInput {
     @Field(() => StringFilter, {nullable:true})
     description?: StringFilter;
 
+    @Field(() => StringFilter, {nullable:true})
+    leader_id?: StringFilter;
+
     @Field(() => StringNullableFilter, {nullable:true})
     contact_id?: StringNullableFilter;
 
@@ -76,6 +80,10 @@ export class DepartmentWhereUniqueInput {
     @Type(() => ChurchNullableScalarRelationFilter)
     church?: ChurchNullableScalarRelationFilter;
 
+    @Field(() => UserScalarRelationFilter, {nullable:true})
+    @Type(() => UserScalarRelationFilter)
+    leader?: UserScalarRelationFilter;
+
     @Field(() => ContactNullableScalarRelationFilter, {nullable:true})
     @Type(() => ContactNullableScalarRelationFilter)
     contact?: ContactNullableScalarRelationFilter;
@@ -87,6 +95,10 @@ export class DepartmentWhereUniqueInput {
     @Field(() => ProjectListRelationFilter, {nullable:true})
     @Type(() => ProjectListRelationFilter)
     projects?: ProjectListRelationFilter;
+
+    @Field(() => ProjectListRelationFilter, {nullable:true})
+    @Type(() => ProjectListRelationFilter)
+    church_projects?: ProjectListRelationFilter;
 
     @Field(() => AnnualReportListRelationFilter, {nullable:true})
     annual_reports?: AnnualReportListRelationFilter;

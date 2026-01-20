@@ -95,6 +95,7 @@ export class ProjectRepository {
         owner: { connect: { id: ownerId } },
         Institution: data.institution_id ? { connect: { id: data.institution_id } } : undefined,
         church: data.church_id ? { connect: { id: data.church_id } } : undefined,
+        church_department: data.church_department_id ? { connect: { id: data.church_department_id } } : undefined,
         event: eventId ? { connect: { id: eventId } } : undefined,
       },
     });
@@ -207,13 +208,16 @@ export class ProjectRepository {
   }
   
   async update(id: string, data: ProjectUpdateDto, userId: string): Promise<Project> {
-    const { institution_id, department_id, owner_id, church_id, activities, ...rest } = data;
+    const { institution_id, department_id, owner_id, church_id, church_department_id, activities, ...rest } = data;
 
     if (institution_id) {
       await this.institutionRepository.findById(institution_id);
     }
     if (department_id) {
       await this.departmentRepository.findById(department_id);
+    }
+    if (church_department_id) {
+      await this.departmentRepository.findById(church_department_id);
     }
     if (owner_id) {
       await this.userRepository.findById(owner_id);
@@ -223,6 +227,7 @@ export class ProjectRepository {
     const updateData: any = {
       Institution: institution_id ? { connect: { id: institution_id } } : undefined,
       church: church_id ? { connect: { id: church_id } } : undefined,
+      church_department: church_department_id ? { connect: { id: church_department_id } } : undefined,
       owner: owner_id ? { connect: { id: owner_id } } : undefined,
       department: department_id ? { connect: { id: department_id } } : undefined,
       budget: rest.budget ? DecimalHelper.toDecimal(rest.budget).toDecimalPlaces(2) : undefined,

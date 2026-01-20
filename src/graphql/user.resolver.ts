@@ -66,6 +66,27 @@ export class UserResolver {
 
   @Permission()
   @Mutation(() => UserModel)
+  async updateOwnUser(
+    @Args('data') data: UserUpdateDto,
+    @Context() context: { userId: string },
+  ): Promise<Omit<User, 'password'>> {
+    const userId = context.userId;
+    return await this.userService.updateUser(userId, data, userId);
+  }
+
+  @Permission()
+  @Mutation(() => UserModel)
+  async updateUserDepartment(
+    @Args('userId') userId: string,
+    @Context() context: { userId: string },
+    @Args('departmentId', { type: () => String, nullable: true }) departmentId?: string,
+  ): Promise<Omit<User, 'password'>> {
+    const requester_id = context.userId;
+    return await this.userService.updateUser(userId, { department_id: departmentId || undefined }, requester_id);
+  }
+
+  @Permission()
+  @Mutation(() => UserModel)
   async deleteUser(
     @Args('id') id: string,
     @Context() context: { userId: string },

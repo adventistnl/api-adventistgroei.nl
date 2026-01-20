@@ -8,6 +8,7 @@ import { NullableDateTimeFieldUpdateOperationsInput } from '../prisma/nullable-d
 import { SubsidyStatusUncheckedUpdateManyWithoutDepartmentNestedInput } from '../subsidy-status/subsidy-status-unchecked-update-many-without-department-nested.input';
 import { Type } from 'class-transformer';
 import { ProjectUncheckedUpdateManyWithoutDepartmentNestedInput } from '../project/project-unchecked-update-many-without-department-nested.input';
+import { ProjectUncheckedUpdateManyWithoutChurch_departmentNestedInput } from '../project/project-unchecked-update-many-without-church-department-nested.input';
 import { AnnualReportUncheckedUpdateManyWithoutDepartmentNestedInput } from '../annual-report/annual-report-unchecked-update-many-without-department-nested.input';
 import { SubsidyRequestUncheckedUpdateManyWithoutDepartmentNestedInput } from '../subsidy-request/subsidy-request-unchecked-update-many-without-department-nested.input';
 import { UserUncheckedUpdateManyWithoutDepartmentNestedInput } from '../user/user-unchecked-update-many-without-department-nested.input';
@@ -30,6 +31,9 @@ export class DepartmentUncheckedUpdateWithoutContactInput {
 
     @Field(() => StringFieldUpdateOperationsInput, {nullable:true})
     description?: StringFieldUpdateOperationsInput;
+
+    @Field(() => StringFieldUpdateOperationsInput, {nullable:true})
+    leader_id?: StringFieldUpdateOperationsInput;
 
     @Field(() => DateTimeFieldUpdateOperationsInput, {nullable:true})
     created_at?: DateTimeFieldUpdateOperationsInput;
@@ -59,6 +63,10 @@ export class DepartmentUncheckedUpdateWithoutContactInput {
     @Field(() => ProjectUncheckedUpdateManyWithoutDepartmentNestedInput, {nullable:true})
     @Type(() => ProjectUncheckedUpdateManyWithoutDepartmentNestedInput)
     projects?: ProjectUncheckedUpdateManyWithoutDepartmentNestedInput;
+
+    @Field(() => ProjectUncheckedUpdateManyWithoutChurch_departmentNestedInput, {nullable:true})
+    @Type(() => ProjectUncheckedUpdateManyWithoutChurch_departmentNestedInput)
+    church_projects?: ProjectUncheckedUpdateManyWithoutChurch_departmentNestedInput;
 
     @Field(() => AnnualReportUncheckedUpdateManyWithoutDepartmentNestedInput, {nullable:true})
     annual_reports?: AnnualReportUncheckedUpdateManyWithoutDepartmentNestedInput;

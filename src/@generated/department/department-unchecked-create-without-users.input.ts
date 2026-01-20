@@ -3,6 +3,7 @@ import { InputType } from '@nestjs/graphql';
 import { SubsidyStatusUncheckedCreateNestedManyWithoutDepartmentInput } from '../subsidy-status/subsidy-status-unchecked-create-nested-many-without-department.input';
 import { Type } from 'class-transformer';
 import { ProjectUncheckedCreateNestedManyWithoutDepartmentInput } from '../project/project-unchecked-create-nested-many-without-department.input';
+import { ProjectUncheckedCreateNestedManyWithoutChurch_departmentInput } from '../project/project-unchecked-create-nested-many-without-church-department.input';
 import { AnnualReportUncheckedCreateNestedManyWithoutDepartmentInput } from '../annual-report/annual-report-unchecked-create-nested-many-without-department.input';
 import { SubsidyRequestUncheckedCreateNestedManyWithoutDepartmentInput } from '../subsidy-request/subsidy-request-unchecked-create-nested-many-without-department.input';
 import { AnnualBudgetUncheckedCreateNestedManyWithoutDepartmentInput } from '../annual-budget/annual-budget-unchecked-create-nested-many-without-department.input';
@@ -24,6 +25,9 @@ export class DepartmentUncheckedCreateWithoutUsersInput {
 
     @Field(() => String, {nullable:false})
     description!: string;
+
+    @Field(() => String, {nullable:false})
+    leader_id!: string;
 
     @Field(() => String, {nullable:true})
     contact_id?: string;
@@ -56,6 +60,10 @@ export class DepartmentUncheckedCreateWithoutUsersInput {
     @Field(() => ProjectUncheckedCreateNestedManyWithoutDepartmentInput, {nullable:true})
     @Type(() => ProjectUncheckedCreateNestedManyWithoutDepartmentInput)
     projects?: ProjectUncheckedCreateNestedManyWithoutDepartmentInput;
+
+    @Field(() => ProjectUncheckedCreateNestedManyWithoutChurch_departmentInput, {nullable:true})
+    @Type(() => ProjectUncheckedCreateNestedManyWithoutChurch_departmentInput)
+    church_projects?: ProjectUncheckedCreateNestedManyWithoutChurch_departmentInput;
 
     @Field(() => AnnualReportUncheckedCreateNestedManyWithoutDepartmentInput, {nullable:true})
     annual_reports?: AnnualReportUncheckedCreateNestedManyWithoutDepartmentInput;

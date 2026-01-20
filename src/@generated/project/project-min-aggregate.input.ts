@@ -11,6 +11,9 @@ export class ProjectMinAggregateInput {
     department_id?: true;
 
     @Field(() => Boolean, {nullable:true})
+    church_department_id?: true;
+
+    @Field(() => Boolean, {nullable:true})
     title?: true;
 
     @Field(() => Boolean, {nullable:true})

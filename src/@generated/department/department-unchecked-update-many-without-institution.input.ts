@@ -21,6 +21,9 @@ export class DepartmentUncheckedUpdateManyWithoutInstitutionInput {
     @Field(() => StringFieldUpdateOperationsInput, {nullable:true})
     description?: StringFieldUpdateOperationsInput;
 
+    @Field(() => StringFieldUpdateOperationsInput, {nullable:true})
+    leader_id?: StringFieldUpdateOperationsInput;
+
     @Field(() => NullableStringFieldUpdateOperationsInput, {nullable:true})
     contact_id?: NullableStringFieldUpdateOperationsInput;
 

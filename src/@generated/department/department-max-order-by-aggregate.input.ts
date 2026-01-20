@@ -21,6 +21,9 @@ export class DepartmentMaxOrderByAggregateInput {
     description?: `${SortOrder}`;
 
     @Field(() => SortOrder, {nullable:true})
+    leader_id?: `${SortOrder}`;
+
+    @Field(() => SortOrder, {nullable:true})
     contact_id?: `${SortOrder}`;
 
     @Field(() => SortOrder, {nullable:true})

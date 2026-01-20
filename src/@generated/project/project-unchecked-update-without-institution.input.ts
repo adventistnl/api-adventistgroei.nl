@@ -1,6 +1,7 @@
 import { Field } from '@nestjs/graphql';
 import { InputType } from '@nestjs/graphql';
 import { StringFieldUpdateOperationsInput } from '../prisma/string-field-update-operations.input';
+import { NullableStringFieldUpdateOperationsInput } from '../prisma/nullable-string-field-update-operations.input';
 import { DecimalFieldUpdateOperationsInput } from '../prisma/decimal-field-update-operations.input';
 import { Type } from 'class-transformer';
 import { EnumLanguagePreferenceFieldUpdateOperationsInput } from '../prisma/enum-language-preference-field-update-operations.input';
@@ -9,7 +10,6 @@ import { EnumProjectStatusFieldUpdateOperationsInput } from '../prisma/enum-proj
 import { BoolFieldUpdateOperationsInput } from '../prisma/bool-field-update-operations.input';
 import { DateTimeFieldUpdateOperationsInput } from '../prisma/date-time-field-update-operations.input';
 import { NullableDateTimeFieldUpdateOperationsInput } from '../prisma/nullable-date-time-field-update-operations.input';
-import { NullableStringFieldUpdateOperationsInput } from '../prisma/nullable-string-field-update-operations.input';
 import { VoluntariesOnProjectsUncheckedUpdateManyWithoutProjectNestedInput } from '../voluntaries-on-projects/voluntaries-on-projects-unchecked-update-many-without-project-nested.input';
 import { ProjectActivityUncheckedUpdateManyWithoutProjectNestedInput } from '../project-activity/project-activity-unchecked-update-many-without-project-nested.input';
 import { SubsidyRequestUncheckedUpdateManyWithoutProjectNestedInput } from '../subsidy-request/subsidy-request-unchecked-update-many-without-project-nested.input';
@@ -23,6 +23,9 @@ export class ProjectUncheckedUpdateWithoutInstitutionInput {
 
     @Field(() => StringFieldUpdateOperationsInput, {nullable:true})
     department_id?: StringFieldUpdateOperationsInput;
+
+    @Field(() => NullableStringFieldUpdateOperationsInput, {nullable:true})
+    church_department_id?: NullableStringFieldUpdateOperationsInput;
 
     @Field(() => StringFieldUpdateOperationsInput, {nullable:true})
     title?: StringFieldUpdateOperationsInput;

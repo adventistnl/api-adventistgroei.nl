@@ -26,6 +26,9 @@ export class Project {
     @Field(() => String, {nullable:false})
     department_id!: string;
 
+    @Field(() => String, {nullable:true})
+    church_department_id!: string | null;
+
     @Field(() => String, {nullable:false})
     title!: string;
 
@@ -100,6 +103,9 @@ export class Project {
 
     @Field(() => Department, {nullable:false})
     department?: Department;
+
+    @Field(() => Department, {nullable:true})
+    church_department?: Department | null;
 
     @Field(() => User, {nullable:false})
     owner?: User;
