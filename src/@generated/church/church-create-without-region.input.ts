@@ -52,9 +52,9 @@ export class ChurchCreateWithoutRegionInput {
     @Type(() => ContactCreateNestedOneWithoutChurchInput)
     contact?: ContactCreateNestedOneWithoutChurchInput;
 
-    @Field(() => UserCreateNestedOneWithoutLed_churchInput, {nullable:false})
+    @Field(() => UserCreateNestedOneWithoutLed_churchInput, {nullable:true})
     @Type(() => UserCreateNestedOneWithoutLed_churchInput)
-    leader!: UserCreateNestedOneWithoutLed_churchInput;
+    leader?: UserCreateNestedOneWithoutLed_churchInput;
 
     @Field(() => DepartmentCreateNestedManyWithoutChurchInput, {nullable:true})
     @Type(() => DepartmentCreateNestedManyWithoutChurchInput)

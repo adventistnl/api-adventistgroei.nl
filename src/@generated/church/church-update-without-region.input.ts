@@ -9,7 +9,7 @@ import { NullableStringFieldUpdateOperationsInput } from '../prisma/nullable-str
 import { InstitutionUpdateOneRequiredWithoutChurchesNestedInput } from '../institution/institution-update-one-required-without-churches-nested.input';
 import { Type } from 'class-transformer';
 import { ContactUpdateOneWithoutChurchNestedInput } from '../contact/contact-update-one-without-church-nested.input';
-import { UserUpdateOneRequiredWithoutLed_churchNestedInput } from '../user/user-update-one-required-without-led-church-nested.input';
+import { UserUpdateOneWithoutLed_churchNestedInput } from '../user/user-update-one-without-led-church-nested.input';
 import { DepartmentUpdateManyWithoutChurchNestedInput } from '../department/department-update-many-without-church-nested.input';
 import { UserUpdateManyWithoutChurchNestedInput } from '../user/user-update-many-without-church-nested.input';
 import { SubsidyRequestUpdateManyWithoutChurchNestedInput } from '../subsidy-request/subsidy-request-update-many-without-church-nested.input';
@@ -57,9 +57,9 @@ export class ChurchUpdateWithoutRegionInput {
     @Type(() => ContactUpdateOneWithoutChurchNestedInput)
     contact?: ContactUpdateOneWithoutChurchNestedInput;
 
-    @Field(() => UserUpdateOneRequiredWithoutLed_churchNestedInput, {nullable:true})
-    @Type(() => UserUpdateOneRequiredWithoutLed_churchNestedInput)
-    leader?: UserUpdateOneRequiredWithoutLed_churchNestedInput;
+    @Field(() => UserUpdateOneWithoutLed_churchNestedInput, {nullable:true})
+    @Type(() => UserUpdateOneWithoutLed_churchNestedInput)
+    leader?: UserUpdateOneWithoutLed_churchNestedInput;
 
     @Field(() => DepartmentUpdateManyWithoutChurchNestedInput, {nullable:true})
     @Type(() => DepartmentUpdateManyWithoutChurchNestedInput)

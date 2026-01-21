@@ -20,8 +20,8 @@ export class ChurchCreateManyContactInput {
     @Field(() => String, {nullable:true})
     region_id?: string;
 
-    @Field(() => String, {nullable:false})
-    leader_id!: string;
+    @Field(() => String, {nullable:true})
+    leader_id?: string;
 
     @Field(() => Date, {nullable:true})
     created_at?: Date | string;

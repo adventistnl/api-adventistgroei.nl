@@ -55,9 +55,9 @@ export class ChurchCreateWithoutDepartmentsInput {
     @Type(() => ContactCreateNestedOneWithoutChurchInput)
     contact?: ContactCreateNestedOneWithoutChurchInput;
 
-    @Field(() => UserCreateNestedOneWithoutLed_churchInput, {nullable:false})
+    @Field(() => UserCreateNestedOneWithoutLed_churchInput, {nullable:true})
     @Type(() => UserCreateNestedOneWithoutLed_churchInput)
-    leader!: UserCreateNestedOneWithoutLed_churchInput;
+    leader?: UserCreateNestedOneWithoutLed_churchInput;
 
     @Field(() => UserCreateNestedManyWithoutChurchInput, {nullable:true})
     @Type(() => UserCreateNestedManyWithoutChurchInput)
