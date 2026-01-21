@@ -1,7 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { ChurchRepository } from '../repositories/church.repository';
 import { ChurchCreateDto, ChurchUpdateDto } from '../dto/church.dto';
-import { Church } from '@prisma/client';
+import { Church } from 'src/@generated/church/church.model';
+import { Church as PrismaChurch, User } from '@prisma/client';
 
 @Injectable()
 export class ChurchService {
@@ -37,7 +38,7 @@ export class ChurchService {
     return await this.churchRepository.findByIdSafe(id);
   }
   
-  async findManyByFilters(filters: Partial<Record<keyof Church, any>>): Promise<Church[]> {
+  async findManyByFilters(filters: Partial<Record<keyof PrismaChurch, any>>): Promise<Church[]> {
     return await this.churchRepository.findManyByFilters(filters);
   }
 
@@ -45,7 +46,7 @@ export class ChurchService {
     return await this.churchRepository.getKPIData(churchId);
   }
 
-  async getUsersByChurchId(churchId: string): Promise<any[]> {
+  async getUsersByChurchId(churchId: string): Promise<User[]> {
     return this.churchRepository.getUsersByChurchId(churchId);
   }
 

@@ -34,8 +34,8 @@ export class ChurchOrderByWithRelationInput {
     @Field(() => SortOrderInput, {nullable:true})
     contact_id?: SortOrderInput;
 
-    @Field(() => SortOrder, {nullable:true})
-    leader_id?: `${SortOrder}`;
+    @Field(() => SortOrderInput, {nullable:true})
+    leader_id?: SortOrderInput;
 
     @Field(() => SortOrder, {nullable:true})
     created_at?: `${SortOrder}`;

@@ -1,17 +1,15 @@
 import { Resolver, Mutation, Args, Query, Context, ResolveField, Parent } from '@nestjs/graphql';
 import { ChurchService } from '../services/church.service';
-import { ChurchModel } from '../models/church.model';
 import { Church } from 'src/@generated/church/church.model';
 import { ChurchCreateDto, ChurchUpdateDto } from '../dto/church.dto';
 import { Permission } from '../middlewares/permissions.decorator';
 import { UseGuards } from '@nestjs/common';
 import { PermissionsGuard } from '../middlewares/permissions.guard';
 import { User } from 'src/@generated/user/user.model';
-import { UserModel } from '../models/user.model';
 import { UserService } from '../services/user.service';
 import GraphQLJSON from 'graphql-type-json';
 
-@Resolver(() => ChurchModel)
+@Resolver(() => Church)
 @UseGuards(PermissionsGuard)
 export class ChurchResolver {
   constructor(
@@ -20,7 +18,7 @@ export class ChurchResolver {
   ) {}
 
   @Permission()
-  @Mutation(() => ChurchModel)
+  @Mutation(() => Church)
   async createChurch(
     @Args('data') data: ChurchCreateDto,
     @Context() context: { userId: string },
@@ -30,7 +28,7 @@ export class ChurchResolver {
   }
 
   @Permission()
-  @Query(() => [ChurchModel])
+  @Query(() => [Church])
   async churches(
     @Args('institution_id', { nullable: true }) institution_id?: string
   ): Promise<Church[]> {
@@ -38,13 +36,13 @@ export class ChurchResolver {
   }
 
   @Permission()
-  @Query(() => ChurchModel, { nullable: true })
+  @Query(() => Church, { nullable: true })
   async church(@Args('id') id: string): Promise<Church | null> {
     return await this.churchService.getChurchById(id);
   }
 
   @Permission()
-  @Mutation(() => ChurchModel)
+  @Mutation(() => Church)
   async updateChurch(
     @Args('id') id: string,
     @Args('data') data: ChurchUpdateDto,
@@ -54,7 +52,7 @@ export class ChurchResolver {
   }
 
   @Permission()
-  @Mutation(() => ChurchModel)
+  @Mutation(() => Church)
   async deleteChurch(
     @Args('id') churchId: string,
     @Context() context: { userId: string },
@@ -71,20 +69,25 @@ export class ChurchResolver {
   ): Promise<any[]> {
     return this.churchService.getChurchActivityTimeline(institution_id, selectedYear);
   }
-
-  @ResolveField(() => UserModel, { nullable: true })
-  async leader(@Parent() church: Church): Promise<Omit<User, 'password'> | null> {
-    return this.userService.getUserById(church.leader_id);
-  }
-
 }
 
 @Resolver(() => Church)
 export class ChurchGeneratedResolver {
-  constructor(private readonly churchService: ChurchService) {}
+  constructor(
+    private readonly churchService: ChurchService,
+    private readonly userService: UserService,
+  ) {}
 
   @ResolveField(() => [User])
   async users(@Parent() church: Church): Promise<User[]> {
-    return this.churchService.getUsersByChurchId(church.id);
+    return this.churchService.getUsersByChurchId(church.id) as Promise<User[]>;
+  }
+
+  @ResolveField(() => User, { nullable: true })
+  async leader(@Parent() church: Church): Promise<Omit<User, 'password'> | null> {
+    if (!church.leader_id) {
+      return null;
+    }
+    return this.userService.getUserById(church.leader_id);
   }
 }

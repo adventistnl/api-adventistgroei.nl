@@ -114,6 +114,9 @@ export class ChurchModel {
   @Field(() => String, { nullable: true })
   contact_id?: string | null;
 
+  @Field(() => String, { nullable: true })
+  leader_id?: string | null;
+
   @Field()
   created_at: Date;
 
