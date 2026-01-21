@@ -33,8 +33,8 @@ export class Church {
     @Field(() => String, {nullable:true})
     contact_id!: string | null;
 
-    @Field(() => String, {nullable:false})
-    leader_id!: string;
+    @Field(() => String, {nullable:true})
+    leader_id!: string | null;
 
     @Field(() => Date, {nullable:false})
     created_at!: Date;
@@ -66,8 +66,8 @@ export class Church {
     @Field(() => Contact, {nullable:true})
     contact?: Contact | null;
 
-    @Field(() => User, {nullable:false})
-    leader?: User;
+    @Field(() => User, {nullable:true})
+    leader?: User | null;
 
     @Field(() => [Department], {nullable:true})
     departments?: Array<Department>;

@@ -10,7 +10,7 @@ import { InstitutionScalarRelationFilter } from '../institution/institution-scal
 import { Type } from 'class-transformer';
 import { RegionNullableScalarRelationFilter } from '../region/region-nullable-scalar-relation-filter.input';
 import { ContactNullableScalarRelationFilter } from '../contact/contact-nullable-scalar-relation-filter.input';
-import { UserScalarRelationFilter } from '../user/user-scalar-relation-filter.input';
+import { UserNullableScalarRelationFilter } from '../user/user-nullable-scalar-relation-filter.input';
 import { DepartmentListRelationFilter } from '../department/department-list-relation-filter.input';
 import { UserListRelationFilter } from '../user/user-list-relation-filter.input';
 import { SubsidyRequestListRelationFilter } from '../subsidy-request/subsidy-request-list-relation-filter.input';
@@ -47,8 +47,8 @@ export class ChurchWhereInput {
     @Field(() => StringNullableFilter, {nullable:true})
     contact_id?: StringNullableFilter;
 
-    @Field(() => StringFilter, {nullable:true})
-    leader_id?: StringFilter;
+    @Field(() => StringNullableFilter, {nullable:true})
+    leader_id?: StringNullableFilter;
 
     @Field(() => DateTimeFilter, {nullable:true})
     created_at?: DateTimeFilter;
@@ -82,9 +82,9 @@ export class ChurchWhereInput {
     @Type(() => ContactNullableScalarRelationFilter)
     contact?: ContactNullableScalarRelationFilter;
 
-    @Field(() => UserScalarRelationFilter, {nullable:true})
-    @Type(() => UserScalarRelationFilter)
-    leader?: UserScalarRelationFilter;
+    @Field(() => UserNullableScalarRelationFilter, {nullable:true})
+    @Type(() => UserNullableScalarRelationFilter)
+    leader?: UserNullableScalarRelationFilter;
 
     @Field(() => DepartmentListRelationFilter, {nullable:true})
     @Type(() => DepartmentListRelationFilter)

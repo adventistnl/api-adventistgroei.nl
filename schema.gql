@@ -1123,7 +1123,7 @@ type Church {
   name: String!
   region_id: String
   contact_id: String
-  leader_id: String!
+  leader_id: String
   created_at: DateTime!
   updated_at: DateTime!
   created_by: String!
@@ -1134,7 +1134,7 @@ type Church {
   institution: Institution!
   region: Region
   contact: Contact
-  leader: User!
+  leader: User
   departments: [Department!]
   users: [User!]
   subsidy_requests: [SubsidyRequest!]
@@ -1339,23 +1339,6 @@ type ChurchChartData {
   projects: Float!
   activeProjects: Float!
   fill: String!
-}
-
-type ChurchModel {
-  id: String!
-  institution_id: String!
-  name: String!
-  region_id: String
-  type: ChurchType
-  contact_id: String
-  created_at: DateTime!
-  updated_at: DateTime!
-  created_by: String!
-  updated_by: String!
-  is_deleted: Boolean!
-  deleted_at: DateTime
-  deleted_by: String
-  leader: UserModel
 }
 
 type UsersByRoleData {
@@ -1653,8 +1636,8 @@ type ForgotPasswordResponse {
 
 type Query {
   permissions: [PermissionGroupPermissionsModel!]!
-  churches(institution_id: String): [ChurchModel!]!
-  church(id: String!): ChurchModel
+  churches(institution_id: String): [Church!]!
+  church(id: String!): Church
   churchActivityTimeline(institution_id: String, selectedYear: Float): [JSON!]!
   institutions: [Institution!]!
   institution(id: String!): Institution
@@ -2184,7 +2167,7 @@ input ChurchWhereInput {
   name: StringFilter
   region_id: StringNullableFilter
   contact_id: StringNullableFilter
-  leader_id: StringFilter
+  leader_id: StringNullableFilter
   created_at: DateTimeFilter
   updated_at: DateTimeFilter
   created_by: StringFilter
@@ -2195,7 +2178,7 @@ input ChurchWhereInput {
   institution: InstitutionScalarRelationFilter
   region: RegionNullableScalarRelationFilter
   contact: ContactNullableScalarRelationFilter
-  leader: UserScalarRelationFilter
+  leader: UserNullableScalarRelationFilter
   departments: DepartmentListRelationFilter
   users: UserListRelationFilter
   subsidy_requests: SubsidyRequestListRelationFilter
@@ -2246,11 +2229,6 @@ input RegionWhereInput {
   churches: ChurchListRelationFilter
 }
 
-input UserScalarRelationFilter {
-  is: UserWhereInput
-  isNot: UserWhereInput
-}
-
 input DepartmentListRelationFilter {
   every: DepartmentWhereInput
   some: DepartmentWhereInput
@@ -2291,6 +2269,11 @@ input DepartmentWhereInput {
 input ChurchNullableScalarRelationFilter {
   is: ChurchWhereInput
   isNot: ChurchWhereInput
+}
+
+input UserScalarRelationFilter {
+  is: UserWhereInput
+  isNot: UserWhereInput
 }
 
 input SubsidyStatusListRelationFilter {
@@ -3591,7 +3574,7 @@ input ChurchOrderByWithRelationInput {
   name: SortOrder
   region_id: SortOrderInput
   contact_id: SortOrderInput
-  leader_id: SortOrder
+  leader_id: SortOrderInput
   created_at: SortOrder
   updated_at: SortOrder
   created_by: SortOrder
@@ -3775,9 +3758,9 @@ enum AnnualBudgetScalarFieldEnum {
 
 type Mutation {
   login(input: LoginInput!): AuthModel!
-  createChurch(data: ChurchCreateDto!): ChurchModel!
-  updateChurch(id: String!, data: ChurchUpdateDto!): ChurchModel!
-  deleteChurch(id: String!): ChurchModel!
+  createChurch(data: ChurchCreateDto!): Church!
+  updateChurch(id: String!, data: ChurchUpdateDto!): Church!
+  deleteChurch(id: String!): Church!
   createInstitution(data: InstitutionCreateDto!): Institution!
   updateInstitution(data: InstitutionUpdateDto!, id: String!): Institution!
   deleteInstitution(id: String!): Institution!

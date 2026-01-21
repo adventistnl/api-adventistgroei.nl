@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../services/prisma.service';
 import { ChurchCreateDto, ChurchUpdateDto } from '../dto/church.dto';
-import { Church } from '@prisma/client';
+import { Church, User } from '@prisma/client';
 import { CustomGraphQLError, ErrorCode } from 'src/common/errors/custom-graphql-error';
 import { InstitutionRepository } from './institution.repository';
 import { RegionRepository } from './region.repository';
@@ -464,7 +464,7 @@ export class ChurchRepository {
     };
   }
 
-  async getUsersByChurchId(churchId: string): Promise<any[]> {
+  async getUsersByChurchId(churchId: string): Promise<User[]> {
     return this.prisma.user.findMany({
       where: { church_id: churchId, is_deleted: false },
       include: { user_roles: { include: { role: true } } },
