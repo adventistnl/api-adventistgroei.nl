@@ -81,7 +81,7 @@ export class NodemailerEmailRepository {
       });
     } catch (error) {
       console.error('Error sending email:', error);
-      throw new CustomGraphQLError('Failed to send email', ErrorCode.INTERNAL_SERVER_ERROR, 500);
+      throw new CustomGraphQLError(`Failed to send email: ${error instanceof Error ? error.message : String(error)}`, ErrorCode.INTERNAL_SERVER_ERROR, 500);
     }
   }
 
