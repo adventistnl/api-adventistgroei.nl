@@ -1,0 +1,29 @@
+{
+  "errors": {
+    "status_is_closed": "Cannot change status of a CLOSED subsidy request",
+    "invalid_transition_in_review_to_closed": "Cannot change status directly from IN_REVIEW to CLOSED",
+    "invalid_transition_final_state": "Cannot change status from {{from}} to {{to}}. Approved/Rejected requests can only be CLOSED.",
+    "action_not_allowed_closed": "Action not allowed on a CLOSED subsidy request",
+    "documents_not_validated": "Cannot change status. All documents must be validated first.",
+    "documents_pending_validation": "Cannot approve subsidy. {{count}} document(s) are still pending validation.",
+    "documents_rejected": "Cannot approve subsidy. {{count}} document(s) were rejected.",
+    "pending_status_not_found": "Pending status not found. Please create a PENDING status first.",
+    "subsidy_not_found": "SubsidyRequest not found",
+    "cannot_delete_approved_or_closed": "Cannot delete {{status}} subsidy requests",
+    "approved_status_not_found": "Approved status not found",
+    "rejected_status_not_found": "Rejected status not found",
+    "document_amounts_mismatch": "The sum of document amounts ({{sum}}) does not match the requested amount ({{requested}}) for the activity"
+  },
+  "history": {
+    "request_created": "Request created",
+    "status_changed": "Status changed from {{from}} to {{to}}",
+    "priority_changed": "Priority changed from {{from}} to {{to}}",
+    "subsidy_deleted": "Subsidy request deleted",
+    "request_approved": "Request approved. Approved amount: {{amount}}",
+    "request_rejected": "Request rejected",
+    "auto_status_in_review": "Status automatically changed to IN_REVIEW. {{approved}} approved, {{rejected}} rejected, {{pending}} pending."
+  },
+  "status": {
+    "unknown": "Unknown"
+  }
+}

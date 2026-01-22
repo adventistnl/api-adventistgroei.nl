@@ -134,15 +134,17 @@ export class UserRepository {
     let contactData;
     if (user.contact_id) {
       // User has existing contact - update it
-      contactData = Object.keys(contactUpdateData).length > 0 
-        ? { 
-            connect: { id: user.contact_id }, 
-            update: { 
+      if (Object.keys(contactUpdateData).length > 0) {
+        contactData = { 
+          update: { 
+            where: { id: user.contact_id },
+            data: {
               ...contactUpdateData, 
               updated_by: requester_id 
-            } 
+            }
           }
-        : { connect: { id: user.contact_id } };
+        };
+      }
     } else if (Object.keys(contactUpdateData).length > 0) {
       // User has no contact but we have contact data - create new contact
       contactData = {
