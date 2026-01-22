@@ -7,6 +7,7 @@ import { SubsidyRequestCreateDto, SubsidyRequestUpdateDto } from '../dto/subsidy
 import { SubsidyKPIs, SubsidyByDepartment, SubsidyByMonth, SubsidyByStatus } from '../dto/subsidy-analytics.dto';
 import { Permission } from '../middlewares';
 import { PermissionsGuard } from '../middlewares/permissions.guard';
+import { LanguagePreference } from '../@generated/prisma/language-preference.enum';
 
 @Resolver(() => SubsidyRequest)
 export class SubsidyRequestResolver {
@@ -36,9 +37,10 @@ export class SubsidyRequestResolver {
   @Permission()
   async createSubsidyRequest(
     @Args('data') data: SubsidyRequestCreateDto,
+    @Args('language', { type: () => LanguagePreference, nullable: true, defaultValue: LanguagePreference.en }) language: LanguagePreference,
     @Context() context: { userId: string },
   ): Promise<SubsidyRequest> {
-    return this.subsidyRequestService.create(data, context.userId);
+    return this.subsidyRequestService.create(data, context.userId, language);
   }
 
   @Mutation(() => SubsidyRequest)
@@ -47,9 +49,10 @@ export class SubsidyRequestResolver {
   async updateSubsidyRequest(
     @Args('id') id: string,
     @Args('data') data: SubsidyRequestUpdateDto,
+    @Args('language', { type: () => LanguagePreference, nullable: true, defaultValue: LanguagePreference.en }) language: LanguagePreference,
     @Context() context: { userId: string },
   ): Promise<SubsidyRequest> {
-    return this.subsidyRequestService.update(id, data, context.userId);
+    return this.subsidyRequestService.update(id, data, context.userId, language);
   }
 
   @Mutation(() => SubsidyRequest)
@@ -57,9 +60,10 @@ export class SubsidyRequestResolver {
   @Permission()
   async deleteSubsidyRequest(
     @Args('id') id: string,
+    @Args('language', { type: () => LanguagePreference, nullable: true, defaultValue: LanguagePreference.en }) language: LanguagePreference,
     @Context() context: { userId: string },
   ): Promise<SubsidyRequest> {
-    return this.subsidyRequestService.delete(id, context.userId);
+    return this.subsidyRequestService.delete(id, context.userId, language);
   }
 
   @Mutation(() => SubsidyRequest)
@@ -68,9 +72,10 @@ export class SubsidyRequestResolver {
   async approveSubsidyRequest(
     @Args('id') id: string,
     @Args('approved_amount', { type: () => Float }) approvedAmount: number,
+    @Args('language', { type: () => LanguagePreference, nullable: true, defaultValue: LanguagePreference.en }) language: LanguagePreference,
     @Context() context: { userId: string },
   ): Promise<SubsidyRequest> {
-    return this.subsidyRequestService.approve(id, approvedAmount, context.userId);
+    return this.subsidyRequestService.approve(id, approvedAmount, context.userId, language);
   }
 
   @Mutation(() => SubsidyRequest)
@@ -79,18 +84,20 @@ export class SubsidyRequestResolver {
   async rejectSubsidyRequest(
     @Args('id') id: string,
     @Args('rejection_reason') rejectionReason: string,
+    @Args('language', { type: () => LanguagePreference, nullable: true, defaultValue: LanguagePreference.en }) language: LanguagePreference,
     @Context() context: { userId: string },
   ): Promise<SubsidyRequest> {
-    return this.subsidyRequestService.reject(id, rejectionReason, context.userId);
+    return this.subsidyRequestService.reject(id, rejectionReason, context.userId, language);
   }
 
   @Mutation(() => SubsidyStatusHistory)
   async addSubsidyRequestMessage(
     @Args('id') id: string,
     @Args('message') message: string,
+    @Args('language', { type: () => LanguagePreference, nullable: true, defaultValue: LanguagePreference.en }) language: LanguagePreference,
     @Context() context: { userId: string },
   ): Promise<SubsidyStatusHistory> {
-    return this.subsidyRequestService.addMessage(id, message, context.userId);
+    return this.subsidyRequestService.addMessage(id, message, context.userId, language);
   }
 
   // Analytics queries

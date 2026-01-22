@@ -3795,12 +3795,12 @@ type Mutation {
   createSetting(data: SettingCreateDto!): Setting!
   updateSetting(id: String!, data: SettingUpdateDto!): Setting!
   deleteSetting(id: String!): Setting!
-  createSubsidyRequest(data: SubsidyRequestCreateDto!): SubsidyRequest!
-  updateSubsidyRequest(id: String!, data: SubsidyRequestUpdateDto!): SubsidyRequest!
-  deleteSubsidyRequest(id: String!): SubsidyRequest!
-  approveSubsidyRequest(id: String!, approved_amount: Float!): SubsidyRequest!
-  rejectSubsidyRequest(id: String!, rejection_reason: String!): SubsidyRequest!
-  addSubsidyRequestMessage(id: String!, message: String!): SubsidyStatusHistory!
+  createSubsidyRequest(data: SubsidyRequestCreateDto!, language: LanguagePreference = en): SubsidyRequest!
+  updateSubsidyRequest(id: String!, data: SubsidyRequestUpdateDto!, language: LanguagePreference = en): SubsidyRequest!
+  deleteSubsidyRequest(id: String!, language: LanguagePreference = en): SubsidyRequest!
+  approveSubsidyRequest(id: String!, approved_amount: Float!, language: LanguagePreference = en): SubsidyRequest!
+  rejectSubsidyRequest(id: String!, rejection_reason: String!, language: LanguagePreference = en): SubsidyRequest!
+  addSubsidyRequestMessage(id: String!, message: String!, language: LanguagePreference = en): SubsidyStatusHistory!
   createContact(data: ContactCreateDto!, userId: String!): Contact!
   updateContact(data: ContactUpdateDto!): Contact!
   deleteContact(id: String!, userId: String!): Contact!

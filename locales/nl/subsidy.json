@@ -1,0 +1,29 @@
+{
+  "errors": {
+    "status_is_closed": "Kan de status van een GESLOTEN subsidieaanvraag niet wijzigen",
+    "invalid_transition_in_review_to_closed": "Kan de status niet direct wijzigen van IN_BEOORDELING naar GESLOTEN",
+    "invalid_transition_final_state": "Kan de status niet wijzigen van {{from}} naar {{to}}. Goedgekeurde/Afgewezen aanvragen kunnen alleen GESLOTEN worden.",
+    "action_not_allowed_closed": "Actie niet toegestaan op een GESLOTEN subsidieaanvraag",
+    "documents_not_validated": "Kan de status niet wijzigen. Alle documenten moeten eerst gevalideerd worden.",
+    "documents_pending_validation": "Kan subsidie niet goedkeuren. {{count}} document(en) wachten nog op validatie.",
+    "documents_rejected": "Kan subsidie niet goedkeuren. {{count}} document(en) zijn afgewezen.",
+    "pending_status_not_found": "Status 'In afwachting' niet gevonden. Maak eerst een PENDING status aan.",
+    "subsidy_not_found": "Subsidieaanvraag niet gevonden",
+    "cannot_delete_approved_or_closed": "Kan {{status}} subsidieaanvragen niet verwijderen",
+    "approved_status_not_found": "Goedgekeurde status niet gevonden",
+    "rejected_status_not_found": "Afgewezen status niet gevonden",
+    "document_amounts_mismatch": "De som van documentbedragen ({{sum}}) komt niet overeen met het aangevraagde bedrag ({{requested}}) voor de activiteit"
+  },
+  "history": {
+    "request_created": "Aanvraag aangemaakt",
+    "status_changed": "Status gewijzigd van {{from}} naar {{to}}",
+    "priority_changed": "Prioriteit gewijzigd van {{from}} naar {{to}}",
+    "subsidy_deleted": "Subsidieaanvraag verwijderd",
+    "request_approved": "Aanvraag goedgekeurd. Goedgekeurd bedrag: {{amount}}",
+    "request_rejected": "Aanvraag afgewezen",
+    "auto_status_in_review": "Status automatisch gewijzigd naar IN_BEOORDELING. {{approved}} goedgekeurd, {{rejected}} afgewezen, {{pending}} in afwachting."
+  },
+  "status": {
+    "unknown": "Onbekend"
+  }
+}

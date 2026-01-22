@@ -15,6 +15,8 @@ import { SubsidyHistoryType } from '../@generated/prisma/subsidy-history-type.en
 import { AnnualBudgetService } from './annual-budget.service';
 import { DecimalHelper } from '../common/helpers/decimal.helper';
 import { SubsidyReceiptService } from './subsidy-receipt.service';
+import { translate } from '../../i18n.config';
+import { LanguagePreference } from '../@generated/prisma/language-preference.enum';
 
 @Injectable()
 export class SubsidyRequestService {
@@ -30,7 +32,7 @@ export class SubsidyRequestService {
     private readonly subsidyReceiptService: SubsidyReceiptService,
   ) {}
 
-  private validateStatusTransition(currentStatusName: string | undefined, newStatusName: string) {
+  private validateStatusTransition(currentStatusName: string | undefined, newStatusName: string, language: LanguagePreference = LanguagePreference.en) {
       if (!currentStatusName) return;
 
       const from = currentStatusName.toUpperCase();
@@ -39,7 +41,7 @@ export class SubsidyRequestService {
       // Rule 1: Closed status cannot be changed to anything else
       if (from === 'CLOSED' && from !== to) {
           throw new CustomGraphQLError(
-              'Cannot change status of a CLOSED subsidy request',
+              translate('subsidy.errors.status_is_closed', language, { ns: 'subsidy' }),
               ErrorCode.BAD_REQUEST,
               400,
               { additional: { errorCode: 'STATUS_IS_CLOSED' } }
@@ -49,7 +51,7 @@ export class SubsidyRequestService {
       // Rule 2: In Review -> Closed Not Allowed directly
       if (from === 'IN_REVIEW' && to === 'CLOSED') {
            throw new CustomGraphQLError(
-              'Cannot change status directly from IN_REVIEW to CLOSED',
+              translate('subsidy.errors.invalid_transition_in_review_to_closed', language, { ns: 'subsidy' }),
               ErrorCode.BAD_REQUEST,
               400,
               { additional: { errorCode: 'INVALID_TRANSITION_IN_REVIEW_TO_CLOSED' } }
@@ -59,15 +61,7 @@ export class SubsidyRequestService {
       // Rule 3: Approved/Rejected can ONLY go to Closed (if not staying same)
       if ((from === 'APPROVED' || from === 'REJECTED') && to !== 'CLOSED' && from !== to) {
            throw new CustomGraphQLError(
-              `Cannot change status from ${from} to ${to}. Approved/Rejected requests can only be CLOSED.`,
-              ErrorCode.BAD_REQUEST,
-              400,
-              { additional: { errorCode: 'INVALID_TRANSITION_FINAL_STATE' } }
-          );
-      }
-      if ((from === 'APPROVED' || from === 'REJECTED') && to !== 'CLOSED' && from !== to) {
-           throw new CustomGraphQLError(
-              `Cannot change status from ${from} to ${to}. Approved/Rejected requests can only be CLOSED.`,
+              translate('subsidy.errors.invalid_transition_final_state', language, { ns: 'subsidy', from, to }),
               ErrorCode.BAD_REQUEST,
               400,
               { additional: { errorCode: 'INVALID_TRANSITION_FINAL_STATE' } }
@@ -75,18 +69,18 @@ export class SubsidyRequestService {
       }
   }
 
-  private ensureNotClosed(statusName: string | undefined) {
+  private ensureNotClosed(statusName: string | undefined, language: LanguagePreference = LanguagePreference.en) {
     if (statusName?.toUpperCase() === 'CLOSED') {
       throw new CustomGraphQLError(
-        'Action not allowed on a CLOSED subsidy request',
-        ErrorCode.BAD_REQUEST, // Or STATUS_CHANGE_NOT_ALLOWED
+        translate('subsidy.errors.action_not_allowed_closed', language, { ns: 'subsidy' }),
+        ErrorCode.BAD_REQUEST,
         400,
         { additional: { errorCode: 'STATUS_IS_CLOSED' } }
       );
     }
   }
 
-  private async ensureAllDocumentsValidated(id: string) {
+  private async ensureAllDocumentsValidated(id: string, language: LanguagePreference = LanguagePreference.en) {
     const pendingReceipts = await this.prisma.subsidyReceipt.count({
       where: {
         subsidy_request_id: id,
@@ -97,7 +91,7 @@ export class SubsidyRequestService {
 
     if (pendingReceipts > 0) {
        throw new CustomGraphQLError(
-        'Cannot change status. All documents must be validated first.',
+        translate('subsidy.errors.documents_not_validated', language, { ns: 'subsidy' }),
         ErrorCode.BAD_REQUEST,
         400,
         { additional: { errorCode: 'DOCUMENTS_NOT_VALIDATED' } }
@@ -109,7 +103,7 @@ export class SubsidyRequestService {
    * Validates that ALL documents are approved (not just validated).
    * This blocks approval of subsidy if any document was rejected.
    */
-  private async ensureAllDocumentsApproved(id: string) {
+  private async ensureAllDocumentsApproved(id: string, language: LanguagePreference = LanguagePreference.en) {
     const receipts = await this.prisma.subsidyReceipt.findMany({
       where: {
         subsidy_request_id: id,
@@ -125,7 +119,7 @@ export class SubsidyRequestService {
     const pendingCount = receipts.filter(r => !r.is_validated).length;
     if (pendingCount > 0) {
       throw new CustomGraphQLError(
-        `Cannot approve subsidy. ${pendingCount} document(s) are still pending validation.`,
+        translate('subsidy.errors.documents_pending_validation', language, { ns: 'subsidy', count: pendingCount }),
         ErrorCode.BAD_REQUEST,
         400,
         { additional: { errorCode: 'DOCUMENTS_NOT_VALIDATED' } }
@@ -136,7 +130,7 @@ export class SubsidyRequestService {
     const rejectedCount = receipts.filter(r => r.is_validated && !r.approved).length;
     if (rejectedCount > 0) {
       throw new CustomGraphQLError(
-        `Cannot approve subsidy. ${rejectedCount} document(s) were rejected.`,
+        translate('subsidy.errors.documents_rejected', language, { ns: 'subsidy', count: rejectedCount }),
         ErrorCode.BAD_REQUEST,
         400,
         { additional: { errorCode: 'DOCUMENTS_REJECTED' } }
@@ -144,7 +138,7 @@ export class SubsidyRequestService {
     }
   }
 
-  async create(data: SubsidyRequestCreateDto, userId: string): Promise<SubsidyRequest> {
+  async create(data: SubsidyRequestCreateDto, userId: string, language: LanguagePreference = LanguagePreference.en): Promise<SubsidyRequest> {
     // Se subsidy_status_id não foi fornecido, buscar status "PENDING" automaticamente
     if (!data.subsidy_status_id) {
       const pendingStatus = await this.prisma.subsidyStatus.findFirst({
@@ -152,7 +146,11 @@ export class SubsidyRequestService {
       });
 
       if (!pendingStatus) {
-        throw new CustomGraphQLError('Pending status not found. Please create a PENDING status first.', ErrorCode.NOT_FOUND, 404);
+        throw new CustomGraphQLError(
+          translate('subsidy.errors.pending_status_not_found', language, { ns: 'subsidy' }),
+          ErrorCode.NOT_FOUND,
+          404
+        );
       }
 
       data.subsidy_status_id = pendingStatus.id;
@@ -166,7 +164,7 @@ export class SubsidyRequestService {
       status_id: data.subsidy_status_id,
       previous_status_id: undefined,
       type: SubsidyHistoryType.STATUS_CHANGE,
-      reason: 'Request created',
+      reason: translate('subsidy.history.request_created', language, { ns: 'subsidy' }),
       changed_by: userId,
     });
 
@@ -209,7 +207,7 @@ export class SubsidyRequestService {
         // Check if sum matches requested amount
         if (documentAmountsSum > 0 && Math.abs(documentAmountsSum - itemInput.requested_amount) > 0.01) {
           throw new CustomGraphQLError(
-            `The sum of document amounts (${documentAmountsSum}) does not match the requested amount (${itemInput.requested_amount}) for the activity`,
+            translate('subsidy.errors.document_amounts_mismatch', language, { ns: 'subsidy', sum: documentAmountsSum, requested: itemInput.requested_amount }),
             ErrorCode.VALIDATION_ERROR,
             400
           );
@@ -220,18 +218,22 @@ export class SubsidyRequestService {
     return subsidyRequest;
   }
 
-  async update(id: string, data: SubsidyRequestUpdateDto, userId: string): Promise<SubsidyRequest> {
+  async update(id: string, data: SubsidyRequestUpdateDto, userId: string, language: LanguagePreference = LanguagePreference.en): Promise<SubsidyRequest> {
     // Get current subsidy to check if status changed
 
 
     const current = await this.subsidyRequestRepository.findById(id);
     
     if (!current) {
-      throw new CustomGraphQLError('SubsidyRequest not found', ErrorCode.NOT_FOUND, 404);
+      throw new CustomGraphQLError(
+        translate('subsidy.errors.subsidy_not_found', language, { ns: 'subsidy' }),
+        ErrorCode.NOT_FOUND,
+        404
+      );
     }
 
     // Checking if currently closed
-    this.ensureNotClosed(current.subsidy_status?.name);
+    this.ensureNotClosed(current.subsidy_status?.name, language);
 
     const result = await this.subsidyRequestRepository.update(id, data, userId);
 
@@ -305,17 +307,17 @@ export class SubsidyRequestService {
       ]);
 
       if (newStatus) {
-         this.validateStatusTransition(current.subsidy_status?.name, newStatus.name);
+         this.validateStatusTransition(current.subsidy_status?.name, newStatus.name, language);
          
          const targetName = newStatus.name.toUpperCase();
          if (['APPROVED', 'REJECTED', 'CLOSED'].includes(targetName)) {
-            await this.ensureAllDocumentsValidated(id);
+            await this.ensureAllDocumentsValidated(id, language);
          }
       }
 
-      const previousStatusName = previousStatus?.description || previousStatus?.name || 'Desconhecido';
-      const newStatusName = newStatus?.description || newStatus?.name || 'Desconhecido';
-      const reason = data.notes || `Status alterado de ${previousStatusName} para ${newStatusName}`;
+      const previousStatusName = previousStatus?.description || previousStatus?.name || translate('subsidy.status.unknown', language, { ns: 'subsidy' });
+      const newStatusName = newStatus?.description || newStatus?.name || translate('subsidy.status.unknown', language, { ns: 'subsidy' });
+      const reason = data.notes || translate('subsidy.history.status_changed', language, { ns: 'subsidy', from: previousStatusName, to: newStatusName });
 
       await this.historyRepository.create({
         subsidy_request_id: id,
@@ -333,7 +335,7 @@ export class SubsidyRequestService {
         subsidy_request_id: id,
         status_id: current.subsidy_statuses_id, // Keep current status context
         type: SubsidyHistoryType.PRIORITY_CHANGE,
-        reason: `Priority changed from ${current.priority} to ${data.priority}`,
+        reason: translate('subsidy.history.priority_changed', language, { ns: 'subsidy', from: current.priority, to: data.priority }),
         changed_by: userId,
       });
     }
@@ -341,17 +343,17 @@ export class SubsidyRequestService {
     return result;
   }
 
-  async addMessage(subsidyRequestId: string, message: string, userId: string): Promise<any> {
+  async addMessage(subsidyRequestId: string, message: string, userId: string, language: LanguagePreference = LanguagePreference.en): Promise<any> {
     const subsidyRequest = await this.subsidyRequestRepository.findById(subsidyRequestId);
     if (!subsidyRequest) {
-      throw new CustomGraphQLError('SubsidyRequest not found', ErrorCode.NOT_FOUND, 404);
+      throw new CustomGraphQLError(
+        translate('subsidy.errors.subsidy_not_found', language, { ns: 'subsidy' }),
+        ErrorCode.NOT_FOUND,
+        404
+      );
     }
 
-    if (!subsidyRequest) {
-      throw new CustomGraphQLError('SubsidyRequest not found', ErrorCode.NOT_FOUND, 404);
-    }
-
-    this.ensureNotClosed(subsidyRequest.subsidy_status?.name);
+    this.ensureNotClosed(subsidyRequest.subsidy_status?.name, language);
 
     return this.historyRepository.create({
       subsidy_request_id: subsidyRequestId,
@@ -363,7 +365,7 @@ export class SubsidyRequestService {
     });
   }
 
-  async delete(id: string, userId: string): Promise<SubsidyRequest> {
+  async delete(id: string, userId: string, language: LanguagePreference = LanguagePreference.en): Promise<SubsidyRequest> {
     // Buscar subsidy request com status
     const subsidyRequest = await this.prisma.subsidyRequest.findUnique({
       where: { id, is_deleted: false },
@@ -373,14 +375,18 @@ export class SubsidyRequestService {
     });
 
     if (!subsidyRequest) {
-      throw new CustomGraphQLError('SubsidyRequest not found', ErrorCode.NOT_FOUND, 404);
+      throw new CustomGraphQLError(
+        translate('subsidy.errors.subsidy_not_found', language, { ns: 'subsidy' }),
+        ErrorCode.NOT_FOUND,
+        404
+      );
     }
 
     // Validação: Não permitir deletar se status for APPROVED ou CLOSED
     const blockedStatuses = ['APPROVED', 'CLOSED'];
     if (subsidyRequest.subsidy_status?.name && blockedStatuses.includes(subsidyRequest.subsidy_status.name)) {
       throw new CustomGraphQLError(
-        `Cannot delete ${subsidyRequest.subsidy_status.name.toLowerCase()} subsidy requests`,
+        translate('subsidy.errors.cannot_delete_approved_or_closed', language, { ns: 'subsidy', status: subsidyRequest.subsidy_status.name.toLowerCase() }),
         ErrorCode.BAD_REQUEST,
         400,
         { additional: { errorCode: 'SUBSIDY_IS_APPROVED_OR_CLOSED' } }
@@ -395,7 +401,7 @@ export class SubsidyRequestService {
         status_id: subsidyRequest.subsidy_statuses_id,
         previous_status_id: undefined,
         type: SubsidyHistoryType.STATUS_CHANGE,
-        reason: 'Subsidy request deleted',
+        reason: translate('subsidy.history.subsidy_deleted', language, { ns: 'subsidy' }),
         changed_by: userId,
       });
 
@@ -487,19 +493,23 @@ export class SubsidyRequestService {
     return this.subsidyRequestRepository.findManyByFilters({ project_id: projectId });
   }
 
-  async approve(id: string, approvedAmount: number, userId: string): Promise<SubsidyRequest> {
+  async approve(id: string, approvedAmount: number, userId: string, language: LanguagePreference = LanguagePreference.en): Promise<SubsidyRequest> {
     // Get current subsidy
     const current = await this.subsidyRequestRepository.findById(id);
     
     if (!current) {
-      throw new CustomGraphQLError('SubsidyRequest not found', ErrorCode.NOT_FOUND, 404);
+      throw new CustomGraphQLError(
+        translate('subsidy.errors.subsidy_not_found', language, { ns: 'subsidy' }),
+        ErrorCode.NOT_FOUND,
+        404
+      );
     }
 
     // Validate Status Transition
-    this.validateStatusTransition(current.subsidy_status?.name, 'APPROVED');
+    this.validateStatusTransition(current.subsidy_status?.name, 'APPROVED', language);
 
     // Ensure all documents are approved (not just validated - rejects any with rejected docs)
-    await this.ensureAllDocumentsApproved(id);
+    await this.ensureAllDocumentsApproved(id, language);
 
     // Buscar status "APPROVED"
     const approvedStatus = await this.prisma.subsidyStatus.findFirst({
@@ -507,7 +517,11 @@ export class SubsidyRequestService {
     });
 
     if (!approvedStatus) {
-      throw new CustomGraphQLError('Approved status not found', ErrorCode.NOT_FOUND, 404);
+      throw new CustomGraphQLError(
+        translate('subsidy.errors.approved_status_not_found', language, { ns: 'subsidy' }),
+        ErrorCode.NOT_FOUND,
+        404
+      );
     }
 
     const result = await this.subsidyRequestRepository.update(
@@ -526,7 +540,7 @@ export class SubsidyRequestService {
       subsidy_request_id: id,
       status_id: approvedStatus.id,
       previous_status_id: current.subsidy_statuses_id,
-      reason: `Request approved. Approved amount: ${approvedAmount}`,
+      reason: translate('subsidy.history.request_approved', language, { ns: 'subsidy', amount: approvedAmount }),
       changed_by: userId,
     });
 
@@ -549,19 +563,23 @@ export class SubsidyRequestService {
     return result;
   }
 
-  async reject(id: string, rejectionReason: string, userId: string): Promise<SubsidyRequest> {
+  async reject(id: string, rejectionReason: string, userId: string, language: LanguagePreference = LanguagePreference.en): Promise<SubsidyRequest> {
     // Get current subsidy
     const current = await this.subsidyRequestRepository.findById(id);
     
     if (!current) {
-      throw new CustomGraphQLError('SubsidyRequest not found', ErrorCode.NOT_FOUND, 404);
+      throw new CustomGraphQLError(
+        translate('subsidy.errors.subsidy_not_found', language, { ns: 'subsidy' }),
+        ErrorCode.NOT_FOUND,
+        404
+      );
     }
 
     // Validate Status Transition
-    this.validateStatusTransition(current.subsidy_status?.name, 'REJECTED');
+    this.validateStatusTransition(current.subsidy_status?.name, 'REJECTED', language);
 
     // Ensure all documents are validated
-    await this.ensureAllDocumentsValidated(id);
+    await this.ensureAllDocumentsValidated(id, language);
 
     // Buscar status "REJECTED"
     const rejectedStatus = await this.prisma.subsidyStatus.findFirst({
@@ -569,7 +587,11 @@ export class SubsidyRequestService {
     });
 
     if (!rejectedStatus) {
-      throw new CustomGraphQLError('Rejected status not found', ErrorCode.NOT_FOUND, 404);
+      throw new CustomGraphQLError(
+        translate('subsidy.errors.rejected_status_not_found', language, { ns: 'subsidy' }),
+        ErrorCode.NOT_FOUND,
+        404
+      );
     }
 
     const result = await this.subsidyRequestRepository.update(
@@ -586,7 +608,7 @@ export class SubsidyRequestService {
       subsidy_request_id: id,
       status_id: rejectedStatus.id,
       previous_status_id: current.subsidy_statuses_id,
-      reason: rejectionReason || 'Request rejected',
+      reason: rejectionReason || translate('subsidy.history.request_rejected', language, { ns: 'subsidy' }),
       changed_by: userId,
     });
 
@@ -615,7 +637,7 @@ export class SubsidyRequestService {
    * Status changes to APPROVED/REJECTED/CLOSED must be done manually by the user.
    * This prevents duplicate budget calculations when documents are validated.
    */
-  async recalculateStatus(id: string, userId: string): Promise<void> {
+  async recalculateStatus(id: string, userId: string, language: LanguagePreference = LanguagePreference.en): Promise<void> {
     const subsidyRequest = await this.subsidyRequestRepository.findById(id);
     if (!subsidyRequest) return;
 
@@ -657,9 +679,9 @@ export class SubsidyRequestService {
         console.log(`🤖 Auto-updating subsidy ${id} status to IN_REVIEW`);
         const updateData: SubsidyRequestUpdateDto = {
           subsidy_status_id: status.id,
-          notes: `Status automatically changed to IN_REVIEW. ${approvedDocs} approved, ${rejectedDocs} rejected, ${pendingDocs} pending.`
+          notes: translate('subsidy.history.auto_status_in_review', language, { ns: 'subsidy', approved: approvedDocs, rejected: rejectedDocs, pending: pendingDocs })
         };
-        await this.update(id, updateData, userId);
+        await this.update(id, updateData, userId, language);
       }
     }
     // For APPROVED/REJECTED, just log - user must manually approve/reject to trigger budget calculations
