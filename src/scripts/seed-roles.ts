@@ -43,6 +43,7 @@ const roles = [
       { key_code: 'ROLE_UPDATE', is_essential: true },
       { key_code: 'ROLE_DELETE', is_essential: true },
       { key_code: 'USER_UPDATE', is_essential: true },
+      { key_code: 'USER_OWN_UPDATE', is_essential: true },
       { key_code: 'USER_DELETE', is_essential: true },
       { key_code: 'USER_ROLE_ADD', is_essential: true },
       { key_code: 'USER_ROLE_REMOVE', is_essential: true },
@@ -100,6 +101,7 @@ const roles = [
     permissions: [
       { key_code: 'USERS_ACCESS', is_essential: true },
       { key_code: 'USER_ACCESS', is_essential: true },
+      { key_code: 'USER_OWN_UPDATE', is_essential: true },
       { key_code: 'CHURCHES_ACCESS', is_essential: true },
       { key_code: 'CHURCH_ACCESS', is_essential: true },
       { key_code: 'DEPARTMENTS_ACCESS', is_essential: true },
@@ -115,6 +117,7 @@ const roles = [
       // Read permissions
       { key_code: 'USERS_ACCESS', is_essential: true },
       { key_code: 'USER_ACCESS', is_essential: true },
+      { key_code: 'USER_OWN_UPDATE', is_essential: true },
       { key_code: 'CHURCHES_ACCESS', is_essential: true },
       { key_code: 'CHURCH_ACCESS', is_essential: true },
       { key_code: 'DEPARTMENTS_ACCESS', is_essential: true },
@@ -170,6 +173,7 @@ const roles = [
     permissions: [
       { key_code: 'USERS_ACCESS', is_essential: true },
       { key_code: 'USER_ACCESS', is_essential: true },
+      { key_code: 'USER_OWN_UPDATE', is_essential: true },
       { key_code: 'PROJECTS_ACCESS', is_essential: true },
       { key_code: 'PROJECT_ACCESS', is_essential: true },
       { key_code: 'ANNUAL_BUDGETS_ACCESS', is_essential: true },
@@ -210,6 +214,7 @@ const roles = [
     permissions: [
       { key_code: 'USERS_ACCESS', is_essential: true },
       { key_code: 'USER_ACCESS', is_essential: true },
+      { key_code: 'USER_OWN_UPDATE', is_essential: true },
       { key_code: 'INSTITUTIONS_ACCESS', is_essential: true },
       { key_code: 'INSTITUTION_ACCESS', is_essential: true },
       { key_code: 'DEPARTMENTS_ACCESS', is_essential: true },
@@ -297,6 +302,7 @@ const roles = [
       // Read permissions
       { key_code: 'USERS_ACCESS', is_essential: true },
       { key_code: 'USER_ACCESS', is_essential: true },
+      { key_code: 'USER_OWN_UPDATE', is_essential: true },
       { key_code: 'INSTITUTIONS_ACCESS', is_essential: true },
       { key_code: 'INSTITUTION_ACCESS', is_essential: true },
       { key_code: 'DEPARTMENTS_ACCESS', is_essential: true },
@@ -346,6 +352,7 @@ const roles = [
       // Read permissions
       { key_code: 'USERS_ACCESS', is_essential: true },
       { key_code: 'USER_ACCESS', is_essential: true },
+      { key_code: 'USER_OWN_UPDATE', is_essential: true },
       { key_code: 'CHURCHES_ACCESS', is_essential: true },
       { key_code: 'CHURCH_ACCESS', is_essential: true },
       { key_code: 'DEPARTMENTS_ACCESS', is_essential: true },

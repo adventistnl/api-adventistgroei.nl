@@ -38,7 +38,6 @@ const permissionsDisabledToClient = [
   { name: 'delete setting', description: 'Delete a setting', resolver_name: 'deleteSetting' as PermissionResolverName, group: 'SETTING' as PermissionGroup, key_code: 'SETTING_DELETE', disabled_to_client: true },
   { name: 'add project voluntary', description: 'Adicionar voluntário ao projeto', resolver_name: 'addProjectVoluntary' as PermissionResolverName, group: 'PROJECT' as PermissionGroup, key_code: 'PROJECT_VOLUNTARY_ADD', disabled_to_client: true },
   { name: 'remove project voluntary', description: 'Remover voluntário do projeto', resolver_name: 'removeProjectVoluntary' as PermissionResolverName, group: 'PROJECT' as PermissionGroup, key_code: 'PROJECT_VOLUNTARY_REMOVE', disabled_to_client: true },
-  { name: 'update own user', description: 'Update own user profile', resolver_name: 'updateOwnUser' as PermissionResolverName, group: 'USER' as PermissionGroup, key_code: 'USER_OWN_UPDATE', disabled_to_client: true },
   { name: 'update user department', description: 'Update or remove user department assignment (admin/developer only)', resolver_name: 'updateUserDepartment' as PermissionResolverName, group: 'USER' as PermissionGroup, key_code: 'USER_DEPARTMENT_UPDATE', disabled_to_client: true },
   { name: 'update church leader', description: 'Update church leader assignment (admin/developer only)', resolver_name: 'updateChurchLeader' as PermissionResolverName, group: 'CHURCH' as PermissionGroup, key_code: 'CHURCH_LEADER_UPDATE', disabled_to_client: true },
 ];
@@ -46,6 +45,7 @@ const permissionsDisabledToClient = [
 const permissionsEnabledToClient = [
   { name: 'read users', description: 'Access to users', resolver_name: 'users' as PermissionResolverName, group: 'USER' as PermissionGroup, key_code: 'USERS_ACCESS', disabled_to_client: false },
   { name: 'read user', description: 'Access to a single user', resolver_name: 'user' as PermissionResolverName, group: 'USER' as PermissionGroup, key_code: 'USER_ACCESS', disabled_to_client: false },
+  { name: 'update own user', description: 'Update own user profile', resolver_name: 'updateOwnUser' as PermissionResolverName, group: 'USER' as PermissionGroup, key_code: 'USER_OWN_UPDATE', disabled_to_client: false },
   { name: 'read institutions', description: 'Access to institutions', resolver_name: 'institutions' as PermissionResolverName, group: 'INSTITUTION' as PermissionGroup, key_code: 'INSTITUTIONS_ACCESS', disabled_to_client: false },
   { name: 'read institution', description: 'Access to a single institution', resolver_name: 'institution' as PermissionResolverName, group: 'INSTITUTION' as PermissionGroup, key_code: 'INSTITUTION_ACCESS', disabled_to_client: false },
   { name: 'read regions', description: 'Access to regions', resolver_name: 'regions' as PermissionResolverName, group: 'REGION' as PermissionGroup, key_code: 'REGIONS_ACCESS', disabled_to_client: false },
@@ -176,6 +176,7 @@ async function main() {
       }
     }
   }
+  console.log('✅ Permissions seeding completed successfully!');
 }
 
 main()
