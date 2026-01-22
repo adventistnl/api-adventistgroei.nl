@@ -480,35 +480,35 @@ export class ProjectRepository {
       ];
     }
 
-    if (user) {
-      const isGlobalAdmin = user.user_roles?.some(ur => ur.key_code === 'ADMIN' || ur.key_code === 'DEV');
-      const isInstitutionLeader = user.user_roles?.some(ur => ur.key_code === 'INSTITUTIONAL_LEADER');
+    // if (user) {
+    //   const isGlobalAdmin = user.user_roles?.some(ur => ur.key_code === 'ADMIN' || ur.key_code === 'DEV');
+    //   const isInstitutionLeader = user.user_roles?.some(ur => ur.key_code === 'INSTITUTIONAL_LEADER');
       
-      // If not admin or institution leader, apply filters
-      if (!isGlobalAdmin && !isInstitutionLeader) {
-        const isDepartmentLeader = user.user_roles?.some(ur => 
-          ur.key_code === 'INSTITUTIONAL_DEPARTMENT_LEADER' || 
-          ur.key_code === 'DEPARTMENT_CHURCH_LEADER'
-        );
+    //   // If not admin or institution leader, apply filters
+    //   if (!isGlobalAdmin && !isInstitutionLeader) {
+    //     const isDepartmentLeader = user.user_roles?.some(ur => 
+    //       ur.key_code === 'INSTITUTIONAL_DEPARTMENT_LEADER' || 
+    //       ur.key_code === 'DEPARTMENT_CHURCH_LEADER'
+    //     );
 
-        if (isDepartmentLeader && user.department_id) {
-          // Department Leader sees all projects in their department
-          where.department_id = user.department_id;
-        } else {
-          // Regular user sees only assigned projects
-          // Assignments: Owner, Creator, or Activity Assignee
-          where.AND = [
-            {
-              OR: [
-                { owner_id: user.id },
-                { created_by: user.id },
-                { activities: { some: { assignees: { some: { user_id: user.id } }, is_deleted: false } } }
-              ]
-            }
-          ];
-        }
-      }
-    }
+    //     if (isDepartmentLeader && user.department_id) {
+    //       // Department Leader sees all projects in their department
+    //       where.department_id = user.department_id;
+    //     } else {
+    //       // Regular user sees only assigned projects
+    //       // Assignments: Owner, Creator, or Activity Assignee
+    //       where.AND = [
+    //         {
+    //           OR: [
+    //             { owner_id: user.id },
+    //             { created_by: user.id },
+    //             { activities: { some: { assignees: { some: { user_id: user.id } }, is_deleted: false } } }
+    //           ]
+    //         }
+    //       ];
+    //     }
+    //   }
+    // }
 
     return this.prisma.project.findMany({
       where,
