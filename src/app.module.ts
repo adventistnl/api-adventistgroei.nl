@@ -19,6 +19,7 @@ import { LoggingInterceptor } from './interceptors/logging.interceptor';
 import { GlobalExceptionFilter } from './filters/global-exception.filter';
 import { ActivityDocumentsController } from './controllers/activity-documents.controller';
 import { SubsidyReceiptController } from './controllers/subsidy-receipt.controller';
+import { ZipCodeModule } from './modules/zip-code.module';
 
 const JWT_SECRET = process.env.JWT_SECRET;
 
@@ -26,6 +27,7 @@ const JWT_SECRET = process.env.JWT_SECRET;
   imports: [
     ScheduleModule.forRoot(), // Habilita o suporte a cron jobs
     ConfigModule.forRoot(),
+    ZipCodeModule,
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
       playground: true,

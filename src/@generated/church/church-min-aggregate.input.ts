@@ -26,6 +26,12 @@ export class ChurchMinAggregateInput {
     leader_id?: true;
 
     @Field(() => Boolean, {nullable:true})
+    zip_code?: true;
+
+    @Field(() => Boolean, {nullable:true})
+    house_number?: true;
+
+    @Field(() => Boolean, {nullable:true})
     created_at?: true;
 
     @Field(() => Boolean, {nullable:true})

@@ -1,6 +1,7 @@
 import { Field } from '@nestjs/graphql';
 import { InputType } from '@nestjs/graphql';
 import { ChurchType } from '../prisma/church-type.enum';
+import { Int } from '@nestjs/graphql';
 import { UserUncheckedCreateNestedManyWithoutChurchInput } from '../user/user-unchecked-create-nested-many-without-church.input';
 import { Type } from 'class-transformer';
 import { SubsidyRequestUncheckedCreateNestedManyWithoutChurchInput } from '../subsidy-request/subsidy-request-unchecked-create-nested-many-without-church.input';
@@ -30,6 +31,12 @@ export class ChurchUncheckedCreateWithoutDepartmentsInput {
 
     @Field(() => String, {nullable:true})
     leader_id?: string;
+
+    @Field(() => String, {nullable:true})
+    zip_code?: string;
+
+    @Field(() => Int, {nullable:true})
+    house_number?: number;
 
     @Field(() => Date, {nullable:true})
     created_at?: Date | string;

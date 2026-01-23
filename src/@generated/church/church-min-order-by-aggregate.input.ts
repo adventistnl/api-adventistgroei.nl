@@ -27,6 +27,12 @@ export class ChurchMinOrderByAggregateInput {
     leader_id?: `${SortOrder}`;
 
     @Field(() => SortOrder, {nullable:true})
+    zip_code?: `${SortOrder}`;
+
+    @Field(() => SortOrder, {nullable:true})
+    house_number?: `${SortOrder}`;
+
+    @Field(() => SortOrder, {nullable:true})
     created_at?: `${SortOrder}`;
 
     @Field(() => SortOrder, {nullable:true})

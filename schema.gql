@@ -1124,6 +1124,8 @@ type Church {
   region_id: String
   contact_id: String
   leader_id: String
+  zip_code: String
+  house_number: Int
   created_at: DateTime!
   updated_at: DateTime!
   created_by: String!
@@ -1634,6 +1636,11 @@ type ForgotPasswordResponse {
   resetToken: String
 }
 
+type ZipInfo {
+  city: String
+  province: String
+}
+
 type Query {
   permissions: [PermissionGroupPermissionsModel!]!
   churches(institution_id: String): [Church!]!
@@ -1695,6 +1702,17 @@ type Query {
   entityDistribution(year: Int!): [EntityDistribution!]!
   budgetDistribution(year: Int!, institutionId: String!): BudgetDistribution!
   institutionalDepartmentsKPIs(year: Int!, institutionId: String!): InstitutionalDepartmentsKPIs!
+
+  """
+  Get city and province information for a Dutch postal code (ZIP code) and house number
+  """
+  getZipInfo(
+    """Dutch postal code (format: 1234AB)"""
+    zip: String!
+
+    """House number"""
+    houseNumber: Int!
+  ): ZipInfo!
 }
 
 input GetSubsidyReceiptsDto {
@@ -2168,6 +2186,8 @@ input ChurchWhereInput {
   region_id: StringNullableFilter
   contact_id: StringNullableFilter
   leader_id: StringNullableFilter
+  zip_code: StringNullableFilter
+  house_number: IntNullableFilter
   created_at: DateTimeFilter
   updated_at: DateTimeFilter
   created_by: StringFilter
@@ -2198,6 +2218,28 @@ input NestedEnumChurchTypeFilter {
   in: [ChurchType!]
   notIn: [ChurchType!]
   not: NestedEnumChurchTypeFilter
+}
+
+input IntNullableFilter {
+  equals: Int
+  in: [Int!]
+  notIn: [Int!]
+  lt: Int
+  lte: Int
+  gt: Int
+  gte: Int
+  not: NestedIntNullableFilter
+}
+
+input NestedIntNullableFilter {
+  equals: Int
+  in: [Int!]
+  notIn: [Int!]
+  lt: Int
+  lte: Int
+  gt: Int
+  gte: Int
+  not: NestedIntNullableFilter
 }
 
 input InstitutionScalarRelationFilter {
@@ -3575,6 +3617,8 @@ input ChurchOrderByWithRelationInput {
   region_id: SortOrderInput
   contact_id: SortOrderInput
   leader_id: SortOrderInput
+  zip_code: SortOrderInput
+  house_number: SortOrderInput
   created_at: SortOrder
   updated_at: SortOrder
   created_by: SortOrder
@@ -3853,6 +3897,8 @@ input ChurchCreateDto {
   leader_id: String!
   contact: ContactCreateDto
   type: ChurchType
+  zip_code: String
+  house_number: Int
 }
 
 input ContactCreateDto {
@@ -3879,6 +3925,8 @@ input ChurchUpdateDto {
   departmens: [String!]
   subsidy_requests: [String!]
   type: ChurchType
+  zip_code: String
+  house_number: Int
 }
 
 input InstitutionCreateDto {

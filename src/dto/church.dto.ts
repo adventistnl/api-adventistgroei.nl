@@ -1,5 +1,5 @@
-import { InputType, Field } from '@nestjs/graphql';
-import { IsArray, IsOptional, IsString } from 'class-validator';
+import { InputType, Field, Int } from '@nestjs/graphql';
+import { IsArray, IsOptional, IsString, IsInt } from 'class-validator';
 import { ContactCreateDto } from './contact.dto';
 import { ChurchType } from 'src/@generated/prisma/church-type.enum';
 
@@ -23,6 +23,16 @@ export class ChurchCreateDto {
 
   @Field(() => ChurchType, { nullable: true })
   type?: ChurchType
+
+  @Field(() => String, { nullable: true })
+  @IsString()
+  @IsOptional()
+  zip_code?: string;
+
+  @Field(() => Int, { nullable: true })
+  @IsInt()
+  @IsOptional()
+  house_number?: number;
 }
 
 @InputType()
@@ -63,4 +73,14 @@ export class ChurchUpdateDto {
   
   @Field(() => ChurchType, { nullable: true })
   type?: ChurchType
+
+  @Field(() => String, { nullable: true })
+  @IsString()
+  @IsOptional()
+  zip_code?: string;
+
+  @Field(() => Int, { nullable: true })
+  @IsInt()
+  @IsOptional()
+  house_number?: number;
 }

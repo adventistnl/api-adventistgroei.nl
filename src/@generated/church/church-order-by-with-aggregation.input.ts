@@ -3,8 +3,10 @@ import { InputType } from '@nestjs/graphql';
 import { SortOrder } from '../prisma/sort-order.enum';
 import { SortOrderInput } from '../prisma/sort-order.input';
 import { ChurchCountOrderByAggregateInput } from './church-count-order-by-aggregate.input';
+import { ChurchAvgOrderByAggregateInput } from './church-avg-order-by-aggregate.input';
 import { ChurchMaxOrderByAggregateInput } from './church-max-order-by-aggregate.input';
 import { ChurchMinOrderByAggregateInput } from './church-min-order-by-aggregate.input';
+import { ChurchSumOrderByAggregateInput } from './church-sum-order-by-aggregate.input';
 
 @InputType()
 export class ChurchOrderByWithAggregationInput {
@@ -30,6 +32,12 @@ export class ChurchOrderByWithAggregationInput {
     @Field(() => SortOrderInput, {nullable:true})
     leader_id?: SortOrderInput;
 
+    @Field(() => SortOrderInput, {nullable:true})
+    zip_code?: SortOrderInput;
+
+    @Field(() => SortOrderInput, {nullable:true})
+    house_number?: SortOrderInput;
+
     @Field(() => SortOrder, {nullable:true})
     created_at?: `${SortOrder}`;
 
@@ -54,9 +62,15 @@ export class ChurchOrderByWithAggregationInput {
     @Field(() => ChurchCountOrderByAggregateInput, {nullable:true})
     _count?: ChurchCountOrderByAggregateInput;
 
+    @Field(() => ChurchAvgOrderByAggregateInput, {nullable:true})
+    _avg?: ChurchAvgOrderByAggregateInput;
+
     @Field(() => ChurchMaxOrderByAggregateInput, {nullable:true})
     _max?: ChurchMaxOrderByAggregateInput;
 
     @Field(() => ChurchMinOrderByAggregateInput, {nullable:true})
     _min?: ChurchMinOrderByAggregateInput;
+
+    @Field(() => ChurchSumOrderByAggregateInput, {nullable:true})
+    _sum?: ChurchSumOrderByAggregateInput;
 }
