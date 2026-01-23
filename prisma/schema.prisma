@@ -372,6 +372,8 @@ model Church {
   contact          Contact?               @relation(fields: [contact_id], references: [id])
   leader_id        String?                @unique
   leader           User?                  @relation("ChurchLeader", fields: [leader_id], references: [id])
+  zip_code         String?
+  house_number     Int?
   created_at       DateTime               @default(now())
   updated_at       DateTime               @updatedAt
   created_by       String

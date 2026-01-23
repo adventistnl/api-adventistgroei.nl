@@ -4,6 +4,7 @@ import { ChurchWhereInput } from './church-where.input';
 import { EnumChurchTypeFilter } from '../prisma/enum-church-type-filter.input';
 import { StringFilter } from '../prisma/string-filter.input';
 import { StringNullableFilter } from '../prisma/string-nullable-filter.input';
+import { IntNullableFilter } from '../prisma/int-nullable-filter.input';
 import { DateTimeFilter } from '../prisma/date-time-filter.input';
 import { BoolFilter } from '../prisma/bool-filter.input';
 import { DateTimeNullableFilter } from '../prisma/date-time-nullable-filter.input';
@@ -50,6 +51,12 @@ export class ChurchWhereUniqueInput {
 
     @Field(() => StringNullableFilter, {nullable:true})
     contact_id?: StringNullableFilter;
+
+    @Field(() => StringNullableFilter, {nullable:true})
+    zip_code?: StringNullableFilter;
+
+    @Field(() => IntNullableFilter, {nullable:true})
+    house_number?: IntNullableFilter;
 
     @Field(() => DateTimeFilter, {nullable:true})
     created_at?: DateTimeFilter;

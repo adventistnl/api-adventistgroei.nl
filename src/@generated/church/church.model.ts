@@ -2,6 +2,7 @@ import { Field } from '@nestjs/graphql';
 import { ObjectType } from '@nestjs/graphql';
 import { ID } from '@nestjs/graphql';
 import { ChurchType } from '../prisma/church-type.enum';
+import { Int } from '@nestjs/graphql';
 import { Institution } from '../institution/institution.model';
 import { Region } from '../region/region.model';
 import { Contact } from '../contact/contact.model';
@@ -35,6 +36,12 @@ export class Church {
 
     @Field(() => String, {nullable:true})
     leader_id!: string | null;
+
+    @Field(() => String, {nullable:true})
+    zip_code!: string | null;
+
+    @Field(() => Int, {nullable:true})
+    house_number!: number | null;
 
     @Field(() => Date, {nullable:false})
     created_at!: Date;

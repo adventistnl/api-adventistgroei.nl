@@ -27,6 +27,12 @@ export class ChurchCountAggregate {
     leader_id!: number;
 
     @Field(() => Int, {nullable:false})
+    zip_code!: number;
+
+    @Field(() => Int, {nullable:false})
+    house_number!: number;
+
+    @Field(() => Int, {nullable:false})
     created_at!: number;
 
     @Field(() => Int, {nullable:false})

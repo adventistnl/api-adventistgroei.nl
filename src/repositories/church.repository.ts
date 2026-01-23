@@ -59,6 +59,8 @@ export class ChurchRepository {
         name: data.name,
         type: data.type || 'STANDARD',
         contact:  contactId ? { connect: { id: contactId } } : undefined,
+        zip_code: data.zip_code,
+        house_number: data.house_number,
         created_by: userId,
         updated_by: userId,
         is_deleted: false,
@@ -122,6 +124,8 @@ export class ChurchRepository {
         ...(data.leader_id && { leader: { connect: { id: data.leader_id } } }),
         ...(data.type && { type: data.type }),
         ...(data.name && { name: data.name }),
+        ...(data.zip_code !== undefined && { zip_code: data.zip_code }),
+        ...(data.house_number !== undefined && { house_number: data.house_number }),
         // Sempre atualiza a região quando a cidade for informada
         // Conecta se há regionId, ou desconecta (null) se não há região para a cidade
         ...(city !== undefined && {

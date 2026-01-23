@@ -1,6 +1,7 @@
 import { Field } from '@nestjs/graphql';
 import { ObjectType } from '@nestjs/graphql';
 import { ChurchType } from '../prisma/church-type.enum';
+import { Int } from '@nestjs/graphql';
 
 @ObjectType()
 export class ChurchMaxAggregate {
@@ -25,6 +26,12 @@ export class ChurchMaxAggregate {
 
     @Field(() => String, {nullable:true})
     leader_id?: string;
+
+    @Field(() => String, {nullable:true})
+    zip_code?: string;
+
+    @Field(() => Int, {nullable:true})
+    house_number?: number;
 
     @Field(() => Date, {nullable:true})
     created_at?: Date | string;

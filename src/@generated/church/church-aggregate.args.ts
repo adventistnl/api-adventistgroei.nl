@@ -7,6 +7,8 @@ import { Prisma } from '@prisma/client';
 import { ChurchWhereUniqueInput } from './church-where-unique.input';
 import { Int } from '@nestjs/graphql';
 import { ChurchCountAggregateInput } from './church-count-aggregate.input';
+import { ChurchAvgAggregateInput } from './church-avg-aggregate.input';
+import { ChurchSumAggregateInput } from './church-sum-aggregate.input';
 import { ChurchMinAggregateInput } from './church-min-aggregate.input';
 import { ChurchMaxAggregateInput } from './church-max-aggregate.input';
 
@@ -31,6 +33,12 @@ export class ChurchAggregateArgs {
 
     @Field(() => ChurchCountAggregateInput, {nullable:true})
     _count?: ChurchCountAggregateInput;
+
+    @Field(() => ChurchAvgAggregateInput, {nullable:true})
+    _avg?: ChurchAvgAggregateInput;
+
+    @Field(() => ChurchSumAggregateInput, {nullable:true})
+    _sum?: ChurchSumAggregateInput;
 
     @Field(() => ChurchMinAggregateInput, {nullable:true})
     _min?: ChurchMinAggregateInput;
