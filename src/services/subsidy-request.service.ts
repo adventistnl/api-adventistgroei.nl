@@ -80,6 +80,30 @@ export class SubsidyRequestService {
     }
   }
 
+  /**
+   * Check if user has FINANCIAL_MANAGER role
+   */
+  private async userHasFinancialRole(userId: string): Promise<boolean> {
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+      include: {
+        user_roles: {
+          where: { is_deleted: false },
+          include: {
+            role: {
+              select: { key_code: true }
+            }
+          }
+        }
+      }
+    });
+
+    if (!user) return false;
+
+    const userRoles = user.user_roles.map(ur => ur.role.key_code);
+    return userRoles.includes('FINANCIAL_MANAGER');
+  }
+
   private async ensureAllDocumentsValidated(id: string, language: LanguagePreference = LanguagePreference.en) {
     const pendingReceipts = await this.prisma.subsidyReceipt.count({
       where: {
@@ -312,6 +336,19 @@ export class SubsidyRequestService {
          const targetName = newStatus.name.toUpperCase();
          if (['APPROVED', 'REJECTED', 'CLOSED'].includes(targetName)) {
             await this.ensureAllDocumentsValidated(id, language);
+         }
+
+         // Only FINANCIAL_MANAGER can close a subsidy request
+         if (targetName === 'CLOSED') {
+           const hasFinancialRole = await this.userHasFinancialRole(userId);
+           if (!hasFinancialRole) {
+             throw new CustomGraphQLError(
+               translate('subsidy.errors.only_financial_can_close', language, { ns: 'subsidy' }),
+               ErrorCode.FORBIDDEN,
+               403,
+               { additional: { errorCode: 'ONLY_FINANCIAL_CAN_CLOSE' } }
+             );
+           }
          }
       }
 

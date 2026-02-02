@@ -12,7 +12,8 @@
     "cannot_delete_approved_or_closed": "Kan {{status}} subsidieaanvragen niet verwijderen",
     "approved_status_not_found": "Goedgekeurde status niet gevonden",
     "rejected_status_not_found": "Afgewezen status niet gevonden",
-    "document_amounts_mismatch": "De som van documentbedragen ({{sum}}) komt niet overeen met het aangevraagde bedrag ({{requested}}) voor de activiteit"
+    "document_amounts_mismatch": "De som van documentbedragen ({{sum}}) komt niet overeen met het aangevraagde bedrag ({{requested}}) voor de activiteit",
+    "only_financial_can_close": "Alleen gebruikers met de rol Financieel Manager kunnen subsidieaanvragen sluiten"
   },
   "history": {
     "request_created": "Aanvraag aangemaakt",
