@@ -25,6 +25,11 @@
     "auto_status_in_review": "Status automatisch gewijzigd naar IN_BEOORDELING. {{approved}} goedgekeurd, {{rejected}} afgewezen, {{pending}} in afwachting."
   },
   "status": {
-    "unknown": "Onbekend"
+    "unknown": "Onbekend",
+    "pending": "In afwachting",
+    "in_review": "In beoordeling",
+    "approved": "Goedgekeurd",
+    "rejected": "Afgewezen",
+    "closed": "Gesloten"
   }
 }
