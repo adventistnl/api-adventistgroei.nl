@@ -41,7 +41,7 @@ export class SubsidyRequestService {
       // Rule 1: Closed status cannot be changed to anything else
       if (from === 'CLOSED' && from !== to) {
           throw new CustomGraphQLError(
-              translate('subsidy.errors.status_is_closed', language, { ns: 'subsidy' }),
+              translate('errors.status_is_closed', language, { ns: 'subsidy' }),
               ErrorCode.BAD_REQUEST,
               400,
               { additional: { errorCode: 'STATUS_IS_CLOSED' } }
@@ -51,7 +51,7 @@ export class SubsidyRequestService {
       // Rule 2: In Review -> Closed Not Allowed directly
       if (from === 'IN_REVIEW' && to === 'CLOSED') {
            throw new CustomGraphQLError(
-              translate('subsidy.errors.invalid_transition_in_review_to_closed', language, { ns: 'subsidy' }),
+              translate('errors.invalid_transition_in_review_to_closed', language, { ns: 'subsidy' }),
               ErrorCode.BAD_REQUEST,
               400,
               { additional: { errorCode: 'INVALID_TRANSITION_IN_REVIEW_TO_CLOSED' } }
@@ -61,7 +61,7 @@ export class SubsidyRequestService {
       // Rule 3: Approved/Rejected can ONLY go to Closed (if not staying same)
       if ((from === 'APPROVED' || from === 'REJECTED') && to !== 'CLOSED' && from !== to) {
            throw new CustomGraphQLError(
-              translate('subsidy.errors.invalid_transition_final_state', language, { ns: 'subsidy', from, to }),
+              translate('errors.invalid_transition_final_state', language, { ns: 'subsidy', from, to }),
               ErrorCode.BAD_REQUEST,
               400,
               { additional: { errorCode: 'INVALID_TRANSITION_FINAL_STATE' } }
@@ -72,7 +72,7 @@ export class SubsidyRequestService {
   private ensureNotClosed(statusName: string | undefined, language: LanguagePreference = LanguagePreference.en) {
     if (statusName?.toUpperCase() === 'CLOSED') {
       throw new CustomGraphQLError(
-        translate('subsidy.errors.action_not_allowed_closed', language, { ns: 'subsidy' }),
+        translate('errors.action_not_allowed_closed', language, { ns: 'subsidy' }),
         ErrorCode.BAD_REQUEST,
         400,
         { additional: { errorCode: 'STATUS_IS_CLOSED' } }
@@ -115,7 +115,7 @@ export class SubsidyRequestService {
 
     if (pendingReceipts > 0) {
        throw new CustomGraphQLError(
-        translate('subsidy.errors.documents_not_validated', language, { ns: 'subsidy' }),
+        translate('errors.documents_not_validated', language, { ns: 'subsidy' }),
         ErrorCode.BAD_REQUEST,
         400,
         { additional: { errorCode: 'DOCUMENTS_NOT_VALIDATED' } }
@@ -143,7 +143,7 @@ export class SubsidyRequestService {
     const pendingCount = receipts.filter(r => !r.is_validated).length;
     if (pendingCount > 0) {
       throw new CustomGraphQLError(
-        translate('subsidy.errors.documents_pending_validation', language, { ns: 'subsidy', count: pendingCount }),
+        translate('errors.documents_pending_validation', language, { ns: 'subsidy', count: pendingCount }),
         ErrorCode.BAD_REQUEST,
         400,
         { additional: { errorCode: 'DOCUMENTS_NOT_VALIDATED' } }
@@ -154,7 +154,7 @@ export class SubsidyRequestService {
     const rejectedCount = receipts.filter(r => r.is_validated && !r.approved).length;
     if (rejectedCount > 0) {
       throw new CustomGraphQLError(
-        translate('subsidy.errors.documents_rejected', language, { ns: 'subsidy', count: rejectedCount }),
+        translate('errors.documents_rejected', language, { ns: 'subsidy', count: rejectedCount }),
         ErrorCode.BAD_REQUEST,
         400,
         { additional: { errorCode: 'DOCUMENTS_REJECTED' } }
@@ -171,7 +171,7 @@ export class SubsidyRequestService {
 
       if (!pendingStatus) {
         throw new CustomGraphQLError(
-          translate('subsidy.errors.pending_status_not_found', language, { ns: 'subsidy' }),
+          translate('errors.pending_status_not_found', language, { ns: 'subsidy' }),
           ErrorCode.NOT_FOUND,
           404
         );
@@ -188,7 +188,7 @@ export class SubsidyRequestService {
       status_id: data.subsidy_status_id,
       previous_status_id: undefined,
       type: SubsidyHistoryType.STATUS_CHANGE,
-      reason: translate('subsidy.history.request_created', language, { ns: 'subsidy' }),
+      reason: translate('history.request_created', language, { ns: 'subsidy' }),
       changed_by: userId,
     });
 
@@ -231,7 +231,7 @@ export class SubsidyRequestService {
         // Check if sum matches requested amount
         if (documentAmountsSum > 0 && Math.abs(documentAmountsSum - itemInput.requested_amount) > 0.01) {
           throw new CustomGraphQLError(
-            translate('subsidy.errors.document_amounts_mismatch', language, { ns: 'subsidy', sum: documentAmountsSum, requested: itemInput.requested_amount }),
+            translate('errors.document_amounts_mismatch', language, { ns: 'subsidy', sum: documentAmountsSum, requested: itemInput.requested_amount }),
             ErrorCode.VALIDATION_ERROR,
             400
           );
@@ -250,7 +250,7 @@ export class SubsidyRequestService {
     
     if (!current) {
       throw new CustomGraphQLError(
-        translate('subsidy.errors.subsidy_not_found', language, { ns: 'subsidy' }),
+        translate('errors.subsidy_not_found', language, { ns: 'subsidy' }),
         ErrorCode.NOT_FOUND,
         404
       );
@@ -343,7 +343,7 @@ export class SubsidyRequestService {
            const hasFinancialRole = await this.userHasFinancialRole(userId);
            if (!hasFinancialRole) {
              throw new CustomGraphQLError(
-               translate('subsidy.errors.only_financial_can_close', language, { ns: 'subsidy' }),
+               translate('errors.only_financial_can_close', language, { ns: 'subsidy' }),
                ErrorCode.FORBIDDEN,
                403,
                { additional: { errorCode: 'ONLY_FINANCIAL_CAN_CLOSE' } }
@@ -351,10 +351,12 @@ export class SubsidyRequestService {
            }
          }
       }
-
-      const previousStatusName = previousStatus?.description || previousStatus?.name || translate('subsidy.status.unknown', language, { ns: 'subsidy' });
-      const newStatusName = newStatus?.description || newStatus?.name || translate('subsidy.status.unknown', language, { ns: 'subsidy' });
-      const reason = data.notes || translate('subsidy.history.status_changed', language, { ns: 'subsidy', from: previousStatusName, to: newStatusName });
+      // Translate status names using status key (name is like PENDING, IN_REVIEW, etc.)
+      const previousStatusKey = previousStatus?.name?.toLowerCase().replace(' ', '_') || 'unknown';
+      const newStatusKey = newStatus?.name?.toLowerCase().replace(' ', '_') || 'unknown';
+      const previousStatusName = translate(`status.${previousStatusKey}`, language, { ns: 'subsidy' });
+      const newStatusName = translate(`status.${newStatusKey}`, language, { ns: 'subsidy' });
+      const reason = data.notes || translate('history.status_changed', language, { ns: 'subsidy', from: previousStatusName, to: newStatusName });
 
       await this.historyRepository.create({
         subsidy_request_id: id,
@@ -390,7 +392,7 @@ export class SubsidyRequestService {
         subsidy_request_id: id,
         status_id: current.subsidy_statuses_id, // Keep current status context
         type: SubsidyHistoryType.PRIORITY_CHANGE,
-        reason: translate('subsidy.history.priority_changed', language, { ns: 'subsidy', from: current.priority, to: data.priority }),
+        reason: translate('history.priority_changed', language, { ns: 'subsidy', from: current.priority, to: data.priority }),
         changed_by: userId,
       });
     }
@@ -402,7 +404,7 @@ export class SubsidyRequestService {
     const subsidyRequest = await this.subsidyRequestRepository.findById(subsidyRequestId);
     if (!subsidyRequest) {
       throw new CustomGraphQLError(
-        translate('subsidy.errors.subsidy_not_found', language, { ns: 'subsidy' }),
+        translate('errors.subsidy_not_found', language, { ns: 'subsidy' }),
         ErrorCode.NOT_FOUND,
         404
       );
@@ -431,7 +433,7 @@ export class SubsidyRequestService {
 
     if (!subsidyRequest) {
       throw new CustomGraphQLError(
-        translate('subsidy.errors.subsidy_not_found', language, { ns: 'subsidy' }),
+        translate('errors.subsidy_not_found', language, { ns: 'subsidy' }),
         ErrorCode.NOT_FOUND,
         404
       );
@@ -441,7 +443,7 @@ export class SubsidyRequestService {
     const blockedStatuses = ['APPROVED', 'CLOSED'];
     if (subsidyRequest.subsidy_status?.name && blockedStatuses.includes(subsidyRequest.subsidy_status.name)) {
       throw new CustomGraphQLError(
-        translate('subsidy.errors.cannot_delete_approved_or_closed', language, { ns: 'subsidy', status: subsidyRequest.subsidy_status.name.toLowerCase() }),
+        translate('errors.cannot_delete_approved_or_closed', language, { ns: 'subsidy', status: subsidyRequest.subsidy_status.name.toLowerCase() }),
         ErrorCode.BAD_REQUEST,
         400,
         { additional: { errorCode: 'SUBSIDY_IS_APPROVED_OR_CLOSED' } }
@@ -456,7 +458,7 @@ export class SubsidyRequestService {
         status_id: subsidyRequest.subsidy_statuses_id,
         previous_status_id: undefined,
         type: SubsidyHistoryType.STATUS_CHANGE,
-        reason: translate('subsidy.history.subsidy_deleted', language, { ns: 'subsidy' }),
+        reason: translate('history.subsidy_deleted', language, { ns: 'subsidy' }),
         changed_by: userId,
       });
 
@@ -554,7 +556,7 @@ export class SubsidyRequestService {
     
     if (!current) {
       throw new CustomGraphQLError(
-        translate('subsidy.errors.subsidy_not_found', language, { ns: 'subsidy' }),
+        translate('errors.subsidy_not_found', language, { ns: 'subsidy' }),
         ErrorCode.NOT_FOUND,
         404
       );
@@ -573,7 +575,7 @@ export class SubsidyRequestService {
 
     if (!approvedStatus) {
       throw new CustomGraphQLError(
-        translate('subsidy.errors.approved_status_not_found', language, { ns: 'subsidy' }),
+        translate('errors.approved_status_not_found', language, { ns: 'subsidy' }),
         ErrorCode.NOT_FOUND,
         404
       );
@@ -595,7 +597,7 @@ export class SubsidyRequestService {
       subsidy_request_id: id,
       status_id: approvedStatus.id,
       previous_status_id: current.subsidy_statuses_id,
-      reason: translate('subsidy.history.request_approved', language, { ns: 'subsidy', amount: approvedAmount }),
+      reason: translate('history.request_approved', language, { ns: 'subsidy', amount: approvedAmount }),
       changed_by: userId,
     });
 
@@ -611,7 +613,7 @@ export class SubsidyRequestService {
     
     if (!current) {
       throw new CustomGraphQLError(
-        translate('subsidy.errors.subsidy_not_found', language, { ns: 'subsidy' }),
+        translate('errors.subsidy_not_found', language, { ns: 'subsidy' }),
         ErrorCode.NOT_FOUND,
         404
       );
@@ -630,7 +632,7 @@ export class SubsidyRequestService {
 
     if (!rejectedStatus) {
       throw new CustomGraphQLError(
-        translate('subsidy.errors.rejected_status_not_found', language, { ns: 'subsidy' }),
+        translate('errors.rejected_status_not_found', language, { ns: 'subsidy' }),
         ErrorCode.NOT_FOUND,
         404
       );
@@ -650,7 +652,7 @@ export class SubsidyRequestService {
       subsidy_request_id: id,
       status_id: rejectedStatus.id,
       previous_status_id: current.subsidy_statuses_id,
-      reason: rejectionReason || translate('subsidy.history.request_rejected', language, { ns: 'subsidy' }),
+      reason: rejectionReason || translate('history.request_rejected', language, { ns: 'subsidy' }),
       changed_by: userId,
     });
 
@@ -721,7 +723,7 @@ export class SubsidyRequestService {
         console.log(`🤖 Auto-updating subsidy ${id} status to IN_REVIEW`);
         const updateData: SubsidyRequestUpdateDto = {
           subsidy_status_id: status.id,
-          notes: translate('subsidy.history.auto_status_in_review', language, { ns: 'subsidy', approved: approvedDocs, rejected: rejectedDocs, pending: pendingDocs })
+          notes: translate('history.auto_status_in_review', language, { ns: 'subsidy', approved: approvedDocs, rejected: rejectedDocs, pending: pendingDocs })
         };
         await this.update(id, updateData, userId, language);
       }

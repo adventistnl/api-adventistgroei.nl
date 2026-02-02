@@ -25,6 +25,11 @@
     "auto_status_in_review": "Status automatically changed to IN_REVIEW. {{approved}} approved, {{rejected}} rejected, {{pending}} pending."
   },
   "status": {
-    "unknown": "Unknown"
+    "unknown": "Unknown",
+    "pending": "Pending",
+    "in_review": "In Review",
+    "approved": "Approved",
+    "rejected": "Rejected",
+    "closed": "Closed"
   }
 }
