@@ -327,6 +327,24 @@ export class SubsidyRequestService {
         reason,
         changed_by: userId,
       });
+
+      // When status changes to CLOSED, release allocation and add approved amount to spent
+      if (newStatus?.name.toUpperCase() === 'CLOSED') {
+        const fullRequest = await this.prisma.subsidyRequest.findUnique({
+          where: { id },
+          select: { department_id: true, approved_amount: true, total_budget: true }
+        });
+
+        if (fullRequest?.department_id && fullRequest.approved_amount) {
+          await this.annualBudgetService.updateBudgetFinancials(
+            fullRequest.department_id,
+            new Date().getFullYear(),
+            -Number(fullRequest.total_budget || 0), // Release allocation (remove from planned)
+            Number(fullRequest.approved_amount), // Add approved amount as expense (move to spent)
+            userId
+          );
+        }
+      }
     }
 
     // If priority changed, create history record
@@ -544,21 +562,8 @@ export class SubsidyRequestService {
       changed_by: userId,
     });
 
-    // Update Annual Budget (Release allocation, Add expense)
-    const fullRequest = await this.prisma.subsidyRequest.findUnique({
-      where: { id },
-      select: { department_id: true, total_budget: true }
-    });
-
-    if (fullRequest?.department_id) {
-       await this.annualBudgetService.updateBudgetFinancials(
-         fullRequest.department_id,
-         new Date().getFullYear(),
-         -Number(fullRequest.total_budget || 0), // Release allocation
-         approvedAmount, // Add expense
-         userId
-       );
-    }
+    // Budget remains as planned/allocated when approved
+    // Expense will only be added to spent when status changes to CLOSED
 
     return result;
   }
