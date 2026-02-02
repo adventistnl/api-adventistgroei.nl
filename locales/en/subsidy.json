@@ -12,7 +12,8 @@
     "cannot_delete_approved_or_closed": "Cannot delete {{status}} subsidy requests",
     "approved_status_not_found": "Approved status not found",
     "rejected_status_not_found": "Rejected status not found",
-    "document_amounts_mismatch": "The sum of document amounts ({{sum}}) does not match the requested amount ({{requested}}) for the activity"
+    "document_amounts_mismatch": "The sum of document amounts ({{sum}}) does not match the requested amount ({{requested}}) for the activity",
+    "only_financial_can_close": "Only users with the Financial Manager role can close subsidy requests"
   },
   "history": {
     "request_created": "Request created",
