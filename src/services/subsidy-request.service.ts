@@ -259,6 +259,36 @@ export class SubsidyRequestService {
     // Checking if currently closed
     this.ensureNotClosed(current.subsidy_status?.name, language);
 
+    // If status is being changed, validate BEFORE the update
+    if (data.subsidy_status_id && data.subsidy_status_id !== current.subsidy_statuses_id) {
+      const newStatus = await this.prisma.subsidyStatus.findUnique({ where: { id: data.subsidy_status_id } });
+      
+      if (newStatus) {
+        // Validate status transition
+        this.validateStatusTransition(current.subsidy_status?.name, newStatus.name, language);
+        
+        const targetName = newStatus.name.toUpperCase();
+        
+        // Validate documents for terminal states
+        if (['APPROVED', 'REJECTED', 'CLOSED'].includes(targetName)) {
+          await this.ensureAllDocumentsValidated(id, language);
+        }
+        
+        // Only FINANCIAL_MANAGER can close a subsidy request - MUST be checked BEFORE update
+        if (targetName === 'CLOSED') {
+          const hasFinancialRole = await this.userHasFinancialRole(userId);
+          if (!hasFinancialRole) {
+            throw new CustomGraphQLError(
+              translate('errors.only_financial_can_close', language, { ns: 'subsidy' }),
+              ErrorCode.FORBIDDEN,
+              403,
+              { additional: { errorCode: 'ONLY_FINANCIAL_CAN_CLOSE' } }
+            );
+          }
+        }
+      }
+    }
+
     const result = await this.subsidyRequestRepository.update(id, data, userId);
 
     // Process linked_activity_document_ids if any
@@ -330,27 +360,6 @@ export class SubsidyRequestService {
         this.prisma.subsidyStatus.findUnique({ where: { id: data.subsidy_status_id } })
       ]);
 
-      if (newStatus) {
-         this.validateStatusTransition(current.subsidy_status?.name, newStatus.name, language);
-         
-         const targetName = newStatus.name.toUpperCase();
-         if (['APPROVED', 'REJECTED', 'CLOSED'].includes(targetName)) {
-            await this.ensureAllDocumentsValidated(id, language);
-         }
-
-         // Only FINANCIAL_MANAGER can close a subsidy request
-         if (targetName === 'CLOSED') {
-           const hasFinancialRole = await this.userHasFinancialRole(userId);
-           if (!hasFinancialRole) {
-             throw new CustomGraphQLError(
-               translate('errors.only_financial_can_close', language, { ns: 'subsidy' }),
-               ErrorCode.FORBIDDEN,
-               403,
-               { additional: { errorCode: 'ONLY_FINANCIAL_CAN_CLOSE' } }
-             );
-           }
-         }
-      }
       // Translate status names using status key (name is like PENDING, IN_REVIEW, etc.)
       const previousStatusKey = previousStatus?.name?.toLowerCase().replace(' ', '_') || 'unknown';
       const newStatusKey = newStatus?.name?.toLowerCase().replace(' ', '_') || 'unknown';
