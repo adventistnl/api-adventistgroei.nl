@@ -79,6 +79,14 @@ export class SubsidyRequestUncheckedCreateWithoutItemsInput {
     @Field(() => String, {nullable:false})
     project_id!: string;
 
+    @Field(() => Boolean, {nullable:true})
+    is_for_advance?: boolean;
+
+    @Field(() => GraphQLDecimal, {nullable:true})
+    @Type(() => Object)
+    @Transform(transformToDecimal)
+    advance_amount?: Decimal;
+
     @Field(() => SubsidyReceiptUncheckedCreateNestedManyWithoutSubsidy_requestInput, {nullable:true})
     @Type(() => SubsidyReceiptUncheckedCreateNestedManyWithoutSubsidy_requestInput)
     subsidy_receipts?: SubsidyReceiptUncheckedCreateNestedManyWithoutSubsidy_requestInput;

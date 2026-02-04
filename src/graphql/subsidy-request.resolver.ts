@@ -100,6 +100,18 @@ export class SubsidyRequestResolver {
     return this.subsidyRequestService.addMessage(id, message, context.userId, language);
   }
 
+  @Mutation(() => SubsidyRequest)
+  @UseGuards(PermissionsGuard)
+  @Permission()
+  async createAdvanceRequest(
+    @Args('projectId') projectId: string,
+    @Args('advanceAmount', { type: () => Float }) advanceAmount: number,
+    @Args('language', { type: () => LanguagePreference, nullable: true, defaultValue: LanguagePreference.en }) language: LanguagePreference,
+    @Context() context: { userId: string },
+  ): Promise<SubsidyRequest> {
+    return this.subsidyRequestService.createAdvanceRequest(projectId, advanceAmount, context.userId, language);
+  }
+
   // Analytics queries
   @Query(() => SubsidyKPIs)
   @UseGuards(PermissionsGuard)

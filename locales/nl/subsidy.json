@@ -17,6 +17,8 @@
   },
   "history": {
     "request_created": "Aanvraag aangemaakt",
+    "subsidy_created_advance": "Subsidieaanvraag aangemaakt in afwachting",
+    "activity_linked_to_advance": "Activiteit gekoppeld aan subsidieaanvraag in afwachting",
     "status_changed": "Status gewijzigd van {{from}} naar {{to}}",
     "priority_changed": "Prioriteit gewijzigd van {{from}} naar {{to}}",
     "subsidy_deleted": "Subsidieaanvraag verwijderd",

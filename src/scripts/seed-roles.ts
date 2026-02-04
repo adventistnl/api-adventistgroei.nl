@@ -91,6 +91,7 @@ const roles = [
       { key_code: 'SUBSIDY_BY_DEPARTMENT_ACCESS', is_essential: true },
       { key_code: 'SUBSIDY_BY_MONTH_ACCESS', is_essential: true },
       { key_code: 'SUBSIDY_BY_STATUS_ACCESS', is_essential: true },
+      { key_code: 'SUBSIDY_REQUEST_ADVANCE_CREATE', is_essetial: true }
     ],
   },
   {
@@ -163,6 +164,7 @@ const roles = [
       { key_code: 'SUBSIDY_BY_DEPARTMENT_ACCESS', is_essential: true },
       { key_code: 'SUBSIDY_BY_MONTH_ACCESS', is_essential: true },
       { key_code: 'SUBSIDY_BY_STATUS_ACCESS', is_essential: true },
+      { key_code: 'SUBSIDY_REQUEST_ADVANCE_CREATE', is_essetial: true },
       // Subsidy Receipts
       { key_code: 'UPLOAD_SUBSIDY_RECEIPT', is_essential: true },
       { key_code: 'DOWNLOAD_SUBSIDY_RECEIPT', is_essential: true },
@@ -385,6 +387,7 @@ const roles = [
       { key_code: 'SUBSIDY_REQUEST_UPDATE', is_essential: true },
       { key_code: 'SUBSIDY_KPIS_ACCESS', is_essential: true },
       { key_code: 'SUBSIDY_STATUS_HISTORY_GET', is_essential: true },
+      { key_code: 'SUBSIDY_REQUEST_ADVANCE_CREATE', is_essetial: true },
       // Subsidy Receipts
       { key_code: 'UPLOAD_SUBSIDY_RECEIPT', is_essential: true },
       { key_code: 'DOWNLOAD_SUBSIDY_RECEIPT', is_essential: true },
@@ -431,6 +434,7 @@ const roles = [
       { key_code: 'DELETE_ACTIVITY_DOCUMENT', is_essential: true },
       { key_code: 'VALIDATE_ACTIVITY_DOCUMENT', is_essential: true },
       { key_code: 'GET_ACTIVITY_DOCUMENTS', is_essential: true },
+      { key_code: 'SUBSIDY_REQUEST_ADVANCE_CREATE', is_essetial: true },
       // Subsidies (can create, update, but NOT approve/reject)
       { key_code: 'SUBSIDY_REQUESTS_ACCESS', is_essential: true },
       { key_code: 'SUBSIDY_REQUEST_ACCESS', is_essential: true },

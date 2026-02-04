@@ -69,5 +69,11 @@ export class SubsidyRequestCountAggregate {
     project_id!: number;
 
     @Field(() => Int, {nullable:false})
+    is_for_advance!: number;
+
+    @Field(() => Int, {nullable:false})
+    advance_amount!: number;
+
+    @Field(() => Int, {nullable:false})
     _all!: number;
 }

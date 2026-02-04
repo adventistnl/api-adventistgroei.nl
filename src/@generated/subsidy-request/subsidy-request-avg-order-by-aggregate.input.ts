@@ -10,4 +10,7 @@ export class SubsidyRequestAvgOrderByAggregateInput {
 
     @Field(() => SortOrder, {nullable:true})
     approved_amount?: `${SortOrder}`;
+
+    @Field(() => SortOrder, {nullable:true})
+    advance_amount?: `${SortOrder}`;
 }

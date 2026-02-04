@@ -67,4 +67,10 @@ export class SubsidyRequestMaxOrderByAggregateInput {
 
     @Field(() => SortOrder, {nullable:true})
     project_id?: `${SortOrder}`;
+
+    @Field(() => SortOrder, {nullable:true})
+    is_for_advance?: `${SortOrder}`;
+
+    @Field(() => SortOrder, {nullable:true})
+    advance_amount?: `${SortOrder}`;
 }

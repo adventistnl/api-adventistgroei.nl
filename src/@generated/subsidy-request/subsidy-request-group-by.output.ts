@@ -75,6 +75,12 @@ export class SubsidyRequestGroupBy {
     @Field(() => String, {nullable:false})
     project_id!: string;
 
+    @Field(() => Boolean, {nullable:false})
+    is_for_advance!: boolean;
+
+    @Field(() => GraphQLDecimal, {nullable:true})
+    advance_amount?: Decimal;
+
     @Field(() => SubsidyRequestCountAggregate, {nullable:true})
     _count?: SubsidyRequestCountAggregate;
 
