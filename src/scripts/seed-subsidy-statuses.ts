@@ -70,6 +70,15 @@ async function main() {
       created_by: user.id,
       updated_by: user.id,
     },
+    {
+      name: 'ADVANCED_CLOSED',
+      description: 'Advance payment completed',
+      order: 6,
+      department_id: department.id,
+      assigned_to: user.id,
+      created_by: user.id,
+      updated_by: user.id,
+    },
   ];
 
   for (const status of statuses) {

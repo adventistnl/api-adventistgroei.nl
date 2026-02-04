@@ -521,6 +521,8 @@ type SubsidyRequest {
   priority: SubsidyRequestPriority!
   subsidy_statuses_id: String!
   project_id: String!
+  is_for_advance: Boolean!
+  advance_amount: Decimal
   institution: Institution!
   requester: User!
   department: Department!
@@ -853,6 +855,7 @@ enum PermissionResolverName {
   subsidyByDepartment
   subsidyByMonth
   subsidyByStatus
+  createAdvanceRequest
 }
 
 enum PermissionGroup {
@@ -2385,6 +2388,8 @@ input SubsidyRequestWhereInput {
   priority: EnumSubsidyRequestPriorityFilter
   subsidy_statuses_id: StringFilter
   project_id: StringFilter
+  is_for_advance: BoolFilter
+  advance_amount: DecimalNullableFilter
   institution: InstitutionScalarRelationFilter
   requester: UserScalarRelationFilter
   department: DepartmentScalarRelationFilter
@@ -3845,6 +3850,7 @@ type Mutation {
   approveSubsidyRequest(id: String!, approved_amount: Float!, language: LanguagePreference = en): SubsidyRequest!
   rejectSubsidyRequest(id: String!, rejection_reason: String!, language: LanguagePreference = en): SubsidyRequest!
   addSubsidyRequestMessage(id: String!, message: String!, language: LanguagePreference = en): SubsidyStatusHistory!
+  createAdvanceRequest(projectId: String!, advanceAmount: Float!, language: LanguagePreference = en): SubsidyRequest!
   createContact(data: ContactCreateDto!, userId: String!): Contact!
   updateContact(data: ContactUpdateDto!): Contact!
   deleteContact(id: String!, userId: String!): Contact!
@@ -4223,6 +4229,8 @@ input SubsidyRequestCreateDto {
   items: [SubsidyRequestItemInput!]!
   project_id: String!
   notes: String
+  is_for_advance: Boolean
+  advance_amount: Float
 }
 
 input SubsidyRequestItemInput {

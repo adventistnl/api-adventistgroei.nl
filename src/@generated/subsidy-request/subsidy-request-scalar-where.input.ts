@@ -8,6 +8,7 @@ import { DateTimeFilter } from '../prisma/date-time-filter.input';
 import { DateTimeNullableFilter } from '../prisma/date-time-nullable-filter.input';
 import { BoolFilter } from '../prisma/bool-filter.input';
 import { EnumSubsidyRequestPriorityFilter } from '../prisma/enum-subsidy-request-priority-filter.input';
+import { DecimalNullableFilter } from '../prisma/decimal-nullable-filter.input';
 
 @InputType()
 export class SubsidyRequestScalarWhereInput {
@@ -88,4 +89,11 @@ export class SubsidyRequestScalarWhereInput {
 
     @Field(() => StringFilter, {nullable:true})
     project_id?: StringFilter;
+
+    @Field(() => BoolFilter, {nullable:true})
+    is_for_advance?: BoolFilter;
+
+    @Field(() => DecimalNullableFilter, {nullable:true})
+    @Type(() => DecimalNullableFilter)
+    advance_amount?: DecimalNullableFilter;
 }

@@ -66,4 +66,10 @@ export class SubsidyRequestMinAggregateInput {
 
     @Field(() => Boolean, {nullable:true})
     project_id?: true;
+
+    @Field(() => Boolean, {nullable:true})
+    is_for_advance?: true;
+
+    @Field(() => Boolean, {nullable:true})
+    advance_amount?: true;
 }

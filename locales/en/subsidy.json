@@ -17,6 +17,8 @@
   },
   "history": {
     "request_created": "Request created",
+    "subsidy_created_advance": "Subsidy request created in advance",
+    "activity_linked_to_advance": "Activity linked to advance subsidy request",
     "status_changed": "Status changed from {{from}} to {{to}}",
     "priority_changed": "Priority changed from {{from}} to {{to}}",
     "subsidy_deleted": "Subsidy request deleted",

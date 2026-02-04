@@ -67,6 +67,14 @@ export class SubsidyRequestCreateWithoutChurchInput {
     @Field(() => SubsidyRequestPriority, {nullable:true})
     priority?: `${SubsidyRequestPriority}`;
 
+    @Field(() => Boolean, {nullable:true})
+    is_for_advance?: boolean;
+
+    @Field(() => GraphQLDecimal, {nullable:true})
+    @Type(() => Object)
+    @Transform(transformToDecimal)
+    advance_amount?: Decimal;
+
     @Field(() => InstitutionCreateNestedOneWithoutSubsidy_requestsInput, {nullable:false})
     @Type(() => InstitutionCreateNestedOneWithoutSubsidy_requestsInput)
     institution!: InstitutionCreateNestedOneWithoutSubsidy_requestsInput;

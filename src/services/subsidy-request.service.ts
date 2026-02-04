@@ -58,8 +58,38 @@ export class SubsidyRequestService {
           );
       }
 
-      // Rule 3: Approved/Rejected can ONLY go to Closed (if not staying same)
-      if ((from === 'APPROVED' || from === 'REJECTED') && to !== 'CLOSED' && from !== to) {
+      // Rule: Only APPROVED can go to ADVANCED_CLOSED
+      if (to === 'ADVANCED_CLOSED' && from !== 'APPROVED') {
+          throw new CustomGraphQLError(
+              translate('errors.invalid_transition_to_advanced_closed', language, { ns: 'subsidy', from }),
+              ErrorCode.BAD_REQUEST,
+              400,
+              { additional: { errorCode: 'INVALID_TRANSITION_TO_ADVANCED_CLOSED' } }
+          );
+      }
+
+      // Rule 3: ADVANCED_CLOSED can ONLY go to CLOSED
+      if (from === 'ADVANCED_CLOSED' && to !== 'CLOSED' && from !== to) {
+           throw new CustomGraphQLError(
+              translate('errors.invalid_transition_advanced_closed', language, { ns: 'subsidy', to }),
+              ErrorCode.BAD_REQUEST,
+              400,
+              { additional: { errorCode: 'INVALID_TRANSITION_FROM_ADVANCED_CLOSED' } }
+          );
+      }
+
+      // Rule 4: Approved can go to CLOSED or ADVANCED_CLOSED (for advance requests)
+      // Rejected can ONLY go to Closed
+      if (from === 'APPROVED' && to !== 'CLOSED' && to !== 'ADVANCED_CLOSED' && from !== to) {
+           throw new CustomGraphQLError(
+              translate('errors.invalid_transition_final_state', language, { ns: 'subsidy', from, to }),
+              ErrorCode.BAD_REQUEST,
+              400,
+              { additional: { errorCode: 'INVALID_TRANSITION_FINAL_STATE' } }
+          );
+      }
+
+      if (from === 'REJECTED' && to !== 'CLOSED' && from !== to) {
            throw new CustomGraphQLError(
               translate('errors.invalid_transition_final_state', language, { ns: 'subsidy', from, to }),
               ErrorCode.BAD_REQUEST,
@@ -242,6 +272,136 @@ export class SubsidyRequestService {
     return subsidyRequest;
   }
 
+  /**
+   * Create an advance request for a project.
+   * Advance requests:
+   * - Have is_for_advance = true
+   * - Cannot exceed 50% of subsidized_budget
+   * - Do not require document uploads
+   * - Start with PENDING status
+   */
+  async createAdvanceRequest(
+    projectId: string,
+    advanceAmount: number,
+    userId: string,
+    language: LanguagePreference = LanguagePreference.en
+  ): Promise<SubsidyRequest> {
+    // Fetch project with its subsidized budget
+    const project = await this.prisma.project.findUnique({
+      where: { id: projectId, is_deleted: false },
+      select: {
+        id: true,
+        title: true,
+        subsidized_budget: true,
+        institution_id: true,
+        department_id: true,
+        church_id: true,
+        created_by: true,
+      }
+    });
+
+    if (!project) {
+      throw new CustomGraphQLError(
+        translate('errors.project_not_found', language, { ns: 'subsidy' }),
+        ErrorCode.NOT_FOUND,
+        404
+      );
+    }
+
+    // Validate advance amount (max 50% of subsidized budget)
+    const maxAdvance = Number(project.subsidized_budget || 0) * 0.5;
+    if (advanceAmount > maxAdvance) {
+      throw new CustomGraphQLError(
+        translate('errors.advance_exceeds_limit', language, { ns: 'subsidy', max: maxAdvance }),
+        ErrorCode.BAD_REQUEST,
+        400,
+        { additional: { errorCode: 'ADVANCE_EXCEEDS_LIMIT' } }
+      );
+    }
+
+    if (advanceAmount <= 0) {
+      throw new CustomGraphQLError(
+        translate('errors.advance_amount_invalid', language, { ns: 'subsidy' }),
+        ErrorCode.BAD_REQUEST,
+        400
+      );
+    }
+
+    // Check if project already has an active advance request (not rejected)
+    const existingAdvance = await this.prisma.subsidyRequest.findFirst({
+      where: {
+        project_id: projectId,
+        is_for_advance: true,
+        is_deleted: false,
+        subsidy_status: {
+          name: {
+            not: 'REJECTED'
+          }
+        }
+      }
+    });
+
+    if (existingAdvance) {
+      throw new CustomGraphQLError(
+        translate('errors.advance_already_exists', language, { ns: 'subsidy' }),
+        ErrorCode.BAD_REQUEST,
+        400,
+        { additional: { errorCode: 'ADVANCE_ALREADY_EXISTS' } }
+      );
+    }
+
+    // Find PENDING status
+    const pendingStatus = await this.prisma.subsidyStatus.findFirst({
+      where: { name: 'PENDING', is_deleted: false },
+    });
+
+    if (!pendingStatus) {
+      throw new CustomGraphQLError(
+        translate('errors.pending_status_not_found', language, { ns: 'subsidy' }),
+        ErrorCode.NOT_FOUND,
+        404
+      );
+    }
+
+    // Create the advance request
+    const subsidyRequest = await this.prisma.subsidyRequest.create({
+      data: {
+        description: `Advance request for project: ${project.title}`,
+        total_budget: advanceAmount,
+        is_for_advance: true,
+        advance_amount: advanceAmount,
+        institution_id: project.institution_id!,
+        department_id: project.department_id,
+        church_id: project.church_id ?? undefined,
+        project_id: projectId,
+        requester_id: userId,
+        subsidy_statuses_id: pendingStatus.id,
+        created_by: userId,
+        updated_by: userId,
+      },
+      include: {
+        subsidy_status: true,
+        institution: true,
+        department: true,
+        church: true,
+        project: true,
+        requester: true,
+      }
+    });
+
+    // Create initial history record
+    await this.historyRepository.create({
+      subsidy_request_id: subsidyRequest.id,
+      status_id: pendingStatus.id,
+      previous_status_id: undefined,
+      type: SubsidyHistoryType.STATUS_CHANGE,
+      reason: translate('history.subsidy_created_advance', language, { ns: 'subsidy', amount: advanceAmount }),
+      changed_by: userId,
+    });
+
+    return subsidyRequest;
+  }
+
   async update(id: string, data: SubsidyRequestUpdateDto, userId: string, language: LanguagePreference = LanguagePreference.en): Promise<SubsidyRequest> {
     // Get current subsidy to check if status changed
 
@@ -289,7 +449,40 @@ export class SubsidyRequestService {
       }
     }
 
+    // Capture existing activities for history diff (only for advance requests)
+    let existingActivityIds: string[] = [];
+    if (current.is_for_advance) {
+      existingActivityIds = (current as any).items?.map((i: any) => i.project_activity_id) || [];
+    }
+
     const result = await this.subsidyRequestRepository.update(id, data, userId);
+
+    // Check for newly linked activities to log history (Advance Subsidy only)
+    if (current.is_for_advance && data.items) {
+      const newActivityIds = data.items.map(i => i.project_activity_id);
+      const addedActivityIds = newActivityIds.filter(id => !existingActivityIds.includes(id));
+
+      if (addedActivityIds.length > 0) {
+        // Fetch names for logging
+        const activities = await this.prisma.projectActivity.findMany({
+          where: { id: { in: addedActivityIds } },
+          select: { id: true, name: true }
+        });
+
+        for (const activity of activities) {
+          await this.historyRepository.create({
+            subsidy_request_id: id,
+            status_id: current.subsidy_statuses_id,
+            type: SubsidyHistoryType.STATUS_CHANGE, 
+            reason: translate('history.activity_linked_to_advance', language, { 
+              ns: 'subsidy', 
+              activityName: activity.name 
+            }),
+            changed_by: userId,
+          });
+        }
+      }
+    }
 
     // Process linked_activity_document_ids if any
     if (data.items && data.items.length > 0) {
@@ -316,6 +509,7 @@ export class SubsidyRequestService {
                 docAmount
               );
             }
+
           }
         }
 
@@ -377,18 +571,42 @@ export class SubsidyRequestService {
       });
 
       // When status changes to CLOSED, release allocation and add approved amount to spent
+      // EXCEPT when coming from ADVANCED_CLOSED (budget was already updated during advance)
       if (newStatus?.name.toUpperCase() === 'CLOSED') {
+        const previousStatusName = previousStatus?.name?.toUpperCase();
+        
+        // Skip budget update if coming from ADVANCED_CLOSED
+        if (previousStatusName !== 'ADVANCED_CLOSED') {
+          const fullRequest = await this.prisma.subsidyRequest.findUnique({
+            where: { id },
+            select: { department_id: true, approved_amount: true, total_budget: true }
+          });
+
+          if (fullRequest?.department_id && fullRequest.approved_amount) {
+            await this.annualBudgetService.updateBudgetFinancials(
+              fullRequest.department_id,
+              new Date().getFullYear(),
+              -Number(fullRequest.total_budget || 0), // Release allocation (remove from planned)
+              Number(fullRequest.approved_amount), // Add approved amount as expense (move to spent)
+              userId
+            );
+          }
+        }
+      }
+
+      // When status changes to ADVANCED_CLOSED, update budget with advance amount
+      if (newStatus?.name.toUpperCase() === 'ADVANCED_CLOSED') {
         const fullRequest = await this.prisma.subsidyRequest.findUnique({
           where: { id },
-          select: { department_id: true, approved_amount: true, total_budget: true }
+          select: { department_id: true, advance_amount: true, total_budget: true, is_for_advance: true }
         });
 
-        if (fullRequest?.department_id && fullRequest.approved_amount) {
+        if (fullRequest?.department_id && fullRequest.advance_amount && fullRequest.is_for_advance) {
           await this.annualBudgetService.updateBudgetFinancials(
             fullRequest.department_id,
             new Date().getFullYear(),
-            -Number(fullRequest.total_budget || 0), // Release allocation (remove from planned)
-            Number(fullRequest.approved_amount), // Add approved amount as expense (move to spent)
+            -Number(fullRequest.total_budget || 0), // Release allocation
+            Number(fullRequest.advance_amount), // Add advance amount as expense
             userId
           );
         }

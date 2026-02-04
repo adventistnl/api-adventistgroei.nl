@@ -50,6 +50,15 @@ export class SubsidyRequestCreateDto {
   @IsOptional()
   @IsString()
   notes?: string;
+
+  @Field({ nullable: true })
+  @IsOptional()
+  is_for_advance?: boolean;
+
+  @Field(() => Float, { nullable: true })
+  @IsOptional()
+  @IsNumber()
+  advance_amount?: number;
 }
 @InputType()
 export class SubsidyRequestUpdateDto {
