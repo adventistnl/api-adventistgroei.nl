@@ -1126,23 +1126,23 @@ export class AnnualBudgetRepository {
       });
 
       // Update Institution (Only Expenses propagate)
-      if (deltaSpent !== 0) {
-          const instExpenses = new Decimal(institutionBudget.total_expenses);
-          const instPlanned = new Decimal(institutionBudget.planned_budget);
-          const instAllocated = new Decimal(institutionBudget.allocated_amount);
+    if (deltaSpent !== 0) {
+        const instExpenses = new Decimal(institutionBudget.total_expenses);
+        const instPlanned = new Decimal(institutionBudget.planned_budget);
+        const instAllocated = new Decimal(institutionBudget.allocated_amount);
 
-          const newInstExpenses = instExpenses.plus(deltaSpent);
-          const newInstBalance = instPlanned.minus(instAllocated.plus(newInstExpenses));
+        const newInstExpenses = instExpenses.plus(deltaSpent);
+        const newInstBalance = instPlanned.minus(instAllocated);
 
-         await tx.annualBudget.update({
-           where: { id: institutionBudget.id },
-           data: {
-             total_expenses: newInstExpenses,
-             balance: newInstBalance,
-             updated_by: userId
-           }
-         });
-      }
+       await tx.annualBudget.update({
+         where: { id: institutionBudget.id },
+         data: {
+           total_expenses: newInstExpenses,
+           balance: newInstBalance,
+           updated_by: userId
+         }
+       });
+    }
     });
   }
 }
