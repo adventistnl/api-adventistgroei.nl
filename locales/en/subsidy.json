@@ -32,6 +32,7 @@
     "in_review": "In Review",
     "approved": "Approved",
     "rejected": "Rejected",
+    "advanced_closed": "Advanced Closed",
     "closed": "Closed"
   }
 }
