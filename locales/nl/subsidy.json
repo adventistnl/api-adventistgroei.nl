@@ -32,6 +32,7 @@
     "in_review": "In beoordeling",
     "approved": "Goedgekeurd",
     "rejected": "Afgewezen",
+    "advanced_closed": "Voorschot Gesloten",
     "closed": "Gesloten"
   }
 }
