@@ -87,6 +87,15 @@ export class SubsidyRequest {
     @Field(() => GraphQLDecimal, {nullable:true})
     advance_amount!: Decimal | null;
 
+    @Field(() => GraphQLDecimal, {defaultValue:0,nullable:false})
+    refund_amount!: Decimal;
+
+    @Field(() => Boolean, {defaultValue:false,nullable:false})
+    have_refund!: boolean;
+
+    @Field(() => Boolean, {defaultValue:false,nullable:false})
+    refund_done!: boolean;
+
     @Field(() => Institution, {nullable:false})
     institution?: Institution;
 

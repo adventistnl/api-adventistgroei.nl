@@ -14,4 +14,7 @@ export class SubsidyRequestAvgAggregate {
 
     @Field(() => GraphQLDecimal, {nullable:true})
     advance_amount?: Decimal;
+
+    @Field(() => GraphQLDecimal, {nullable:true})
+    refund_amount?: Decimal;
 }

@@ -75,6 +75,16 @@ export class SubsidyRequestUpdateWithoutInstitutionInput {
     @Type(() => NullableDecimalFieldUpdateOperationsInput)
     advance_amount?: NullableDecimalFieldUpdateOperationsInput;
 
+    @Field(() => DecimalFieldUpdateOperationsInput, {nullable:true})
+    @Type(() => DecimalFieldUpdateOperationsInput)
+    refund_amount?: DecimalFieldUpdateOperationsInput;
+
+    @Field(() => BoolFieldUpdateOperationsInput, {nullable:true})
+    have_refund?: BoolFieldUpdateOperationsInput;
+
+    @Field(() => BoolFieldUpdateOperationsInput, {nullable:true})
+    refund_done?: BoolFieldUpdateOperationsInput;
+
     @Field(() => UserUpdateOneRequiredWithoutSubsidyRequestNestedInput, {nullable:true})
     @Type(() => UserUpdateOneRequiredWithoutSubsidyRequestNestedInput)
     requester?: UserUpdateOneRequiredWithoutSubsidyRequestNestedInput;

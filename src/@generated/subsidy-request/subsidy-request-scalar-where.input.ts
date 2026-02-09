@@ -96,4 +96,14 @@ export class SubsidyRequestScalarWhereInput {
     @Field(() => DecimalNullableFilter, {nullable:true})
     @Type(() => DecimalNullableFilter)
     advance_amount?: DecimalNullableFilter;
+
+    @Field(() => DecimalFilter, {nullable:true})
+    @Type(() => DecimalFilter)
+    refund_amount?: DecimalFilter;
+
+    @Field(() => BoolFilter, {nullable:true})
+    have_refund?: BoolFilter;
+
+    @Field(() => BoolFilter, {nullable:true})
+    refund_done?: BoolFilter;
 }

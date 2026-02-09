@@ -15,6 +15,7 @@ import { SubsidyHistoryType } from '../@generated/prisma/subsidy-history-type.en
 import { AnnualBudgetService } from './annual-budget.service';
 import { DecimalHelper } from '../common/helpers/decimal.helper';
 import { SubsidyReceiptService } from './subsidy-receipt.service';
+import { EmailService } from './email.service';
 import { translate } from '../../i18n.config';
 import { LanguagePreference } from '../@generated/prisma/language-preference.enum';
 
@@ -30,6 +31,7 @@ export class SubsidyRequestService {
     private readonly annualBudgetService: AnnualBudgetService,
     @Inject(forwardRef(() => SubsidyReceiptService))
     private readonly subsidyReceiptService: SubsidyReceiptService,
+    private readonly emailService: EmailService,
   ) {}
 
   private validateStatusTransition(currentStatusName: string | undefined, newStatusName: string, language: LanguagePreference = LanguagePreference.en) {
@@ -1055,4 +1057,205 @@ export class SubsidyRequestService {
       quarter: Math.floor(index / 3) + 1
     }));
   }
+
+  /**
+   * Request a refund for a subsidy.
+   * Sets have_refund = true and refund_amount.
+   * Creates history record with translated reason.
+   */
+  async requestRefund(
+    id: string,
+    refundAmount: number,
+    reason: string,
+    userId: string,
+    language: LanguagePreference = LanguagePreference.en
+  ): Promise<SubsidyRequest> {
+    const subsidyRequest = await this.subsidyRequestRepository.findById(id);
+    
+    if (!subsidyRequest) {
+      throw new CustomGraphQLError(
+        translate('errors.subsidy_not_found', language, { ns: 'subsidy' }),
+        ErrorCode.NOT_FOUND,
+        404
+      );
+    }
+
+    // Validate that subsidy is in ADVANCED_CLOSED or CLOSED status
+    const validStatuses = ['ADVANCED_CLOSED', 'CLOSED'];
+    if (!validStatuses.includes(subsidyRequest.subsidy_status?.name?.toUpperCase() || '')) {
+      throw new CustomGraphQLError(
+        translate('errors.refund_invalid_status', language, { ns: 'subsidy' }),
+        ErrorCode.BAD_REQUEST,
+        400,
+        { additional: { errorCode: 'REFUND_INVALID_STATUS' } }
+      );
+    }
+
+    // Validate refund amount
+    if (refundAmount <= 0) {
+      throw new CustomGraphQLError(
+        translate('errors.refund_amount_invalid', language, { ns: 'subsidy' }),
+        ErrorCode.BAD_REQUEST,
+        400
+      );
+    }
+
+    // Update subsidy request
+    const result = await this.subsidyRequestRepository.update(
+      id,
+      {
+        refund_amount: refundAmount,
+        have_refund: true,
+      } as any,
+      userId
+    );
+
+    // Create history record
+    await this.historyRepository.create({
+      subsidy_request_id: id,
+      status_id: subsidyRequest.subsidy_statuses_id,
+      type: SubsidyHistoryType.COMMENT,
+      reason: translate('history.refund_requested', language, { ns: 'subsidy', amount: refundAmount, reason }),
+      changed_by: userId,
+    });
+
+    return result;
+  }
+
+  /**
+   * Confirm that refund has been processed.
+   * Sets refund_done = true.
+   * Processes budget refund (moves from spent back to allocated).
+   * Creates history record with translation.
+   */
+  async confirmRefundDone(
+    id: string,
+    userId: string,
+    language: LanguagePreference = LanguagePreference.en
+  ): Promise<SubsidyRequest> {
+    const subsidyRequest = await this.subsidyRequestRepository.findById(id);
+    
+    if (!subsidyRequest) {
+      throw new CustomGraphQLError(
+        translate('errors.subsidy_not_found', language, { ns: 'subsidy' }),
+        ErrorCode.NOT_FOUND,
+        404
+      );
+    }
+
+    // Validate that have_refund is true
+    if (!(subsidyRequest as any).have_refund) {
+      throw new CustomGraphQLError(
+        translate('errors.no_refund_requested', language, { ns: 'subsidy' }),
+        ErrorCode.BAD_REQUEST,
+        400,
+        { additional: { errorCode: 'NO_REFUND_REQUESTED' } }
+      );
+    }
+
+    // Validate that refund is not already done
+    if ((subsidyRequest as any).refund_done) {
+      throw new CustomGraphQLError(
+        translate('errors.refund_already_done', language, { ns: 'subsidy' }),
+        ErrorCode.BAD_REQUEST,
+        400,
+        { additional: { errorCode: 'REFUND_ALREADY_DONE' } }
+      );
+    }
+
+    const refundAmount = Number((subsidyRequest as any).refund_amount || 0);
+
+    // Update subsidy request
+    const result = await this.subsidyRequestRepository.update(
+      id,
+      {
+        refund_done: true,
+      } as any,
+      userId
+    );
+
+    // Process budget refund (move from spent back to allocated)
+    if (subsidyRequest.department_id && refundAmount > 0) {
+      await this.annualBudgetService.updateBudgetFinancials(
+        subsidyRequest.department_id,
+        new Date().getFullYear(),
+        refundAmount, // Add back to allocated
+        -refundAmount, // Remove from spent
+        userId
+      );
+    }
+
+    // Create history record
+    await this.historyRepository.create({
+      subsidy_request_id: id,
+      status_id: subsidyRequest.subsidy_statuses_id,
+      type: SubsidyHistoryType.COMMENT,
+      reason: translate('history.refund_confirmed', language, { ns: 'subsidy', amount: refundAmount }),
+      changed_by: userId,
+    });
+
+    // Send email notification to requester
+    try {
+      const requester = await this.prisma.user.findUnique({
+        where: { id: subsidyRequest.requester_id },
+        select: { email: true, name: true, language_preference: true }
+      });
+
+      if (requester?.email) {
+        await this.emailService.sendRefundApprovedEmail({
+          to: requester.email,
+          subsidyId: id,
+          refundAmount,
+          requesterName: requester.name,
+          language: (requester.language_preference as any) || language,
+        });
+
+        // Log email sent in history
+        await this.historyRepository.create({
+          subsidy_request_id: id,
+          status_id: subsidyRequest.subsidy_statuses_id,
+          type: SubsidyHistoryType.COMMENT,
+          reason: translate('history.email_sent_refund', language, { ns: 'subsidy', email: requester.email }),
+          changed_by: userId,
+        });
+      }
+    } catch (emailError) {
+      // Log error but don't fail the refund confirmation
+      console.error('Failed to send refund email:', emailError);
+    }
+
+    return result;
+  }
+
+  /**
+   * Get all subsidies waiting for refund.
+   * Returns subsidies where have_refund = true and refund_done = false.
+   */
+  async getSubsidiesWaitingRefund(institutionId?: string): Promise<SubsidyRequest[]> {
+    const where: any = {
+      is_deleted: false,
+      have_refund: true,
+      refund_done: false,
+    };
+
+    if (institutionId) {
+      where.institution_id = institutionId;
+    }
+
+    return this.prisma.subsidyRequest.findMany({
+      where,
+      include: {
+        subsidy_status: true,
+        institution: true,
+        department: true,
+        church: true,
+        project: true,
+        requester: true,
+      },
+      orderBy: {
+        created_at: 'desc',
+      },
+    });
+  }
 }
+

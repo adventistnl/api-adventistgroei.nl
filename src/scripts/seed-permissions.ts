@@ -136,6 +136,10 @@ const permissionsEnabledToClient = [
   { name: 'delete subsidy receipt', description: 'Delete receipt from subsidy request', resolver_name: 'deleteSubsidyReceipt' as PermissionResolverName, group: 'SUBSIDY_RECEIPT' as PermissionGroup, key_code: 'DELETE_SUBSIDY_RECEIPT', disabled_to_client: false },
   { name: 'validate subsidy receipt', description: 'Validate uploaded subsidy receipt', resolver_name: 'validateSubsidyReceipt' as PermissionResolverName, group: 'SUBSIDY_RECEIPT' as PermissionGroup, key_code: 'VALIDATE_SUBSIDY_RECEIPT', disabled_to_client: false },
   { name: 'get subsidy receipts', description: 'List all receipts of a subsidy request', resolver_name: 'getSubsidyReceipts' as PermissionResolverName, group: 'SUBSIDY_RECEIPT' as PermissionGroup, key_code: 'GET_SUBSIDY_RECEIPTS', disabled_to_client: false },
+  // Refund permissions
+  { name: 'request subsidy refund', description: 'Request a refund for a subsidy', resolver_name: 'requestSubsidyRefund' as PermissionResolverName, group: 'SUBSIDY_REQUEST' as PermissionGroup, key_code: 'REQUEST_SUBSIDY_REFUND', disabled_to_client: false },
+  { name: 'get subsidies waiting refund', description: 'View subsidies waiting for refund', resolver_name: 'getSubsidiesWaitingRefund' as PermissionResolverName, group: 'SUBSIDY_REQUEST' as PermissionGroup, key_code: 'GET_SUBSIDIES_WAITING_REFUND', disabled_to_client: false },
+  { name: 'confirm refund done', description: 'Confirm that refund has been processed', resolver_name: 'confirmRefundDone' as PermissionResolverName, group: 'SUBSIDY_REQUEST' as PermissionGroup, key_code: 'CONFIRM_REFUND_DONE', disabled_to_client: false },
 ];
 
 async function main() {

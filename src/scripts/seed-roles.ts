@@ -91,7 +91,11 @@ const roles = [
       { key_code: 'SUBSIDY_BY_DEPARTMENT_ACCESS', is_essential: true },
       { key_code: 'SUBSIDY_BY_MONTH_ACCESS', is_essential: true },
       { key_code: 'SUBSIDY_BY_STATUS_ACCESS', is_essential: true },
-      { key_code: 'SUBSIDY_REQUEST_ADVANCE_CREATE', is_essetial: true }
+      { key_code: 'SUBSIDY_REQUEST_ADVANCE_CREATE', is_essetial: true },
+      // Refund permissions
+      { key_code: 'REQUEST_SUBSIDY_REFUND', is_essential: true },
+      { key_code: 'GET_SUBSIDIES_WAITING_REFUND', is_essential: true },
+      { key_code: 'CONFIRM_REFUND_DONE', is_essential: true },
     ],
   },
   {
@@ -165,6 +169,8 @@ const roles = [
       { key_code: 'SUBSIDY_BY_MONTH_ACCESS', is_essential: true },
       { key_code: 'SUBSIDY_BY_STATUS_ACCESS', is_essential: true },
       { key_code: 'SUBSIDY_REQUEST_ADVANCE_CREATE', is_essetial: true },
+      // Refund permissions
+      { key_code: 'GET_SUBSIDIES_WAITING_REFUND', is_essential: true },
       // Subsidy Receipts
       { key_code: 'UPLOAD_SUBSIDY_RECEIPT', is_essential: true },
       { key_code: 'DOWNLOAD_SUBSIDY_RECEIPT', is_essential: true },
@@ -222,6 +228,10 @@ const roles = [
       { key_code: 'SUBSIDY_BY_DEPARTMENT_ACCESS', is_essential: true },
       { key_code: 'SUBSIDY_BY_MONTH_ACCESS', is_essential: true },
       { key_code: 'SUBSIDY_BY_STATUS_ACCESS', is_essential: true },
+      // Refund permissions
+      { key_code: 'REQUEST_SUBSIDY_REFUND', is_essential: true },
+      { key_code: 'GET_SUBSIDIES_WAITING_REFUND', is_essential: true },
+      { key_code: 'CONFIRM_REFUND_DONE', is_essential: true },
     ],
   },
   {
@@ -388,6 +398,9 @@ const roles = [
       { key_code: 'SUBSIDY_KPIS_ACCESS', is_essential: true },
       { key_code: 'SUBSIDY_STATUS_HISTORY_GET', is_essential: true },
       { key_code: 'SUBSIDY_REQUEST_ADVANCE_CREATE', is_essetial: true },
+      // Refund permissions
+      { key_code: 'REQUEST_SUBSIDY_REFUND', is_essential: true },
+      { key_code: 'GET_SUBSIDIES_WAITING_REFUND', is_essential: true },
       // Subsidy Receipts
       { key_code: 'UPLOAD_SUBSIDY_RECEIPT', is_essential: true },
       { key_code: 'DOWNLOAD_SUBSIDY_RECEIPT', is_essential: true },

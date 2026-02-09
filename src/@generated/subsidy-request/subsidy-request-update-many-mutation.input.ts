@@ -66,4 +66,14 @@ export class SubsidyRequestUpdateManyMutationInput {
     @Field(() => NullableDecimalFieldUpdateOperationsInput, {nullable:true})
     @Type(() => NullableDecimalFieldUpdateOperationsInput)
     advance_amount?: NullableDecimalFieldUpdateOperationsInput;
+
+    @Field(() => DecimalFieldUpdateOperationsInput, {nullable:true})
+    @Type(() => DecimalFieldUpdateOperationsInput)
+    refund_amount?: DecimalFieldUpdateOperationsInput;
+
+    @Field(() => BoolFieldUpdateOperationsInput, {nullable:true})
+    have_refund?: BoolFieldUpdateOperationsInput;
+
+    @Field(() => BoolFieldUpdateOperationsInput, {nullable:true})
+    refund_done?: BoolFieldUpdateOperationsInput;
 }

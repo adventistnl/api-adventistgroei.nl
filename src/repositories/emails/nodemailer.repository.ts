@@ -7,6 +7,7 @@ import { translate } from 'i18n.config';
 import { CustomGraphQLError, ErrorCode } from 'src/common/errors/custom-graphql-error';
 import { InviteEmailDto } from 'src/dto/email.dto';
 import { ForgotPasswordEmailDto } from 'src/dto/forgot-password-email.dto';
+import { RefundApprovedEmailDto } from 'src/dto/refund-approved-email.dto';
 import { UserService } from '../../services/user.service';
 import { MustacheService } from '../../services/mustache.service';
 import { LanguagePreference } from '../../@generated/prisma/language-preference.enum';
@@ -101,5 +102,22 @@ export class NodemailerEmailRepository {
         footer: translate('forgotPassword.footer', language, { ns: 'emails' }) || '',
       };
       await this.sendEmail(data.to, subject, 'forgot-password', templateData);
+    }
+
+    async sendRefundApprovedEmail(data: RefundApprovedEmailDto): Promise<void> {
+      const language = data.language || LanguagePreference.en;
+      await loadNamespaces(['emails']);
+
+      const subject = translate('refundApproved.subject', language, { ns: 'emails' }) || 'Refund Approved';
+      const templateData = {
+        subsidyId: data.subsidyId,
+        refundAmount: data.refundAmount,
+        requesterName: data.requesterName,
+        subject,
+        body: translate('refundApproved.body', language, { ns: 'emails', amount: data.refundAmount, subsidyId: data.subsidyId }) || `Your refund of ${data.refundAmount} has been approved for subsidy ${data.subsidyId}.`,
+        greeting: translate('refundApproved.greeting', language, { ns: 'emails', name: data.requesterName }) || `Hello ${data.requesterName},`,
+        footer: translate('refundApproved.footer', language, { ns: 'emails' }) || '',
+      };
+      await this.sendEmail(data.to, subject, 'refund-approved', templateData);
     }
 }

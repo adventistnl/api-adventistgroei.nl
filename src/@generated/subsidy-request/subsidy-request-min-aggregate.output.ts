@@ -75,4 +75,13 @@ export class SubsidyRequestMinAggregate {
 
     @Field(() => GraphQLDecimal, {nullable:true})
     advance_amount?: Decimal;
+
+    @Field(() => GraphQLDecimal, {nullable:true})
+    refund_amount?: Decimal;
+
+    @Field(() => Boolean, {nullable:true})
+    have_refund?: boolean;
+
+    @Field(() => Boolean, {nullable:true})
+    refund_done?: boolean;
 }

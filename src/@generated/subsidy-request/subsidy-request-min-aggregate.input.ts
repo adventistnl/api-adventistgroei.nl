@@ -72,4 +72,13 @@ export class SubsidyRequestMinAggregateInput {
 
     @Field(() => Boolean, {nullable:true})
     advance_amount?: true;
+
+    @Field(() => Boolean, {nullable:true})
+    refund_amount?: true;
+
+    @Field(() => Boolean, {nullable:true})
+    have_refund?: true;
+
+    @Field(() => Boolean, {nullable:true})
+    refund_done?: true;
 }

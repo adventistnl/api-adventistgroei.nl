@@ -11,5 +11,9 @@
   "forgotPassword.body": "Uw verificatiecode is: {{code}}\n\nDeze code verloopt over {{expiresIn}}.",
   "forgotPassword.expiry": "Deze code verloopt over {{expiresIn}}.",
   "forgotPassword.ignore": "Als u geen verzoek tot wachtwoordherstel hebt ingediend, negeer deze e-mail dan.",
-  "forgotPassword.footer": "Met vriendelijke groet,\nHet Adventist Groei Team"
+  "forgotPassword.footer": "Met vriendelijke groet,\nHet Adventist Groei Team",
+  "refundApproved.subject": "Terugbetaling Goedgekeurd",
+  "refundApproved.greeting": "Hallo {{name}},",
+  "refundApproved.body": "Uw terugbetalingsverzoek van €{{amount}} voor subsidie {{subsidyId}} is goedgekeurd en verwerkt.",
+  "refundApproved.footer": "Met vriendelijke groet,\nHet Adventist Groei Team"
 }

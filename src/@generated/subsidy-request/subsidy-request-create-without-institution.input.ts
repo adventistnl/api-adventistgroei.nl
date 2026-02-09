@@ -75,6 +75,17 @@ export class SubsidyRequestCreateWithoutInstitutionInput {
     @Transform(transformToDecimal)
     advance_amount?: Decimal;
 
+    @Field(() => GraphQLDecimal, {nullable:true})
+    @Type(() => Object)
+    @Transform(transformToDecimal)
+    refund_amount?: Decimal;
+
+    @Field(() => Boolean, {nullable:true})
+    have_refund?: boolean;
+
+    @Field(() => Boolean, {nullable:true})
+    refund_done?: boolean;
+
     @Field(() => UserCreateNestedOneWithoutSubsidyRequestInput, {nullable:false})
     @Type(() => UserCreateNestedOneWithoutSubsidyRequestInput)
     requester!: UserCreateNestedOneWithoutSubsidyRequestInput;

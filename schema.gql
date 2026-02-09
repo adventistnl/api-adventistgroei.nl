@@ -523,6 +523,9 @@ type SubsidyRequest {
   project_id: String!
   is_for_advance: Boolean!
   advance_amount: Decimal
+  refund_amount: Decimal!
+  have_refund: Boolean!
+  refund_done: Boolean!
   institution: Institution!
   requester: User!
   department: Department!
@@ -856,6 +859,9 @@ enum PermissionResolverName {
   subsidyByMonth
   subsidyByStatus
   createAdvanceRequest
+  requestSubsidyRefund
+  getSubsidiesWaitingRefund
+  confirmRefundDone
 }
 
 enum PermissionGroup {
@@ -1679,6 +1685,7 @@ type Query {
   setting(id: String!): Setting
   subsidyRequests(project_id: String): [SubsidyRequest!]!
   subsidyRequest(id: String!): SubsidyRequest
+  getSubsidiesWaitingRefund(institutionId: String): [SubsidyRequest!]!
   subsidyKPIs(institutionId: String): SubsidyKPIs!
   subsidyByDepartment(institutionId: String): [SubsidyByDepartment!]!
   subsidyByMonth(institutionId: String): [SubsidyByMonth!]!
@@ -2390,6 +2397,9 @@ input SubsidyRequestWhereInput {
   project_id: StringFilter
   is_for_advance: BoolFilter
   advance_amount: DecimalNullableFilter
+  refund_amount: DecimalFilter
+  have_refund: BoolFilter
+  refund_done: BoolFilter
   institution: InstitutionScalarRelationFilter
   requester: UserScalarRelationFilter
   department: DepartmentScalarRelationFilter
@@ -3851,6 +3861,8 @@ type Mutation {
   rejectSubsidyRequest(id: String!, rejection_reason: String!, language: LanguagePreference = en): SubsidyRequest!
   addSubsidyRequestMessage(id: String!, message: String!, language: LanguagePreference = en): SubsidyStatusHistory!
   createAdvanceRequest(projectId: String!, advanceAmount: Float!, language: LanguagePreference = en): SubsidyRequest!
+  requestSubsidyRefund(id: String!, refundAmount: Float!, reason: String!, language: LanguagePreference = en): SubsidyRequest!
+  confirmRefundDone(id: String!, language: LanguagePreference = en): SubsidyRequest!
   createContact(data: ContactCreateDto!, userId: String!): Contact!
   updateContact(data: ContactUpdateDto!): Contact!
   deleteContact(id: String!, userId: String!): Contact!
