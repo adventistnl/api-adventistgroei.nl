@@ -1119,6 +1119,41 @@ export class SubsidyRequestService {
       changed_by: userId,
     });
 
+    // Send email notification to requester
+    try {
+      const requester = await this.prisma.user.findUnique({
+        where: { id: subsidyRequest.requester_id },
+        select: { email: true, name: true, language_preference: true }
+      });
+
+      if (requester?.email) {
+        const frontendUrl = process.env.FRONTEND_BASE_URL || 'http://localhost:3000';
+        const projectUrl = `${frontendUrl}/projects/${subsidyRequest.project_id}`;
+        
+        await this.emailService.sendRefundRequestedEmail({
+          to: requester.email,
+          subsidyName: subsidyRequest.description || 'Subsidy Request',
+          projectName: subsidyRequest.project?.title || 'Unknown Project',
+          projectUrl,
+          refundAmount,
+          requesterName: requester.name,
+          reason,
+          language: (requester.language_preference as any) || language,
+        });
+
+        // Log email sent in history
+        await this.historyRepository.create({
+          subsidy_request_id: id,
+          status_id: subsidyRequest.subsidy_statuses_id,
+          type: SubsidyHistoryType.COMMENT,
+          reason: translate('history.email_sent_refund_request', language, { ns: 'subsidy', email: requester.email }),
+          changed_by: userId,
+        });
+      }
+    } catch (emailError) {
+      console.error('Failed to send refund requested email:', emailError);
+    }
+
     return result;
   }
 
@@ -1201,27 +1236,39 @@ export class SubsidyRequestService {
         select: { email: true, name: true, language_preference: true }
       });
 
+      console.log(`[SubsidyRequestService] Found requester for refund email: ${requester?.email ? requester.email : 'No email found'}`);
+
       if (requester?.email) {
-        await this.emailService.sendRefundApprovedEmail({
+        console.log(`[SubsidyRequestService] Attempting to send refund email to ${requester.email}`);
+        
+        const frontendUrl = process.env.FRONTEND_BASE_URL || 'http://localhost:3000';
+        const projectUrl = `${frontendUrl}/projects/${subsidyRequest.project_id}`;
+
+        await this.emailService.sendRefundReceivedEmail({
           to: requester.email,
-          subsidyId: id,
+          subsidyName: subsidyRequest.description || 'Subsidy Request',
+          projectName: subsidyRequest.project?.title || 'Unknown Project',
+          projectUrl,
           refundAmount,
           requesterName: requester.name,
           language: (requester.language_preference as any) || language,
         });
+        console.log(`[SubsidyRequestService] Refund email sent successfully`);
 
         // Log email sent in history
         await this.historyRepository.create({
           subsidy_request_id: id,
           status_id: subsidyRequest.subsidy_statuses_id,
           type: SubsidyHistoryType.COMMENT,
-          reason: translate('history.email_sent_refund', language, { ns: 'subsidy', email: requester.email }),
+          reason: translate('history.email_sent_refund_received', language, { ns: 'subsidy', email: requester.email }),
           changed_by: userId,
         });
+      } else {
+        console.warn(`[SubsidyRequestService] Skipping email sending for subsidy ${id} because requester has no email.`);
       }
     } catch (emailError) {
       // Log error but don't fail the refund confirmation
-      console.error('Failed to send refund email:', emailError);
+      console.error('[SubsidyRequestService] Failed to send refund email:', emailError);
     }
 
     return result;

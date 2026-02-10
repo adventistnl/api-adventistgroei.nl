@@ -15,5 +15,15 @@
   "refundApproved.subject": "Terugbetaling Goedgekeurd",
   "refundApproved.greeting": "Hallo {{name}},",
   "refundApproved.body": "Uw terugbetalingsverzoek van €{{amount}} voor subsidie {{subsidyId}} is goedgekeurd en verwerkt.",
-  "refundApproved.footer": "Met vriendelijke groet,\nHet Adventist Groei Team"
+  "refundApproved.footer": "Met vriendelijke groet,\nHet Adventist Groei Team",
+  "refundRequested.subject": "Terugbetaling Aangevraagd",
+  "refundRequested.greeting": "Hallo {{name}},",
+  "refundRequested.body": "Er is een terugbetalingsverzoek van €{{amount}} ontvangen voor subsidie {{subsidyId}}.",
+  "refundRequested.footer": "Met vriendelijke groet,\nHet Adventist Groei Team",
+  "refundRequested.cta": "Project bekijken",
+  "refundReceived.subject": "Terugbetaling Ontvangen",
+  "refundReceived.greeting": "Hallo {{name}},",
+  "refundReceived.body": "Wij hebben de ontvangst van uw terugbetaling van €{{amount}} voor subsidie {{subsidyId}} bevestigd.",
+  "refundReceived.footer": "Met vriendelijke groet,\nHet Adventist Groei Team",
+  "refundReceived.cta": "Project bekijken"
 }

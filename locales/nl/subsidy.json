@@ -31,7 +31,9 @@
     "auto_status_in_review": "Status automatisch gewijzigd naar IN_BEOORDELING. {{approved}} goedgekeurd, {{rejected}} afgewezen, {{pending}} in afwachting.",
     "refund_requested": "Terugbetaling aangevraagd. Bedrag: {{amount}}. Reden: {{reason}}",
     "refund_confirmed": "Terugbetaling verwerkt. Bedrag: {{amount}}",
-    "email_sent_refund": "E-mail over goedkeuring terugbetaling verzonden naar {{email}}"
+    "email_sent_refund": "E-mail over goedkeuring terugbetaling verzonden naar {{email}}",
+    "email_sent_refund_request": "E-mail over aangevraagde terugbetaling verzonden naar {{email}}",
+    "email_sent_refund_received": "E-mail over ontvangen terugbetaling verzonden naar {{email}}"
   },
   "status": {
     "unknown": "Onbekend",

@@ -11,6 +11,7 @@ import { RefundApprovedEmailDto } from 'src/dto/refund-approved-email.dto';
 import { UserService } from '../../services/user.service';
 import { MustacheService } from '../../services/mustache.service';
 import { LanguagePreference } from '../../@generated/prisma/language-preference.enum';
+import { RefundRequestedEmailDto } from '../../dto/refund-requested-email.dto';
 
 @Injectable()
 export class NodemailerEmailRepository {
@@ -81,7 +82,6 @@ export class NodemailerEmailRepository {
         html, // HTML body content
       });
     } catch (error) {
-      console.error('Error sending email:', error);
       throw new CustomGraphQLError(`Failed to send email: ${error instanceof Error ? error.message : String(error)}`, ErrorCode.INTERNAL_SERVER_ERROR, 500);
     }
   }
@@ -110,14 +110,58 @@ export class NodemailerEmailRepository {
 
       const subject = translate('refundApproved.subject', language, { ns: 'emails' }) || 'Refund Approved';
       const templateData = {
-        subsidyId: data.subsidyId,
+        subsidyName: data.subsidyName,
+        projectName: data.projectName,
+        projectUrl: data.projectUrl,
         refundAmount: data.refundAmount,
         requesterName: data.requesterName,
         subject,
-        body: translate('refundApproved.body', language, { ns: 'emails', amount: data.refundAmount, subsidyId: data.subsidyId }) || `Your refund of ${data.refundAmount} has been approved for subsidy ${data.subsidyId}.`,
+        body: translate('refundApproved.body', language, { ns: 'emails', amount: data.refundAmount, subsidyName: data.subsidyName, projectName: data.projectName }) || `Your refund of ${data.refundAmount} has been approved for subsidy ${data.subsidyName}.`,
         greeting: translate('refundApproved.greeting', language, { ns: 'emails', name: data.requesterName }) || `Hello ${data.requesterName},`,
         footer: translate('refundApproved.footer', language, { ns: 'emails' }) || '',
+        cta: translate('refundApproved.cta', language, { ns: 'emails' }) || 'View Project',
       };
       await this.sendEmail(data.to, subject, 'refund-approved', templateData);
+    }
+
+    async sendRefundRequestedEmail(data: RefundRequestedEmailDto): Promise<void> {
+      const language = data.language || LanguagePreference.en;
+      await loadNamespaces(['emails']);
+
+      const subject = translate('refundRequested.subject', language, { ns: 'emails' }) || 'Refund Requested';
+      const templateData = {
+        subsidyName: data.subsidyName,
+        projectName: data.projectName,
+        projectUrl: data.projectUrl,
+        refundAmount: data.refundAmount,
+        requesterName: data.requesterName,
+        reason: data.reason,
+        subject,
+        body: translate('refundRequested.body', language, { ns: 'emails', amount: data.refundAmount, subsidyName: data.subsidyName, projectName: data.projectName }) || `A refund request of ${data.refundAmount} has been received for subsidy ${data.subsidyName}.`,
+        greeting: translate('refundRequested.greeting', language, { ns: 'emails', name: data.requesterName }) || `Hello ${data.requesterName},`,
+        footer: translate('refundRequested.footer', language, { ns: 'emails' }) || '',
+        cta: translate('refundRequested.cta', language, { ns: 'emails' }) || 'View Project',
+      };
+      await this.sendEmail(data.to, subject, 'refund-requested', templateData);
+    }
+
+    async sendRefundReceivedEmail(data: RefundApprovedEmailDto): Promise<void> {
+      const language = data.language || LanguagePreference.en;
+      await loadNamespaces(['emails']);
+
+      const subject = translate('refundReceived.subject', language, { ns: 'emails' }) || 'Refund Received';
+      const templateData = {
+        subsidyName: data.subsidyName,
+        projectName: data.projectName,
+        projectUrl: data.projectUrl,
+        refundAmount: data.refundAmount,
+        requesterName: data.requesterName,
+        subject,
+        body: translate('refundReceived.body', language, { ns: 'emails', amount: data.refundAmount, subsidyName: data.subsidyName, projectName: data.projectName }) || `We have confirmed receipt of your refund of ${data.refundAmount} for subsidy ${data.subsidyName}.`,
+        greeting: translate('refundReceived.greeting', language, { ns: 'emails', name: data.requesterName }) || `Hello ${data.requesterName},`,
+        footer: translate('refundReceived.footer', language, { ns: 'emails' }) || '',
+        cta: translate('refundReceived.cta', language, { ns: 'emails' }) || 'View Project',
+      };
+      await this.sendEmail(data.to, subject, 'refund-received', templateData);
     }
 }
