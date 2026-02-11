@@ -33,7 +33,8 @@
     "seed:prod:admin": "ts-node -r tsconfig-paths/register src/scripts/seed-admin-prod.ts",
     "seed:prod:developer": "ts-node -r tsconfig-paths/register src/scripts/seed-developer-prod.ts",
     "seed:prod:all": "pnpm run seed:prod:admin && pnpm run seed:prod:developer && pnpm run seed:subsidy-statuses",
-    "seed:all": "pnpm run seed:permissions && pnpm run seed:roles && pnpm run seed:users && pnpm run seed:subsidy-statuses"
+    "seed:all": "pnpm run seed:permissions && pnpm run seed:roles && pnpm run seed:users && pnpm run seed:subsidy-statuses",
+    "cleanup:orphaned-subsidies": "ts-node -r tsconfig-paths/register src/scripts/cleanup-orphaned-subsidy-requests.ts"
   },
   "dependencies": {
     "@nestjs/apollo": "^13.1.0",

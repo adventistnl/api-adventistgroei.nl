@@ -91,7 +91,7 @@ const roles = [
       { key_code: 'SUBSIDY_BY_DEPARTMENT_ACCESS', is_essential: true },
       { key_code: 'SUBSIDY_BY_MONTH_ACCESS', is_essential: true },
       { key_code: 'SUBSIDY_BY_STATUS_ACCESS', is_essential: true },
-      { key_code: 'SUBSIDY_REQUEST_ADVANCE_CREATE', is_essetial: true },
+      { key_code: 'SUBSIDY_REQUEST_ADVANCE_CREATE', is_essential: true },
       // Refund permissions
       { key_code: 'REQUEST_SUBSIDY_REFUND', is_essential: true },
       { key_code: 'GET_SUBSIDIES_WAITING_REFUND', is_essential: true },
@@ -168,7 +168,7 @@ const roles = [
       { key_code: 'SUBSIDY_BY_DEPARTMENT_ACCESS', is_essential: true },
       { key_code: 'SUBSIDY_BY_MONTH_ACCESS', is_essential: true },
       { key_code: 'SUBSIDY_BY_STATUS_ACCESS', is_essential: true },
-      { key_code: 'SUBSIDY_REQUEST_ADVANCE_CREATE', is_essetial: true },
+      { key_code: 'SUBSIDY_REQUEST_ADVANCE_CREATE', is_essential: true },
       // Refund permissions
       { key_code: 'GET_SUBSIDIES_WAITING_REFUND', is_essential: true },
       // Subsidy Receipts
@@ -396,14 +396,18 @@ const roles = [
       { key_code: 'SUBSIDY_REQUEST_CREATE', is_essential: true },
       { key_code: 'SUBSIDY_REQUEST_UPDATE', is_essential: true },
       { key_code: 'SUBSIDY_KPIS_ACCESS', is_essential: true },
+      { key_code: 'SUBSIDY_BY_DEPARTMENT_ACCESS', is_essential: true },
+      { key_code: 'SUBSIDY_BY_MONTH_ACCESS', is_essential: true },
+      { key_code: 'SUBSIDY_BY_STATUS_ACCESS', is_essential: true },
       { key_code: 'SUBSIDY_STATUS_HISTORY_GET', is_essential: true },
-      { key_code: 'SUBSIDY_REQUEST_ADVANCE_CREATE', is_essetial: true },
+      { key_code: 'SUBSIDY_REQUEST_ADVANCE_CREATE', is_essential: true },
       // Refund permissions
       { key_code: 'REQUEST_SUBSIDY_REFUND', is_essential: true },
       { key_code: 'GET_SUBSIDIES_WAITING_REFUND', is_essential: true },
       // Subsidy Receipts
       { key_code: 'UPLOAD_SUBSIDY_RECEIPT', is_essential: true },
       { key_code: 'DOWNLOAD_SUBSIDY_RECEIPT', is_essential: true },
+      { key_code: 'DELETE_SUBSIDY_RECEIPT', is_essential: true },
       { key_code: 'GET_SUBSIDY_RECEIPTS', is_essential: true },
     ],
   },
@@ -447,7 +451,7 @@ const roles = [
       { key_code: 'DELETE_ACTIVITY_DOCUMENT', is_essential: true },
       { key_code: 'VALIDATE_ACTIVITY_DOCUMENT', is_essential: true },
       { key_code: 'GET_ACTIVITY_DOCUMENTS', is_essential: true },
-      { key_code: 'SUBSIDY_REQUEST_ADVANCE_CREATE', is_essetial: true },
+      { key_code: 'SUBSIDY_REQUEST_ADVANCE_CREATE', is_essential: true },
       // Subsidies (can create, update, but NOT approve/reject)
       { key_code: 'SUBSIDY_REQUESTS_ACCESS', is_essential: true },
       { key_code: 'SUBSIDY_REQUEST_ACCESS', is_essential: true },
@@ -458,6 +462,65 @@ const roles = [
       { key_code: 'UPLOAD_SUBSIDY_RECEIPT', is_essential: true },
       { key_code: 'DOWNLOAD_SUBSIDY_RECEIPT', is_essential: true },
       { key_code: 'GET_SUBSIDY_RECEIPTS', is_essential: true },
+    ],
+  },
+  {
+    name: 'Project Owner',
+    key_code: 'PROJECT_OWNER',
+    description: 'Owner of a specific project with full permissions on project management except creation',
+    is_fixed: true,
+    permissions: [
+      // Read permissions
+      { key_code: 'USERS_ACCESS', is_essential: true },
+      { key_code: 'USER_ACCESS', is_essential: true },
+      { key_code: 'USER_OWN_UPDATE', is_essential: true },
+      { key_code: 'ROLES_ACCESS', is_essential: true },
+      { key_code: 'ROLE_ACCESS', is_essential: true },
+      { key_code: 'PROJECTS_ACCESS', is_essential: true },
+      { key_code: 'PROJECT_ACCESS', is_essential: true },
+      // Project management (NO CREATE)
+      { key_code: 'PROJECT_UPDATE', is_essential: true },
+      { key_code: 'PROJECT_DELETE', is_essential: true },
+      { key_code: 'PROJECT_VOLUNTARY_ADD', is_essential: true },
+      { key_code: 'PROJECT_VOLUNTARY_REMOVE', is_essential: true },
+      // Project KPIs
+      { key_code: 'PROJECT_KPIS_ACCESS', is_essential: true },
+      { key_code: 'PROJECTS_BY_DEPARTMENT_ACCESS', is_essential: true },
+      { key_code: 'SUBSIDY_STATUS_DISTRIBUTION_ACCESS', is_essential: true },
+      { key_code: 'PROJECTS_TIMELINE_ACCESS', is_essential: true },
+      { key_code: 'SPECIFIC_PROJECT_KPIS_ACCESS', is_essential: true },
+      // Activities (full access)
+      { key_code: 'PROJECT_ACTIVITIES_ACCESS', is_essential: true },
+      { key_code: 'ACTIVITY_ACCESS', is_essential: true },
+      { key_code: 'PROJECT_ACTIVITY_CREATE', is_essential: true },
+      { key_code: 'PROJECT_ACTIVITY_UPDATE', is_essential: true },
+      { key_code: 'PROJECT_ACTIVITY_DELETE', is_essential: true },
+      { key_code: 'PROJECT_ACTIVITIES_BATCH_UPDATE', is_essential: true },
+      { key_code: 'PROJECT_ACTIVITY_LOGS_ACCESS', is_essential: true },
+      // Activity Documents
+      { key_code: 'UPLOAD_ACTIVITY_DOCUMENT', is_essential: true },
+      { key_code: 'DOWNLOAD_ACTIVITY_DOCUMENT', is_essential: true },
+      { key_code: 'DELETE_ACTIVITY_DOCUMENT', is_essential: true },
+      { key_code: 'VALIDATE_ACTIVITY_DOCUMENT', is_essential: true },
+      { key_code: 'GET_ACTIVITY_DOCUMENTS', is_essential: true },
+      // Subsidies (can create, update, but NOT approve/reject - that's financial manager)
+      { key_code: 'SUBSIDY_REQUESTS_ACCESS', is_essential: true },
+      { key_code: 'SUBSIDY_REQUEST_ACCESS', is_essential: true },
+      { key_code: 'SUBSIDY_REQUEST_CREATE', is_essential: true },
+      { key_code: 'SUBSIDY_REQUEST_UPDATE', is_essential: true },
+      { key_code: 'SUBSIDY_KPIS_ACCESS', is_essential: true },
+      { key_code: 'SUBSIDY_BY_DEPARTMENT_ACCESS', is_essential: true },
+      { key_code: 'SUBSIDY_BY_MONTH_ACCESS', is_essential: true },
+      { key_code: 'SUBSIDY_BY_STATUS_ACCESS', is_essential: true },
+      { key_code: 'SUBSIDY_REQUEST_ADVANCE_CREATE', is_essential: true },
+      { key_code: 'SUBSIDY_STATUS_HISTORY_GET', is_essential: true },
+      // Subsidy Receipts
+      { key_code: 'UPLOAD_SUBSIDY_RECEIPT', is_essential: true },
+      { key_code: 'DOWNLOAD_SUBSIDY_RECEIPT', is_essential: true },
+      { key_code: 'GET_SUBSIDY_RECEIPTS', is_essential: true },
+      // Refund permissions
+      { key_code: 'REQUEST_SUBSIDY_REFUND', is_essential: true },
+      { key_code: 'GET_SUBSIDIES_WAITING_REFUND', is_essential: true },
     ],
   },
   {
