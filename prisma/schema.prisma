@@ -175,6 +175,10 @@ enum PermissionResolverName {
   subsidyByDepartment
   subsidyByMonth
   subsidyByStatus
+  createAdvanceRequest
+  requestSubsidyRefund
+  getSubsidiesWaitingRefund
+  confirmRefundDone
 }
 
 enum PermissionGroup {
@@ -682,6 +686,11 @@ model SubsidyRequest {
   project             Project                 @relation(fields: [project_id], references: [id])
   subsidy_receipts    SubsidyReceipt[]
   status_history      SubsidyStatusHistory[]
+  is_for_advance      Boolean                 @default(false)
+  advance_amount      Decimal?
+  refund_amount       Decimal                 @default(0)
+  have_refund         Boolean                 @default(false)
+  refund_done         Boolean                 @default(false)
 }
 
 enum SubsidyRequestPriority {

@@ -2,8 +2,8 @@ import { Field } from '@nestjs/graphql';
 import { InputType } from '@nestjs/graphql';
 import { SortOrder } from '../prisma/sort-order.enum';
 import { SortOrderInput } from '../prisma/sort-order.input';
-import { InstitutionOrderByWithRelationInput } from '../institution/institution-order-by-with-relation.input';
 import { Type } from 'class-transformer';
+import { InstitutionOrderByWithRelationInput } from '../institution/institution-order-by-with-relation.input';
 import { UserOrderByWithRelationInput } from '../user/user-order-by-with-relation.input';
 import { DepartmentOrderByWithRelationInput } from '../department/department-order-by-with-relation.input';
 import { ChurchOrderByWithRelationInput } from '../church/church-order-by-with-relation.input';
@@ -78,6 +78,22 @@ export class SubsidyRequestOrderByWithRelationInput {
 
     @Field(() => SortOrder, {nullable:true})
     project_id?: `${SortOrder}`;
+
+    @Field(() => SortOrder, {nullable:true})
+    is_for_advance?: `${SortOrder}`;
+
+    @Field(() => SortOrderInput, {nullable:true})
+    @Type(() => SortOrderInput)
+    advance_amount?: SortOrderInput;
+
+    @Field(() => SortOrder, {nullable:true})
+    refund_amount?: `${SortOrder}`;
+
+    @Field(() => SortOrder, {nullable:true})
+    have_refund?: `${SortOrder}`;
+
+    @Field(() => SortOrder, {nullable:true})
+    refund_done?: `${SortOrder}`;
 
     @Field(() => InstitutionOrderByWithRelationInput, {nullable:true})
     @Type(() => InstitutionOrderByWithRelationInput)

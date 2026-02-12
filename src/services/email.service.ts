@@ -2,6 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { InviteEmailDto } from '../dto/email.dto';
 import { NodemailerEmailRepository } from '../repositories/emails/nodemailer.repository';
 import { ForgotPasswordEmailDto } from '../dto/forgot-password-email.dto';
+import { RefundApprovedEmailDto } from '../dto/refund-approved-email.dto';
+import { RefundRequestedEmailDto } from '../dto/refund-requested-email.dto';
 
 @Injectable()
 export class EmailService {
@@ -15,5 +17,17 @@ export class EmailService {
 
   async sendForgotPasswordEmail(data: ForgotPasswordEmailDto): Promise<void> {
     await this.nodemailerRepository.sendForgotPasswordEmail(data);
+  }
+
+  async sendRefundApprovedEmail(data: RefundApprovedEmailDto): Promise<void> {
+    await this.nodemailerRepository.sendRefundApprovedEmail(data);
+  }
+
+  async sendRefundRequestedEmail(data: RefundRequestedEmailDto): Promise<void> {
+    await this.nodemailerRepository.sendRefundRequestedEmail(data);
+  }
+
+  async sendRefundReceivedEmail(data: RefundApprovedEmailDto): Promise<void> {
+    await this.nodemailerRepository.sendRefundReceivedEmail(data);
   }
 }

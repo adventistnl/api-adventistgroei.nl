@@ -8,6 +8,7 @@ import { DateTimeFilter } from '../prisma/date-time-filter.input';
 import { DateTimeNullableFilter } from '../prisma/date-time-nullable-filter.input';
 import { BoolFilter } from '../prisma/bool-filter.input';
 import { EnumSubsidyRequestPriorityFilter } from '../prisma/enum-subsidy-request-priority-filter.input';
+import { DecimalNullableFilter } from '../prisma/decimal-nullable-filter.input';
 import { InstitutionScalarRelationFilter } from '../institution/institution-scalar-relation-filter.input';
 import { UserScalarRelationFilter } from '../user/user-scalar-relation-filter.input';
 import { DepartmentScalarRelationFilter } from '../department/department-scalar-relation-filter.input';
@@ -97,6 +98,23 @@ export class SubsidyRequestWhereInput {
 
     @Field(() => StringFilter, {nullable:true})
     project_id?: StringFilter;
+
+    @Field(() => BoolFilter, {nullable:true})
+    is_for_advance?: BoolFilter;
+
+    @Field(() => DecimalNullableFilter, {nullable:true})
+    @Type(() => DecimalNullableFilter)
+    advance_amount?: DecimalNullableFilter;
+
+    @Field(() => DecimalFilter, {nullable:true})
+    @Type(() => DecimalFilter)
+    refund_amount?: DecimalFilter;
+
+    @Field(() => BoolFilter, {nullable:true})
+    have_refund?: BoolFilter;
+
+    @Field(() => BoolFilter, {nullable:true})
+    refund_done?: BoolFilter;
 
     @Field(() => InstitutionScalarRelationFilter, {nullable:true})
     @Type(() => InstitutionScalarRelationFilter)

@@ -69,4 +69,19 @@ export class SubsidyRequestMinAggregate {
 
     @Field(() => String, {nullable:true})
     project_id?: string;
+
+    @Field(() => Boolean, {nullable:true})
+    is_for_advance?: boolean;
+
+    @Field(() => GraphQLDecimal, {nullable:true})
+    advance_amount?: Decimal;
+
+    @Field(() => GraphQLDecimal, {nullable:true})
+    refund_amount?: Decimal;
+
+    @Field(() => Boolean, {nullable:true})
+    have_refund?: boolean;
+
+    @Field(() => Boolean, {nullable:true})
+    refund_done?: boolean;
 }

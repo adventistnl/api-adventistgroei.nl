@@ -12,18 +12,36 @@
     "cannot_delete_approved_or_closed": "Kan {{status}} subsidieaanvragen niet verwijderen",
     "approved_status_not_found": "Goedgekeurde status niet gevonden",
     "rejected_status_not_found": "Afgewezen status niet gevonden",
-    "document_amounts_mismatch": "De som van documentbedragen ({{sum}}) komt niet overeen met het aangevraagde bedrag ({{requested}}) voor de activiteit"
+    "document_amounts_mismatch": "De som van documentbedragen ({{sum}}) komt niet overeen met het aangevraagde bedrag ({{requested}}) voor de activiteit",
+    "only_financial_can_close": "Alleen gebruikers met de rol Financieel Manager kunnen subsidieaanvragen sluiten",
+    "refund_invalid_status": "Terugbetaling kan alleen worden aangevraagd voor subsidies met status VOORSCHOT_GESLOTEN of GESLOTEN",
+    "refund_amount_invalid": "Terugbetalingsbedrag moet groter zijn dan nul",
+    "no_refund_requested": "Er is geen terugbetaling aangevraagd voor deze subsidie",
+    "refund_already_done": "Terugbetaling is al verwerkt voor deze subsidie"
   },
   "history": {
     "request_created": "Aanvraag aangemaakt",
+    "subsidy_created_advance": "Subsidieaanvraag aangemaakt in afwachting",
+    "activity_linked_to_advance": "Activiteit gekoppeld aan subsidieaanvraag in afwachting",
     "status_changed": "Status gewijzigd van {{from}} naar {{to}}",
     "priority_changed": "Prioriteit gewijzigd van {{from}} naar {{to}}",
     "subsidy_deleted": "Subsidieaanvraag verwijderd",
     "request_approved": "Aanvraag goedgekeurd. Goedgekeurd bedrag: {{amount}}",
     "request_rejected": "Aanvraag afgewezen",
-    "auto_status_in_review": "Status automatisch gewijzigd naar IN_BEOORDELING. {{approved}} goedgekeurd, {{rejected}} afgewezen, {{pending}} in afwachting."
+    "auto_status_in_review": "Status automatisch gewijzigd naar IN_BEOORDELING. {{approved}} goedgekeurd, {{rejected}} afgewezen, {{pending}} in afwachting.",
+    "refund_requested": "Terugbetaling aangevraagd. Bedrag: {{amount}}. Reden: {{reason}}",
+    "refund_confirmed": "Terugbetaling verwerkt. Bedrag: {{amount}}",
+    "email_sent_refund": "E-mail over goedkeuring terugbetaling verzonden naar {{email}}",
+    "email_sent_refund_request": "E-mail over aangevraagde terugbetaling verzonden naar {{email}}",
+    "email_sent_refund_received": "E-mail over ontvangen terugbetaling verzonden naar {{email}}"
   },
   "status": {
-    "unknown": "Onbekend"
+    "unknown": "Onbekend",
+    "pending": "In afwachting",
+    "in_review": "In beoordeling",
+    "approved": "Goedgekeurd",
+    "rejected": "Afgewezen",
+    "advanced_closed": "Voorschot Gesloten",
+    "closed": "Gesloten"
   }
 }

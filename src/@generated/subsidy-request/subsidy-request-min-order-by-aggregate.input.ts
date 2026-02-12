@@ -67,4 +67,19 @@ export class SubsidyRequestMinOrderByAggregateInput {
 
     @Field(() => SortOrder, {nullable:true})
     project_id?: `${SortOrder}`;
+
+    @Field(() => SortOrder, {nullable:true})
+    is_for_advance?: `${SortOrder}`;
+
+    @Field(() => SortOrder, {nullable:true})
+    advance_amount?: `${SortOrder}`;
+
+    @Field(() => SortOrder, {nullable:true})
+    refund_amount?: `${SortOrder}`;
+
+    @Field(() => SortOrder, {nullable:true})
+    have_refund?: `${SortOrder}`;
+
+    @Field(() => SortOrder, {nullable:true})
+    refund_done?: `${SortOrder}`;
 }

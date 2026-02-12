@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{subject}}</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f9;
+      margin: 0;
+      padding: 0;
+    }
+    .email-container {
+      max-width: 600px;
+      margin: 0 auto;
+      background: #ffffff;
+      border-radius: 8px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+    }
+    .email-header {
+      background-color: #f4f4f9;
+      color: #777777;
+      text-align: center;
+      padding: 20px;
+    }
+    .email-header img {
+      max-width: 100px;
+      margin-bottom: 10px;
+      background: transparent;
+    }
+    .email-body {
+      padding: 20px;
+      color: #333333;
+      line-height: 1.6;
+    }
+    .email-body a {
+      color: #777777;
+      text-decoration: none;
+      font-weight: bold;
+    }
+    .email-footer {
+      text-align: center;
+      padding: 10px;
+      font-size: 12px;
+      color: #777777;
+      background-color: #f4f4f9;
+    }
+    .highlight-box {
+        background-color: #fff3e0;
+        border-left: 4px solid #ff9800;
+        padding: 15px;
+        margin: 20px 0;
+        border-radius: 4px;
+    }
+    .amount {
+        font-size: 20px;
+        font-weight: bold;
+        color: #e65100;
+        margin-bottom: 5px;
+    }
+    .subsidy-id {
+        font-size: 14px;
+        color: #555;
+    }
+  </style>
+</head>
+<body>
+  <div class="email-container">
+    <div class="email-header">
+      <img style="mix-blend-mode: multiply;" src="https://w7.pngwing.com/pngs/867/673/png-transparent-kress-memorial-seventh-day-adventist-church-kempton-park-central-seventh-day-adventist-church-christian-church-logo-s.png" alt="Adventist Church Logo">
+      <h1>{{subject}}</h1>
+    </div>
+    <div class="email-body">
+      <h2>{{greeting}}</h2>
+      <p>{{body}}</p>
+      
+      <div class="highlight-box">
+          <div class="amount">€{{refundAmount}}</div>
+          <div class="subsidy-id"><strong>Subsidy:</strong> {{subsidyName}}</div>
+          <div class="subsidy-id"><strong>Project:</strong> {{projectName}}</div>
+          {{#reason}}
+          <div class="subsidy-id" style="margin-top: 10px;"><strong>Reason:</strong> {{reason}}</div>
+          {{/reason}}
+      </div>
+
+      <p style="text-align: center;">
+        <a href="{{projectUrl}}" style="display: inline-block; background-color: #333333; color: #f4f4f9; padding: 10px 20px; border-radius: 5px; text-decoration: none;">{{cta}}</a>
+      </p>
+
+    </div>
+    <div class="email-footer">
+      <p>{{footer}}</p>
+    </div>
+  </div>
+</body>
+</html>

@@ -7,6 +7,8 @@ void i18n
   .init({
     fallbackLng: 'en', // Idioma padrão
     preload: Object.values(LanguagePreference), // Idiomas suportados
+    ns: ['translation', 'subsidy'], // Namespaces to load
+    defaultNS: 'translation',
     backend: {
       loadPath: './locales/{{lng}}/{{ns}}.json', // Caminho para os arquivos de tradução
     },

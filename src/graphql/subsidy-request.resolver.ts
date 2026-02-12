@@ -100,6 +100,51 @@ export class SubsidyRequestResolver {
     return this.subsidyRequestService.addMessage(id, message, context.userId, language);
   }
 
+  @Mutation(() => SubsidyRequest)
+  @UseGuards(PermissionsGuard)
+  @Permission()
+  async createAdvanceRequest(
+    @Args('projectId') projectId: string,
+    @Args('advanceAmount', { type: () => Float }) advanceAmount: number,
+    @Args('language', { type: () => LanguagePreference, nullable: true, defaultValue: LanguagePreference.en }) language: LanguagePreference,
+    @Context() context: { userId: string },
+  ): Promise<SubsidyRequest> {
+    return this.subsidyRequestService.createAdvanceRequest(projectId, advanceAmount, context.userId, language);
+  }
+
+  @Mutation(() => SubsidyRequest)
+  @UseGuards(PermissionsGuard)
+  @Permission()
+  async requestSubsidyRefund(
+    @Args('id') id: string,
+    @Args('refundAmount', { type: () => Float }) refundAmount: number,
+    @Args('reason') reason: string,
+    @Args('language', { type: () => LanguagePreference, nullable: true, defaultValue: LanguagePreference.en }) language: LanguagePreference,
+    @Context() context: { userId: string },
+  ): Promise<SubsidyRequest> {
+    return this.subsidyRequestService.requestRefund(id, refundAmount, reason, context.userId, language);
+  }
+
+  @Mutation(() => SubsidyRequest)
+  @UseGuards(PermissionsGuard)
+  @Permission()
+  async confirmRefundDone(
+    @Args('id') id: string,
+    @Args('language', { type: () => LanguagePreference, nullable: true, defaultValue: LanguagePreference.en }) language: LanguagePreference,
+    @Context() context: { userId: string },
+  ): Promise<SubsidyRequest> {
+    return this.subsidyRequestService.confirmRefundDone(id, context.userId, language);
+  }
+
+  @Query(() => [SubsidyRequest])
+  @UseGuards(PermissionsGuard)
+  @Permission()
+  async getSubsidiesWaitingRefund(
+    @Args('institutionId', { type: () => String, nullable: true }) institutionId?: string,
+  ): Promise<SubsidyRequest[]> {
+    return this.subsidyRequestService.getSubsidiesWaitingRefund(institutionId);
+  }
+
   // Analytics queries
   @Query(() => SubsidyKPIs)
   @UseGuards(PermissionsGuard)

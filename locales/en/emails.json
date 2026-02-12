@@ -11,5 +11,19 @@
   "forgotPassword.body": "Your verification code is: {{code}}\n\nThis code expires in {{expiresIn}}.",
   "forgotPassword.expiry": "This code will expire in {{expiresIn}}.",
   "forgotPassword.ignore": "If you did not request a password reset, please ignore this email.",
-  "forgotPassword.footer": "Best regards,\nThe Adventist Groei Team"
+  "forgotPassword.footer": "Best regards,\nThe Adventist Groei Team",
+  "refundApproved.subject": "Refund Approved",
+  "refundApproved.greeting": "Hello {{name}},",
+  "refundApproved.body": "Your refund request of €{{amount}} for subsidy {{subsidyName}} has been approved and processed.",
+  "refundApproved.footer": "Best regards,\nThe Adventist Groei Team",
+  "refundReceived.subject": "Refund Received",
+  "refundReceived.greeting": "Hello {{name}},",
+  "refundReceived.body": "We have confirmed receipt of your refund of €{{amount}} for subsidy {{subsidyName}}.",
+  "refundReceived.footer": "Best regards,\nThe Adventist Groei Team",
+  "refundReceived.cta": "View Project",
+  "refundRequested.cta": "View Project",
+  "refundRequested.subject": "Refund Requested",
+  "refundRequested.greeting": "Hello {{name}},",
+  "refundRequested.body": "A refund request of €{{amount}} has been received for subsidy {{subsidyName}}.",
+  "refundRequested.footer": "Best regards,\nThe Adventist Groei Team"
 }

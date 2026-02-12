@@ -129,7 +129,11 @@ export enum PermissionResolverName {
     subsidyKPIs = "subsidyKPIs",
     subsidyByDepartment = "subsidyByDepartment",
     subsidyByMonth = "subsidyByMonth",
-    subsidyByStatus = "subsidyByStatus"
+    subsidyByStatus = "subsidyByStatus",
+    createAdvanceRequest = "createAdvanceRequest",
+    requestSubsidyRefund = "requestSubsidyRefund",
+    getSubsidiesWaitingRefund = "getSubsidiesWaitingRefund",
+    confirmRefundDone = "confirmRefundDone"
 }
 
 

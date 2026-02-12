@@ -2,8 +2,8 @@ import { Field } from '@nestjs/graphql';
 import { InputType } from '@nestjs/graphql';
 import { SortOrder } from '../prisma/sort-order.enum';
 import { SortOrderInput } from '../prisma/sort-order.input';
-import { SubsidyRequestCountOrderByAggregateInput } from './subsidy-request-count-order-by-aggregate.input';
 import { Type } from 'class-transformer';
+import { SubsidyRequestCountOrderByAggregateInput } from './subsidy-request-count-order-by-aggregate.input';
 import { SubsidyRequestAvgOrderByAggregateInput } from './subsidy-request-avg-order-by-aggregate.input';
 import { SubsidyRequestMaxOrderByAggregateInput } from './subsidy-request-max-order-by-aggregate.input';
 import { SubsidyRequestMinOrderByAggregateInput } from './subsidy-request-min-order-by-aggregate.input';
@@ -74,6 +74,22 @@ export class SubsidyRequestOrderByWithAggregationInput {
 
     @Field(() => SortOrder, {nullable:true})
     project_id?: `${SortOrder}`;
+
+    @Field(() => SortOrder, {nullable:true})
+    is_for_advance?: `${SortOrder}`;
+
+    @Field(() => SortOrderInput, {nullable:true})
+    @Type(() => SortOrderInput)
+    advance_amount?: SortOrderInput;
+
+    @Field(() => SortOrder, {nullable:true})
+    refund_amount?: `${SortOrder}`;
+
+    @Field(() => SortOrder, {nullable:true})
+    have_refund?: `${SortOrder}`;
+
+    @Field(() => SortOrder, {nullable:true})
+    refund_done?: `${SortOrder}`;
 
     @Field(() => SubsidyRequestCountOrderByAggregateInput, {nullable:true})
     @Type(() => SubsidyRequestCountOrderByAggregateInput)

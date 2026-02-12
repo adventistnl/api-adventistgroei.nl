@@ -9,4 +9,10 @@ export class SubsidyRequestSumAggregateInput {
 
     @Field(() => Boolean, {nullable:true})
     approved_amount?: true;
+
+    @Field(() => Boolean, {nullable:true})
+    advance_amount?: true;
+
+    @Field(() => Boolean, {nullable:true})
+    refund_amount?: true;
 }

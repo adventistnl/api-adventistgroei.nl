@@ -198,7 +198,12 @@ export class SubsidyRequestRepository {
         },
         church: true,
         subsidy_status: true,
-        project: true,
+        project: {
+          include: {
+            owner: true,
+            department: true,
+          },
+        },
         items: {
           where: { is_deleted: false },
           include: {
@@ -215,6 +220,7 @@ export class SubsidyRequestRepository {
             },
           },
         },
+        subsidy_receipts: true,
       },
     });
   }
@@ -247,6 +253,12 @@ export class SubsidyRequestRepository {
         },
         church: true,
         subsidy_status: true,
+        project: {
+          include: {
+            owner: true,
+            department: true,
+          },
+        },
         items: {
           where: { is_deleted: false },
           include: {
@@ -257,6 +269,7 @@ export class SubsidyRequestRepository {
             },
           },
         },
+        subsidy_receipts: true,
       },
     });
   }
@@ -311,6 +324,12 @@ export class SubsidyRequestRepository {
           },
         },
         church: true,
+        project: {
+          include: {
+            owner: true,
+            department: true,
+          },
+        },
         subsidy_status: true,
         items: {
           where: { is_deleted: false },
@@ -322,6 +341,7 @@ export class SubsidyRequestRepository {
             },
           },
         },
+        subsidy_receipts: true,
       },
     });
   }

@@ -8,6 +8,7 @@ import { DateTimeFieldUpdateOperationsInput } from '../prisma/date-time-field-up
 import { NullableDateTimeFieldUpdateOperationsInput } from '../prisma/nullable-date-time-field-update-operations.input';
 import { BoolFieldUpdateOperationsInput } from '../prisma/bool-field-update-operations.input';
 import { EnumSubsidyRequestPriorityFieldUpdateOperationsInput } from '../prisma/enum-subsidy-request-priority-field-update-operations.input';
+import { NullableDecimalFieldUpdateOperationsInput } from '../prisma/nullable-decimal-field-update-operations.input';
 
 @InputType()
 export class SubsidyRequestUncheckedUpdateManyWithoutSubsidy_statusInput {
@@ -73,4 +74,21 @@ export class SubsidyRequestUncheckedUpdateManyWithoutSubsidy_statusInput {
 
     @Field(() => StringFieldUpdateOperationsInput, {nullable:true})
     project_id?: StringFieldUpdateOperationsInput;
+
+    @Field(() => BoolFieldUpdateOperationsInput, {nullable:true})
+    is_for_advance?: BoolFieldUpdateOperationsInput;
+
+    @Field(() => NullableDecimalFieldUpdateOperationsInput, {nullable:true})
+    @Type(() => NullableDecimalFieldUpdateOperationsInput)
+    advance_amount?: NullableDecimalFieldUpdateOperationsInput;
+
+    @Field(() => DecimalFieldUpdateOperationsInput, {nullable:true})
+    @Type(() => DecimalFieldUpdateOperationsInput)
+    refund_amount?: DecimalFieldUpdateOperationsInput;
+
+    @Field(() => BoolFieldUpdateOperationsInput, {nullable:true})
+    have_refund?: BoolFieldUpdateOperationsInput;
+
+    @Field(() => BoolFieldUpdateOperationsInput, {nullable:true})
+    refund_done?: BoolFieldUpdateOperationsInput;
 }
