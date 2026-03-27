@@ -12,6 +12,9 @@ export class SubsidyReceiptCountOrderByAggregateInput {
     project_activities_id?: `${SortOrder}`;
 
     @Field(() => SortOrder, {nullable:true})
+    is_refund_receipt?: `${SortOrder}`;
+
+    @Field(() => SortOrder, {nullable:true})
     file_url?: `${SortOrder}`;
 
     @Field(() => SortOrder, {nullable:true})
@@ -37,6 +40,12 @@ export class SubsidyReceiptCountOrderByAggregateInput {
 
     @Field(() => SortOrder, {nullable:true})
     validated_by?: `${SortOrder}`;
+
+    @Field(() => SortOrder, {nullable:true})
+    rejection_reason?: `${SortOrder}`;
+
+    @Field(() => SortOrder, {nullable:true})
+    note?: `${SortOrder}`;
 
     @Field(() => SortOrder, {nullable:true})
     uploaded_by?: `${SortOrder}`;

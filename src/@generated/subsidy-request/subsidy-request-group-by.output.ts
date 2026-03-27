@@ -3,6 +3,7 @@ import { ObjectType } from '@nestjs/graphql';
 import { Decimal } from '@prisma/client/runtime/library';
 import { GraphQLDecimal } from 'prisma-graphql-type-decimal';
 import { SubsidyRequestPriority } from '../prisma/subsidy-request-priority.enum';
+import { SubsidyRequestType } from '../prisma/subsidy-request-type.enum';
 import { SubsidyRequestCountAggregate } from './subsidy-request-count-aggregate.output';
 import { SubsidyRequestAvgAggregate } from './subsidy-request-avg-aggregate.output';
 import { SubsidyRequestSumAggregate } from './subsidy-request-sum-aggregate.output';
@@ -80,6 +81,9 @@ export class SubsidyRequestGroupBy {
 
     @Field(() => GraphQLDecimal, {nullable:true})
     advance_amount?: Decimal;
+
+    @Field(() => SubsidyRequestType, {nullable:false})
+    request_type!: `${SubsidyRequestType}`;
 
     @Field(() => GraphQLDecimal, {nullable:false})
     refund_amount!: Decimal;

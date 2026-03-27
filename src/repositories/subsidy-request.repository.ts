@@ -5,6 +5,7 @@ import { SubsidyRequestCreateDto, SubsidyRequestUpdateDto } from '../dto/subsidy
 import { CustomGraphQLError, ErrorCode } from 'src/common/errors/custom-graphql-error';
 import { ProjectActivityRepository } from './project-activity.repository';
 import { SubsidyRequestItemRepository } from './subsidy-request-item.repository';
+import { SubsidyRequestType } from 'src/@generated/prisma/subsidy-request-type.enum';
 
 @Injectable()
 export class SubsidyRequestRepository {
@@ -15,9 +16,26 @@ export class SubsidyRequestRepository {
   ) {}
 
   async create(data: SubsidyRequestCreateDto, userId: string): Promise<SubsidyRequest> {
-    const { institution_id, requester_id, department_id, church_id, items, subsidy_status_id, project_id, notes, ...rest } = data;
+    const { institution_id, requester_id, department_id, church_id, items, subsidy_status_id, project_id, notes, request_type, is_for_advance: _is_for_advance, advance_amount, ...rest } = data;
 
-    if (!items || items.length === 0) {
+    // ADVANCE não requer items; WITHOUT_DOCUMENT e WITH_DOCUMENT exigem ao menos um item
+    const resolvedType = request_type ?? SubsidyRequestType.WITH_DOCUMENT;
+    const isAdvance = resolvedType === SubsidyRequestType.ADVANCE;
+
+    console.log('🔵 [SubsidyRequestRepository.create] START', {
+      resolvedType,
+      isAdvance,
+      project_id,
+      department_id,
+      institution_id,
+      requester_id,
+      subsidy_status_id,
+      items_count: items?.length ?? 0,
+      rest_keys: Object.keys(rest),
+    });
+
+    if (!isAdvance && (!items || items.length === 0)) {
+      console.error('🔴 [SubsidyRequestRepository.create] BLOCKED: no items for non-ADVANCE type');
       throw new CustomGraphQLError('At least one item must be associated with the SubsidyRequest.', ErrorCode.BAD_REQUEST, 400);
     }
 
@@ -29,81 +47,99 @@ export class SubsidyRequestRepository {
       throw new CustomGraphQLError(`SubsidyStatus with id ${subsidy_status_id} does not exist or has been deleted.`, ErrorCode.NOT_FOUND, 404);
     }
 
-    // Validar que todas as activities existem
-    const activityIds = items.map(item => item.project_activity_id);
-    const projectActivities = await this.projectActivityRespository.findManyByFilters({
-      id: { in: activityIds },
-      is_deleted: false,
-    });
-
-    if (projectActivities.length !== activityIds.length) {
-      throw new CustomGraphQLError(`One or more ProjectActivities do not exist or have been deleted.`, ErrorCode.NOT_FOUND, 404);
-    }
-
-    // Check for duplicate subsidy requests
-    const existingSubsidies = await this.prisma.subsidyRequest.findMany({
-      where: {
+    // Validar activities apenas para tipos que requerem items
+    if (!isAdvance && items && items.length > 0) {
+      const activityIds = items.map(item => item.project_activity_id);
+      const projectActivities = await this.projectActivityRespository.findManyByFilters({
+        id: { in: activityIds },
         is_deleted: false,
-        items: {
-          some: {
-            project_activity_id: { in: activityIds },
-            is_deleted: false
-          }
-        }
-      },
-      include: {
-        items: {
-          where: {
-            project_activity_id: { in: activityIds },
-            is_deleted: false
-          },
-          include: {
-            project_activity: true
-          }
-        }
+      });
+
+      if (projectActivities.length !== activityIds.length) {
+        throw new CustomGraphQLError(`One or more ProjectActivities do not exist or have been deleted.`, ErrorCode.NOT_FOUND, 404);
       }
-    });
 
-    if (existingSubsidies.length > 0) {
-      const duplicateActivities = existingSubsidies
-        .flatMap(s => s.items)
-        .map(item => item.project_activity.name);
-      
-      throw new CustomGraphQLError(
-        `As seguintes atividades já possuem pedido de subsídio: ${duplicateActivities.join(', ')}`,
-        ErrorCode.BAD_REQUEST,
-        400
-      );
+      // Verificar duplicatas de subsídio por atividade
+      const existingSubsidies = await this.prisma.subsidyRequest.findMany({
+        where: {
+          is_deleted: false,
+          items: {
+            some: {
+              project_activity_id: { in: activityIds },
+              is_deleted: false,
+            },
+          },
+        },
+        include: {
+          items: {
+            where: {
+              project_activity_id: { in: activityIds },
+              is_deleted: false,
+            },
+            include: { project_activity: true },
+          },
+        },
+      });
+
+      if (existingSubsidies.length > 0) {
+        const duplicateActivities = existingSubsidies
+          .flatMap(s => s.items)
+          .map(item => item.project_activity.name);
+
+        console.error('🔴 [SubsidyRequestRepository.create] BLOCKED: duplicate activities found:', {
+          duplicateActivities,
+          existingSubsidyIds: existingSubsidies.map(s => s.id),
+        });
+
+        throw new CustomGraphQLError(
+          `As seguintes atividades já possuem pedido de subsídio: ${duplicateActivities.join(', ')}`,
+          ErrorCode.BAD_REQUEST,
+          400
+        );
+      }
+
+      console.log('🔵 [SubsidyRequestRepository.create] Duplicate check passed');
     }
 
+    console.log('� [SubsidyRequestRepository.create] Calling prisma.subsidyRequest.create...');
 
-    console.log('🔍 [SubsidyRequestRepository] Creating subsidy with:', {
-      institution_id,
-      department_id,
-      church_id,
-      project_id,
-      requester_id
-    });
+    let subsidyRequest: any;
+    try {
+      // Criar SubsidyRequest
+      subsidyRequest = await this.prisma.subsidyRequest.create({
+        data: {
+          ...rest,
+          project: { connect: { id: project_id } },
+          institution: { connect: { id: institution_id } },
+          requester: { connect: { id: requester_id } },
+          department: { connect: { id: department_id } },
+          ...(church_id ? { church: { connect: { id: church_id } } } : {}),
+          subsidy_status: { connect: { id: subsidy_status_id } },
+          request_type: resolvedType,
+          is_for_advance: isAdvance,
+          ...(advance_amount != null ? { advance_amount } : {}),
+          created_by: userId,
+          updated_by: userId,
+          is_deleted: false,
+        },
+      });
+    } catch (prismaError) {
+      console.error('🔴 [SubsidyRequestRepository.create] prisma.create FAILED:', {
+        message: prismaError?.message,
+        code: prismaError?.code,
+        meta: prismaError?.meta,
+        clientVersion: prismaError?.clientVersion,
+        stack: prismaError?.stack,
+      });
+      throw prismaError;
+    }
 
-    // Criar SubsidyRequest
-    const subsidyRequest = await this.prisma.subsidyRequest.create({
-      data: {
-        ...rest,
-        project: { connect: { id: project_id } },
-        institution: { connect: { id: institution_id } },
-        requester: { connect: { id: requester_id } },
-        department: { connect: { id: department_id } },
-        // Conectar church apenas se church_id existir
-        ...(church_id ? { church: { connect: { id: church_id } } } : {}),
-        subsidy_status: { connect: { id: subsidy_status_id } },
-        created_by: userId,
-        updated_by: userId,
-        is_deleted: false,
-      },
-    });
+    console.log('🟢 [SubsidyRequestRepository.create] Prisma create OK — id:', subsidyRequest.id);
 
-    // Criar items
-    await this.subsidyRequestItemRepository.createMany(subsidyRequest.id, items);
+    // Criar items apenas para tipos que os requerem
+    if (!isAdvance && items && items.length > 0) {
+      await this.subsidyRequestItemRepository.createMany(subsidyRequest.id, items);
+    }
 
     // Retornar com relacionamentos
     const result = await this.findById(subsidyRequest.id);
@@ -201,6 +237,7 @@ export class SubsidyRequestRepository {
         project: {
           include: {
             owner: true,
+            co_owner: true,
             department: true,
           },
         },
@@ -256,6 +293,7 @@ export class SubsidyRequestRepository {
         project: {
           include: {
             owner: true,
+            co_owner: true,
             department: true,
           },
         },
@@ -327,6 +365,7 @@ export class SubsidyRequestRepository {
         project: {
           include: {
             owner: true,
+            co_owner: true,
             department: true,
           },
         },

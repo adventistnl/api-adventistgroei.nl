@@ -6,12 +6,14 @@ import { PrismaService } from 'src/services';
 export interface CreateSubsidyReceiptData {
   subsidy_request_id: string;
   subsidy_request_item_id?: string;
-  project_activities_id: string;
+  project_activities_id?: string;
+  is_refund_receipt?: boolean;
   file_url: string;
   drive_file_id: string;
   filename: string;
   type: string;
   amount?: number;
+  note?: string;
   uploaded_by: string;
   is_validated: boolean;
   validated_at?: Date | null;
@@ -22,6 +24,8 @@ export interface UpdateSubsidyReceiptData {
   drive_file_id?: string;
   type?: string;
   amount?: number;
+  note?: string;
+  rejection_reason?: string;
   is_validated?: boolean;
   validated_at?: Date | null;
   validated_by?: string | null;
@@ -42,6 +46,7 @@ export class SubsidyReceiptRepository {
           subsidy_request_id: data.subsidy_request_id,
           subsidy_request_item_id: data.subsidy_request_item_id,
           project_activities_id: data.project_activities_id,
+          is_refund_receipt: data.is_refund_receipt ?? false,
           file_url: data.file_url,
           drive_file_id: data.drive_file_id,
           filename: data.filename,
@@ -50,6 +55,7 @@ export class SubsidyReceiptRepository {
           uploaded_by: data.uploaded_by,
           is_validated: data.is_validated,
           validated_at: data.validated_at,
+          note: data.note,
           created_at: new Date(),
           created_by: userId,
           updated_by: userId,
@@ -175,6 +181,8 @@ export class SubsidyReceiptRepository {
       if (data.validated_at !== undefined) updateData.validated_at = data.validated_at;
       if (data.validated_by !== undefined) updateData.validated_by = data.validated_by;
       if (data.approved !== undefined) updateData.approved = data.approved;
+      if (data.note !== undefined) updateData.note = data.note;
+      if (data.rejection_reason !== undefined) updateData.rejection_reason = data.rejection_reason;
 
       return await this.prisma.subsidyReceipt.update({
         where: { id },
@@ -243,15 +251,17 @@ export class SubsidyReceiptRepository {
   /**
    * Validar recibo (atualizar is_validated para true E approved para true)
    */
-  async validateReceipt(id: string, userId: string): Promise<SubsidyReceipt> {
+  async validateReceipt(id: string, userId: string, note?: string): Promise<SubsidyReceipt> {
     try {
       return await this.prisma.subsidyReceipt.update({
         where: { id },
         data: {
           is_validated: true,
-          approved: true, // IMPORTANTE: Também marcar como aprovado
+          approved: true,
           validated_at: new Date(),
           validated_by: userId,
+          note: note ?? undefined,
+          rejection_reason: null, // limpa eventual rejeição anterior
           updated_by: userId,
           updated_at: new Date(),
         },
@@ -309,8 +319,7 @@ export class SubsidyReceiptRepository {
           approved: false,
           validated_at: new Date(),
           validated_by: userId,
-          // Note: rejection_reason field doesn't exist in schema yet
-          // If needed, add it to the Prisma schema
+          rejection_reason: reason ?? null,
           updated_by: userId,
           updated_at: new Date(),
         },

@@ -1,13 +1,14 @@
-import { Resolver, Query, Mutation, Args, Context, Float } from '@nestjs/graphql';
+import { Resolver, Query, Mutation, Args, Context, Float, ResolveField, Parent } from '@nestjs/graphql';
 import { UseGuards } from '@nestjs/common';
 import { SubsidyRequestService } from '../services/subsidy-request.service';
 import { SubsidyRequest } from '../@generated/subsidy-request/subsidy-request.model';
 import { SubsidyStatusHistory } from 'src/@generated/subsidy-status-history/subsidy-status-history.model';
-import { SubsidyRequestCreateDto, SubsidyRequestUpdateDto } from '../dto/subsidy-request.dto';
+import { SubsidyRequestCreateDto, SubsidyRequestUpdateDto, CreateWithoutDocumentSubsidyRequestDto } from '../dto/subsidy-request.dto';
 import { SubsidyKPIs, SubsidyByDepartment, SubsidyByMonth, SubsidyByStatus } from '../dto/subsidy-analytics.dto';
 import { Permission } from '../middlewares';
 import { PermissionsGuard } from '../middlewares/permissions.guard';
 import { LanguagePreference } from '../@generated/prisma/language-preference.enum';
+import { ProjectCollaborator } from '../models';
 
 @Resolver(() => SubsidyRequest)
 export class SubsidyRequestResolver {
@@ -40,7 +41,34 @@ export class SubsidyRequestResolver {
     @Args('language', { type: () => LanguagePreference, nullable: true, defaultValue: LanguagePreference.en }) language: LanguagePreference,
     @Context() context: { userId: string },
   ): Promise<SubsidyRequest> {
-    return this.subsidyRequestService.create(data, context.userId, language);
+    console.log('⚡ [SubsidyRequestResolver.createSubsidyRequest] Received:', {
+      userId: context.userId,
+      request_type: data.request_type,
+      project_id: data.project_id,
+      department_id: data.department_id,
+      institution_id: data.institution_id,
+      requester_id: data.requester_id,
+      total_budget: data.total_budget,
+      items_count: data.items?.length ?? 0,
+      items: data.items?.map(i => ({
+        project_activity_id: i.project_activity_id,
+        requested_amount: i.requested_amount,
+        linked_docs: i.linked_activity_document_ids?.length ?? 0,
+        doc_amounts: i.linked_document_amounts,
+      })),
+    });
+    try {
+      const result = await this.subsidyRequestService.create(data, context.userId, language);
+      console.log('⚡ [SubsidyRequestResolver.createSubsidyRequest] OK — id:', result.id);
+      return result;
+    } catch (err) {
+      console.error('⚡ [SubsidyRequestResolver.createSubsidyRequest] ERROR:', {
+        message: err?.message,
+        extensions: err?.extensions,
+        stack: err?.stack,
+      });
+      throw err;
+    }
   }
 
   @Mutation(() => SubsidyRequest)
@@ -90,6 +118,17 @@ export class SubsidyRequestResolver {
     return this.subsidyRequestService.reject(id, rejectionReason, context.userId, language);
   }
 
+  @Mutation(() => SubsidyRequest)
+  @UseGuards(PermissionsGuard)
+  @Permission()
+  submitSubsidyRequest(
+    @Args('id') id: string,
+    @Args('language', { type: () => LanguagePreference, nullable: true, defaultValue: LanguagePreference.en }) language: LanguagePreference,
+    @Context() context: { userId: string },
+  ): Promise<SubsidyRequest> {
+    return this.subsidyRequestService.submit(id, context.userId, language);
+  }
+
   @Mutation(() => SubsidyStatusHistory)
   async addSubsidyRequestMessage(
     @Args('id') id: string,
@@ -110,6 +149,17 @@ export class SubsidyRequestResolver {
     @Context() context: { userId: string },
   ): Promise<SubsidyRequest> {
     return this.subsidyRequestService.createAdvanceRequest(projectId, advanceAmount, context.userId, language);
+  }
+
+  @Mutation(() => SubsidyRequest)
+  @UseGuards(PermissionsGuard)
+  @Permission()
+  async createSubsidyWithoutDocument(
+    @Args('data') data: CreateWithoutDocumentSubsidyRequestDto,
+    @Args('language', { type: () => LanguagePreference, nullable: true, defaultValue: LanguagePreference.en }) language: LanguagePreference,
+    @Context() context: { userId: string },
+  ): Promise<SubsidyRequest> {
+    return this.subsidyRequestService.createWithoutDocumentRequest(data, context.userId, language);
   }
 
   @Mutation(() => SubsidyRequest)
@@ -188,5 +238,10 @@ export class SubsidyRequestResolver {
       { status: 'Rejected', count: kpis.rejectedRequests, fill: '#ef4444' },
       { status: 'Closed', count: kpis.closedRequests, fill: '#6b7280' }
     ];
+  }
+
+  @ResolveField(() => [ProjectCollaborator], { name: 'collaborators' })
+  collaborators(@Parent() subsidyRequest: SubsidyRequest): Promise<ProjectCollaborator[]> {
+    return this.subsidyRequestService.getCollaboratorsForSubsidyRequest(subsidyRequest);
   }
 }

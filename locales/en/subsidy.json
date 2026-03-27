@@ -8,6 +8,8 @@
     "documents_pending_validation": "Cannot approve subsidy. {{count}} document(s) are still pending validation.",
     "documents_rejected": "Cannot approve subsidy. {{count}} document(s) were rejected.",
     "pending_status_not_found": "Pending status not found. Please create a PENDING status first.",
+    "draft_status_not_found": "Draft status not found. Please create a DRAFT status first.",
+    "invalid_transition_from_draft": "Cannot change status from DRAFT to {{to}}. Draft requests must be submitted (moved to PENDING) first.",
     "subsidy_not_found": "SubsidyRequest not found",
     "cannot_delete_approved_or_closed": "Cannot delete {{status}} subsidy requests",
     "approved_status_not_found": "Approved status not found",
@@ -20,6 +22,8 @@
     "refund_already_done": "Refund has already been processed for this subsidy"
   },
   "history": {
+    "request_created_as_draft": "Request created as draft",
+    "request_submitted": "Request submitted for review",
     "request_created": "Request created",
     "subsidy_created_advance": "Subsidy request created in advance",
     "activity_linked_to_advance": "Activity linked to advance subsidy request",
@@ -37,6 +41,7 @@
   },
   "status": {
     "unknown": "Unknown",
+    "draft": "Draft",
     "pending": "Pending",
     "in_review": "In Review",
     "approved": "Approved",

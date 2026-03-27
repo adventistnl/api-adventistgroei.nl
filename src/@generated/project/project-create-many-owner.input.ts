@@ -42,6 +42,9 @@ export class ProjectCreateManyOwnerInput {
     @Transform(transformToDecimal)
     balance?: Decimal;
 
+    @Field(() => String, {nullable:true})
+    co_owner_id?: string;
+
     @Field(() => LanguagePreference, {nullable:false})
     language_preference!: `${LanguagePreference}`;
 

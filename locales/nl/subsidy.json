@@ -8,6 +8,8 @@
     "documents_pending_validation": "Kan subsidie niet goedkeuren. {{count}} document(en) wachten nog op validatie.",
     "documents_rejected": "Kan subsidie niet goedkeuren. {{count}} document(en) zijn afgewezen.",
     "pending_status_not_found": "Status 'In afwachting' niet gevonden. Maak eerst een PENDING status aan.",
+    "draft_status_not_found": "Conceptstatus niet gevonden. Maak eerst een DRAFT status aan.",
+    "invalid_transition_from_draft": "Kan de status niet wijzigen van CONCEPT naar {{to}}. Conceptaanvragen moeten eerst worden ingediend (naar IN_AFWACHTING verplaatst).",
     "subsidy_not_found": "Subsidieaanvraag niet gevonden",
     "cannot_delete_approved_or_closed": "Kan {{status}} subsidieaanvragen niet verwijderen",
     "approved_status_not_found": "Goedgekeurde status niet gevonden",
@@ -20,6 +22,8 @@
     "refund_already_done": "Terugbetaling is al verwerkt voor deze subsidie"
   },
   "history": {
+    "request_created_as_draft": "Aanvraag aangemaakt als concept",
+    "request_submitted": "Aanvraag ingediend ter beoordeling",
     "request_created": "Aanvraag aangemaakt",
     "subsidy_created_advance": "Subsidieaanvraag aangemaakt in afwachting",
     "activity_linked_to_advance": "Activiteit gekoppeld aan subsidieaanvraag in afwachting",
@@ -37,6 +41,7 @@
   },
   "status": {
     "unknown": "Onbekend",
+    "draft": "Concept",
     "pending": "In afwachting",
     "in_review": "In beoordeling",
     "approved": "Goedgekeurd",

@@ -23,11 +23,13 @@ import { SubsidyRequestUpdateManyWithoutRequesterNestedInput } from '../subsidy-
 import { SubsidyStatusUpdateManyWithoutAssigned_userNestedInput } from '../subsidy-status/subsidy-status-update-many-without-assigned-user-nested.input';
 import { VoluntariesOnProjectsUpdateManyWithoutUserNestedInput } from '../voluntaries-on-projects/voluntaries-on-projects-update-many-without-user-nested.input';
 import { ProjectUpdateManyWithoutOwnerNestedInput } from '../project/project-update-many-without-owner-nested.input';
+import { ProjectUpdateManyWithoutCo_ownerNestedInput } from '../project/project-update-many-without-co-owner-nested.input';
 import { AnnualBudgetUpdateManyWithoutApproved_userNestedInput } from '../annual-budget/annual-budget-update-many-without-approved-user-nested.input';
 import { ProjectActivityLogUpdateManyWithoutUserNestedInput } from '../project-activity-log/project-activity-log-update-many-without-user-nested.input';
 import { ProjectActivityAssigneeUpdateManyWithoutUserNestedInput } from '../project-activity-assignee/project-activity-assignee-update-many-without-user-nested.input';
 import { SubsidyStatusHistoryUpdateManyWithoutUserNestedInput } from '../subsidy-status-history/subsidy-status-history-update-many-without-user-nested.input';
 import { ChurchUpdateOneWithoutLeaderNestedInput } from '../church/church-update-one-without-leader-nested.input';
+import { ProjectHistoryUpdateManyWithoutUserNestedInput } from '../project-history/project-history-update-many-without-user-nested.input';
 
 @InputType()
 export class UserUpdateWithoutLed_departmentsInput {
@@ -126,6 +128,10 @@ export class UserUpdateWithoutLed_departmentsInput {
     @Type(() => ProjectUpdateManyWithoutOwnerNestedInput)
     Project?: ProjectUpdateManyWithoutOwnerNestedInput;
 
+    @Field(() => ProjectUpdateManyWithoutCo_ownerNestedInput, {nullable:true})
+    @Type(() => ProjectUpdateManyWithoutCo_ownerNestedInput)
+    co_owned_projects?: ProjectUpdateManyWithoutCo_ownerNestedInput;
+
     @Field(() => AnnualBudgetUpdateManyWithoutApproved_userNestedInput, {nullable:true})
     @Type(() => AnnualBudgetUpdateManyWithoutApproved_userNestedInput)
     approved_annual_budgets?: AnnualBudgetUpdateManyWithoutApproved_userNestedInput;
@@ -145,4 +151,8 @@ export class UserUpdateWithoutLed_departmentsInput {
     @Field(() => ChurchUpdateOneWithoutLeaderNestedInput, {nullable:true})
     @Type(() => ChurchUpdateOneWithoutLeaderNestedInput)
     led_church?: ChurchUpdateOneWithoutLeaderNestedInput;
+
+    @Field(() => ProjectHistoryUpdateManyWithoutUserNestedInput, {nullable:true})
+    @Type(() => ProjectHistoryUpdateManyWithoutUserNestedInput)
+    project_history?: ProjectHistoryUpdateManyWithoutUserNestedInput;
 }

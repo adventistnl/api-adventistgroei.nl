@@ -15,6 +15,9 @@ export class SubsidyReceiptCreateInput {
     @Field(() => String, {nullable:true})
     id?: string;
 
+    @Field(() => Boolean, {nullable:true})
+    is_refund_receipt?: boolean;
+
     @Field(() => String, {nullable:false})
     file_url!: string;
 
@@ -44,6 +47,12 @@ export class SubsidyReceiptCreateInput {
     @Field(() => String, {nullable:true})
     validated_by?: string;
 
+    @Field(() => String, {nullable:true})
+    rejection_reason?: string;
+
+    @Field(() => String, {nullable:true})
+    note?: string;
+
     @Field(() => String, {nullable:false})
     uploaded_by!: string;
 
@@ -68,9 +77,9 @@ export class SubsidyReceiptCreateInput {
     @Field(() => String, {nullable:true})
     deleted_by?: string;
 
-    @Field(() => ProjectActivityCreateNestedOneWithoutSubsidy_receiptsInput, {nullable:false})
+    @Field(() => ProjectActivityCreateNestedOneWithoutSubsidy_receiptsInput, {nullable:true})
     @Type(() => ProjectActivityCreateNestedOneWithoutSubsidy_receiptsInput)
-    project_activity!: ProjectActivityCreateNestedOneWithoutSubsidy_receiptsInput;
+    project_activity?: ProjectActivityCreateNestedOneWithoutSubsidy_receiptsInput;
 
     @Field(() => SubsidyRequestCreateNestedOneWithoutSubsidy_receiptsInput, {nullable:true})
     @Type(() => SubsidyRequestCreateNestedOneWithoutSubsidy_receiptsInput)

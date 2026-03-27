@@ -3,8 +3,8 @@ import { InputType } from '@nestjs/graphql';
 import { Type } from 'class-transformer';
 import { StringFilter } from '../prisma/string-filter.input';
 import { StringNullableFilter } from '../prisma/string-nullable-filter.input';
-import { DecimalNullableFilter } from '../prisma/decimal-nullable-filter.input';
 import { BoolFilter } from '../prisma/bool-filter.input';
+import { DecimalNullableFilter } from '../prisma/decimal-nullable-filter.input';
 import { DateTimeNullableFilter } from '../prisma/date-time-nullable-filter.input';
 import { DateTimeFilter } from '../prisma/date-time-filter.input';
 
@@ -26,8 +26,11 @@ export class SubsidyReceiptScalarWhereInput {
     @Field(() => StringFilter, {nullable:true})
     id?: StringFilter;
 
-    @Field(() => StringFilter, {nullable:true})
-    project_activities_id?: StringFilter;
+    @Field(() => StringNullableFilter, {nullable:true})
+    project_activities_id?: StringNullableFilter;
+
+    @Field(() => BoolFilter, {nullable:true})
+    is_refund_receipt?: BoolFilter;
 
     @Field(() => StringFilter, {nullable:true})
     file_url?: StringFilter;
@@ -56,6 +59,12 @@ export class SubsidyReceiptScalarWhereInput {
 
     @Field(() => StringNullableFilter, {nullable:true})
     validated_by?: StringNullableFilter;
+
+    @Field(() => StringNullableFilter, {nullable:true})
+    rejection_reason?: StringNullableFilter;
+
+    @Field(() => StringNullableFilter, {nullable:true})
+    note?: StringNullableFilter;
 
     @Field(() => StringFilter, {nullable:true})
     uploaded_by?: StringFilter;

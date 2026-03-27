@@ -12,6 +12,9 @@ export class SubsidyReceiptCountAggregate {
     project_activities_id!: number;
 
     @Field(() => Int, {nullable:false})
+    is_refund_receipt!: number;
+
+    @Field(() => Int, {nullable:false})
     file_url!: number;
 
     @Field(() => Int, {nullable:false})
@@ -37,6 +40,12 @@ export class SubsidyReceiptCountAggregate {
 
     @Field(() => Int, {nullable:false})
     validated_by!: number;
+
+    @Field(() => Int, {nullable:false})
+    rejection_reason!: number;
+
+    @Field(() => Int, {nullable:false})
+    note!: number;
 
     @Field(() => Int, {nullable:false})
     uploaded_by!: number;

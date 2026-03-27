@@ -12,6 +12,7 @@ import { VoluntariesOnProjectsOrderByRelationAggregateInput } from '../voluntari
 import { ProjectActivityOrderByRelationAggregateInput } from '../project-activity/project-activity-order-by-relation-aggregate.input';
 import { SubsidyRequestOrderByRelationAggregateInput } from '../subsidy-request/subsidy-request-order-by-relation-aggregate.input';
 import { SpecialProjectsOrderByRelationAggregateInput } from '../special-projects/special-projects-order-by-relation-aggregate.input';
+import { ProjectHistoryOrderByRelationAggregateInput } from '../project-history/project-history-order-by-relation-aggregate.input';
 
 @InputType()
 export class ProjectOrderByWithRelationInput {
@@ -42,6 +43,9 @@ export class ProjectOrderByWithRelationInput {
 
     @Field(() => SortOrder, {nullable:true})
     owner_id?: `${SortOrder}`;
+
+    @Field(() => SortOrderInput, {nullable:true})
+    co_owner_id?: SortOrderInput;
 
     @Field(() => SortOrder, {nullable:true})
     language_preference?: `${SortOrder}`;
@@ -109,6 +113,10 @@ export class ProjectOrderByWithRelationInput {
     @Type(() => UserOrderByWithRelationInput)
     owner?: UserOrderByWithRelationInput;
 
+    @Field(() => UserOrderByWithRelationInput, {nullable:true})
+    @Type(() => UserOrderByWithRelationInput)
+    co_owner?: UserOrderByWithRelationInput;
+
     @Field(() => EventOrderByWithRelationInput, {nullable:true})
     @Type(() => EventOrderByWithRelationInput)
     event?: EventOrderByWithRelationInput;
@@ -136,4 +144,8 @@ export class ProjectOrderByWithRelationInput {
     @Field(() => SpecialProjectsOrderByRelationAggregateInput, {nullable:true})
     @Type(() => SpecialProjectsOrderByRelationAggregateInput)
     special_projects?: SpecialProjectsOrderByRelationAggregateInput;
+
+    @Field(() => ProjectHistoryOrderByRelationAggregateInput, {nullable:true})
+    @Type(() => ProjectHistoryOrderByRelationAggregateInput)
+    history?: ProjectHistoryOrderByRelationAggregateInput;
 }

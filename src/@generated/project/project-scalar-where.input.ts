@@ -56,6 +56,9 @@ export class ProjectScalarWhereInput {
     @Field(() => StringFilter, {nullable:true})
     owner_id?: StringFilter;
 
+    @Field(() => StringNullableFilter, {nullable:true})
+    co_owner_id?: StringNullableFilter;
+
     @Field(() => EnumLanguagePreferenceFilter, {nullable:true})
     language_preference?: EnumLanguagePreferenceFilter;
 

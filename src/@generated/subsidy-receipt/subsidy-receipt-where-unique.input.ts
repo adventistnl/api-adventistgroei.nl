@@ -2,13 +2,13 @@ import { Field } from '@nestjs/graphql';
 import { InputType } from '@nestjs/graphql';
 import { SubsidyReceiptWhereInput } from './subsidy-receipt-where.input';
 import { Type } from 'class-transformer';
-import { StringFilter } from '../prisma/string-filter.input';
 import { StringNullableFilter } from '../prisma/string-nullable-filter.input';
-import { DecimalNullableFilter } from '../prisma/decimal-nullable-filter.input';
 import { BoolFilter } from '../prisma/bool-filter.input';
+import { StringFilter } from '../prisma/string-filter.input';
+import { DecimalNullableFilter } from '../prisma/decimal-nullable-filter.input';
 import { DateTimeNullableFilter } from '../prisma/date-time-nullable-filter.input';
 import { DateTimeFilter } from '../prisma/date-time-filter.input';
-import { ProjectActivityScalarRelationFilter } from '../project-activity/project-activity-scalar-relation-filter.input';
+import { ProjectActivityNullableScalarRelationFilter } from '../project-activity/project-activity-nullable-scalar-relation-filter.input';
 import { SubsidyRequestNullableScalarRelationFilter } from '../subsidy-request/subsidy-request-nullable-scalar-relation-filter.input';
 import { SubsidyRequestItemNullableScalarRelationFilter } from '../subsidy-request-item/subsidy-request-item-nullable-scalar-relation-filter.input';
 
@@ -30,8 +30,11 @@ export class SubsidyReceiptWhereUniqueInput {
     @Type(() => SubsidyReceiptWhereInput)
     NOT?: Array<SubsidyReceiptWhereInput>;
 
-    @Field(() => StringFilter, {nullable:true})
-    project_activities_id?: StringFilter;
+    @Field(() => StringNullableFilter, {nullable:true})
+    project_activities_id?: StringNullableFilter;
+
+    @Field(() => BoolFilter, {nullable:true})
+    is_refund_receipt?: BoolFilter;
 
     @Field(() => StringFilter, {nullable:true})
     file_url?: StringFilter;
@@ -60,6 +63,12 @@ export class SubsidyReceiptWhereUniqueInput {
 
     @Field(() => StringNullableFilter, {nullable:true})
     validated_by?: StringNullableFilter;
+
+    @Field(() => StringNullableFilter, {nullable:true})
+    rejection_reason?: StringNullableFilter;
+
+    @Field(() => StringNullableFilter, {nullable:true})
+    note?: StringNullableFilter;
 
     @Field(() => StringFilter, {nullable:true})
     uploaded_by?: StringFilter;
@@ -91,9 +100,9 @@ export class SubsidyReceiptWhereUniqueInput {
     @Field(() => StringNullableFilter, {nullable:true})
     subsidy_request_item_id?: StringNullableFilter;
 
-    @Field(() => ProjectActivityScalarRelationFilter, {nullable:true})
-    @Type(() => ProjectActivityScalarRelationFilter)
-    project_activity?: ProjectActivityScalarRelationFilter;
+    @Field(() => ProjectActivityNullableScalarRelationFilter, {nullable:true})
+    @Type(() => ProjectActivityNullableScalarRelationFilter)
+    project_activity?: ProjectActivityNullableScalarRelationFilter;
 
     @Field(() => SubsidyRequestNullableScalarRelationFilter, {nullable:true})
     @Type(() => SubsidyRequestNullableScalarRelationFilter)

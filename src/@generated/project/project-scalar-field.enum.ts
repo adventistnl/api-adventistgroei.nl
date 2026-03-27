@@ -10,6 +10,7 @@ export enum ProjectScalarFieldEnum {
     subsidized_budget = "subsidized_budget",
     balance = "balance",
     owner_id = "owner_id",
+    co_owner_id = "co_owner_id",
     language_preference = "language_preference",
     type = "type",
     status = "status",

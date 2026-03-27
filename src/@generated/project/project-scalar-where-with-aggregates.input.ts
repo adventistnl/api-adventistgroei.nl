@@ -56,6 +56,9 @@ export class ProjectScalarWhereWithAggregatesInput {
     @Field(() => StringWithAggregatesFilter, {nullable:true})
     owner_id?: StringWithAggregatesFilter;
 
+    @Field(() => StringNullableWithAggregatesFilter, {nullable:true})
+    co_owner_id?: StringNullableWithAggregatesFilter;
+
     @Field(() => EnumLanguagePreferenceWithAggregatesFilter, {nullable:true})
     language_preference?: EnumLanguagePreferenceWithAggregatesFilter;
 

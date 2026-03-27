@@ -12,6 +12,7 @@ import { NullableDateTimeFieldUpdateOperationsInput } from '../prisma/nullable-d
 import { NullableStringFieldUpdateOperationsInput } from '../prisma/nullable-string-field-update-operations.input';
 import { DepartmentUpdateOneRequiredWithoutProjectsNestedInput } from '../department/department-update-one-required-without-projects-nested.input';
 import { UserUpdateOneRequiredWithoutProjectNestedInput } from '../user/user-update-one-required-without-project-nested.input';
+import { UserUpdateOneWithoutCo_owned_projectsNestedInput } from '../user/user-update-one-without-co-owned-projects-nested.input';
 import { EventUpdateOneWithoutProjectsNestedInput } from '../event/event-update-one-without-projects-nested.input';
 import { InstitutionUpdateOneWithoutProjectsNestedInput } from '../institution/institution-update-one-without-projects-nested.input';
 import { ChurchUpdateOneWithoutProjectsNestedInput } from '../church/church-update-one-without-projects-nested.input';
@@ -19,6 +20,7 @@ import { VoluntariesOnProjectsUpdateManyWithoutProjectNestedInput } from '../vol
 import { ProjectActivityUpdateManyWithoutProjectNestedInput } from '../project-activity/project-activity-update-many-without-project-nested.input';
 import { SubsidyRequestUpdateManyWithoutProjectNestedInput } from '../subsidy-request/subsidy-request-update-many-without-project-nested.input';
 import { SpecialProjectsUpdateManyWithoutProjectNestedInput } from '../special-projects/special-projects-update-many-without-project-nested.input';
+import { ProjectHistoryUpdateManyWithoutProjectNestedInput } from '../project-history/project-history-update-many-without-project-nested.input';
 
 @InputType()
 export class ProjectUpdateWithoutChurch_departmentInput {
@@ -97,6 +99,10 @@ export class ProjectUpdateWithoutChurch_departmentInput {
     @Type(() => UserUpdateOneRequiredWithoutProjectNestedInput)
     owner?: UserUpdateOneRequiredWithoutProjectNestedInput;
 
+    @Field(() => UserUpdateOneWithoutCo_owned_projectsNestedInput, {nullable:true})
+    @Type(() => UserUpdateOneWithoutCo_owned_projectsNestedInput)
+    co_owner?: UserUpdateOneWithoutCo_owned_projectsNestedInput;
+
     @Field(() => EventUpdateOneWithoutProjectsNestedInput, {nullable:true})
     @Type(() => EventUpdateOneWithoutProjectsNestedInput)
     event?: EventUpdateOneWithoutProjectsNestedInput;
@@ -124,4 +130,8 @@ export class ProjectUpdateWithoutChurch_departmentInput {
     @Field(() => SpecialProjectsUpdateManyWithoutProjectNestedInput, {nullable:true})
     @Type(() => SpecialProjectsUpdateManyWithoutProjectNestedInput)
     special_projects?: SpecialProjectsUpdateManyWithoutProjectNestedInput;
+
+    @Field(() => ProjectHistoryUpdateManyWithoutProjectNestedInput, {nullable:true})
+    @Type(() => ProjectHistoryUpdateManyWithoutProjectNestedInput)
+    history?: ProjectHistoryUpdateManyWithoutProjectNestedInput;
 }

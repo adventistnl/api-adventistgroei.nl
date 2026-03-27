@@ -15,6 +15,7 @@ import { VoluntariesOnProjects } from '../voluntaries-on-projects/voluntaries-on
 import { ProjectActivity } from '../project-activity/project-activity.model';
 import { SubsidyRequest } from '../subsidy-request/subsidy-request.model';
 import { SpecialProjects } from '../special-projects/special-projects.model';
+import { ProjectHistory } from '../project-history/project-history.model';
 import { ProjectCount } from './project-count.output';
 
 @ObjectType()
@@ -46,6 +47,9 @@ export class Project {
 
     @Field(() => String, {nullable:false})
     owner_id!: string;
+
+    @Field(() => String, {nullable:true})
+    co_owner_id!: string | null;
 
     @Field(() => LanguagePreference, {nullable:false})
     language_preference!: `${LanguagePreference}`;
@@ -110,6 +114,9 @@ export class Project {
     @Field(() => User, {nullable:false})
     owner?: User;
 
+    @Field(() => User, {nullable:true})
+    co_owner?: User | null;
+
     @Field(() => Event, {nullable:true})
     event?: Event | null;
 
@@ -130,6 +137,9 @@ export class Project {
 
     @Field(() => [SpecialProjects], {nullable:true})
     special_projects?: Array<SpecialProjects>;
+
+    @Field(() => [ProjectHistory], {nullable:true})
+    history?: Array<ProjectHistory>;
 
     @Field(() => ProjectCount, {nullable:false})
     _count?: ProjectCount;

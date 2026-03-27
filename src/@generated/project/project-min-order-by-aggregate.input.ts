@@ -33,6 +33,9 @@ export class ProjectMinOrderByAggregateInput {
     owner_id?: `${SortOrder}`;
 
     @Field(() => SortOrder, {nullable:true})
+    co_owner_id?: `${SortOrder}`;
+
+    @Field(() => SortOrder, {nullable:true})
     language_preference?: `${SortOrder}`;
 
     @Field(() => SortOrder, {nullable:true})

@@ -13,6 +13,7 @@ import { NullableDateTimeFieldUpdateOperationsInput } from '../prisma/nullable-d
 import { VoluntariesOnProjectsUncheckedUpdateManyWithoutProjectNestedInput } from '../voluntaries-on-projects/voluntaries-on-projects-unchecked-update-many-without-project-nested.input';
 import { ProjectActivityUncheckedUpdateManyWithoutProjectNestedInput } from '../project-activity/project-activity-unchecked-update-many-without-project-nested.input';
 import { SpecialProjectsUncheckedUpdateManyWithoutProjectNestedInput } from '../special-projects/special-projects-unchecked-update-many-without-project-nested.input';
+import { ProjectHistoryUncheckedUpdateManyWithoutProjectNestedInput } from '../project-history/project-history-unchecked-update-many-without-project-nested.input';
 
 @InputType()
 export class ProjectUncheckedUpdateWithoutSubsidiesInput {
@@ -46,6 +47,9 @@ export class ProjectUncheckedUpdateWithoutSubsidiesInput {
 
     @Field(() => StringFieldUpdateOperationsInput, {nullable:true})
     owner_id?: StringFieldUpdateOperationsInput;
+
+    @Field(() => NullableStringFieldUpdateOperationsInput, {nullable:true})
+    co_owner_id?: NullableStringFieldUpdateOperationsInput;
 
     @Field(() => EnumLanguagePreferenceFieldUpdateOperationsInput, {nullable:true})
     language_preference?: EnumLanguagePreferenceFieldUpdateOperationsInput;
@@ -112,4 +116,8 @@ export class ProjectUncheckedUpdateWithoutSubsidiesInput {
     @Field(() => SpecialProjectsUncheckedUpdateManyWithoutProjectNestedInput, {nullable:true})
     @Type(() => SpecialProjectsUncheckedUpdateManyWithoutProjectNestedInput)
     special_projects?: SpecialProjectsUncheckedUpdateManyWithoutProjectNestedInput;
+
+    @Field(() => ProjectHistoryUncheckedUpdateManyWithoutProjectNestedInput, {nullable:true})
+    @Type(() => ProjectHistoryUncheckedUpdateManyWithoutProjectNestedInput)
+    history?: ProjectHistoryUncheckedUpdateManyWithoutProjectNestedInput;
 }

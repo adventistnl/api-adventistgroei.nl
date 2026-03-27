@@ -14,8 +14,11 @@ export class SubsidyReceiptGroupBy {
     @Field(() => String, {nullable:false})
     id!: string;
 
-    @Field(() => String, {nullable:false})
-    project_activities_id!: string;
+    @Field(() => String, {nullable:true})
+    project_activities_id?: string;
+
+    @Field(() => Boolean, {nullable:false})
+    is_refund_receipt!: boolean;
 
     @Field(() => String, {nullable:false})
     file_url!: string;
@@ -43,6 +46,12 @@ export class SubsidyReceiptGroupBy {
 
     @Field(() => String, {nullable:true})
     validated_by?: string;
+
+    @Field(() => String, {nullable:true})
+    rejection_reason?: string;
+
+    @Field(() => String, {nullable:true})
+    note?: string;
 
     @Field(() => String, {nullable:false})
     uploaded_by!: string;

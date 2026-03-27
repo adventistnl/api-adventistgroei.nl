@@ -202,6 +202,21 @@ export class UserRepository {
     });
   }
 
+  async findFinanceManagersByInstitution(institutionId: string): Promise<User[]> {
+    return this.prisma.user.findMany({
+      where: {
+        institution_id: institutionId,
+        is_deleted: false,
+        user_roles: {
+          some: {
+            is_deleted: false,
+            role: { key_code: 'FINANCIAL_MANAGER' },
+          },
+        },
+      },
+    }) as unknown as User[];
+  }
+
   async findById(id: string): Promise<Omit<User, 'password'> | null> {
     const user = await this.prisma.user.findUnique({
       where: { id, is_deleted: false },

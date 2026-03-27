@@ -9,6 +9,7 @@ import { DateTimeNullableWithAggregatesFilter } from '../prisma/date-time-nullab
 import { BoolWithAggregatesFilter } from '../prisma/bool-with-aggregates-filter.input';
 import { EnumSubsidyRequestPriorityWithAggregatesFilter } from '../prisma/enum-subsidy-request-priority-with-aggregates-filter.input';
 import { DecimalNullableWithAggregatesFilter } from '../prisma/decimal-nullable-with-aggregates-filter.input';
+import { EnumSubsidyRequestTypeWithAggregatesFilter } from '../prisma/enum-subsidy-request-type-with-aggregates-filter.input';
 
 @InputType()
 export class SubsidyRequestScalarWhereWithAggregatesInput {
@@ -96,6 +97,9 @@ export class SubsidyRequestScalarWhereWithAggregatesInput {
     @Field(() => DecimalNullableWithAggregatesFilter, {nullable:true})
     @Type(() => DecimalNullableWithAggregatesFilter)
     advance_amount?: DecimalNullableWithAggregatesFilter;
+
+    @Field(() => EnumSubsidyRequestTypeWithAggregatesFilter, {nullable:true})
+    request_type?: EnumSubsidyRequestTypeWithAggregatesFilter;
 
     @Field(() => DecimalWithAggregatesFilter, {nullable:true})
     @Type(() => DecimalWithAggregatesFilter)

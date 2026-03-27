@@ -16,4 +16,7 @@ export class ProjectCount {
 
     @Field(() => Int, {nullable:false})
     special_projects?: number;
+
+    @Field(() => Int, {nullable:false})
+    history?: number;
 }

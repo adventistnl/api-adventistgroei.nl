@@ -11,6 +11,9 @@ export class SubsidyReceiptMinAggregateInput {
     project_activities_id?: true;
 
     @Field(() => Boolean, {nullable:true})
+    is_refund_receipt?: true;
+
+    @Field(() => Boolean, {nullable:true})
     file_url?: true;
 
     @Field(() => Boolean, {nullable:true})
@@ -36,6 +39,12 @@ export class SubsidyReceiptMinAggregateInput {
 
     @Field(() => Boolean, {nullable:true})
     validated_by?: true;
+
+    @Field(() => Boolean, {nullable:true})
+    rejection_reason?: true;
+
+    @Field(() => Boolean, {nullable:true})
+    note?: true;
 
     @Field(() => Boolean, {nullable:true})
     uploaded_by?: true;

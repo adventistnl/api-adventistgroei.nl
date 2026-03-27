@@ -42,8 +42,10 @@ export class SubsidyReceiptController {
     @Body('subsidy_request_id') subsidyRequestId: string,
     @Body('subsidy_request_item_id') subsidyRequestItemId: string,
     @Body('project_activity_id') projectActivityId: string,
+    @Body('is_refund_receipt') isRefundReceipt: string,
     @Body('type') type: string,
     @Body('amount') amount: string,
+    @Body('note') note: string,
     @Req() req: RequestWithUser,
   ) {
     if (!file) {
@@ -67,9 +69,11 @@ export class SubsidyReceiptController {
     const input = {
       subsidy_request_id: subsidyRequestId,
       subsidy_request_item_id: subsidyRequestItemId || undefined,
-      project_activity_id: projectActivityId,
+      project_activity_id: projectActivityId || undefined,
+      is_refund_receipt: isRefundReceipt === 'true',
       type,
       amount: amount ? DecimalHelper.toDecimal(amount).toNumber() : undefined,
+      note: note || undefined,
     };
 
     const result = await this.subsidyReceiptService.uploadReceipt(
@@ -108,8 +112,12 @@ export class SubsidyReceiptController {
   @Post(':id/validate')
   @Permission('validateSubsidyReceipt')
   @HttpCode(HttpStatus.OK)
-  async validateReceipt(@Param('id') id: string, @Req() req: RequestWithUser) {
-    return this.subsidyReceiptService.validateReceipt(id, req.user.userId);
+  async validateReceipt(
+    @Param('id') id: string,
+    @Body('note') note: string,
+    @Req() req: RequestWithUser,
+  ) {
+    return this.subsidyReceiptService.validateReceipt(id, req.user.userId, note || undefined);
   }
 
   @Post(':id/reject')

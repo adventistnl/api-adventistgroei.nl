@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../services/prisma.service';
 import { Project } from '../@generated/project/project.model';
-import { ProjectCreateDto, ProjectUpdateDto } from '../dto/project.dto';
+import { ProjectCreateDto, ProjectUpdateDto, ProjectUpdateCoOwnerDto } from '../dto/project.dto';
 import { Decimal } from '@prisma/client/runtime/library';
 import { DecimalHelper } from '../common/helpers/decimal.helper';
 import { InstitutionRepository } from './institution.repository';
@@ -10,7 +10,8 @@ import { UserRepository } from './user.repository';
 import { EntityType } from '../@generated/prisma/entity-type.enum';
 import { ProjectActivityLogRepository } from './project-activity-log.repository';
 import { ProjectActivityLogAction } from '../@generated/prisma/project-activity-log-action.enum';
-import { UserWithRoles } from '../models';
+import { UserWithRoles, ProjectCollaborator, CollaboratorRole } from '../models';
+import { User } from '../@generated/user/user.model';
 
 @Injectable()
 export class ProjectRepository {
@@ -34,6 +35,11 @@ export class ProjectRepository {
 
     const ownerId = data.owner_id || userId;
     await this.userRepository.findById(ownerId);
+
+    // Validar co_owner_id se fornecido
+    if (data.co_owner_id) {
+      await this.userRepository.findById(data.co_owner_id);
+    }
 
     // Criar evento se is_event = true e dados do evento foram fornecidos
     let eventId: string | undefined;
@@ -93,6 +99,7 @@ export class ProjectRepository {
         is_deleted: false,
         department: { connect: { id: data.department_id } },
         owner: { connect: { id: ownerId } },
+        co_owner: data.co_owner_id ? { connect: { id: data.co_owner_id } } : undefined,
         Institution: data.institution_id ? { connect: { id: data.institution_id } } : undefined,
         church: data.church_id ? { connect: { id: data.church_id } } : undefined,
         church_department: data.church_department_id ? { connect: { id: data.church_department_id } } : undefined,
@@ -208,7 +215,7 @@ export class ProjectRepository {
   }
   
   async update(id: string, data: ProjectUpdateDto, userId: string): Promise<Project> {
-    const { institution_id, department_id, owner_id, church_id, church_department_id, activities, ...rest } = data;
+    const { institution_id, department_id, owner_id, co_owner_id, church_id, church_department_id, activities, ...rest } = data;
 
     if (institution_id) {
       await this.institutionRepository.findById(institution_id);
@@ -222,6 +229,9 @@ export class ProjectRepository {
     if (owner_id) {
       await this.userRepository.findById(owner_id);
     }
+    if (co_owner_id) {
+      await this.userRepository.findById(co_owner_id);
+    }
     // TODO: Add church validation
 
     const updateData: any = {
@@ -229,6 +239,7 @@ export class ProjectRepository {
       church: church_id ? { connect: { id: church_id } } : undefined,
       church_department: church_department_id ? { connect: { id: church_department_id } } : undefined,
       owner: owner_id ? { connect: { id: owner_id } } : undefined,
+      co_owner: co_owner_id !== undefined ? (co_owner_id ? { connect: { id: co_owner_id } } : { disconnect: true }) : undefined,
       department: department_id ? { connect: { id: department_id } } : undefined,
       budget: rest.budget ? DecimalHelper.toDecimal(rest.budget).toDecimalPlaces(2) : undefined,
       subsidized_budget: rest.subsidized_budget !== undefined ? DecimalHelper.toDecimal(rest.subsidized_budget).toDecimalPlaces(2) : undefined,
@@ -324,6 +335,34 @@ export class ProjectRepository {
     });
   }
 
+  /**
+   * Atualiza apenas o co_owner_id de um projeto
+   * @param projectId - ID do projeto
+   * @param data - Dados contendo o co_owner_id
+   * @param userId - ID do usuário que está realizando a atualização
+   * @returns Projeto atualizado
+   */
+  async updateCoOwner(projectId: string, data: ProjectUpdateCoOwnerDto, userId: string): Promise<Project> {
+    // Validar se o projeto existe
+    const project = await this.findById(projectId);
+    if (!project) {
+      throw new Error(`Project with id ${projectId} not found`);
+    }
+
+    // Validar co_owner_id se fornecido
+    if (data.co_owner_id) {
+      await this.userRepository.findById(data.co_owner_id);
+    }
+
+    return this.prisma.project.update({
+      where: { id: projectId },
+      data: {
+        co_owner: data.co_owner_id ? { connect: { id: data.co_owner_id } } : { disconnect: true },
+        updated_by: userId,
+      },
+    });
+  }
+
   async softDelete(id: string, userId: string): Promise<Project> {
     return this.prisma.project.update({
       where: { id },
@@ -340,7 +379,8 @@ export class ProjectRepository {
     return this.prisma.project.findUnique({
       where: { id, is_deleted: false },
       include: {
-        owner: true, // Inclui o relacionamento com o proprietário
+        owner: true,
+        co_owner: true,
         department: {
           include: {
             church: true,
@@ -403,7 +443,8 @@ export class ProjectRepository {
         is_deleted: false,
       },
       include: {
-        owner: true, // Inclui o relacionamento com o proprietário
+        owner: true,
+        co_owner: true,
         department: true,
         Institution: true,
         activities: {
@@ -443,7 +484,8 @@ export class ProjectRepository {
         is_deleted: false,
       },
       include: {
-        owner: true, // Inclui o relacionamento com o proprietário
+        owner: true,
+        co_owner: true,
         department: true,
         Institution: true,
         activities: {
@@ -468,7 +510,7 @@ export class ProjectRepository {
     });
   }
 
-  async findAll(institutionId?: string, user?: UserWithRoles | null): Promise<Project[]> {
+  async findAll(institutionId?: string, _user?: UserWithRoles | null): Promise<Project[]> {
     const where: any = {
       is_deleted: false,
     };
@@ -514,6 +556,7 @@ export class ProjectRepository {
       where,
       include: {
         owner: true,
+        co_owner: true,
         department: {
           include: {
             church: true,
@@ -543,6 +586,149 @@ export class ProjectRepository {
     });
   }
 
+  /**
+   * Retorna todos os projetos onde o usuário é owner, co_owner ou assignee de atividade
+   */
+  async findMyProjects(userId: string): Promise<Project[]> {
+    return this.prisma.project.findMany({
+      where: {
+        is_deleted: false,
+        OR: [
+          { owner_id: userId },
+          { co_owner_id: userId },
+          {
+            activities: {
+              some: {
+                is_deleted: false,
+                assignees: { some: { user_id: userId } },
+              },
+            },
+          },
+        ],
+      },
+      include: {
+        owner: true,
+        co_owner: true,
+        department: {
+          include: { church: true },
+        },
+        Institution: true,
+        church: true,
+        activities: {
+          where: { is_deleted: false },
+          include: {
+            assignees: {
+              include: { user: true },
+            },
+            activity_funding: true,
+            activity_documents: {
+              where: { is_deleted: false },
+            },
+          },
+        },
+      },
+      orderBy: { created_at: 'desc' },
+    });
+  }
+
+  /**
+   * Retorna todos os colaboradores de um projeto:
+   * owner, co_owner e assignees das atividades (sem duplicatas)
+   */
+  async findCollaboratorsByProjectId(projectId: string): Promise<ProjectCollaborator[]> {
+    const project = await this.prisma.project.findUnique({
+      where: { id: projectId, is_deleted: false },
+      include: {
+        owner: true,
+        co_owner: true,
+        activities: {
+          where: { is_deleted: false },
+          include: {
+            assignees: {
+              include: { user: true },
+            },
+          },
+        },
+      },
+    });
+
+    if (!project) {
+      return [];
+    }
+
+    // Mapa para deduplicar por user_id, priorizando roles mais relevantes
+    const rolesPriority: Record<CollaboratorRole, number> = {
+      [CollaboratorRole.owner]: 0,
+      [CollaboratorRole.co_owner]: 1,
+      [CollaboratorRole.assignee]: 2,
+      [CollaboratorRole.finance]: 3,
+      [CollaboratorRole.requester]: 4,
+    };
+
+    const collaboratorsMap = new Map<string, ProjectCollaborator>();
+
+    // 1. Owner principal
+    if (project.owner) {
+      collaboratorsMap.set(project.owner_id, {
+        user: project.owner as unknown as User,
+        role: CollaboratorRole.owner,
+        activity_ids: [],
+      });
+    }
+
+    // 2. Co-owner (não sobrescreve owner caso sejam o mesmo usuário)
+    if (project.co_owner && project.co_owner_id) {
+      const existing = collaboratorsMap.get(project.co_owner_id);
+      if (!existing || rolesPriority[CollaboratorRole.co_owner] < rolesPriority[existing.role]) {
+        collaboratorsMap.set(project.co_owner_id, {
+          user: project.co_owner as unknown as User,
+          role: CollaboratorRole.co_owner,
+          activity_ids: [],
+        });
+      }
+    }
+
+    // 3. Assignees das atividades
+    for (const activity of project.activities) {
+      for (const assignee of activity.assignees) {
+        const existing = collaboratorsMap.get(assignee.user_id);
+        if (!existing) {
+          // Novo colaborador como assignee
+          collaboratorsMap.set(assignee.user_id, {
+            user: assignee.user as unknown as User,
+            role: CollaboratorRole.assignee,
+            activity_ids: [activity.id],
+          });
+        } else if (existing.role === CollaboratorRole.assignee) {
+          // Já é assignee: acumula as atividades
+          existing.activity_ids = [...(existing.activity_ids ?? []), activity.id];
+        }
+        // Se já é owner ou co_owner, apenas acumula activity_ids sem alterar o role
+        else {
+          existing.activity_ids = [...(existing.activity_ids ?? []), activity.id];
+        }
+      }
+    }
+
+    // 4. Gestores financeiros (FINANCIAL_MANAGER) da mesma instituição
+    if (project.institution_id) {
+      const financeUsers = await this.userRepository.findFinanceManagersByInstitution(project.institution_id);
+      for (const financeUser of financeUsers) {
+        const userId = (financeUser as { id: string }).id;
+        if (!collaboratorsMap.has(userId)) {
+          collaboratorsMap.set(userId, {
+            user: financeUser as unknown as User,
+            role: CollaboratorRole.finance,
+            activity_ids: [],
+          });
+        }
+        // Se já está no mapa com role de maior prioridade (owner, co_owner, assignee), não sobrescreve
+      }
+    }
+
+    return Array.from(collaboratorsMap.values());
+  }
+
   async findByChurchId(churchId: string): Promise<Project[]> {
     return this.prisma.project.findMany({
       where: {
@@ -553,6 +739,7 @@ export class ProjectRepository {
       },
       include: {
         owner: true,
+        co_owner: true,
         department: {
           include: {
             church: true,
@@ -580,5 +767,39 @@ export class ProjectRepository {
         },
       },
     });
+  }
+
+  /**
+   * Retorna os IDs de todos os colaboradores de um projeto:
+   * owner + co_owner (se existir) + voluntários ativos.
+   * Usado para publicar notificações individuais via WebSocket.
+   */
+  async getCollaboratorIds(projectId: string): Promise<string[]> {
+    const project = await this.prisma.project.findUnique({
+      where: { id: projectId, is_deleted: false },
+      select: {
+        owner_id: true,
+        co_owner_id: true,
+        institution_id: true,
+        voluntary_users: {
+          where: { is_deleted: false },
+          select: { user_id: true },
+        },
+      },
+    });
+
+    if (!project) return [];
+
+    const ids = new Set<string>();
+    ids.add(project.owner_id);
+    if (project.co_owner_id) ids.add(project.co_owner_id);
+    project.voluntary_users.forEach((v) => ids.add(v.user_id));
+
+    if (project.institution_id) {
+      const financeUsers = await this.userRepository.findFinanceManagersByInstitution(project.institution_id);
+      (financeUsers as Array<{ id: string }>).forEach((u) => ids.add(u.id));
+    }
+
+    return Array.from(ids);
   }
 }

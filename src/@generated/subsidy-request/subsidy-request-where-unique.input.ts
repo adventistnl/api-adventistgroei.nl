@@ -10,6 +10,7 @@ import { DateTimeNullableFilter } from '../prisma/date-time-nullable-filter.inpu
 import { BoolFilter } from '../prisma/bool-filter.input';
 import { EnumSubsidyRequestPriorityFilter } from '../prisma/enum-subsidy-request-priority-filter.input';
 import { DecimalNullableFilter } from '../prisma/decimal-nullable-filter.input';
+import { EnumSubsidyRequestTypeFilter } from '../prisma/enum-subsidy-request-type-filter.input';
 import { InstitutionScalarRelationFilter } from '../institution/institution-scalar-relation-filter.input';
 import { UserScalarRelationFilter } from '../user/user-scalar-relation-filter.input';
 import { DepartmentScalarRelationFilter } from '../department/department-scalar-relation-filter.input';
@@ -106,6 +107,9 @@ export class SubsidyRequestWhereUniqueInput {
     @Field(() => DecimalNullableFilter, {nullable:true})
     @Type(() => DecimalNullableFilter)
     advance_amount?: DecimalNullableFilter;
+
+    @Field(() => EnumSubsidyRequestTypeFilter, {nullable:true})
+    request_type?: EnumSubsidyRequestTypeFilter;
 
     @Field(() => DecimalFilter, {nullable:true})
     @Type(() => DecimalFilter)

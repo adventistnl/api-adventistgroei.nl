@@ -34,6 +34,95 @@ type RoleAssignmentModel {
   is_deleted: Boolean!
 }
 
+type UsersByRoleData {
+  role: String!
+  count: Float!
+  fill: String!
+}
+
+type ChurchesByRegionData {
+  region: String!
+  name: String!
+  churches: Float!
+  color: String
+  fill: String!
+}
+
+type InstitutionChartsData {
+  usersByRole: [UsersByRoleData!]!
+  monthlyUserGrowth: Float
+  churchesByRegion: [ChurchesByRegionData!]!
+}
+
+type RegionKPIData {
+  totalRegions: Float!
+  totalChurches: Float!
+  totalProvinces: Float!
+  totalCities: Float!
+}
+
+type RegionModel {
+  id: String!
+  name: String!
+  description: String
+  territory: JSON
+  color: String
+  created_at: DateTime!
+  updated_at: DateTime!
+  created_by: String!
+  updated_by: String!
+  is_deleted: Boolean!
+  deleted_at: DateTime
+  deleted_by: String
+}
+
+"""
+The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
+"""
+scalar JSON
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
+type ChurchKPIData {
+  totalChurches: Float!
+  totalMembers: Float!
+  totalDepartments: Float!
+  totalSubsidyRequests: Float!
+  totalBudget: Float!
+  totalUsedBudget: Float!
+  budgetUtilization: Float!
+  avgMembersPerChurch: Float!
+}
+
+type ChurchActivityData {
+  church_id: String!
+  church_name: String!
+  month: String!
+  year: Float!
+  activity_score: Float!
+  user_count: Float!
+  department_count: Float!
+  project_count: Float!
+  has_recent_activity: Boolean!
+  has_recent_departments: Boolean!
+  has_recent_projects: Boolean!
+  has_updated_church: Boolean!
+  has_new_users: Boolean!
+}
+
+type ChurchChartData {
+  church: String!
+  fullName: String!
+  members: Float!
+  activeMembers: Float!
+  projects: Float!
+  activeProjects: Float!
+  fill: String!
+}
+
 type RegionCount {
   churches: Int!
 }
@@ -55,16 +144,6 @@ type Region {
   _count: RegionCount!
   kpiData: RegionKPIData!
 }
-
-"""
-The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
-"""
-scalar JSON
-
-"""
-A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
-"""
-scalar DateTime
 
 type EventRecipient {
   id: ID!
@@ -157,7 +236,7 @@ enum EventType {
   evangelism
 }
 
-"""Idioma preferencial da instituição"""
+"""Idioma preferencial do usuário"""
 enum LanguagePreference {
   en
   nl
@@ -201,11 +280,77 @@ type SpecialProjects {
   subsidy_status: SubsidyStatus
 }
 
+type AdjustmentTask {
+  id: ID!
+  adjustment_id: String!
+  title: String!
+  completed: Boolean!
+  position: Int!
+  created_at: DateTime!
+  updated_at: DateTime!
+  adjustment: ProjectAdjustment!
+}
+
+type ProjectAdjustmentCount {
+  tasks: Int!
+}
+
+type ProjectAdjustment {
+  id: ID!
+  project_history_id: String!
+  status: AdjustmentStatus!
+  created_at: DateTime!
+  updated_at: DateTime!
+  created_by: String!
+  updated_by: String!
+  project_history: ProjectHistory!
+  tasks: [AdjustmentTask!]
+  _count: ProjectAdjustmentCount!
+}
+
+enum AdjustmentStatus {
+  OPEN
+  IN_PROGRESS
+  CLOSED
+}
+
+type ProjectHistory {
+  id: ID!
+  project_id: String!
+  user_id: String!
+  type: ProjectHistoryType!
+  comment: String
+  field_name: String
+  old_value: String
+  new_value: String
+  metadata: JSON
+  created_at: DateTime!
+  project: Project!
+  user: User!
+  adjustment: ProjectAdjustment
+}
+
+enum ProjectHistoryType {
+  COMMENT
+  CREATED
+  UPDATED
+  STATUS_CHANGED
+  BUDGET_UPDATED
+  DEADLINE_UPDATED
+  OWNER_CHANGED
+  CO_OWNER_UPDATED
+  DEPARTMENT_CHANGED
+  DELETED
+  RESTORED
+  ADJUSTMENT_NEEDED
+}
+
 type ProjectCount {
   voluntary_users: Int!
   activities: Int!
   subsidies: Int!
   special_projects: Int!
+  history: Int!
 }
 
 type Project {
@@ -218,6 +363,7 @@ type Project {
   subsidized_budget: Decimal!
   balance: Decimal!
   owner_id: String!
+  co_owner_id: String
   language_preference: LanguagePreference!
   type: ProjectType!
   status: ProjectStatus!
@@ -239,6 +385,7 @@ type Project {
   department: Department!
   church_department: Department
   owner: User!
+  co_owner: User
   event: Event
   Institution: Institution
   church: Church
@@ -246,10 +393,12 @@ type Project {
   activities: [ProjectActivity!]
   subsidies: [SubsidyRequest!]
   special_projects: [SpecialProjects!]
+  history: [ProjectHistory!]!
   _count: ProjectCount!
   Church: Church
   churchDepartment: Department
   kpis: ProjectKPIsDto!
+  collaborators: [ProjectCollaborator!]!
 }
 
 enum ProjectType {
@@ -259,8 +408,13 @@ enum ProjectType {
 
 enum ProjectStatus {
   DRAFT
-  IN_PROGRESS
+  OPEN_REQUEST
   IN_REVIEW
+  ADJUSTMENTS_NEEDED
+  IN_PROGRESS
+  PENDING_RECEIPT
+  WAITING_REFUND
+  OVERDUE
   ON_HOLD
   EXPIRED
   CONCLUDED
@@ -268,7 +422,8 @@ enum ProjectStatus {
 
 type SubsidyReceipt {
   id: ID!
-  project_activities_id: String!
+  project_activities_id: String
+  is_refund_receipt: Boolean!
   file_url: String!
   drive_file_id: String
   filename: String!
@@ -278,6 +433,8 @@ type SubsidyReceipt {
   is_validated: Boolean!
   validated_at: DateTime
   validated_by: String
+  rejection_reason: String
+  note: String
   uploaded_by: String!
   created_at: DateTime!
   updated_at: DateTime!
@@ -288,7 +445,7 @@ type SubsidyReceipt {
   deleted_by: String
   subsidy_request_id: String
   subsidy_request_item_id: String
-  project_activity: ProjectActivity!
+  project_activity: ProjectActivity
   subsidy_request: SubsidyRequest
   subsidy_request_item: SubsidyRequestItem
 }
@@ -523,6 +680,7 @@ type SubsidyRequest {
   project_id: String!
   is_for_advance: Boolean!
   advance_amount: Decimal
+  request_type: SubsidyRequestType!
   refund_amount: Decimal!
   have_refund: Boolean!
   refund_done: Boolean!
@@ -536,12 +694,19 @@ type SubsidyRequest {
   subsidy_receipts: [SubsidyReceipt!]
   status_history: [SubsidyStatusHistory!]
   _count: SubsidyRequestCount!
+  collaborators: [ProjectCollaborator!]!
 }
 
 enum SubsidyRequestPriority {
   LOW
   MEDIUM
   HIGH
+}
+
+enum SubsidyRequestType {
+  ADVANCE
+  WITHOUT_DOCUMENT
+  WITH_DOCUMENT
 }
 
 type SubsidyStatusCount {
@@ -779,8 +944,10 @@ enum PermissionResolverName {
   deleteDirectMessage
   projects
   project
+  myProjects
   createProject
   updateProject
+  updateProjectCoOwner
   deleteProject
   notifications
   notification
@@ -859,9 +1026,20 @@ enum PermissionResolverName {
   subsidyByMonth
   subsidyByStatus
   createAdvanceRequest
+  createSubsidyWithoutDocument
   requestSubsidyRefund
   getSubsidiesWaitingRefund
   confirmRefundDone
+  projectHistories
+  createProjectHistory
+  deleteProjectHistory
+  projectAdjustments
+  projectAdjustment
+  createAdjustment
+  updateAdjustmentStatus
+  addAdjustmentTask
+  toggleAdjustmentTask
+  removeAdjustmentTask
 }
 
 enum PermissionGroup {
@@ -886,6 +1064,7 @@ enum PermissionGroup {
   EMAIL_SEND
   INVITE
   ANNUAL_BUDGET
+  PROJECT_HISTORY
 }
 
 type RolePermission {
@@ -1063,11 +1242,13 @@ type UserCount {
   SubsidyStatus: Int!
   voluntary_projects: Int!
   Project: Int!
+  co_owned_projects: Int!
   approved_annual_budgets: Int!
   project_activity_logs: Int!
   activity_assignments: Int!
   subsidy_status_history: Int!
   led_departments: Int!
+  project_history: Int!
 }
 
 type User {
@@ -1103,12 +1284,14 @@ type User {
   SubsidyStatus: [SubsidyStatus!]
   voluntary_projects: [VoluntariesOnProjects!]
   Project: [Project!]
+  co_owned_projects: [Project!]
   approved_annual_budgets: [AnnualBudget!]
   project_activity_logs: [ProjectActivityLog!]
   activity_assignments: [ProjectActivityAssignee!]
   subsidy_status_history: [SubsidyStatusHistory!]
   led_departments: [Department!]
   led_church: Church
+  project_history: [ProjectHistory!]
   _count: UserCount!
 }
 
@@ -1309,91 +1492,6 @@ type UserWithRoles {
   user_roles: [RoleModel!]!
 }
 
-type AuthModel {
-  accessToken: String!
-  expiresIn: Float!
-  user: UserWithRoles!
-}
-
-type ChurchKPIData {
-  totalChurches: Float!
-  totalMembers: Float!
-  totalDepartments: Float!
-  totalSubsidyRequests: Float!
-  totalBudget: Float!
-  totalUsedBudget: Float!
-  budgetUtilization: Float!
-  avgMembersPerChurch: Float!
-}
-
-type ChurchActivityData {
-  church_id: String!
-  church_name: String!
-  month: String!
-  year: Float!
-  activity_score: Float!
-  user_count: Float!
-  department_count: Float!
-  project_count: Float!
-  has_recent_activity: Boolean!
-  has_recent_departments: Boolean!
-  has_recent_projects: Boolean!
-  has_updated_church: Boolean!
-  has_new_users: Boolean!
-}
-
-type ChurchChartData {
-  church: String!
-  fullName: String!
-  members: Float!
-  activeMembers: Float!
-  projects: Float!
-  activeProjects: Float!
-  fill: String!
-}
-
-type UsersByRoleData {
-  role: String!
-  count: Float!
-  fill: String!
-}
-
-type ChurchesByRegionData {
-  region: String!
-  name: String!
-  churches: Float!
-  color: String
-  fill: String!
-}
-
-type InstitutionChartsData {
-  usersByRole: [UsersByRoleData!]!
-  monthlyUserGrowth: Float
-  churchesByRegion: [ChurchesByRegionData!]!
-}
-
-type RegionKPIData {
-  totalRegions: Float!
-  totalChurches: Float!
-  totalProvinces: Float!
-  totalCities: Float!
-}
-
-type RegionModel {
-  id: String!
-  name: String!
-  description: String
-  territory: JSON
-  color: String
-  created_at: DateTime!
-  updated_at: DateTime!
-  created_by: String!
-  updated_by: String!
-  is_deleted: Boolean!
-  deleted_at: DateTime
-  deleted_by: String
-}
-
 type InviteModel {
   token: String!
   url: String!
@@ -1414,6 +1512,27 @@ type ValidateOutputModel {
 type LinkContactResult {
   success: Boolean!
   message: String
+}
+
+type ProjectCollaborator {
+  user: User!
+  role: CollaboratorRole!
+  activity_ids: [String!]
+}
+
+"""Papel do colaborador no projeto"""
+enum CollaboratorRole {
+  owner
+  co_owner
+  assignee
+  finance
+  requester
+}
+
+type AuthModel {
+  accessToken: String!
+  expiresIn: Float!
+  user: UserWithRoles!
 }
 
 type DeleteBudgetResponse {
@@ -1674,6 +1793,7 @@ type Query {
   directMessages: [DirectMessage!]!
   directMessage(id: String!): DirectMessage
   projects(institutionId: String): [Project!]!
+  myProjects: [Project!]!
   project(id: String!): Project
   projectKPIs(institutionId: String): ProjectKPIs!
   projectsByDepartment(institutionId: String): [ProjectsByDepartment!]!
@@ -1712,6 +1832,9 @@ type Query {
   entityDistribution(year: Int!): [EntityDistribution!]!
   budgetDistribution(year: Int!, institutionId: String!): BudgetDistribution!
   institutionalDepartmentsKPIs(year: Int!, institutionId: String!): InstitutionalDepartmentsKPIs!
+  projectHistories(projectId: ID!): [ProjectHistory!]!
+  projectAdjustments(projectId: ID!): [ProjectAdjustment!]!
+  projectAdjustment(id: ID!): ProjectAdjustment!
 
   """
   Get city and province information for a Dutch postal code (ZIP code) and house number
@@ -2071,12 +2194,14 @@ input UserWhereInput {
   SubsidyStatus: SubsidyStatusListRelationFilter
   voluntary_projects: VoluntariesOnProjectsListRelationFilter
   Project: ProjectListRelationFilter
+  co_owned_projects: ProjectListRelationFilter
   approved_annual_budgets: AnnualBudgetListRelationFilter
   project_activity_logs: ProjectActivityLogListRelationFilter
   activity_assignments: ProjectActivityAssigneeListRelationFilter
   subsidy_status_history: SubsidyStatusHistoryListRelationFilter
   led_departments: DepartmentListRelationFilter
   led_church: ChurchNullableScalarRelationFilter
+  project_history: ProjectHistoryListRelationFilter
 }
 
 input EnumGenderTypeNullableFilter {
@@ -2397,6 +2522,7 @@ input SubsidyRequestWhereInput {
   project_id: StringFilter
   is_for_advance: BoolFilter
   advance_amount: DecimalNullableFilter
+  request_type: EnumSubsidyRequestTypeFilter
   refund_amount: DecimalFilter
   have_refund: BoolFilter
   refund_done: BoolFilter
@@ -2423,6 +2549,20 @@ input NestedEnumSubsidyRequestPriorityFilter {
   in: [SubsidyRequestPriority!]
   notIn: [SubsidyRequestPriority!]
   not: NestedEnumSubsidyRequestPriorityFilter
+}
+
+input EnumSubsidyRequestTypeFilter {
+  equals: SubsidyRequestType
+  in: [SubsidyRequestType!]
+  notIn: [SubsidyRequestType!]
+  not: NestedEnumSubsidyRequestTypeFilter
+}
+
+input NestedEnumSubsidyRequestTypeFilter {
+  equals: SubsidyRequestType
+  in: [SubsidyRequestType!]
+  notIn: [SubsidyRequestType!]
+  not: NestedEnumSubsidyRequestTypeFilter
 }
 
 input SubsidyStatusScalarRelationFilter {
@@ -2559,6 +2699,7 @@ input ProjectWhereInput {
   subsidized_budget: DecimalFilter
   balance: DecimalFilter
   owner_id: StringFilter
+  co_owner_id: StringNullableFilter
   language_preference: EnumLanguagePreferenceFilter
   type: EnumProjectTypeFilter
   status: EnumProjectStatusFilter
@@ -2580,6 +2721,7 @@ input ProjectWhereInput {
   department: DepartmentScalarRelationFilter
   church_department: DepartmentNullableScalarRelationFilter
   owner: UserScalarRelationFilter
+  co_owner: UserNullableScalarRelationFilter
   event: EventNullableScalarRelationFilter
   Institution: InstitutionNullableScalarRelationFilter
   church: ChurchNullableScalarRelationFilter
@@ -2587,6 +2729,7 @@ input ProjectWhereInput {
   activities: ProjectActivityListRelationFilter
   subsidies: SubsidyRequestListRelationFilter
   special_projects: SpecialProjectsListRelationFilter
+  history: ProjectHistoryListRelationFilter
 }
 
 input EnumProjectTypeFilter {
@@ -2838,6 +2981,109 @@ input SubsidyStatusNullableScalarRelationFilter {
   isNot: SubsidyStatusWhereInput
 }
 
+input ProjectHistoryListRelationFilter {
+  every: ProjectHistoryWhereInput
+  some: ProjectHistoryWhereInput
+  none: ProjectHistoryWhereInput
+}
+
+input ProjectHistoryWhereInput {
+  AND: [ProjectHistoryWhereInput!]
+  OR: [ProjectHistoryWhereInput!]
+  NOT: [ProjectHistoryWhereInput!]
+  id: StringFilter
+  project_id: StringFilter
+  user_id: StringFilter
+  type: EnumProjectHistoryTypeFilter
+  comment: StringNullableFilter
+  field_name: StringNullableFilter
+  old_value: StringNullableFilter
+  new_value: StringNullableFilter
+  metadata: JsonNullableFilter
+  created_at: DateTimeFilter
+  project: ProjectScalarRelationFilter
+  user: UserScalarRelationFilter
+  adjustment: ProjectAdjustmentNullableScalarRelationFilter
+}
+
+input EnumProjectHistoryTypeFilter {
+  equals: ProjectHistoryType
+  in: [ProjectHistoryType!]
+  notIn: [ProjectHistoryType!]
+  not: NestedEnumProjectHistoryTypeFilter
+}
+
+input NestedEnumProjectHistoryTypeFilter {
+  equals: ProjectHistoryType
+  in: [ProjectHistoryType!]
+  notIn: [ProjectHistoryType!]
+  not: NestedEnumProjectHistoryTypeFilter
+}
+
+input ProjectAdjustmentNullableScalarRelationFilter {
+  is: ProjectAdjustmentWhereInput
+  isNot: ProjectAdjustmentWhereInput
+}
+
+input ProjectAdjustmentWhereInput {
+  AND: [ProjectAdjustmentWhereInput!]
+  OR: [ProjectAdjustmentWhereInput!]
+  NOT: [ProjectAdjustmentWhereInput!]
+  id: StringFilter
+  project_history_id: StringFilter
+  status: EnumAdjustmentStatusFilter
+  created_at: DateTimeFilter
+  updated_at: DateTimeFilter
+  created_by: StringFilter
+  updated_by: StringFilter
+  project_history: ProjectHistoryScalarRelationFilter
+  tasks: AdjustmentTaskListRelationFilter
+}
+
+input EnumAdjustmentStatusFilter {
+  equals: AdjustmentStatus
+  in: [AdjustmentStatus!]
+  notIn: [AdjustmentStatus!]
+  not: NestedEnumAdjustmentStatusFilter
+}
+
+input NestedEnumAdjustmentStatusFilter {
+  equals: AdjustmentStatus
+  in: [AdjustmentStatus!]
+  notIn: [AdjustmentStatus!]
+  not: NestedEnumAdjustmentStatusFilter
+}
+
+input ProjectHistoryScalarRelationFilter {
+  is: ProjectHistoryWhereInput
+  isNot: ProjectHistoryWhereInput
+}
+
+input AdjustmentTaskListRelationFilter {
+  every: AdjustmentTaskWhereInput
+  some: AdjustmentTaskWhereInput
+  none: AdjustmentTaskWhereInput
+}
+
+input AdjustmentTaskWhereInput {
+  AND: [AdjustmentTaskWhereInput!]
+  OR: [AdjustmentTaskWhereInput!]
+  NOT: [AdjustmentTaskWhereInput!]
+  id: StringFilter
+  adjustment_id: StringFilter
+  title: StringFilter
+  completed: BoolFilter
+  position: IntFilter
+  created_at: DateTimeFilter
+  updated_at: DateTimeFilter
+  adjustment: ProjectAdjustmentScalarRelationFilter
+}
+
+input ProjectAdjustmentScalarRelationFilter {
+  is: ProjectAdjustmentWhereInput
+  isNot: ProjectAdjustmentWhereInput
+}
+
 input SubsidyReceiptListRelationFilter {
   every: SubsidyReceiptWhereInput
   some: SubsidyReceiptWhereInput
@@ -2849,7 +3095,8 @@ input SubsidyReceiptWhereInput {
   OR: [SubsidyReceiptWhereInput!]
   NOT: [SubsidyReceiptWhereInput!]
   id: StringFilter
-  project_activities_id: StringFilter
+  project_activities_id: StringNullableFilter
+  is_refund_receipt: BoolFilter
   file_url: StringFilter
   drive_file_id: StringNullableFilter
   filename: StringFilter
@@ -2859,6 +3106,8 @@ input SubsidyReceiptWhereInput {
   is_validated: BoolFilter
   validated_at: DateTimeNullableFilter
   validated_by: StringNullableFilter
+  rejection_reason: StringNullableFilter
+  note: StringNullableFilter
   uploaded_by: StringFilter
   created_at: DateTimeFilter
   updated_at: DateTimeFilter
@@ -2869,9 +3118,14 @@ input SubsidyReceiptWhereInput {
   deleted_by: StringNullableFilter
   subsidy_request_id: StringNullableFilter
   subsidy_request_item_id: StringNullableFilter
-  project_activity: ProjectActivityScalarRelationFilter
+  project_activity: ProjectActivityNullableScalarRelationFilter
   subsidy_request: SubsidyRequestNullableScalarRelationFilter
   subsidy_request_item: SubsidyRequestItemNullableScalarRelationFilter
+}
+
+input ProjectActivityNullableScalarRelationFilter {
+  is: ProjectActivityWhereInput
+  isNot: ProjectActivityWhereInput
 }
 
 input SubsidyRequestNullableScalarRelationFilter {
@@ -2911,11 +3165,6 @@ input ActivityDocumentsWhereInput {
   deleted_at: DateTimeNullableFilter
   deleted_by: StringNullableFilter
   project_activity: ProjectActivityNullableScalarRelationFilter
-}
-
-input ProjectActivityNullableScalarRelationFilter {
-  is: ProjectActivityWhereInput
-  isNot: ProjectActivityWhereInput
 }
 
 input ActivityFundingNullableScalarRelationFilter {
@@ -3516,12 +3765,14 @@ input UserOrderByWithRelationInput {
   SubsidyStatus: SubsidyStatusOrderByRelationAggregateInput
   voluntary_projects: VoluntariesOnProjectsOrderByRelationAggregateInput
   Project: ProjectOrderByRelationAggregateInput
+  co_owned_projects: ProjectOrderByRelationAggregateInput
   approved_annual_budgets: AnnualBudgetOrderByRelationAggregateInput
   project_activity_logs: ProjectActivityLogOrderByRelationAggregateInput
   activity_assignments: ProjectActivityAssigneeOrderByRelationAggregateInput
   subsidy_status_history: SubsidyStatusHistoryOrderByRelationAggregateInput
   led_departments: DepartmentOrderByRelationAggregateInput
   led_church: ChurchOrderByWithRelationInput
+  project_history: ProjectHistoryOrderByRelationAggregateInput
 }
 
 input ContactOrderByWithRelationInput {
@@ -3736,6 +3987,10 @@ input SubsidyStatusHistoryOrderByRelationAggregateInput {
   _count: SortOrder
 }
 
+input ProjectHistoryOrderByRelationAggregateInput {
+  _count: SortOrder
+}
+
 input AnnualBudgetWhereUniqueInput {
   id: String
   AND: [AnnualBudgetWhereInput!]
@@ -3847,6 +4102,7 @@ type Mutation {
   deleteDirectMessage(id: String!): DirectMessage!
   createProject(data: ProjectCreateDto!): Project!
   updateProject(id: String!, data: ProjectUpdateDto!): Project!
+  updateProjectCoOwner(id: String!, data: ProjectUpdateCoOwnerDto!): Project!
   deleteProject(id: String!): Project!
   createNotification(data: NotificationCreateDto!): Notification!
   updateNotification(id: String!, data: NotificationUpdateDto!): Notification!
@@ -3859,8 +4115,10 @@ type Mutation {
   deleteSubsidyRequest(id: String!, language: LanguagePreference = en): SubsidyRequest!
   approveSubsidyRequest(id: String!, approved_amount: Float!, language: LanguagePreference = en): SubsidyRequest!
   rejectSubsidyRequest(id: String!, rejection_reason: String!, language: LanguagePreference = en): SubsidyRequest!
+  submitSubsidyRequest(id: String!, language: LanguagePreference = en): SubsidyRequest!
   addSubsidyRequestMessage(id: String!, message: String!, language: LanguagePreference = en): SubsidyStatusHistory!
   createAdvanceRequest(projectId: String!, advanceAmount: Float!, language: LanguagePreference = en): SubsidyRequest!
+  createSubsidyWithoutDocument(data: CreateWithoutDocumentSubsidyRequestDto!, language: LanguagePreference = en): SubsidyRequest!
   requestSubsidyRefund(id: String!, refundAmount: Float!, reason: String!, language: LanguagePreference = en): SubsidyRequest!
   confirmRefundDone(id: String!, language: LanguagePreference = en): SubsidyRequest!
   createContact(data: ContactCreateDto!, userId: String!): Contact!
@@ -3881,7 +4139,8 @@ type Mutation {
   validateActivityDocument(id: ID!): ActivityDocuments!
   uploadSubsidyReceipt(input: UploadSubsidyReceiptDto!, file: Upload!): SubsidyReceipt!
   deleteSubsidyReceipt(id: ID!): SubsidyReceipt!
-  validateSubsidyReceipt(id: ID!): SubsidyReceipt!
+  validateSubsidyReceipt(id: ID!, note: String): SubsidyReceipt!
+  rejectSubsidyReceipt(id: ID!, reason: String): SubsidyReceipt!
   updateSubsidyRequestMessage(id: String!, message: String!): SubsidyStatusHistory!
   deleteSubsidyRequestMessage(id: String!): SubsidyStatusHistory!
   inviteUser(data: InviteUserDto!): InviteModel!
@@ -3902,6 +4161,13 @@ type Mutation {
   sendForgotPasswordCode(input: SendCodeInput!): ForgotPasswordResponse!
   verifyForgotPasswordCode(input: VerifyCodeInput!): ForgotPasswordResponse!
   resetPassword(input: ResetPasswordInput!): ForgotPasswordResponse!
+  createProjectHistory(data: ProjectHistoryCreateDto!): ProjectHistory!
+  deleteProjectHistory(id: ID!): ProjectHistory!
+  createAdjustment(data: CreateAdjustmentDto!): ProjectAdjustment!
+  updateAdjustmentStatus(data: UpdateAdjustmentStatusDto!): ProjectAdjustment!
+  addAdjustmentTask(data: AddAdjustmentTaskDto!): AdjustmentTask!
+  toggleAdjustmentTask(data: ToggleAdjustmentTaskDto!): AdjustmentTask!
+  removeAdjustmentTask(taskId: ID!): AdjustmentTask!
 }
 
 input LoginInput {
@@ -4111,6 +4377,7 @@ input ProjectCreateDto {
   church_id: String
   church_department_id: String
   owner_id: String
+  co_owner_id: String
   start_at: String!
   end_at: String!
   deadline: String
@@ -4170,6 +4437,7 @@ input ProjectUpdateDto {
   church_id: String
   church_department_id: String
   owner_id: String
+  co_owner_id: String
   start_at: String
   end_at: String
   deadline: String
@@ -4198,6 +4466,10 @@ input ActivityFundingUpdateDto {
   entity_contribution_percent: Float
   entity_type: EntityType
   entity_id: String
+}
+
+input ProjectUpdateCoOwnerDto {
+  co_owner_id: String
 }
 
 input NotificationCreateDto {
@@ -4238,9 +4510,11 @@ input SubsidyRequestCreateDto {
   department_id: String!
   church_id: String
   subsidy_status_id: String
-  items: [SubsidyRequestItemInput!]!
+  start_as_draft: Boolean
+  items: [SubsidyRequestItemInput!]
   project_id: String!
   notes: String
+  request_type: SubsidyRequestType = WITH_DOCUMENT
   is_for_advance: Boolean
   advance_amount: Float
 }
@@ -4266,6 +4540,18 @@ input SubsidyRequestUpdateDto {
   rejection_reason: String
   notes: String
   priority: SubsidyRequestPriority
+}
+
+input CreateWithoutDocumentSubsidyRequestDto {
+  description: String!
+  total_budget: Float!
+  institution_id: String
+  requester_id: String!
+  department_id: String!
+  church_id: String
+  project_id: String!
+  items: [SubsidyRequestItemInput!]!
+  notes: String
 }
 
 input LinkContactDto {
@@ -4335,9 +4621,11 @@ scalar Upload
 input UploadSubsidyReceiptDto {
   subsidy_request_id: String!
   subsidy_request_item_id: String
-  project_activity_id: String!
+  project_activity_id: String
+  is_refund_receipt: Boolean = false
   type: String!
   amount: Float
+  note: String
 }
 
 input InviteUserDto {
@@ -4436,4 +4724,46 @@ input ResetPasswordInput {
   code: String!
   newPassword: String!
   resetToken: String!
+}
+
+input ProjectHistoryCreateDto {
+  project_id: String!
+  type: ProjectHistoryType!
+  comment: String
+  field_name: String
+  old_value: String
+  new_value: String
+  metadata: JSON
+}
+
+input CreateAdjustmentDto {
+  project_id: String!
+  comment: String
+  tasks: [AdjustmentTaskInput!]
+}
+
+input AdjustmentTaskInput {
+  title: String!
+  position: Int
+}
+
+input UpdateAdjustmentStatusDto {
+  id: String!
+  status: AdjustmentStatus!
+}
+
+input AddAdjustmentTaskDto {
+  adjustment_id: String!
+  title: String!
+  position: Int
+}
+
+input ToggleAdjustmentTaskDto {
+  task_id: String!
+  completed: Boolean!
+}
+
+type Subscription {
+  projectHistoryAdded(projectId: ID!): ProjectHistory!
+  userProjectHistoryAdded(userId: ID!): ProjectHistory!
 }

@@ -5,7 +5,7 @@ import { PermissionsGuard } from '../middlewares/permissions.guard';
 import { Permission } from 'src/middlewares';
 import { SubsidyReceipt } from 'src/@generated/subsidy-receipt/subsidy-receipt.model';
 import { SubsidyReceiptService } from '../services/subsidy-receipt.service';
-import { UploadSubsidyReceiptDto, GetSubsidyReceiptsDto } from '../dto/subsidy-receipt.dto';
+import { UploadSubsidyReceiptDto, GetSubsidyReceiptsDto, RejectSubsidyReceiptDto } from '../dto/subsidy-receipt.dto';
 
 @Resolver(() => SubsidyReceipt)
 export class SubsidyReceiptResolver {
@@ -60,9 +60,24 @@ export class SubsidyReceiptResolver {
   @Permission('validateSubsidyReceipt')
   async validateSubsidyReceipt(
     @Args('id', { type: () => ID }) id: string,
+    @Args('note', { type: () => String, nullable: true }) note: string | undefined,
     @Context('userId') userId: string,
   ): Promise<SubsidyReceipt> {
-    return this.service.validateReceipt(id, userId);
+    return this.service.validateReceipt(id, userId, note);
+  }
+
+  /**
+   * Rejeitar recibo
+   */
+  @Mutation(() => SubsidyReceipt)
+  @UseGuards(PermissionsGuard)
+  @Permission('validateSubsidyReceipt')
+  async rejectSubsidyReceipt(
+    @Args('id', { type: () => ID }) id: string,
+    @Args('reason', { type: () => String, nullable: true }) reason: string | undefined,
+    @Context('userId') userId: string,
+  ): Promise<SubsidyReceipt> {
+    return this.service.rejectReceipt(id, userId, reason);
   }
 
   /**

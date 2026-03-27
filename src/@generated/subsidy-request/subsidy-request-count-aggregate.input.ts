@@ -74,6 +74,9 @@ export class SubsidyRequestCountAggregateInput {
     advance_amount?: true;
 
     @Field(() => Boolean, {nullable:true})
+    request_type?: true;
+
+    @Field(() => Boolean, {nullable:true})
     refund_amount?: true;
 
     @Field(() => Boolean, {nullable:true})

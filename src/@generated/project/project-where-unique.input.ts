@@ -14,6 +14,7 @@ import { DateTimeNullableFilter } from '../prisma/date-time-nullable-filter.inpu
 import { DepartmentScalarRelationFilter } from '../department/department-scalar-relation-filter.input';
 import { DepartmentNullableScalarRelationFilter } from '../department/department-nullable-scalar-relation-filter.input';
 import { UserScalarRelationFilter } from '../user/user-scalar-relation-filter.input';
+import { UserNullableScalarRelationFilter } from '../user/user-nullable-scalar-relation-filter.input';
 import { EventNullableScalarRelationFilter } from '../event/event-nullable-scalar-relation-filter.input';
 import { InstitutionNullableScalarRelationFilter } from '../institution/institution-nullable-scalar-relation-filter.input';
 import { ChurchNullableScalarRelationFilter } from '../church/church-nullable-scalar-relation-filter.input';
@@ -21,6 +22,7 @@ import { VoluntariesOnProjectsListRelationFilter } from '../voluntaries-on-proje
 import { ProjectActivityListRelationFilter } from '../project-activity/project-activity-list-relation-filter.input';
 import { SubsidyRequestListRelationFilter } from '../subsidy-request/subsidy-request-list-relation-filter.input';
 import { SpecialProjectsListRelationFilter } from '../special-projects/special-projects-list-relation-filter.input';
+import { ProjectHistoryListRelationFilter } from '../project-history/project-history-list-relation-filter.input';
 
 @InputType()
 export class ProjectWhereUniqueInput {
@@ -66,6 +68,9 @@ export class ProjectWhereUniqueInput {
 
     @Field(() => StringFilter, {nullable:true})
     owner_id?: StringFilter;
+
+    @Field(() => StringNullableFilter, {nullable:true})
+    co_owner_id?: StringNullableFilter;
 
     @Field(() => EnumLanguagePreferenceFilter, {nullable:true})
     language_preference?: EnumLanguagePreferenceFilter;
@@ -133,6 +138,10 @@ export class ProjectWhereUniqueInput {
     @Type(() => UserScalarRelationFilter)
     owner?: UserScalarRelationFilter;
 
+    @Field(() => UserNullableScalarRelationFilter, {nullable:true})
+    @Type(() => UserNullableScalarRelationFilter)
+    co_owner?: UserNullableScalarRelationFilter;
+
     @Field(() => EventNullableScalarRelationFilter, {nullable:true})
     @Type(() => EventNullableScalarRelationFilter)
     event?: EventNullableScalarRelationFilter;
@@ -160,4 +169,8 @@ export class ProjectWhereUniqueInput {
     @Field(() => SpecialProjectsListRelationFilter, {nullable:true})
     @Type(() => SpecialProjectsListRelationFilter)
     special_projects?: SpecialProjectsListRelationFilter;
+
+    @Field(() => ProjectHistoryListRelationFilter, {nullable:true})
+    @Type(() => ProjectHistoryListRelationFilter)
+    history?: ProjectHistoryListRelationFilter;
 }

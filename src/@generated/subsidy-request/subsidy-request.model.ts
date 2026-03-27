@@ -4,6 +4,7 @@ import { ID } from '@nestjs/graphql';
 import { GraphQLDecimal } from 'prisma-graphql-type-decimal';
 import { Decimal } from '@prisma/client/runtime/library';
 import { SubsidyRequestPriority } from '../prisma/subsidy-request-priority.enum';
+import { SubsidyRequestType } from '../prisma/subsidy-request-type.enum';
 import { Institution } from '../institution/institution.model';
 import { User } from '../user/user.model';
 import { Department } from '../department/department.model';
@@ -86,6 +87,9 @@ export class SubsidyRequest {
 
     @Field(() => GraphQLDecimal, {nullable:true})
     advance_amount!: Decimal | null;
+
+    @Field(() => SubsidyRequestType, {defaultValue:'WITH_DOCUMENT',nullable:false})
+    request_type!: `${SubsidyRequestType}`;
 
     @Field(() => GraphQLDecimal, {defaultValue:0,nullable:false})
     refund_amount!: Decimal;

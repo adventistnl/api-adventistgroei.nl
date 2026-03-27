@@ -12,6 +12,9 @@ export class SubsidyReceiptMaxAggregate {
     @Field(() => String, {nullable:true})
     project_activities_id?: string;
 
+    @Field(() => Boolean, {nullable:true})
+    is_refund_receipt?: boolean;
+
     @Field(() => String, {nullable:true})
     file_url?: string;
 
@@ -38,6 +41,12 @@ export class SubsidyReceiptMaxAggregate {
 
     @Field(() => String, {nullable:true})
     validated_by?: string;
+
+    @Field(() => String, {nullable:true})
+    rejection_reason?: string;
+
+    @Field(() => String, {nullable:true})
+    note?: string;
 
     @Field(() => String, {nullable:true})
     uploaded_by?: string;

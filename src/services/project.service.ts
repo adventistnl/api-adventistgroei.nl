@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { ProjectRepository } from '../repositories/project.repository';
 import { DecimalHelper } from '../common/helpers/decimal.helper';
 import { Project } from '../@generated/project/project.model';
-import { ProjectCreateDto, ProjectUpdateDto } from '../dto/project.dto';
+import { ProjectCreateDto, ProjectUpdateDto, ProjectUpdateCoOwnerDto } from '../dto/project.dto';
 import { PrismaService } from './prisma.service';
 import { ProjectKPIs, ProjectsByDepartment, SubsidyStatusDistribution, ProjectsTimeline } from '../dto/project-analytics.dto';
 import { SubsidyRequestService } from './subsidy-request.service';
@@ -10,7 +10,7 @@ import { ProjectActivityService } from './project-activity.service';
 import { CustomGraphQLError, ErrorCode } from '../common/errors/custom-graphql-error';
 import { AnnualBudgetService } from './annual-budget.service';
 import { UserRepository } from '../repositories/user.repository';
-import { UserWithRoles } from '../models';
+import { UserWithRoles, ProjectCollaborator } from '../models';
 import { ProjectStatus } from '../@generated/prisma/project-status.enum';
 
 @Injectable()
@@ -86,6 +86,38 @@ export class ProjectService {
     }
 
     return this.projectRepository.update(id, data, userId);
+  }
+
+  /**
+   * Atualiza apenas o co_owner_id de um projeto
+   * @param projectId - ID do projeto
+   * @param data - Dados contendo o co_owner_id
+   * @param userId - ID do usuário que está realizando a atualização
+   * @returns Projeto atualizado
+   */
+  async updateCoOwner(projectId: string, data: ProjectUpdateCoOwnerDto, userId: string): Promise<Project> {
+    // Validar se o projeto existe e se não está concluído
+    const existingProject = await this.findById(projectId);
+    if (!existingProject) {
+      throw new CustomGraphQLError(
+        'Project not found',
+        ErrorCode.NOT_FOUND,
+        404,
+        { additional: { errorCode: 'PROJECT_NOT_FOUND' } }
+      );
+    }
+
+    // Block modification if project is CONCLUDED
+    if (existingProject.status === ProjectStatus.CONCLUDED) {
+      throw new CustomGraphQLError(
+        'Cannot modify a concluded project',
+        ErrorCode.BAD_REQUEST,
+        400,
+        { additional: { errorCode: 'PROJECT_IS_CONCLUDED' } }
+      );
+    }
+
+    return this.projectRepository.updateCoOwner(projectId, data, userId);
   }
 
   /**
@@ -292,6 +324,14 @@ export class ProjectService {
 
   async getProjectsByChurch(churchId: string): Promise<Project[]> {
     return this.projectRepository.findByChurchId(churchId);
+  }
+
+  async getMyProjects(userId: string): Promise<Project[]> {
+    return this.projectRepository.findMyProjects(userId);
+  }
+
+  async getProjectCollaborators(projectId: string): Promise<ProjectCollaborator[]> {
+    return this.projectRepository.findCollaboratorsByProjectId(projectId);
   }
 
   async getProjectKPIs(institutionId?: string): Promise<ProjectKPIs> {

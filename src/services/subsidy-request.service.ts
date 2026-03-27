@@ -4,7 +4,7 @@ import { SubsidyRequestItemRepository } from '../repositories/subsidy-request-it
 import { SubsidyStatusHistoryRepository } from '../repositories/subsidy-status-history.repository';
 import { SubsidyReceiptRepository } from '../repositories/subsidy-receipt.repository';
 import { SubsidyRequest } from '../@generated/subsidy-request/subsidy-request.model';
-import { SubsidyRequestCreateDto, SubsidyRequestUpdateDto } from '../dto/subsidy-request.dto';
+import { SubsidyRequestCreateDto, SubsidyRequestUpdateDto, CreateWithoutDocumentSubsidyRequestDto } from '../dto/subsidy-request.dto';
 import { SubsidyKPIs, SubsidyByDepartment, SubsidyByMonth } from '../dto/subsidy-analytics.dto';
 import { CustomGraphQLError, ErrorCode } from '../common/errors/custom-graphql-error';
 import { PrismaService } from './prisma.service';
@@ -12,12 +12,15 @@ import { GoogleDriveService } from './google-drive.service';
 import { format } from 'date-fns';
 
 import { SubsidyHistoryType } from '../@generated/prisma/subsidy-history-type.enum';
+import { SubsidyRequestType } from '../@generated/prisma/subsidy-request-type.enum';
 import { AnnualBudgetService } from './annual-budget.service';
 import { DecimalHelper } from '../common/helpers/decimal.helper';
 import { SubsidyReceiptService } from './subsidy-receipt.service';
 import { EmailService } from './email.service';
 import { translate } from '../../i18n.config';
 import { LanguagePreference } from '../@generated/prisma/language-preference.enum';
+import { ProjectCollaborator, CollaboratorRole } from '../models';
+import { User } from '../@generated/user/user.model';
 
 @Injectable()
 export class SubsidyRequestService {
@@ -39,6 +42,16 @@ export class SubsidyRequestService {
 
       const from = currentStatusName.toUpperCase();
       const to = newStatusName.toUpperCase();
+
+      // Rule 0: DRAFT can only move to PENDING (submit) or stay as DRAFT
+      if (from === 'DRAFT' && to !== 'PENDING' && from !== to) {
+          throw new CustomGraphQLError(
+              translate('errors.invalid_transition_from_draft', language, { ns: 'subsidy', to }),
+              ErrorCode.BAD_REQUEST,
+              400,
+              { additional: { errorCode: 'INVALID_TRANSITION_FROM_DRAFT' } }
+          );
+      }
 
       // Rule 1: Closed status cannot be changed to anything else
       if (from === 'CLOSED' && from !== to) {
@@ -195,24 +208,58 @@ export class SubsidyRequestService {
   }
 
   async create(data: SubsidyRequestCreateDto, userId: string, language: LanguagePreference = LanguagePreference.en): Promise<SubsidyRequest> {
-    // Se subsidy_status_id não foi fornecido, buscar status "PENDING" automaticamente
+    const resolvedType = data.request_type ?? SubsidyRequestType.WITH_DOCUMENT;
+
+    console.log('🟡 [SubsidyRequestService.create] START', {
+      userId,
+      resolvedType,
+      project_id: data.project_id,
+      department_id: data.department_id,
+      institution_id: data.institution_id,
+      requester_id: data.requester_id,
+      items_count: data.items?.length ?? 0,
+      items: data.items?.map(i => ({
+        project_activity_id: i.project_activity_id,
+        requested_amount: i.requested_amount,
+        linked_docs: i.linked_activity_document_ids?.length ?? 0,
+      })),
+    });
+
+    // Se subsidy_status_id não foi fornecido, buscar status inicial automaticamente
     if (!data.subsidy_status_id) {
-      const pendingStatus = await this.prisma.subsidyStatus.findFirst({
-        where: { name: 'PENDING', is_deleted: false },
+      const initialStatusName = data.start_as_draft ? 'DRAFT' : 'PENDING';
+      const initialStatus = await this.prisma.subsidyStatus.findFirst({
+        where: { name: initialStatusName, is_deleted: false },
       });
 
-      if (!pendingStatus) {
+      if (!initialStatus) {
+        const errorKey = data.start_as_draft ? 'errors.draft_status_not_found' : 'errors.pending_status_not_found';
         throw new CustomGraphQLError(
-          translate('errors.pending_status_not_found', language, { ns: 'subsidy' }),
+          translate(errorKey, language, { ns: 'subsidy' }),
           ErrorCode.NOT_FOUND,
           404
         );
       }
 
-      data.subsidy_status_id = pendingStatus.id;
+      data.subsidy_status_id = initialStatus.id;
     }
 
-    const subsidyRequest = await this.subsidyRequestRepository.create(data, userId);
+    console.log('🟡 [SubsidyRequestService.create] Calling repository.create with subsidy_status_id:', data.subsidy_status_id);
+
+    let subsidyRequest: SubsidyRequest;
+    try {
+      subsidyRequest = await this.subsidyRequestRepository.create(data, userId);
+    } catch (repoError) {
+      console.error('🔴 [SubsidyRequestService.create] repository.create FAILED:', {
+        message: repoError?.message,
+        code: repoError?.code,
+        meta: repoError?.meta,
+        stack: repoError?.stack,
+      });
+      throw repoError;
+    }
+
+    console.log('🟢 [SubsidyRequestService.create] repository.create OK — id:', subsidyRequest.id);
 
     // Create initial history record
     await this.historyRepository.create({
@@ -220,15 +267,18 @@ export class SubsidyRequestService {
       status_id: data.subsidy_status_id,
       previous_status_id: undefined,
       type: SubsidyHistoryType.STATUS_CHANGE,
-      reason: translate('history.request_created', language, { ns: 'subsidy' }),
+      reason: translate(
+        data.start_as_draft ? 'history.request_created_as_draft' : 'history.request_created',
+        language,
+        { ns: 'subsidy' },
+      ),
       changed_by: userId,
     });
 
-    // Process linked_activity_document_ids if any
-    if (data.items && data.items.length > 0) {
-      // Fetch created items to get their IDs
+    // Processar documentos linkados apenas para WITH_DOCUMENT
+    if (resolvedType === SubsidyRequestType.WITH_DOCUMENT && data.items && data.items.length > 0) {
       const createdItems = await this.subsidyRequestItemRepository.findBySubsidyRequestId(subsidyRequest.id);
-      
+
       for (const itemInput of data.items) {
         if (itemInput.linked_activity_document_ids && itemInput.linked_activity_document_ids.length > 0) {
           const createdItem = createdItems.find(
@@ -239,7 +289,7 @@ export class SubsidyRequestService {
             for (let i = 0; i < itemInput.linked_activity_document_ids.length; i++) {
               const docId = itemInput.linked_activity_document_ids[i];
               const docAmount = itemInput.linked_document_amounts?.[i] || 0;
-              
+
               await this.subsidyReceiptService.createFromActivityDocument(
                 userId,
                 subsidyRequest.id,
@@ -252,15 +302,11 @@ export class SubsidyRequestService {
           }
         }
       }
-    }
 
-    // Validate that the sum of receipt amounts matches the requested amount for each item
-    if (data.items && data.items.length > 0) {
+      // Validar que a soma dos comprovantes bate com o valor solicitado de cada item
       for (const itemInput of data.items) {
-        // Calculate sum of document amounts for this item
         const documentAmountsSum = (itemInput.linked_document_amounts || []).reduce((sum, amount) => sum + amount, 0);
-        
-        // Check if sum matches requested amount
+
         if (documentAmountsSum > 0 && Math.abs(documentAmountsSum - itemInput.requested_amount) > 0.01) {
           throw new CustomGraphQLError(
             translate('errors.document_amounts_mismatch', language, { ns: 'subsidy', sum: documentAmountsSum, requested: itemInput.requested_amount }),
@@ -271,7 +317,63 @@ export class SubsidyRequestService {
       }
     }
 
+    console.log('🟢 [SubsidyRequestService.create] DONE — returning id:', subsidyRequest.id, 'request_type:', resolvedType);
     return subsidyRequest;
+  }
+
+  /**
+   * Criar subsídio do tipo WITHOUT_DOCUMENT.
+   * Vinculado a atividades, mas sem comprovante de documento.
+   * Fica com pendência de receipt (equivalente ao ADVANCE nesse sentido).
+   * Se institution_id não for fornecido, é derivado do projeto automaticamente.
+   */
+  async createWithoutDocumentRequest(
+    data: CreateWithoutDocumentSubsidyRequestDto,
+    userId: string,
+    language: LanguagePreference = LanguagePreference.en
+  ): Promise<SubsidyRequest> {
+    let institutionId = data.institution_id;
+
+    // Derivar institution_id do projeto se não fornecido
+    if (!institutionId) {
+      const project = await this.prisma.project.findUnique({
+        where: { id: data.project_id, is_deleted: false },
+        select: { institution_id: true },
+      });
+
+      if (!project) {
+        throw new CustomGraphQLError(
+          translate('errors.project_not_found', language, { ns: 'subsidy' }),
+          ErrorCode.NOT_FOUND,
+          404
+        );
+      }
+
+      if (!project.institution_id) {
+        throw new CustomGraphQLError(
+          translate('errors.project_has_no_institution', language, { ns: 'subsidy' }),
+          ErrorCode.BAD_REQUEST,
+          400
+        );
+      }
+
+      institutionId = project.institution_id;
+    }
+
+    console.log('🟡 [SubsidyRequestService.createWithoutDocumentRequest] START', {
+      project_id: data.project_id,
+      institution_id: institutionId,
+      department_id: data.department_id,
+      items_count: data.items?.length ?? 0,
+    });
+
+    const createDto: SubsidyRequestCreateDto = {
+      ...data,
+      institution_id: institutionId,
+      request_type: SubsidyRequestType.WITHOUT_DOCUMENT,
+      is_for_advance: false,
+    };
+    return this.create(createDto, userId, language);
   }
 
   /**
@@ -378,6 +480,7 @@ export class SubsidyRequestService {
         project_id: projectId,
         requester_id: userId,
         subsidy_statuses_id: pendingStatus.id,
+        request_type: SubsidyRequestType.ADVANCE,
         created_by: userId,
         updated_by: userId,
       },
@@ -430,9 +533,11 @@ export class SubsidyRequestService {
         this.validateStatusTransition(current.subsidy_status?.name, newStatus.name, language);
         
         const targetName = newStatus.name.toUpperCase();
-        
-        // Validate documents for terminal states
-        if (['APPROVED', 'REJECTED', 'CLOSED'].includes(targetName)) {
+        const currentRequestType = (current as any).request_type as SubsidyRequestType | undefined;
+        const requiresDocValidation = !currentRequestType || currentRequestType === SubsidyRequestType.WITH_DOCUMENT;
+
+        // Validate documents for terminal states apenas para WITH_DOCUMENT
+        if (requiresDocValidation && ['APPROVED', 'REJECTED', 'CLOSED'].includes(targetName)) {
           await this.ensureAllDocumentsValidated(id, language);
         }
         
@@ -486,8 +591,11 @@ export class SubsidyRequestService {
       }
     }
 
-    // Process linked_activity_document_ids if any
-    if (data.items && data.items.length > 0) {
+    // Processar documentos linkados apenas para WITH_DOCUMENT
+    const currentRequestTypeForUpdate = (current as any).request_type as SubsidyRequestType | undefined;
+    const isWithDocument = !currentRequestTypeForUpdate || currentRequestTypeForUpdate === SubsidyRequestType.WITH_DOCUMENT;
+
+    if (isWithDocument && data.items && data.items.length > 0) {
       // Fetch created items to get their IDs
       const createdItems = await this.subsidyRequestItemRepository.findBySubsidyRequestId(id);
       
@@ -514,14 +622,12 @@ export class SubsidyRequestService {
 
           }
         }
-
-
       }
     }
 
     // Validate that the sum of receipt amounts matches the requested amount for each item
-    // For UPDATE, we need to check ALL receipts for each item, not just linked ones
-    if (data.items && data.items.length > 0) {
+    // Only for WITH_DOCUMENT type
+    if (isWithDocument && data.items && data.items.length > 0) {
       const createdItems = await this.subsidyRequestItemRepository.findBySubsidyRequestId(id);
       
       for (const itemInput of data.items) {
@@ -775,8 +881,125 @@ export class SubsidyRequestService {
     return this.subsidyRequestRepository.findAll();
   }
 
+  async getCollaboratorsForSubsidyRequest(subsidyRequest: SubsidyRequest): Promise<ProjectCollaborator[]> {
+    const rolesPriority: Record<CollaboratorRole, number> = {
+      [CollaboratorRole.owner]: 0,
+      [CollaboratorRole.co_owner]: 1,
+      [CollaboratorRole.requester]: 2,
+      [CollaboratorRole.finance]: 3,
+      [CollaboratorRole.assignee]: 4,
+    };
+
+    const collaboratorsMap = new Map<string, ProjectCollaborator>();
+
+    const addOrKeep = (userId: string, entry: ProjectCollaborator) => {
+      const existing = collaboratorsMap.get(userId);
+      if (!existing || rolesPriority[entry.role] < rolesPriority[existing.role]) {
+        collaboratorsMap.set(userId, entry);
+      }
+    };
+
+    const project = (subsidyRequest as any).project as {
+      owner_id?: string;
+      owner?: unknown;
+      co_owner_id?: string | null;
+      co_owner?: unknown;
+    } | null;
+
+    // 1. Owner do projeto vinculado
+    if (project?.owner && project.owner_id) {
+      addOrKeep(project.owner_id, {
+        user: project.owner as unknown as User,
+        role: CollaboratorRole.owner,
+        activity_ids: [],
+      });
+    }
+
+    // 2. Co-owner do projeto vinculado
+    if (project?.co_owner && project.co_owner_id) {
+      addOrKeep(project.co_owner_id, {
+        user: project.co_owner as unknown as User,
+        role: CollaboratorRole.co_owner,
+        activity_ids: [],
+      });
+    }
+
+    // 3. Solicitante (quem criou o pedido)
+    if (subsidyRequest.requester && subsidyRequest.requester_id) {
+      addOrKeep(subsidyRequest.requester_id, {
+        user: subsidyRequest.requester as unknown as User,
+        role: CollaboratorRole.requester,
+        activity_ids: [],
+      });
+    }
+
+    // 4. Gestores financeiros (FINANCIAL_MANAGER) da mesma instituição
+    if (subsidyRequest.institution_id) {
+      const financeUsers = await this.prisma.user.findMany({
+        where: {
+          institution_id: subsidyRequest.institution_id,
+          is_deleted: false,
+          user_roles: {
+            some: {
+              is_deleted: false,
+              role: { key_code: 'FINANCIAL_MANAGER' },
+            },
+          },
+        },
+      });
+
+      for (const financeUser of financeUsers) {
+        addOrKeep(financeUser.id, {
+          user: financeUser as unknown as User,
+          role: CollaboratorRole.finance,
+          activity_ids: [],
+        });
+      }
+    }
+
+    return Array.from(collaboratorsMap.values());
+  }
+
   async findByProjectId(projectId: string): Promise<SubsidyRequest[]> {
     return this.subsidyRequestRepository.findManyByFilters({ project_id: projectId });
+  }
+
+  /**
+   * Submit a DRAFT subsidy request for review (DRAFT → PENDING).
+   */
+  async submit(id: string, userId: string, language: LanguagePreference = LanguagePreference.en): Promise<SubsidyRequest> {
+    const current = await this.subsidyRequestRepository.findById(id);
+
+    if (!current) {
+      throw new CustomGraphQLError(
+        translate('errors.subsidy_not_found', language, { ns: 'subsidy' }),
+        ErrorCode.NOT_FOUND,
+        404,
+      );
+    }
+
+    if (current.subsidy_status?.name?.toUpperCase() !== 'DRAFT') {
+      throw new CustomGraphQLError(
+        translate('errors.invalid_transition_from_draft', language, { ns: 'subsidy', to: current.subsidy_status?.name ?? 'UNKNOWN' }),
+        ErrorCode.BAD_REQUEST,
+        400,
+        { additional: { errorCode: 'INVALID_TRANSITION_FROM_DRAFT' } },
+      );
+    }
+
+    const pendingStatus = await this.prisma.subsidyStatus.findFirst({
+      where: { name: 'PENDING', is_deleted: false },
+    });
+
+    if (!pendingStatus) {
+      throw new CustomGraphQLError(
+        translate('errors.pending_status_not_found', language, { ns: 'subsidy' }),
+        ErrorCode.NOT_FOUND,
+        404,
+      );
+    }
+
+    return this.update(id, { subsidy_status_id: pendingStatus.id, notes: translate('history.request_submitted', language, { ns: 'subsidy' }) }, userId, language);
   }
 
   async approve(id: string, approvedAmount: number, userId: string, language: LanguagePreference = LanguagePreference.en): Promise<SubsidyRequest> {
@@ -794,8 +1017,14 @@ export class SubsidyRequestService {
     // Validate Status Transition
     this.validateStatusTransition(current.subsidy_status?.name, 'APPROVED', language);
 
-    // Ensure all documents are approved (not just validated - rejects any with rejected docs)
-    await this.ensureAllDocumentsApproved(id, language);
+    // Validação de documentos: apenas obrigatória para WITH_DOCUMENT
+    const requestType = (current as any).request_type as SubsidyRequestType | undefined;
+    const requiresDocumentValidation = !requestType || requestType === SubsidyRequestType.WITH_DOCUMENT;
+
+    if (requiresDocumentValidation) {
+      // Ensure all documents are approved (not just validated - rejects any with rejected docs)
+      await this.ensureAllDocumentsApproved(id, language);
+    }
 
     // Buscar status "APPROVED"
     const approvedStatus = await this.prisma.subsidyStatus.findFirst({
@@ -942,7 +1171,13 @@ export class SubsidyRequestService {
     console.log(`📊 [recalculateStatus] Subsidy ${id}: ${approvedDocs}/${totalDocs} approved, ${rejectedDocs}/${totalDocs} rejected, ${pendingDocs}/${totalDocs} pending. Suggested status: ${suggestedStatus}`);
 
     // Only auto-update to IN_REVIEW when documents start being validated
-    // APPROVED/REJECTED/CLOSED must be set manually to trigger budget calculations once
+    // Skip auto-update if still in DRAFT — wait for explicit submission
+    const currentStatusName = subsidyRequest.subsidy_status?.name?.toUpperCase();
+    if (currentStatusName === 'DRAFT') {
+      console.log(`⏭️  Skipping auto-status for subsidy ${id}: still in DRAFT`);
+      return;
+    }
+
     if (suggestedStatus === 'IN_REVIEW') {
       const status = await this.prisma.subsidyStatus.findFirst({
         where: { name: 'IN_REVIEW', is_deleted: false }
@@ -1077,17 +1312,6 @@ export class SubsidyRequestService {
         translate('errors.subsidy_not_found', language, { ns: 'subsidy' }),
         ErrorCode.NOT_FOUND,
         404
-      );
-    }
-
-    // Validate that subsidy is in ADVANCED_CLOSED or CLOSED status
-    const validStatuses = ['ADVANCED_CLOSED', 'CLOSED'];
-    if (!validStatuses.includes(subsidyRequest.subsidy_status?.name?.toUpperCase() || '')) {
-      throw new CustomGraphQLError(
-        translate('errors.refund_invalid_status', language, { ns: 'subsidy' }),
-        ErrorCode.BAD_REQUEST,
-        400,
-        { additional: { errorCode: 'REFUND_INVALID_STATUS' } }
       );
     }
 

@@ -3,6 +3,7 @@ import { ObjectType } from '@nestjs/graphql';
 import { Decimal } from '@prisma/client/runtime/library';
 import { GraphQLDecimal } from 'prisma-graphql-type-decimal';
 import { SubsidyRequestPriority } from '../prisma/subsidy-request-priority.enum';
+import { SubsidyRequestType } from '../prisma/subsidy-request-type.enum';
 
 @ObjectType()
 export class SubsidyRequestMaxAggregate {
@@ -75,6 +76,9 @@ export class SubsidyRequestMaxAggregate {
 
     @Field(() => GraphQLDecimal, {nullable:true})
     advance_amount?: Decimal;
+
+    @Field(() => SubsidyRequestType, {nullable:true})
+    request_type?: `${SubsidyRequestType}`;
 
     @Field(() => GraphQLDecimal, {nullable:true})
     refund_amount?: Decimal;

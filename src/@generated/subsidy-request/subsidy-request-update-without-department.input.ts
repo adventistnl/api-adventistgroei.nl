@@ -9,6 +9,7 @@ import { NullableDateTimeFieldUpdateOperationsInput } from '../prisma/nullable-d
 import { BoolFieldUpdateOperationsInput } from '../prisma/bool-field-update-operations.input';
 import { EnumSubsidyRequestPriorityFieldUpdateOperationsInput } from '../prisma/enum-subsidy-request-priority-field-update-operations.input';
 import { NullableDecimalFieldUpdateOperationsInput } from '../prisma/nullable-decimal-field-update-operations.input';
+import { EnumSubsidyRequestTypeFieldUpdateOperationsInput } from '../prisma/enum-subsidy-request-type-field-update-operations.input';
 import { InstitutionUpdateOneRequiredWithoutSubsidy_requestsNestedInput } from '../institution/institution-update-one-required-without-subsidy-requests-nested.input';
 import { UserUpdateOneRequiredWithoutSubsidyRequestNestedInput } from '../user/user-update-one-required-without-subsidy-request-nested.input';
 import { ChurchUpdateOneWithoutSubsidy_requestsNestedInput } from '../church/church-update-one-without-subsidy-requests-nested.input';
@@ -74,6 +75,9 @@ export class SubsidyRequestUpdateWithoutDepartmentInput {
     @Field(() => NullableDecimalFieldUpdateOperationsInput, {nullable:true})
     @Type(() => NullableDecimalFieldUpdateOperationsInput)
     advance_amount?: NullableDecimalFieldUpdateOperationsInput;
+
+    @Field(() => EnumSubsidyRequestTypeFieldUpdateOperationsInput, {nullable:true})
+    request_type?: EnumSubsidyRequestTypeFieldUpdateOperationsInput;
 
     @Field(() => DecimalFieldUpdateOperationsInput, {nullable:true})
     @Type(() => DecimalFieldUpdateOperationsInput)

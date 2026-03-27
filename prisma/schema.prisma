@@ -96,8 +96,10 @@ enum PermissionResolverName {
   deleteDirectMessage
   projects
   project
+  myProjects
   createProject
   updateProject
+  updateProjectCoOwner
   deleteProject
   notifications
   notification
@@ -116,6 +118,7 @@ enum PermissionResolverName {
   deleteSubsidyRequest
   approveSubsidyRequest
   rejectSubsidyRequest
+  submitSubsidyRequest
   subsidyStatuses
   subsidyStatus
   createSubsidyStatus
@@ -176,9 +179,20 @@ enum PermissionResolverName {
   subsidyByMonth
   subsidyByStatus
   createAdvanceRequest
+  createSubsidyWithoutDocument
   requestSubsidyRefund
   getSubsidiesWaitingRefund
   confirmRefundDone
+  projectHistories
+  createProjectHistory
+  deleteProjectHistory
+  projectAdjustments
+  projectAdjustment
+  createAdjustment
+  updateAdjustmentStatus
+  addAdjustmentTask
+  toggleAdjustmentTask
+  removeAdjustmentTask
 }
 
 enum PermissionGroup {
@@ -203,6 +217,7 @@ enum PermissionGroup {
   EMAIL_SEND
   INVITE
   ANNUAL_BUDGET
+  PROJECT_HISTORY
 }
 
 enum CommunicationType {
@@ -228,8 +243,13 @@ enum CommunicationStatus {
 
 enum ProjectStatus {
   DRAFT
-  IN_PROGRESS
+  OPEN_REQUEST
   IN_REVIEW
+  ADJUSTMENTS_NEEDED
+  IN_PROGRESS
+  PENDING_RECEIPT
+  WAITING_REFUND
+  OVERDUE
   ON_HOLD
   EXPIRED
   CONCLUDED
@@ -238,6 +258,27 @@ enum ProjectStatus {
 enum ProjectType {
   Local
   Global
+}
+
+enum ProjectHistoryType {
+  COMMENT
+  CREATED
+  UPDATED
+  STATUS_CHANGED
+  BUDGET_UPDATED
+  DEADLINE_UPDATED
+  OWNER_CHANGED
+  CO_OWNER_UPDATED
+  DEPARTMENT_CHANGED
+  DELETED
+  RESTORED
+  ADJUSTMENT_NEEDED
+}
+
+enum AdjustmentStatus {
+  OPEN
+  IN_PROGRESS
+  CLOSED
 }
 
 enum AnnualBudgetStatus {
@@ -522,13 +563,15 @@ model User {
   SubsidyRequest            SubsidyRequest[]
   SubsidyStatus             SubsidyStatus[]
   voluntary_projects        VoluntariesOnProjects[]
-  Project                   Project[]
+  Project                   Project[]                @relation("ProjectOwner")
+  co_owned_projects         Project[]                @relation("ProjectCoOwner")
   approved_annual_budgets   AnnualBudget[]           @relation("ApprovedAnnualBudgets")
   project_activity_logs     ProjectActivityLog[]
   activity_assignments      ProjectActivityAssignee[] @relation("ActivityAssignees")
   subsidy_status_history    SubsidyStatusHistory[]
   led_departments           Department[]             @relation("DepartmentLeader")
   led_church                Church?                  @relation("ChurchLeader")
+  project_history           ProjectHistory[]
 }
 
 model Project {
@@ -543,7 +586,9 @@ model Project {
   subsidized_budget     Decimal             @default(0)
   balance               Decimal             @default(0)
   owner_id              String
-  owner                 User                    @relation(fields: [owner_id], references: [id])
+  owner                 User                    @relation("ProjectOwner", fields: [owner_id], references: [id])
+  co_owner_id           String?
+  co_owner              User?                   @relation("ProjectCoOwner", fields: [co_owner_id], references: [id])
   language_preference   LanguagePreference
   type                  ProjectType
   status                ProjectStatus           @default(DRAFT)
@@ -569,6 +614,7 @@ model Project {
   activities            ProjectActivity[]
   subsidies             SubsidyRequest[]
   special_projects      SpecialProjects[]
+  history               ProjectHistory[]
 }
 
 model VoluntariesOnProjects {
@@ -688,6 +734,7 @@ model SubsidyRequest {
   status_history      SubsidyStatusHistory[]
   is_for_advance      Boolean                 @default(false)
   advance_amount      Decimal?
+  request_type        SubsidyRequestType      @default(WITH_DOCUMENT)
   refund_amount       Decimal                 @default(0)
   have_refund         Boolean                 @default(false)
   refund_done         Boolean                 @default(false)
@@ -697,6 +744,12 @@ enum SubsidyRequestPriority {
   LOW
   MEDIUM
   HIGH
+}
+
+enum SubsidyRequestType {
+  ADVANCE
+  WITHOUT_DOCUMENT
+  WITH_DOCUMENT
 }
 
 enum SubsidyHistoryType {
@@ -803,9 +856,10 @@ model ProjectActivityLog {
 }
 
 model SubsidyReceipt {
-  id                    String          @id @default(uuid())
-  project_activities_id String
-  project_activity      ProjectActivity @relation(fields: [project_activities_id], references: [id])
+  id                    String           @id @default(uuid())
+  project_activities_id String?
+  project_activity      ProjectActivity? @relation(fields: [project_activities_id], references: [id])
+  is_refund_receipt     Boolean          @default(false)
   file_url              String          // Google Drive public URL
   drive_file_id         String?         // Google Drive file ID
   filename              String          // Original filename
@@ -815,6 +869,8 @@ model SubsidyReceipt {
   is_validated          Boolean         @default(false)
   validated_at          DateTime?
   validated_by          String?
+  rejection_reason      String?
+  note                  String?
   uploaded_by           String
   created_at            DateTime        @default(now())
   updated_at            DateTime        @updatedAt
@@ -1158,4 +1214,51 @@ model VerificationCode {
   attempts     Int      @default(0)
   createdAt    DateTime @default(now())
   used         Boolean  @default(false)
+}
+
+model ProjectHistory {
+  id          String             @id @default(uuid())
+  project_id  String
+  project     Project            @relation(fields: [project_id], references: [id], onDelete: Cascade)
+  user_id     String
+  user        User               @relation(fields: [user_id], references: [id])
+  type        ProjectHistoryType
+  comment     String?            // Comentário livre do usuário
+  field_name  String?            // Campo alterado (logs automatizados)
+  old_value   String?            // Valor anterior
+  new_value   String?            // Valor novo
+  metadata    Json?              // Dados extras em JSON
+  created_at  DateTime           @default(now())
+  adjustment  ProjectAdjustment?
+
+  @@index([project_id])
+  @@index([user_id])
+  @@index([created_at])
+}
+
+model ProjectAdjustment {
+  id                 String            @id @default(uuid())
+  project_history_id String            @unique
+  project_history    ProjectHistory    @relation(fields: [project_history_id], references: [id], onDelete: Cascade)
+  status             AdjustmentStatus  @default(OPEN)
+  tasks              AdjustmentTask[]
+  created_at         DateTime          @default(now())
+  updated_at         DateTime          @updatedAt
+  created_by         String
+  updated_by         String
+
+  @@index([status])
+}
+
+model AdjustmentTask {
+  id            String            @id @default(uuid())
+  adjustment_id String
+  adjustment    ProjectAdjustment @relation(fields: [adjustment_id], references: [id], onDelete: Cascade)
+  title         String
+  completed     Boolean           @default(false)
+  position      Int               @default(0)
+  created_at    DateTime          @default(now())
+  updated_at    DateTime          @updatedAt
+
+  @@index([adjustment_id])
 }

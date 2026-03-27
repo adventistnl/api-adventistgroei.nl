@@ -23,3 +23,5 @@ export * from './invite.resolver';
 export * from './email.resolver';
 export * from './annual-budget.resolver';
 export * from '../resolvers/forgot-password/forgot-password.resolver';
+export * from './project-history.resolver';
+export * from './project-adjustment.resolver';

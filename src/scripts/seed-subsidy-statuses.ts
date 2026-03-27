@@ -26,6 +26,15 @@ async function main() {
 
   const statuses = [
     {
+      name: 'DRAFT',
+      description: 'Rascunho — ainda não submetido',
+      order: 0,
+      department_id: department.id,
+      assigned_to: user.id,
+      created_by: user.id,
+      updated_by: user.id,
+    },
+    {
       name: 'PENDING',
       description: 'Aguardando aprovação',
       order: 1,
