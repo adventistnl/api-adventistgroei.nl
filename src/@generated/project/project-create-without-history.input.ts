@@ -19,6 +19,7 @@ import { VoluntariesOnProjectsCreateNestedManyWithoutProjectInput } from '../vol
 import { ProjectActivityCreateNestedManyWithoutProjectInput } from '../project-activity/project-activity-create-nested-many-without-project.input';
 import { SubsidyRequestCreateNestedManyWithoutProjectInput } from '../subsidy-request/subsidy-request-create-nested-many-without-project.input';
 import { SpecialProjectsCreateNestedManyWithoutProjectInput } from '../special-projects/special-projects-create-nested-many-without-project.input';
+import { BudgetTransactionCreateNestedManyWithoutProjectInput } from '../budget-transaction/budget-transaction-create-nested-many-without-project.input';
 
 @InputType()
 export class ProjectCreateWithoutHistoryInput {
@@ -135,4 +136,8 @@ export class ProjectCreateWithoutHistoryInput {
     @Field(() => SpecialProjectsCreateNestedManyWithoutProjectInput, {nullable:true})
     @Type(() => SpecialProjectsCreateNestedManyWithoutProjectInput)
     special_projects?: SpecialProjectsCreateNestedManyWithoutProjectInput;
+
+    @Field(() => BudgetTransactionCreateNestedManyWithoutProjectInput, {nullable:true})
+    @Type(() => BudgetTransactionCreateNestedManyWithoutProjectInput)
+    budget_transactions?: BudgetTransactionCreateNestedManyWithoutProjectInput;
 }

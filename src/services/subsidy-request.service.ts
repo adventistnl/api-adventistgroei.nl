@@ -83,8 +83,8 @@ export class SubsidyRequestService {
           );
       }
 
-      // Rule 3: ADVANCED_CLOSED can ONLY go to CLOSED
-      if (from === 'ADVANCED_CLOSED' && to !== 'CLOSED' && from !== to) {
+      // Rule 3: ADVANCED_CLOSED can go to CLOSED or WAITING_REFUND
+      if (from === 'ADVANCED_CLOSED' && to !== 'CLOSED' && to !== 'WAITING_REFUND' && from !== to) {
            throw new CustomGraphQLError(
               translate('errors.invalid_transition_advanced_closed', language, { ns: 'subsidy', to }),
               ErrorCode.BAD_REQUEST,
@@ -93,9 +93,8 @@ export class SubsidyRequestService {
           );
       }
 
-      // Rule 4: Approved can go to CLOSED or ADVANCED_CLOSED (for advance requests)
-      // Rejected can ONLY go to Closed
-      if (from === 'APPROVED' && to !== 'CLOSED' && to !== 'ADVANCED_CLOSED' && from !== to) {
+      // Rule 4: APPROVED can go to CLOSED, ADVANCED_CLOSED (advance) or WAITING_REFUND (refund needed)
+      if (from === 'APPROVED' && to !== 'CLOSED' && to !== 'ADVANCED_CLOSED' && to !== 'WAITING_REFUND' && from !== to) {
            throw new CustomGraphQLError(
               translate('errors.invalid_transition_final_state', language, { ns: 'subsidy', from, to }),
               ErrorCode.BAD_REQUEST,
@@ -104,6 +103,17 @@ export class SubsidyRequestService {
           );
       }
 
+      // Rule 5: WAITING_REFUND can only go to CLOSED (when refund is confirmed)
+      if (from === 'WAITING_REFUND' && to !== 'CLOSED' && from !== to) {
+           throw new CustomGraphQLError(
+              translate('errors.invalid_transition_final_state', language, { ns: 'subsidy', from, to }),
+              ErrorCode.BAD_REQUEST,
+              400,
+              { additional: { errorCode: 'INVALID_TRANSITION_FINAL_STATE' } }
+          );
+      }
+
+      // Rule 6: REJECTED can only go to CLOSED
       if (from === 'REJECTED' && to !== 'CLOSED' && from !== to) {
            throw new CustomGraphQLError(
               translate('errors.invalid_transition_final_state', language, { ns: 'subsidy', from, to }),
@@ -540,6 +550,21 @@ export class SubsidyRequestService {
         if (requiresDocValidation && ['APPROVED', 'REJECTED', 'CLOSED'].includes(targetName)) {
           await this.ensureAllDocumentsValidated(id, language);
         }
+
+        // Transitioning to WAITING_REFUND: ensure refund_amount is already set on the record
+        // (set by the prior requestRefund mutation before this status update is triggered)
+        if (targetName === 'WAITING_REFUND') {
+          const existingRefundAmount = (current as any).refund_amount;
+          if (!existingRefundAmount || Number(existingRefundAmount) <= 0) {
+            throw new CustomGraphQLError(
+              translate('errors.refund_amount_required', language, { ns: 'subsidy' }) ||
+              'refund_amount must be set before transitioning to WAITING_REFUND',
+              ErrorCode.BAD_REQUEST,
+              400,
+              { additional: { errorCode: 'REFUND_AMOUNT_REQUIRED' } }
+            );
+          }
+        }
         
         // Only FINANCIAL_MANAGER can close a subsidy request - MUST be checked BEFORE update
         if (targetName === 'CLOSED') {
@@ -678,32 +703,54 @@ export class SubsidyRequestService {
         changed_by: userId,
       });
 
-      // When status changes to CLOSED, release allocation and add approved amount to spent
-      // EXCEPT when coming from ADVANCED_CLOSED (budget was already updated during advance)
-      if (newStatus?.name.toUpperCase() === 'CLOSED') {
-        const previousStatusName = previousStatus?.name?.toUpperCase();
-        
-        // Skip budget update if coming from ADVANCED_CLOSED
-        if (previousStatusName !== 'ADVANCED_CLOSED') {
-          const fullRequest = await this.prisma.subsidyRequest.findUnique({
-            where: { id },
-            select: { department_id: true, approved_amount: true, total_budget: true }
-          });
+      const prevName = previousStatus?.name?.toUpperCase();
+      const nextName = newStatus?.name?.toUpperCase();
 
-          if (fullRequest?.department_id && fullRequest.approved_amount) {
+      // ── CLOSED ────────────────────────────────────────────────────────────────
+      if (nextName === 'CLOSED') {
+        const fullRequest = await this.prisma.subsidyRequest.findUnique({
+          where: { id },
+          select: { department_id: true, approved_amount: true, total_budget: true, request_type: true }
+        });
+
+        if (fullRequest?.department_id) {
+          if (prevName === 'REJECTED') {
+            // REJECTED → CLOSED: release the reserved allocation (no expense was incurred)
             await this.annualBudgetService.updateBudgetFinancials(
               fullRequest.department_id,
               new Date().getFullYear(),
-              -Number(fullRequest.total_budget || 0), // Release allocation (remove from planned)
-              Number(fullRequest.approved_amount), // Add approved amount as expense (move to spent)
-              userId
+              -Number(fullRequest.total_budget || 0), // Release allocation
+              0,
+              userId,
+              {
+                type: 'ALLOCATION_RELEASED',
+                description: `Budget reservation released — request rejected`,
+                subsidy_request_id: id
+              }
+            );
+          } else if (prevName === 'ADVANCED_CLOSED' || prevName === 'WAITING_REFUND') {
+            // Budget already handled (ADVANCED_CLOSED recorded expense; WAITING_REFUND→CLOSED records refund below)
+            // No additional BudgetTransaction needed here
+          } else if (fullRequest.approved_amount) {
+            // APPROVED → CLOSED (normal path, no refund): record expense
+            await this.annualBudgetService.updateBudgetFinancials(
+              fullRequest.department_id,
+              new Date().getFullYear(),
+              -Number(fullRequest.total_budget || 0), // Release allocation
+              Number(fullRequest.approved_amount),    // Record as real expense
+              userId,
+              {
+                type: 'EXPENSE_APPROVED',
+                description: `Subsidy converted to actual expense`,
+                subsidy_request_id: id
+              }
             );
           }
         }
       }
 
-      // When status changes to ADVANCED_CLOSED, update budget with advance amount
-      if (newStatus?.name.toUpperCase() === 'ADVANCED_CLOSED') {
+      // ── ADVANCED_CLOSED ───────────────────────────────────────────────────────
+      if (nextName === 'ADVANCED_CLOSED') {
         const fullRequest = await this.prisma.subsidyRequest.findUnique({
           where: { id },
           select: { department_id: true, advance_amount: true, total_budget: true, is_for_advance: true }
@@ -714,9 +761,75 @@ export class SubsidyRequestService {
             fullRequest.department_id,
             new Date().getFullYear(),
             -Number(fullRequest.total_budget || 0), // Release allocation
-            Number(fullRequest.advance_amount), // Add advance amount as expense
-            userId
+            Number(fullRequest.advance_amount),      // Record advance as expense
+            userId,
+            {
+              type: 'EXPENSE_APPROVED',
+              description: `Advance subsidy converted to actual expense`,
+              subsidy_request_id: id
+            }
           );
+        }
+      }
+
+      // ── WAITING_REFUND ────────────────────────────────────────────────────────
+      // Transition INTO WAITING_REFUND: record the expense for non-advance paths
+      // (advances already recorded expense in ADVANCED_CLOSED; here we handle APPROVED→WAITING_REFUND)
+      if (nextName === 'WAITING_REFUND') {
+        const fullRequest = await this.prisma.subsidyRequest.findUnique({
+          where: { id },
+          select: {
+            department_id: true,
+            approved_amount: true,
+            total_budget: true,
+            refund_amount: true,
+            refund_type: true,
+            is_for_advance: true
+          }
+        });
+
+        if (fullRequest?.department_id && fullRequest.approved_amount) {
+          if (prevName === 'APPROVED' && !fullRequest.is_for_advance) {
+            // Non-advance: expense not yet recorded — record net expense (approved - refund)
+            const refundAmt  = Number(fullRequest.refund_amount || 0);
+            const approvedAmt = Number(fullRequest.approved_amount);
+            const netExpense  = approvedAmt - refundAmt;
+
+            await this.annualBudgetService.updateBudgetFinancials(
+              fullRequest.department_id,
+              new Date().getFullYear(),
+              -Number(fullRequest.total_budget || 0), // Release allocation
+              netExpense > 0 ? netExpense : 0,        // Record net expense
+              userId,
+              {
+                type: 'EXPENSE_APPROVED',
+                description: `Subsidy approved — pending partial/full refund`,
+                subsidy_request_id: id
+              }
+            );
+          }
+
+          // Record the expected refund (reduces expenses) for all paths
+          const refundAmt = Number(fullRequest.refund_amount || 0);
+          if (refundAmt > 0) {
+            const isTotal = fullRequest.refund_type === 'TOTAL' ||
+              (fullRequest.approved_amount && refundAmt >= Number(fullRequest.approved_amount));
+
+            await this.annualBudgetService.updateBudgetFinancials(
+              fullRequest.department_id,
+              new Date().getFullYear(),
+              0,
+              -refundAmt, // Return money to department (reduce expenses)
+              userId,
+              {
+                type: isTotal ? 'REFUND_TOTAL' : 'REFUND_PARTIAL',
+                description: isTotal
+                  ? `Full refund — subsidy pending confirmation`
+                  : `Partial refund of ${refundAmt} — subsidy pending confirmation`,
+                subsidy_request_id: id
+              }
+            );
+          }
         }
       }
     }
@@ -1126,7 +1239,12 @@ export class SubsidyRequestService {
          new Date().getFullYear(),
          -Number(fullRequest.total_budget || 0), // Release allocation
          0, // No expense
-         userId
+         userId,
+         {
+           type: 'ALLOCATION_RELEASED',
+           description: `Budget reservation released — subsidy rejected`,
+           subsidy_request_id: id
+         }
        );
     }
 
@@ -1301,6 +1419,7 @@ export class SubsidyRequestService {
   async requestRefund(
     id: string,
     refundAmount: number,
+    refundType: 'TOTAL' | 'PARTIAL',
     reason: string,
     userId: string,
     language: LanguagePreference = LanguagePreference.en
@@ -1329,7 +1448,9 @@ export class SubsidyRequestService {
       id,
       {
         refund_amount: refundAmount,
+        refund_type: refundType,
         have_refund: true,
+        refund_rejected: false, // Reset rejection if requested again
       } as any,
       userId
     );
@@ -1440,7 +1561,12 @@ export class SubsidyRequestService {
         new Date().getFullYear(),
         refundAmount, // Add back to allocated
         -refundAmount, // Remove from spent
-        userId
+        userId,
+        {
+          type: (subsidyRequest as any).refund_type === 'PARTIAL' ? 'REFUND_PARTIAL' : 'REFUND_TOTAL',
+          description: `Subsidy refund processed`,
+          subsidy_request_id: id
+        }
       );
     }
 
@@ -1494,6 +1620,62 @@ export class SubsidyRequestService {
       // Log error but don't fail the refund confirmation
       console.error('[SubsidyRequestService] Failed to send refund email:', emailError);
     }
+
+    return result;
+  }
+
+  /**
+   * Rejects a requested refund.
+   * Sets refund_rejected = true so frontend knows.
+   */
+  async rejectRefund(
+    id: string,
+    reason: string,
+    userId: string,
+    language: LanguagePreference = LanguagePreference.en
+  ): Promise<SubsidyRequest> {
+    const subsidyRequest = await this.subsidyRequestRepository.findById(id);
+    
+    if (!subsidyRequest) {
+      throw new CustomGraphQLError(
+        translate('errors.subsidy_not_found', language, { ns: 'subsidy' }),
+        ErrorCode.NOT_FOUND,
+        404
+      );
+    }
+
+    if (!(subsidyRequest as any).have_refund) {
+      throw new CustomGraphQLError(
+        translate('errors.no_refund_requested', language, { ns: 'subsidy' }),
+        ErrorCode.BAD_REQUEST,
+        400
+      );
+    }
+
+    if ((subsidyRequest as any).refund_done) {
+      throw new CustomGraphQLError(
+        translate('errors.refund_already_done', language, { ns: 'subsidy' }),
+        ErrorCode.BAD_REQUEST,
+        400
+      );
+    }
+
+    const result = await this.subsidyRequestRepository.update(
+      id,
+      {
+        refund_rejected: true,
+      } as any,
+      userId
+    );
+
+    // Create history record
+    await this.historyRepository.create({
+      subsidy_request_id: id,
+      status_id: subsidyRequest.subsidy_statuses_id,
+      type: SubsidyHistoryType.COMMENT,
+      reason: translate('history.refund_rejected', language, { ns: 'subsidy', reason }),
+      changed_by: userId,
+    });
 
     return result;
   }

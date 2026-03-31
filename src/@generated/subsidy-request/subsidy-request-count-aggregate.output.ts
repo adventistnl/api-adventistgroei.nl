@@ -87,5 +87,11 @@ export class SubsidyRequestCountAggregate {
     refund_done!: number;
 
     @Field(() => Int, {nullable:false})
+    refund_type!: number;
+
+    @Field(() => Int, {nullable:false})
+    refund_rejected!: number;
+
+    @Field(() => Int, {nullable:false})
     _all!: number;
 }

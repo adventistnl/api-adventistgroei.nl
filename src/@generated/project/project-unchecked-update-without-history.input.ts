@@ -14,6 +14,7 @@ import { VoluntariesOnProjectsUncheckedUpdateManyWithoutProjectNestedInput } fro
 import { ProjectActivityUncheckedUpdateManyWithoutProjectNestedInput } from '../project-activity/project-activity-unchecked-update-many-without-project-nested.input';
 import { SubsidyRequestUncheckedUpdateManyWithoutProjectNestedInput } from '../subsidy-request/subsidy-request-unchecked-update-many-without-project-nested.input';
 import { SpecialProjectsUncheckedUpdateManyWithoutProjectNestedInput } from '../special-projects/special-projects-unchecked-update-many-without-project-nested.input';
+import { BudgetTransactionUncheckedUpdateManyWithoutProjectNestedInput } from '../budget-transaction/budget-transaction-unchecked-update-many-without-project-nested.input';
 
 @InputType()
 export class ProjectUncheckedUpdateWithoutHistoryInput {
@@ -120,4 +121,8 @@ export class ProjectUncheckedUpdateWithoutHistoryInput {
     @Field(() => SpecialProjectsUncheckedUpdateManyWithoutProjectNestedInput, {nullable:true})
     @Type(() => SpecialProjectsUncheckedUpdateManyWithoutProjectNestedInput)
     special_projects?: SpecialProjectsUncheckedUpdateManyWithoutProjectNestedInput;
+
+    @Field(() => BudgetTransactionUncheckedUpdateManyWithoutProjectNestedInput, {nullable:true})
+    @Type(() => BudgetTransactionUncheckedUpdateManyWithoutProjectNestedInput)
+    budget_transactions?: BudgetTransactionUncheckedUpdateManyWithoutProjectNestedInput;
 }

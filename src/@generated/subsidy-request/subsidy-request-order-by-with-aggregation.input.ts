@@ -94,6 +94,12 @@ export class SubsidyRequestOrderByWithAggregationInput {
     @Field(() => SortOrder, {nullable:true})
     refund_done?: `${SortOrder}`;
 
+    @Field(() => SortOrderInput, {nullable:true})
+    refund_type?: SortOrderInput;
+
+    @Field(() => SortOrder, {nullable:true})
+    refund_rejected?: `${SortOrder}`;
+
     @Field(() => SubsidyRequestCountOrderByAggregateInput, {nullable:true})
     @Type(() => SubsidyRequestCountOrderByAggregateInput)
     _count?: SubsidyRequestCountOrderByAggregateInput;

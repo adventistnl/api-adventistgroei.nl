@@ -27,7 +27,9 @@ export enum SubsidyRequestScalarFieldEnum {
     request_type = "request_type",
     refund_amount = "refund_amount",
     have_refund = "have_refund",
-    refund_done = "refund_done"
+    refund_done = "refund_done",
+    refund_type = "refund_type",
+    refund_rejected = "refund_rejected"
 }
 
 

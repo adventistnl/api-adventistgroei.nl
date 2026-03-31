@@ -13,6 +13,8 @@ import { User } from '../user/user.model';
 import { Institution } from '../institution/institution.model';
 import { Church } from '../church/church.model';
 import { Department } from '../department/department.model';
+import { BudgetTransaction } from '../budget-transaction/budget-transaction.model';
+import { AnnualBudgetCount } from './annual-budget-count.output';
 
 @ObjectType()
 export class AnnualBudget {
@@ -127,4 +129,10 @@ export class AnnualBudget {
 
     @Field(() => Department, {nullable:true})
     department?: Department | null;
+
+    @Field(() => [BudgetTransaction], {nullable:true})
+    transactions?: Array<BudgetTransaction>;
+
+    @Field(() => AnnualBudgetCount, {nullable:false})
+    _count?: AnnualBudgetCount;
 }

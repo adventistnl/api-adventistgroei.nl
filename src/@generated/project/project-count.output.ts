@@ -19,4 +19,7 @@ export class ProjectCount {
 
     @Field(() => Int, {nullable:false})
     history?: number;
+
+    @Field(() => Int, {nullable:false})
+    budget_transactions?: number;
 }

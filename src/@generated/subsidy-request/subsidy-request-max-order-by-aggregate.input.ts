@@ -85,4 +85,10 @@ export class SubsidyRequestMaxOrderByAggregateInput {
 
     @Field(() => SortOrder, {nullable:true})
     refund_done?: `${SortOrder}`;
+
+    @Field(() => SortOrder, {nullable:true})
+    refund_type?: `${SortOrder}`;
+
+    @Field(() => SortOrder, {nullable:true})
+    refund_rejected?: `${SortOrder}`;
 }

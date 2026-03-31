@@ -21,6 +21,7 @@ import { VoluntariesOnProjectsUpdateManyWithoutProjectNestedInput } from '../vol
 import { ProjectActivityUpdateManyWithoutProjectNestedInput } from '../project-activity/project-activity-update-many-without-project-nested.input';
 import { SubsidyRequestUpdateManyWithoutProjectNestedInput } from '../subsidy-request/subsidy-request-update-many-without-project-nested.input';
 import { ProjectHistoryUpdateManyWithoutProjectNestedInput } from '../project-history/project-history-update-many-without-project-nested.input';
+import { BudgetTransactionUpdateManyWithoutProjectNestedInput } from '../budget-transaction/budget-transaction-update-many-without-project-nested.input';
 
 @InputType()
 export class ProjectUpdateWithoutSpecial_projectsInput {
@@ -134,4 +135,8 @@ export class ProjectUpdateWithoutSpecial_projectsInput {
     @Field(() => ProjectHistoryUpdateManyWithoutProjectNestedInput, {nullable:true})
     @Type(() => ProjectHistoryUpdateManyWithoutProjectNestedInput)
     history?: ProjectHistoryUpdateManyWithoutProjectNestedInput;
+
+    @Field(() => BudgetTransactionUpdateManyWithoutProjectNestedInput, {nullable:true})
+    @Type(() => BudgetTransactionUpdateManyWithoutProjectNestedInput)
+    budget_transactions?: BudgetTransactionUpdateManyWithoutProjectNestedInput;
 }

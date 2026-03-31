@@ -5,6 +5,7 @@ import { GraphQLDecimal } from 'prisma-graphql-type-decimal';
 import { Decimal } from '@prisma/client/runtime/library';
 import { SubsidyRequestPriority } from '../prisma/subsidy-request-priority.enum';
 import { SubsidyRequestType } from '../prisma/subsidy-request-type.enum';
+import { RefundType } from '../prisma/refund-type.enum';
 import { Institution } from '../institution/institution.model';
 import { User } from '../user/user.model';
 import { Department } from '../department/department.model';
@@ -14,6 +15,7 @@ import { SubsidyRequestItem } from '../subsidy-request-item/subsidy-request-item
 import { Project } from '../project/project.model';
 import { SubsidyReceipt } from '../subsidy-receipt/subsidy-receipt.model';
 import { SubsidyStatusHistory } from '../subsidy-status-history/subsidy-status-history.model';
+import { BudgetTransaction } from '../budget-transaction/budget-transaction.model';
 import { SubsidyRequestCount } from './subsidy-request-count.output';
 
 @ObjectType()
@@ -100,6 +102,12 @@ export class SubsidyRequest {
     @Field(() => Boolean, {defaultValue:false,nullable:false})
     refund_done!: boolean;
 
+    @Field(() => RefundType, {nullable:true})
+    refund_type!: `${RefundType}` | null;
+
+    @Field(() => Boolean, {defaultValue:false,nullable:false})
+    refund_rejected!: boolean;
+
     @Field(() => Institution, {nullable:false})
     institution?: Institution;
 
@@ -126,6 +134,9 @@ export class SubsidyRequest {
 
     @Field(() => [SubsidyStatusHistory], {nullable:true})
     status_history?: Array<SubsidyStatusHistory>;
+
+    @Field(() => [BudgetTransaction], {nullable:true})
+    budget_transactions?: Array<BudgetTransaction>;
 
     @Field(() => SubsidyRequestCount, {nullable:false})
     _count?: SubsidyRequestCount;

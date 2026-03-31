@@ -16,6 +16,7 @@ import { ProjectActivity } from '../project-activity/project-activity.model';
 import { SubsidyRequest } from '../subsidy-request/subsidy-request.model';
 import { SpecialProjects } from '../special-projects/special-projects.model';
 import { ProjectHistory } from '../project-history/project-history.model';
+import { BudgetTransaction } from '../budget-transaction/budget-transaction.model';
 import { ProjectCount } from './project-count.output';
 
 @ObjectType()
@@ -140,6 +141,9 @@ export class Project {
 
     @Field(() => [ProjectHistory], {nullable:true})
     history?: Array<ProjectHistory>;
+
+    @Field(() => [BudgetTransaction], {nullable:true})
+    budget_transactions?: Array<BudgetTransaction>;
 
     @Field(() => ProjectCount, {nullable:false})
     _count?: ProjectCount;

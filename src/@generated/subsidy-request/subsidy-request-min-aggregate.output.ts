@@ -4,6 +4,7 @@ import { Decimal } from '@prisma/client/runtime/library';
 import { GraphQLDecimal } from 'prisma-graphql-type-decimal';
 import { SubsidyRequestPriority } from '../prisma/subsidy-request-priority.enum';
 import { SubsidyRequestType } from '../prisma/subsidy-request-type.enum';
+import { RefundType } from '../prisma/refund-type.enum';
 
 @ObjectType()
 export class SubsidyRequestMinAggregate {
@@ -88,4 +89,10 @@ export class SubsidyRequestMinAggregate {
 
     @Field(() => Boolean, {nullable:true})
     refund_done?: boolean;
+
+    @Field(() => RefundType, {nullable:true})
+    refund_type?: `${RefundType}`;
+
+    @Field(() => Boolean, {nullable:true})
+    refund_rejected?: boolean;
 }

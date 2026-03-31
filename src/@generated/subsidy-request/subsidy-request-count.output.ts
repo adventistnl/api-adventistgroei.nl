@@ -13,4 +13,7 @@ export class SubsidyRequestCount {
 
     @Field(() => Int, {nullable:false})
     status_history?: number;
+
+    @Field(() => Int, {nullable:false})
+    budget_transactions?: number;
 }

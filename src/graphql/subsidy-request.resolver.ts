@@ -168,11 +168,24 @@ export class SubsidyRequestResolver {
   async requestSubsidyRefund(
     @Args('id') id: string,
     @Args('refundAmount', { type: () => Float }) refundAmount: number,
+    @Args('refundType', { type: () => String }) refundType: 'TOTAL' | 'PARTIAL',
     @Args('reason') reason: string,
     @Args('language', { type: () => LanguagePreference, nullable: true, defaultValue: LanguagePreference.en }) language: LanguagePreference,
     @Context() context: { userId: string },
   ): Promise<SubsidyRequest> {
-    return this.subsidyRequestService.requestRefund(id, refundAmount, reason, context.userId, language);
+    return this.subsidyRequestService.requestRefund(id, refundAmount, refundType, reason, context.userId, language);
+  }
+
+  @Mutation(() => SubsidyRequest)
+  @UseGuards(PermissionsGuard)
+  @Permission()
+  async rejectSubsidyRefund(
+    @Args('id') id: string,
+    @Args('reason') reason: string,
+    @Args('language', { type: () => LanguagePreference, nullable: true, defaultValue: LanguagePreference.en }) language: LanguagePreference,
+    @Context() context: { userId: string },
+  ): Promise<SubsidyRequest> {
+    return this.subsidyRequestService.rejectRefund(id, reason, context.userId, language);
   }
 
   @Mutation(() => SubsidyRequest)

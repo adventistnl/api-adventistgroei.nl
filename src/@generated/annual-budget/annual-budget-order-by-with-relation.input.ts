@@ -7,6 +7,7 @@ import { UserOrderByWithRelationInput } from '../user/user-order-by-with-relatio
 import { InstitutionOrderByWithRelationInput } from '../institution/institution-order-by-with-relation.input';
 import { ChurchOrderByWithRelationInput } from '../church/church-order-by-with-relation.input';
 import { DepartmentOrderByWithRelationInput } from '../department/department-order-by-with-relation.input';
+import { BudgetTransactionOrderByRelationAggregateInput } from '../budget-transaction/budget-transaction-order-by-relation-aggregate.input';
 
 @InputType()
 export class AnnualBudgetOrderByWithRelationInput {
@@ -126,4 +127,8 @@ export class AnnualBudgetOrderByWithRelationInput {
     @Field(() => DepartmentOrderByWithRelationInput, {nullable:true})
     @Type(() => DepartmentOrderByWithRelationInput)
     department?: DepartmentOrderByWithRelationInput;
+
+    @Field(() => BudgetTransactionOrderByRelationAggregateInput, {nullable:true})
+    @Type(() => BudgetTransactionOrderByRelationAggregateInput)
+    transactions?: BudgetTransactionOrderByRelationAggregateInput;
 }

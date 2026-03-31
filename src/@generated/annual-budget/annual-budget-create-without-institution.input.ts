@@ -14,6 +14,7 @@ import { AnnualBudgetEntityType } from '../prisma/annual-budget-entity-type.enum
 import { UserCreateNestedOneWithoutApproved_annual_budgetsInput } from '../user/user-create-nested-one-without-approved-annual-budgets.input';
 import { ChurchCreateNestedOneWithoutAnnual_budgetsInput } from '../church/church-create-nested-one-without-annual-budgets.input';
 import { DepartmentCreateNestedOneWithoutAnnual_budgetsInput } from '../department/department-create-nested-one-without-annual-budgets.input';
+import { BudgetTransactionCreateNestedManyWithoutAnnual_budgetInput } from '../budget-transaction/budget-transaction-create-nested-many-without-annual-budget.input';
 
 @InputType()
 export class AnnualBudgetCreateWithoutInstitutionInput {
@@ -126,4 +127,8 @@ export class AnnualBudgetCreateWithoutInstitutionInput {
     @Field(() => DepartmentCreateNestedOneWithoutAnnual_budgetsInput, {nullable:true})
     @Type(() => DepartmentCreateNestedOneWithoutAnnual_budgetsInput)
     department?: DepartmentCreateNestedOneWithoutAnnual_budgetsInput;
+
+    @Field(() => BudgetTransactionCreateNestedManyWithoutAnnual_budgetInput, {nullable:true})
+    @Type(() => BudgetTransactionCreateNestedManyWithoutAnnual_budgetInput)
+    transactions?: BudgetTransactionCreateNestedManyWithoutAnnual_budgetInput;
 }

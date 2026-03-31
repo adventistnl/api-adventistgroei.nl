@@ -17,6 +17,7 @@ import { EnumAnnualBudgetEntityTypeFieldUpdateOperationsInput } from '../prisma/
 import { UserUpdateOneWithoutApproved_annual_budgetsNestedInput } from '../user/user-update-one-without-approved-annual-budgets-nested.input';
 import { ChurchUpdateOneWithoutAnnual_budgetsNestedInput } from '../church/church-update-one-without-annual-budgets-nested.input';
 import { DepartmentUpdateOneWithoutAnnual_budgetsNestedInput } from '../department/department-update-one-without-annual-budgets-nested.input';
+import { BudgetTransactionUpdateManyWithoutAnnual_budgetNestedInput } from '../budget-transaction/budget-transaction-update-many-without-annual-budget-nested.input';
 
 @InputType()
 export class AnnualBudgetUpdateWithoutInstitutionInput {
@@ -124,4 +125,8 @@ export class AnnualBudgetUpdateWithoutInstitutionInput {
     @Field(() => DepartmentUpdateOneWithoutAnnual_budgetsNestedInput, {nullable:true})
     @Type(() => DepartmentUpdateOneWithoutAnnual_budgetsNestedInput)
     department?: DepartmentUpdateOneWithoutAnnual_budgetsNestedInput;
+
+    @Field(() => BudgetTransactionUpdateManyWithoutAnnual_budgetNestedInput, {nullable:true})
+    @Type(() => BudgetTransactionUpdateManyWithoutAnnual_budgetNestedInput)
+    transactions?: BudgetTransactionUpdateManyWithoutAnnual_budgetNestedInput;
 }

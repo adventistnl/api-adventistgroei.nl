@@ -84,4 +84,10 @@ export class SubsidyRequestMaxAggregateInput {
 
     @Field(() => Boolean, {nullable:true})
     refund_done?: true;
+
+    @Field(() => Boolean, {nullable:true})
+    refund_type?: true;
+
+    @Field(() => Boolean, {nullable:true})
+    refund_rejected?: true;
 }

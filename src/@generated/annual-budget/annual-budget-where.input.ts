@@ -18,6 +18,7 @@ import { UserNullableScalarRelationFilter } from '../user/user-nullable-scalar-r
 import { InstitutionNullableScalarRelationFilter } from '../institution/institution-nullable-scalar-relation-filter.input';
 import { ChurchNullableScalarRelationFilter } from '../church/church-nullable-scalar-relation-filter.input';
 import { DepartmentNullableScalarRelationFilter } from '../department/department-nullable-scalar-relation-filter.input';
+import { BudgetTransactionListRelationFilter } from '../budget-transaction/budget-transaction-list-relation-filter.input';
 
 @InputType()
 export class AnnualBudgetWhereInput {
@@ -153,4 +154,8 @@ export class AnnualBudgetWhereInput {
     @Field(() => DepartmentNullableScalarRelationFilter, {nullable:true})
     @Type(() => DepartmentNullableScalarRelationFilter)
     department?: DepartmentNullableScalarRelationFilter;
+
+    @Field(() => BudgetTransactionListRelationFilter, {nullable:true})
+    @Type(() => BudgetTransactionListRelationFilter)
+    transactions?: BudgetTransactionListRelationFilter;
 }

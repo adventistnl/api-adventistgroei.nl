@@ -10,8 +10,10 @@ import { BoolFieldUpdateOperationsInput } from '../prisma/bool-field-update-oper
 import { EnumSubsidyRequestPriorityFieldUpdateOperationsInput } from '../prisma/enum-subsidy-request-priority-field-update-operations.input';
 import { NullableDecimalFieldUpdateOperationsInput } from '../prisma/nullable-decimal-field-update-operations.input';
 import { EnumSubsidyRequestTypeFieldUpdateOperationsInput } from '../prisma/enum-subsidy-request-type-field-update-operations.input';
+import { NullableEnumRefundTypeFieldUpdateOperationsInput } from '../prisma/nullable-enum-refund-type-field-update-operations.input';
 import { SubsidyRequestItemUncheckedUpdateManyWithoutSubsidy_requestNestedInput } from '../subsidy-request-item/subsidy-request-item-unchecked-update-many-without-subsidy-request-nested.input';
 import { SubsidyReceiptUncheckedUpdateManyWithoutSubsidy_requestNestedInput } from '../subsidy-receipt/subsidy-receipt-unchecked-update-many-without-subsidy-request-nested.input';
+import { BudgetTransactionUncheckedUpdateManyWithoutSubsidy_requestNestedInput } from '../budget-transaction/budget-transaction-unchecked-update-many-without-subsidy-request-nested.input';
 
 @InputType()
 export class SubsidyRequestUncheckedUpdateWithoutStatus_historyInput {
@@ -101,6 +103,12 @@ export class SubsidyRequestUncheckedUpdateWithoutStatus_historyInput {
     @Field(() => BoolFieldUpdateOperationsInput, {nullable:true})
     refund_done?: BoolFieldUpdateOperationsInput;
 
+    @Field(() => NullableEnumRefundTypeFieldUpdateOperationsInput, {nullable:true})
+    refund_type?: NullableEnumRefundTypeFieldUpdateOperationsInput;
+
+    @Field(() => BoolFieldUpdateOperationsInput, {nullable:true})
+    refund_rejected?: BoolFieldUpdateOperationsInput;
+
     @Field(() => SubsidyRequestItemUncheckedUpdateManyWithoutSubsidy_requestNestedInput, {nullable:true})
     @Type(() => SubsidyRequestItemUncheckedUpdateManyWithoutSubsidy_requestNestedInput)
     items?: SubsidyRequestItemUncheckedUpdateManyWithoutSubsidy_requestNestedInput;
@@ -108,4 +116,8 @@ export class SubsidyRequestUncheckedUpdateWithoutStatus_historyInput {
     @Field(() => SubsidyReceiptUncheckedUpdateManyWithoutSubsidy_requestNestedInput, {nullable:true})
     @Type(() => SubsidyReceiptUncheckedUpdateManyWithoutSubsidy_requestNestedInput)
     subsidy_receipts?: SubsidyReceiptUncheckedUpdateManyWithoutSubsidy_requestNestedInput;
+
+    @Field(() => BudgetTransactionUncheckedUpdateManyWithoutSubsidy_requestNestedInput, {nullable:true})
+    @Type(() => BudgetTransactionUncheckedUpdateManyWithoutSubsidy_requestNestedInput)
+    budget_transactions?: BudgetTransactionUncheckedUpdateManyWithoutSubsidy_requestNestedInput;
 }

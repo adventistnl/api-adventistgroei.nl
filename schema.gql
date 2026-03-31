@@ -345,12 +345,120 @@ enum ProjectHistoryType {
   ADJUSTMENT_NEEDED
 }
 
+type AnnualBudgetCount {
+  transactions: Int!
+}
+
+type AnnualBudget {
+  id: ID!
+  year: Int!
+  planned_budget: Decimal!
+  total_expenses: Decimal!
+  balance: Decimal!
+  notes: String
+  description: String
+  justification: String
+  approved_by: String
+  created_at: DateTime!
+  updated_at: DateTime!
+  created_by: String!
+  updated_by: String!
+  is_deleted: Boolean!
+  deleted_at: DateTime
+  deleted_by: String
+  status: AnnualBudgetStatus!
+  institution_id: String
+  church_id: String
+  department_id: String
+  allocated_amount: Decimal!
+  approved_amount: Decimal
+  requested_by: String!
+  reviewed_by: String
+  submitted_date: DateTime!
+  review_date: DateTime
+  approval_date: DateTime
+  priority: AnnualBudgetPriority!
+  category: AnnualBudgetCategory!
+  documents: JSON
+  is_locked: Boolean!
+  has_budget_record: Boolean!
+  entity_type: AnnualBudgetEntityType!
+  approved_user: User
+  institution: Institution
+  church: Church
+  department: Department
+  transactions: [BudgetTransaction!]
+  _count: AnnualBudgetCount!
+  approvedAmount: Float!
+  spentAmount: Float!
+  usagePercentage: Float!
+  remainingAmount: Float!
+}
+
+enum AnnualBudgetStatus {
+  DRAFT
+  SUBMITTED
+  APPROVED
+  REJECTED
+  REVISION_REQUESTED
+  IN_PROGRESS
+  CLOSED
+}
+
+enum AnnualBudgetPriority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+}
+
+enum AnnualBudgetCategory {
+  OPERATIONAL
+  PROJECT
+  MAINTENANCE
+  EMERGENCY
+  EXPANSION
+}
+
+enum AnnualBudgetEntityType {
+  INSTITUTION
+  CHURCH
+  INSTITUTION_DEPARTMENT
+  CHURCH_DEPARTMENT
+}
+
+type BudgetTransaction {
+  id: ID!
+  annual_budget_id: String!
+  type: BudgetTransactionType!
+  delta_allocated: Decimal!
+  delta_expenses: Decimal!
+  description: String!
+  project_id: String
+  subsidy_request_id: String
+  created_by: String!
+  created_at: DateTime!
+  annual_budget: AnnualBudget!
+  project: Project
+  subsidy_request: SubsidyRequest
+}
+
+enum BudgetTransactionType {
+  ALLOCATION_RESERVED
+  ALLOCATION_RELEASED
+  EXPENSE_APPROVED
+  REFUND_TOTAL
+  REFUND_PARTIAL
+  MANUAL_ADJUSTMENT
+}
+
 type ProjectCount {
   voluntary_users: Int!
   activities: Int!
   subsidies: Int!
   special_projects: Int!
   history: Int!
+  budget_transactions: Int!
 }
 
 type Project {
@@ -394,6 +502,7 @@ type Project {
   subsidies: [SubsidyRequest!]
   special_projects: [SpecialProjects!]
   history: [ProjectHistory!]!
+  budget_transactions: [BudgetTransaction!]
   _count: ProjectCount!
   Church: Church
   churchDepartment: Department
@@ -654,6 +763,7 @@ type SubsidyRequestCount {
   items: Int!
   subsidy_receipts: Int!
   status_history: Int!
+  budget_transactions: Int!
 }
 
 type SubsidyRequest {
@@ -684,6 +794,8 @@ type SubsidyRequest {
   refund_amount: Decimal!
   have_refund: Boolean!
   refund_done: Boolean!
+  refund_type: RefundType
+  refund_rejected: Boolean!
   institution: Institution!
   requester: User!
   department: Department!
@@ -693,6 +805,7 @@ type SubsidyRequest {
   project: Project!
   subsidy_receipts: [SubsidyReceipt!]
   status_history: [SubsidyStatusHistory!]
+  budget_transactions: [BudgetTransaction!]
   _count: SubsidyRequestCount!
   collaborators: [ProjectCollaborator!]!
 }
@@ -707,6 +820,11 @@ enum SubsidyRequestType {
   ADVANCE
   WITHOUT_DOCUMENT
   WITH_DOCUMENT
+}
+
+enum RefundType {
+  TOTAL
+  PARTIAL
 }
 
 type SubsidyStatusCount {
@@ -753,82 +871,6 @@ type AnnualReport {
   deleted_at: DateTime
   deleted_by: String
   department: Department!
-}
-
-type AnnualBudget {
-  id: ID!
-  year: Int!
-  planned_budget: Decimal!
-  total_expenses: Decimal!
-  balance: Decimal!
-  notes: String
-  description: String
-  justification: String
-  approved_by: String
-  created_at: DateTime!
-  updated_at: DateTime!
-  created_by: String!
-  updated_by: String!
-  is_deleted: Boolean!
-  deleted_at: DateTime
-  deleted_by: String
-  status: AnnualBudgetStatus!
-  institution_id: String
-  church_id: String
-  department_id: String
-  allocated_amount: Decimal!
-  approved_amount: Decimal
-  requested_by: String!
-  reviewed_by: String
-  submitted_date: DateTime!
-  review_date: DateTime
-  approval_date: DateTime
-  priority: AnnualBudgetPriority!
-  category: AnnualBudgetCategory!
-  documents: JSON
-  is_locked: Boolean!
-  has_budget_record: Boolean!
-  entity_type: AnnualBudgetEntityType!
-  approved_user: User
-  institution: Institution
-  church: Church
-  department: Department
-  approvedAmount: Float!
-  spentAmount: Float!
-  usagePercentage: Float!
-  remainingAmount: Float!
-}
-
-enum AnnualBudgetStatus {
-  DRAFT
-  SUBMITTED
-  APPROVED
-  REJECTED
-  REVISION_REQUESTED
-  IN_PROGRESS
-  CLOSED
-}
-
-enum AnnualBudgetPriority {
-  LOW
-  MEDIUM
-  HIGH
-  URGENT
-}
-
-enum AnnualBudgetCategory {
-  OPERATIONAL
-  PROJECT
-  MAINTENANCE
-  EMERGENCY
-  EXPANSION
-}
-
-enum AnnualBudgetEntityType {
-  INSTITUTION
-  CHURCH
-  INSTITUTION_DEPARTMENT
-  CHURCH_DEPARTMENT
 }
 
 type DepartmentCount {
@@ -966,6 +1008,7 @@ enum PermissionResolverName {
   deleteSubsidyRequest
   approveSubsidyRequest
   rejectSubsidyRequest
+  submitSubsidyRequest
   subsidyStatuses
   subsidyStatus
   createSubsidyStatus
@@ -1895,6 +1938,7 @@ input AnnualBudgetWhereInput {
   institution: InstitutionNullableScalarRelationFilter
   church: ChurchNullableScalarRelationFilter
   department: DepartmentNullableScalarRelationFilter
+  transactions: BudgetTransactionListRelationFilter
 }
 
 input StringFilter {
@@ -2526,6 +2570,8 @@ input SubsidyRequestWhereInput {
   refund_amount: DecimalFilter
   have_refund: BoolFilter
   refund_done: BoolFilter
+  refund_type: EnumRefundTypeNullableFilter
+  refund_rejected: BoolFilter
   institution: InstitutionScalarRelationFilter
   requester: UserScalarRelationFilter
   department: DepartmentScalarRelationFilter
@@ -2535,6 +2581,7 @@ input SubsidyRequestWhereInput {
   project: ProjectScalarRelationFilter
   subsidy_receipts: SubsidyReceiptListRelationFilter
   status_history: SubsidyStatusHistoryListRelationFilter
+  budget_transactions: BudgetTransactionListRelationFilter
 }
 
 input EnumSubsidyRequestPriorityFilter {
@@ -2563,6 +2610,20 @@ input NestedEnumSubsidyRequestTypeFilter {
   in: [SubsidyRequestType!]
   notIn: [SubsidyRequestType!]
   not: NestedEnumSubsidyRequestTypeFilter
+}
+
+input EnumRefundTypeNullableFilter {
+  equals: RefundType
+  in: [RefundType!]
+  notIn: [RefundType!]
+  not: NestedEnumRefundTypeNullableFilter
+}
+
+input NestedEnumRefundTypeNullableFilter {
+  equals: RefundType
+  in: [RefundType!]
+  notIn: [RefundType!]
+  not: NestedEnumRefundTypeNullableFilter
 }
 
 input SubsidyStatusScalarRelationFilter {
@@ -2730,6 +2791,7 @@ input ProjectWhereInput {
   subsidies: SubsidyRequestListRelationFilter
   special_projects: SpecialProjectsListRelationFilter
   history: ProjectHistoryListRelationFilter
+  budget_transactions: BudgetTransactionListRelationFilter
 }
 
 input EnumProjectTypeFilter {
@@ -3084,6 +3146,55 @@ input ProjectAdjustmentScalarRelationFilter {
   isNot: ProjectAdjustmentWhereInput
 }
 
+input BudgetTransactionListRelationFilter {
+  every: BudgetTransactionWhereInput
+  some: BudgetTransactionWhereInput
+  none: BudgetTransactionWhereInput
+}
+
+input BudgetTransactionWhereInput {
+  AND: [BudgetTransactionWhereInput!]
+  OR: [BudgetTransactionWhereInput!]
+  NOT: [BudgetTransactionWhereInput!]
+  id: StringFilter
+  annual_budget_id: StringFilter
+  type: EnumBudgetTransactionTypeFilter
+  delta_allocated: DecimalFilter
+  delta_expenses: DecimalFilter
+  description: StringFilter
+  project_id: StringNullableFilter
+  subsidy_request_id: StringNullableFilter
+  created_by: StringFilter
+  created_at: DateTimeFilter
+  annual_budget: AnnualBudgetScalarRelationFilter
+  project: ProjectNullableScalarRelationFilter
+  subsidy_request: SubsidyRequestNullableScalarRelationFilter
+}
+
+input EnumBudgetTransactionTypeFilter {
+  equals: BudgetTransactionType
+  in: [BudgetTransactionType!]
+  notIn: [BudgetTransactionType!]
+  not: NestedEnumBudgetTransactionTypeFilter
+}
+
+input NestedEnumBudgetTransactionTypeFilter {
+  equals: BudgetTransactionType
+  in: [BudgetTransactionType!]
+  notIn: [BudgetTransactionType!]
+  not: NestedEnumBudgetTransactionTypeFilter
+}
+
+input AnnualBudgetScalarRelationFilter {
+  is: AnnualBudgetWhereInput
+  isNot: AnnualBudgetWhereInput
+}
+
+input SubsidyRequestNullableScalarRelationFilter {
+  is: SubsidyRequestWhereInput
+  isNot: SubsidyRequestWhereInput
+}
+
 input SubsidyReceiptListRelationFilter {
   every: SubsidyReceiptWhereInput
   some: SubsidyReceiptWhereInput
@@ -3126,11 +3237,6 @@ input SubsidyReceiptWhereInput {
 input ProjectActivityNullableScalarRelationFilter {
   is: ProjectActivityWhereInput
   isNot: ProjectActivityWhereInput
-}
-
-input SubsidyRequestNullableScalarRelationFilter {
-  is: SubsidyRequestWhereInput
-  isNot: SubsidyRequestWhereInput
 }
 
 input SubsidyRequestItemNullableScalarRelationFilter {
@@ -3715,6 +3821,7 @@ input AnnualBudgetOrderByWithRelationInput {
   institution: InstitutionOrderByWithRelationInput
   church: ChurchOrderByWithRelationInput
   department: DepartmentOrderByWithRelationInput
+  transactions: BudgetTransactionOrderByRelationAggregateInput
 }
 
 enum SortOrder {
@@ -3991,6 +4098,10 @@ input ProjectHistoryOrderByRelationAggregateInput {
   _count: SortOrder
 }
 
+input BudgetTransactionOrderByRelationAggregateInput {
+  _count: SortOrder
+}
+
 input AnnualBudgetWhereUniqueInput {
   id: String
   AND: [AnnualBudgetWhereInput!]
@@ -4032,6 +4143,7 @@ input AnnualBudgetWhereUniqueInput {
   institution: InstitutionNullableScalarRelationFilter
   church: ChurchNullableScalarRelationFilter
   department: DepartmentNullableScalarRelationFilter
+  transactions: BudgetTransactionListRelationFilter
 }
 
 enum AnnualBudgetScalarFieldEnum {
@@ -4119,7 +4231,8 @@ type Mutation {
   addSubsidyRequestMessage(id: String!, message: String!, language: LanguagePreference = en): SubsidyStatusHistory!
   createAdvanceRequest(projectId: String!, advanceAmount: Float!, language: LanguagePreference = en): SubsidyRequest!
   createSubsidyWithoutDocument(data: CreateWithoutDocumentSubsidyRequestDto!, language: LanguagePreference = en): SubsidyRequest!
-  requestSubsidyRefund(id: String!, refundAmount: Float!, reason: String!, language: LanguagePreference = en): SubsidyRequest!
+  requestSubsidyRefund(id: String!, refundAmount: Float!, refundType: String!, reason: String!, language: LanguagePreference = en): SubsidyRequest!
+  rejectSubsidyRefund(id: String!, reason: String!, language: LanguagePreference = en): SubsidyRequest!
   confirmRefundDone(id: String!, language: LanguagePreference = en): SubsidyRequest!
   createContact(data: ContactCreateDto!, userId: String!): Contact!
   updateContact(data: ContactUpdateDto!): Contact!

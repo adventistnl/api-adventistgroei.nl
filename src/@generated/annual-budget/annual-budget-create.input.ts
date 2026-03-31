@@ -15,6 +15,7 @@ import { UserCreateNestedOneWithoutApproved_annual_budgetsInput } from '../user/
 import { InstitutionCreateNestedOneWithoutAnnual_budgetsInput } from '../institution/institution-create-nested-one-without-annual-budgets.input';
 import { ChurchCreateNestedOneWithoutAnnual_budgetsInput } from '../church/church-create-nested-one-without-annual-budgets.input';
 import { DepartmentCreateNestedOneWithoutAnnual_budgetsInput } from '../department/department-create-nested-one-without-annual-budgets.input';
+import { BudgetTransactionCreateNestedManyWithoutAnnual_budgetInput } from '../budget-transaction/budget-transaction-create-nested-many-without-annual-budget.input';
 
 @InputType()
 export class AnnualBudgetCreateInput {
@@ -131,4 +132,8 @@ export class AnnualBudgetCreateInput {
     @Field(() => DepartmentCreateNestedOneWithoutAnnual_budgetsInput, {nullable:true})
     @Type(() => DepartmentCreateNestedOneWithoutAnnual_budgetsInput)
     department?: DepartmentCreateNestedOneWithoutAnnual_budgetsInput;
+
+    @Field(() => BudgetTransactionCreateNestedManyWithoutAnnual_budgetInput, {nullable:true})
+    @Type(() => BudgetTransactionCreateNestedManyWithoutAnnual_budgetInput)
+    transactions?: BudgetTransactionCreateNestedManyWithoutAnnual_budgetInput;
 }

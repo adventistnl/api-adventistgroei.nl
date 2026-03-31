@@ -4,6 +4,7 @@ import { Decimal } from '@prisma/client/runtime/library';
 import { GraphQLDecimal } from 'prisma-graphql-type-decimal';
 import { SubsidyRequestPriority } from '../prisma/subsidy-request-priority.enum';
 import { SubsidyRequestType } from '../prisma/subsidy-request-type.enum';
+import { RefundType } from '../prisma/refund-type.enum';
 import { SubsidyRequestCountAggregate } from './subsidy-request-count-aggregate.output';
 import { SubsidyRequestAvgAggregate } from './subsidy-request-avg-aggregate.output';
 import { SubsidyRequestSumAggregate } from './subsidy-request-sum-aggregate.output';
@@ -93,6 +94,12 @@ export class SubsidyRequestGroupBy {
 
     @Field(() => Boolean, {nullable:false})
     refund_done!: boolean;
+
+    @Field(() => RefundType, {nullable:true})
+    refund_type?: `${RefundType}`;
+
+    @Field(() => Boolean, {nullable:false})
+    refund_rejected!: boolean;
 
     @Field(() => SubsidyRequestCountAggregate, {nullable:true})
     _count?: SubsidyRequestCountAggregate;

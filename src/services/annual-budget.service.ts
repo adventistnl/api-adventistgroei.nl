@@ -337,14 +337,21 @@ export class AnnualBudgetService {
     year: number,
     deltaAllocated: number,
     deltaSpent: number,
-    userId: string
+    userId: string,
+    transactionContext?: {
+      type: 'ALLOCATION_RESERVED' | 'ALLOCATION_RELEASED' | 'EXPENSE_APPROVED' | 'REFUND_TOTAL' | 'REFUND_PARTIAL' | 'MANUAL_ADJUSTMENT' | 'INITIAL_BALANCE';
+      description?: string;
+      project_id?: string;
+      subsidy_request_id?: string;
+    }
   ): Promise<void> {
     return this.annualBudgetRepository.updateBudgetFinancials(
       departmentId,
       year,
       deltaAllocated,
       deltaSpent,
-      userId
+      userId,
+      transactionContext as any
     );
   }
 }

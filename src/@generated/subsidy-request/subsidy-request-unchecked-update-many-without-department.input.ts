@@ -10,6 +10,7 @@ import { BoolFieldUpdateOperationsInput } from '../prisma/bool-field-update-oper
 import { EnumSubsidyRequestPriorityFieldUpdateOperationsInput } from '../prisma/enum-subsidy-request-priority-field-update-operations.input';
 import { NullableDecimalFieldUpdateOperationsInput } from '../prisma/nullable-decimal-field-update-operations.input';
 import { EnumSubsidyRequestTypeFieldUpdateOperationsInput } from '../prisma/enum-subsidy-request-type-field-update-operations.input';
+import { NullableEnumRefundTypeFieldUpdateOperationsInput } from '../prisma/nullable-enum-refund-type-field-update-operations.input';
 
 @InputType()
 export class SubsidyRequestUncheckedUpdateManyWithoutDepartmentInput {
@@ -95,4 +96,10 @@ export class SubsidyRequestUncheckedUpdateManyWithoutDepartmentInput {
 
     @Field(() => BoolFieldUpdateOperationsInput, {nullable:true})
     refund_done?: BoolFieldUpdateOperationsInput;
+
+    @Field(() => NullableEnumRefundTypeFieldUpdateOperationsInput, {nullable:true})
+    refund_type?: NullableEnumRefundTypeFieldUpdateOperationsInput;
+
+    @Field(() => BoolFieldUpdateOperationsInput, {nullable:true})
+    refund_rejected?: BoolFieldUpdateOperationsInput;
 }

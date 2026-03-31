@@ -11,6 +11,7 @@ import { AnnualBudgetPriority } from '../prisma/annual-budget-priority.enum';
 import { AnnualBudgetCategory } from '../prisma/annual-budget-category.enum';
 import { GraphQLJSON } from 'graphql-type-json';
 import { AnnualBudgetEntityType } from '../prisma/annual-budget-entity-type.enum';
+import { BudgetTransactionUncheckedCreateNestedManyWithoutAnnual_budgetInput } from '../budget-transaction/budget-transaction-unchecked-create-nested-many-without-annual-budget.input';
 
 @InputType()
 export class AnnualBudgetUncheckedCreateWithoutApproved_userInput {
@@ -120,4 +121,8 @@ export class AnnualBudgetUncheckedCreateWithoutApproved_userInput {
 
     @Field(() => AnnualBudgetEntityType, {nullable:false})
     entity_type!: `${AnnualBudgetEntityType}`;
+
+    @Field(() => BudgetTransactionUncheckedCreateNestedManyWithoutAnnual_budgetInput, {nullable:true})
+    @Type(() => BudgetTransactionUncheckedCreateNestedManyWithoutAnnual_budgetInput)
+    transactions?: BudgetTransactionUncheckedCreateNestedManyWithoutAnnual_budgetInput;
 }

@@ -7,8 +7,10 @@ import { Transform } from 'class-transformer';
 import { Type } from 'class-transformer';
 import { SubsidyRequestPriority } from '../prisma/subsidy-request-priority.enum';
 import { SubsidyRequestType } from '../prisma/subsidy-request-type.enum';
+import { RefundType } from '../prisma/refund-type.enum';
 import { SubsidyRequestItemUncheckedCreateNestedManyWithoutSubsidy_requestInput } from '../subsidy-request-item/subsidy-request-item-unchecked-create-nested-many-without-subsidy-request.input';
 import { SubsidyReceiptUncheckedCreateNestedManyWithoutSubsidy_requestInput } from '../subsidy-receipt/subsidy-receipt-unchecked-create-nested-many-without-subsidy-request.input';
+import { BudgetTransactionUncheckedCreateNestedManyWithoutSubsidy_requestInput } from '../budget-transaction/budget-transaction-unchecked-create-nested-many-without-subsidy-request.input';
 
 @InputType()
 export class SubsidyRequestUncheckedCreateWithoutStatus_historyInput {
@@ -102,6 +104,12 @@ export class SubsidyRequestUncheckedCreateWithoutStatus_historyInput {
     @Field(() => Boolean, {nullable:true})
     refund_done?: boolean;
 
+    @Field(() => RefundType, {nullable:true})
+    refund_type?: `${RefundType}`;
+
+    @Field(() => Boolean, {nullable:true})
+    refund_rejected?: boolean;
+
     @Field(() => SubsidyRequestItemUncheckedCreateNestedManyWithoutSubsidy_requestInput, {nullable:true})
     @Type(() => SubsidyRequestItemUncheckedCreateNestedManyWithoutSubsidy_requestInput)
     items?: SubsidyRequestItemUncheckedCreateNestedManyWithoutSubsidy_requestInput;
@@ -109,4 +117,8 @@ export class SubsidyRequestUncheckedCreateWithoutStatus_historyInput {
     @Field(() => SubsidyReceiptUncheckedCreateNestedManyWithoutSubsidy_requestInput, {nullable:true})
     @Type(() => SubsidyReceiptUncheckedCreateNestedManyWithoutSubsidy_requestInput)
     subsidy_receipts?: SubsidyReceiptUncheckedCreateNestedManyWithoutSubsidy_requestInput;
+
+    @Field(() => BudgetTransactionUncheckedCreateNestedManyWithoutSubsidy_requestInput, {nullable:true})
+    @Type(() => BudgetTransactionUncheckedCreateNestedManyWithoutSubsidy_requestInput)
+    budget_transactions?: BudgetTransactionUncheckedCreateNestedManyWithoutSubsidy_requestInput;
 }

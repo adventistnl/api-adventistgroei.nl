@@ -28,17 +28,8 @@ export class ProjectService {
     const project = await this.projectRepository.create(data, userId);
 
     try {
-      // Update Annual Budget if there is a subsidized budget
-      if (data.subsidized_budget && data.subsidized_budget > 0) {
-        const year = new Date().getFullYear();
-        await this.annualBudgetService.updateBudgetFinancials(
-          data.department_id,
-          year,
-          data.subsidized_budget, // Add to Allocated
-          0, // No spending yet
-          userId
-        );
-      }
+      // A new project starts as DRAFT, so we do NOT allocate any budget yet.
+      // This is handled later during status transition in update().
     } catch (e) {
       console.error("Failed to allocate budget for new project, rolling back...", e);
       await this.projectRepository.softDelete(project.id, userId);
@@ -82,6 +73,26 @@ export class ProjectService {
       if (newEndDate > now) {
         // Automatically revert status to IN_PROGRESS when extending expired project
         data.status = ProjectStatus.IN_PROGRESS;
+      }
+    }
+
+    // Allocate budget only when the project is submitted for review (DRAFT → OPEN_REQUEST),
+    // i.e. when the owner clicks the "Submit Request" button on the project page.
+    if (existingProject.status === ProjectStatus.DRAFT && data.status === ProjectStatus.OPEN_REQUEST) {
+      const budgetToAllocate = data.subsidized_budget ?? existingProject.subsidized_budget;
+      if (budgetToAllocate && Number(budgetToAllocate) > 0) {
+        await this.annualBudgetService.updateBudgetFinancials(
+          existingProject.department_id,
+          new Date(existingProject.start_at).getFullYear(),
+          Number(budgetToAllocate),
+          0,
+          userId,
+          {
+            type: 'ALLOCATION_RESERVED',
+            description: `Initial project budget reservation: ${existingProject.title}`,
+            project_id: existingProject.id
+          }
+        );
       }
     }
 
@@ -206,6 +217,20 @@ export class ProjectService {
     });
 
     if (activeActivities === 0 && project.status !== ProjectStatus.DRAFT) {
+      if (project.subsidized_budget && Number(project.subsidized_budget) > 0) {
+        await this.annualBudgetService.updateBudgetFinancials(
+          project.department_id,
+          new Date(project.start_at).getFullYear(),
+          -Number(project.subsidized_budget), // release
+          0,
+          userId,
+          {
+            type: 'ALLOCATION_RELEASED',
+            description: `Project ${project.title} reverted to DRAFT status (no activities)`,
+            project_id: project.id
+          }
+        );
+      }
       await this.projectRepository.update(projectId, { status: ProjectStatus.DRAFT }, userId);
       console.log(`📋 Project ${projectId} reverted to DRAFT (no activities)`);
     }
@@ -287,10 +312,10 @@ export class ProjectService {
     // 7. Release subsidized_budget from annual budget
     const projectData = await this.prisma.project.findUnique({
       where: { id },
-      select: { department_id: true, subsidized_budget: true, start_at: true }
+      select: { department_id: true, subsidized_budget: true, start_at: true, status: true }
     });
 
-    if (projectData?.department_id && projectData.subsidized_budget) {
+    if (projectData?.department_id && projectData.subsidized_budget && projectData.status !== ProjectStatus.DRAFT) {
       const projectYear = new Date(projectData.start_at).getFullYear();
       console.log(`💰 Releasing subsidized_budget ${Number(projectData.subsidized_budget)} from annual budget (year: ${projectYear})...`);
       await this.annualBudgetService.updateBudgetFinancials(
@@ -298,7 +323,12 @@ export class ProjectService {
         projectYear,
         -Number(projectData.subsidized_budget), // Release allocation
         0,
-        userId
+        userId,
+        {
+           type: 'ALLOCATION_RELEASED',
+           description: `Project deleted: reserved budget released`,
+           project_id: id
+        }
       );
     }
 

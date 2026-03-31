@@ -11,6 +11,7 @@ import { BoolFilter } from '../prisma/bool-filter.input';
 import { EnumSubsidyRequestPriorityFilter } from '../prisma/enum-subsidy-request-priority-filter.input';
 import { DecimalNullableFilter } from '../prisma/decimal-nullable-filter.input';
 import { EnumSubsidyRequestTypeFilter } from '../prisma/enum-subsidy-request-type-filter.input';
+import { EnumRefundTypeNullableFilter } from '../prisma/enum-refund-type-nullable-filter.input';
 import { InstitutionScalarRelationFilter } from '../institution/institution-scalar-relation-filter.input';
 import { UserScalarRelationFilter } from '../user/user-scalar-relation-filter.input';
 import { DepartmentScalarRelationFilter } from '../department/department-scalar-relation-filter.input';
@@ -20,6 +21,7 @@ import { SubsidyRequestItemListRelationFilter } from '../subsidy-request-item/su
 import { ProjectScalarRelationFilter } from '../project/project-scalar-relation-filter.input';
 import { SubsidyReceiptListRelationFilter } from '../subsidy-receipt/subsidy-receipt-list-relation-filter.input';
 import { SubsidyStatusHistoryListRelationFilter } from '../subsidy-status-history/subsidy-status-history-list-relation-filter.input';
+import { BudgetTransactionListRelationFilter } from '../budget-transaction/budget-transaction-list-relation-filter.input';
 
 @InputType()
 export class SubsidyRequestWhereUniqueInput {
@@ -121,6 +123,12 @@ export class SubsidyRequestWhereUniqueInput {
     @Field(() => BoolFilter, {nullable:true})
     refund_done?: BoolFilter;
 
+    @Field(() => EnumRefundTypeNullableFilter, {nullable:true})
+    refund_type?: EnumRefundTypeNullableFilter;
+
+    @Field(() => BoolFilter, {nullable:true})
+    refund_rejected?: BoolFilter;
+
     @Field(() => InstitutionScalarRelationFilter, {nullable:true})
     @Type(() => InstitutionScalarRelationFilter)
     institution?: InstitutionScalarRelationFilter;
@@ -156,4 +164,8 @@ export class SubsidyRequestWhereUniqueInput {
     @Field(() => SubsidyStatusHistoryListRelationFilter, {nullable:true})
     @Type(() => SubsidyStatusHistoryListRelationFilter)
     status_history?: SubsidyStatusHistoryListRelationFilter;
+
+    @Field(() => BudgetTransactionListRelationFilter, {nullable:true})
+    @Type(() => BudgetTransactionListRelationFilter)
+    budget_transactions?: BudgetTransactionListRelationFilter;
 }

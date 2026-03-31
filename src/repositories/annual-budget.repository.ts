@@ -9,6 +9,7 @@ import { AnnualBudgetPriority } from 'src/@generated/prisma/annual-budget-priori
 import { AnnualBudgetCategory } from 'src/@generated/prisma/annual-budget-category.enum';
 import { FindManyAnnualBudgetArgs } from 'src/@generated/annual-budget/find-many-annual-budget.args';
 import { DecimalHelper } from 'src/common/helpers/decimal.helper';
+import { BudgetTransactionType } from '@prisma/client';
 
 @Injectable()
 export class AnnualBudgetRepository {
@@ -1060,7 +1061,13 @@ export class AnnualBudgetRepository {
     year: number,
     deltaAllocated: number,
     deltaSpent: number,
-    userId: string
+    userId: string,
+    transactionContext?: {
+      type: BudgetTransactionType;
+      description?: string;
+      project_id?: string;
+      subsidy_request_id?: string;
+    }
   ): Promise<void> {
     const deptBudget = await this.prisma.annualBudget.findFirst({
       where: {
@@ -1124,6 +1131,22 @@ export class AnnualBudgetRepository {
           updated_by: userId
         }
       });
+
+      // Create Ledger Transaction if context is provided
+      if (transactionContext) {
+        await tx.budgetTransaction.create({
+          data: {
+            annual_budget_id: deptBudget.id,
+            type: transactionContext.type,
+            delta_allocated: deltaAllocated,
+            delta_expenses: deltaSpent,
+            description: transactionContext.description || 'System transaction',
+            project_id: transactionContext.project_id,
+            subsidy_request_id: transactionContext.subsidy_request_id,
+            created_by: userId,
+          }
+        });
+      }
 
       // Update Institution (Only Expenses propagate)
     if (deltaSpent !== 0) {
