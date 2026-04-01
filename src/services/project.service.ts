@@ -96,6 +96,26 @@ export class ProjectService {
       }
     }
 
+    // Release budget when project is manually reverted to DRAFT from any other status
+    // (covers manual status changes like OPEN_REQUEST → DRAFT or IN_REVIEW → DRAFT)
+    if (existingProject.status !== ProjectStatus.DRAFT && data.status === ProjectStatus.DRAFT) {
+      const budgetToRelease = existingProject.subsidized_budget;
+      if (budgetToRelease && Number(budgetToRelease) > 0) {
+        await this.annualBudgetService.updateBudgetFinancials(
+          existingProject.department_id,
+          new Date(existingProject.start_at).getFullYear(),
+          -Number(budgetToRelease), // negative = release
+          0,
+          userId,
+          {
+            type: 'ALLOCATION_RELEASED',
+            description: `Project reverted to DRAFT, budget released: ${existingProject.title}`,
+            project_id: existingProject.id
+          }
+        );
+      }
+    }
+
     return this.projectRepository.update(id, data, userId);
   }
 
