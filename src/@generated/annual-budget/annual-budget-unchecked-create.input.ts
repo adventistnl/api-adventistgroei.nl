@@ -12,6 +12,8 @@ import { AnnualBudgetCategory } from '../prisma/annual-budget-category.enum';
 import { GraphQLJSON } from 'graphql-type-json';
 import { AnnualBudgetEntityType } from '../prisma/annual-budget-entity-type.enum';
 import { BudgetTransactionUncheckedCreateNestedManyWithoutAnnual_budgetInput } from '../budget-transaction/budget-transaction-unchecked-create-nested-many-without-annual-budget.input';
+import { BudgetTransferUncheckedCreateNestedManyWithoutFrom_budgetInput } from '../budget-transfer/budget-transfer-unchecked-create-nested-many-without-from-budget.input';
+import { BudgetTransferUncheckedCreateNestedManyWithoutTo_budgetInput } from '../budget-transfer/budget-transfer-unchecked-create-nested-many-without-to-budget.input';
 
 @InputType()
 export class AnnualBudgetUncheckedCreateInput {
@@ -128,4 +130,12 @@ export class AnnualBudgetUncheckedCreateInput {
     @Field(() => BudgetTransactionUncheckedCreateNestedManyWithoutAnnual_budgetInput, {nullable:true})
     @Type(() => BudgetTransactionUncheckedCreateNestedManyWithoutAnnual_budgetInput)
     transactions?: BudgetTransactionUncheckedCreateNestedManyWithoutAnnual_budgetInput;
+
+    @Field(() => BudgetTransferUncheckedCreateNestedManyWithoutFrom_budgetInput, {nullable:true})
+    @Type(() => BudgetTransferUncheckedCreateNestedManyWithoutFrom_budgetInput)
+    transfers_out?: BudgetTransferUncheckedCreateNestedManyWithoutFrom_budgetInput;
+
+    @Field(() => BudgetTransferUncheckedCreateNestedManyWithoutTo_budgetInput, {nullable:true})
+    @Type(() => BudgetTransferUncheckedCreateNestedManyWithoutTo_budgetInput)
+    transfers_in?: BudgetTransferUncheckedCreateNestedManyWithoutTo_budgetInput;
 }

@@ -14,6 +14,7 @@ import { Institution } from '../institution/institution.model';
 import { Church } from '../church/church.model';
 import { Department } from '../department/department.model';
 import { BudgetTransaction } from '../budget-transaction/budget-transaction.model';
+import { BudgetTransfer } from '../budget-transfer/budget-transfer.model';
 import { AnnualBudgetCount } from './annual-budget-count.output';
 
 @ObjectType()
@@ -132,6 +133,12 @@ export class AnnualBudget {
 
     @Field(() => [BudgetTransaction], {nullable:true})
     transactions?: Array<BudgetTransaction>;
+
+    @Field(() => [BudgetTransfer], {nullable:true})
+    transfers_out?: Array<BudgetTransfer>;
+
+    @Field(() => [BudgetTransfer], {nullable:true})
+    transfers_in?: Array<BudgetTransfer>;
 
     @Field(() => AnnualBudgetCount, {nullable:false})
     _count?: AnnualBudgetCount;

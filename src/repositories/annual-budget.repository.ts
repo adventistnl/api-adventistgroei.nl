@@ -46,6 +46,24 @@ export class AnnualBudgetRepository {
     });
   }
 
+  async executeRawQuery(query: string, params: any[] = []): Promise<any> {
+    return this.prisma.$queryRawUnsafe(query, ...params);
+  }
+
+  async getBudgetTransactions(budgetIds: string[]): Promise<any[]> {
+    if (budgetIds.length === 0) return [];
+    return this.prisma.budgetTransaction.findMany({
+      where: {
+        annual_budget_id: { in: budgetIds }
+      },
+      select: {
+        annual_budget_id: true,
+        delta_expenses: true,
+        created_at: true
+      }
+    });
+  }
+
   async findManyWithRelations(args: FindManyAnnualBudgetArgs): Promise<any[]> {
     return this.prisma.annualBudget.findMany({
       ...args,
@@ -680,6 +698,23 @@ export class AnnualBudgetRepository {
     dto: any, // InstitutionBudgetCreateDto
     userId: string
   ): Promise<AnnualBudget> {
+    // Se o frontend enviar institution_id vazio, tentamos resgatar da sessão do usuário
+    if (!dto.institution_id || dto.institution_id.trim() === '') {
+      const user = await this.prisma.user.findUnique({
+        where: { id: userId },
+        select: { institution_id: true }
+      });
+      if (user?.institution_id) {
+        dto.institution_id = user.institution_id;
+      } else {
+        throw new CustomGraphQLError(
+          'Institution ID is required and cannot be empty.',
+          ErrorCode.BAD_REQUEST,
+          400
+        );
+      }
+    }
+
     // Verificar se já existe budget para esta institution/ano
     const existing = await this.prisma.annualBudget.findFirst({
       where: {
@@ -704,25 +739,54 @@ export class AnnualBudgetRepository {
     const allocated = Number(dto.allocated_amount || 0);
     const balance = planned - (expenses + allocated);
 
-    return this.prisma.annualBudget.create({
-      data: {
-        year: dto.year,
-        planned_budget: planned,
-        total_expenses: expenses,
-        allocated_amount: allocated,
-        balance,
-        description: dto.description,
-        justification: dto.justification,
-        priority: dto.priority || AnnualBudgetPriority.MEDIUM,
-        category: dto.category || AnnualBudgetCategory.OPERATIONAL,
-        notes: dto.notes,
-        entity_type: AnnualBudgetEntityType.INSTITUTION,
-        institution: { connect: { id: dto.institution_id } },
-        created_by: userId,
-        updated_by: userId,
-        requested_by: userId,
-        submitted_date: new Date(),
+    return this.prisma.$transaction(async (tx) => {
+      const budget = await tx.annualBudget.create({
+        data: {
+          year: dto.year,
+          planned_budget: planned,
+          total_expenses: expenses,
+          allocated_amount: allocated,
+          balance,
+          description: dto.description,
+          justification: dto.justification,
+          priority: dto.priority || AnnualBudgetPriority.MEDIUM,
+          category: dto.category || AnnualBudgetCategory.OPERATIONAL,
+          notes: dto.notes,
+          entity_type: AnnualBudgetEntityType.INSTITUTION,
+          institution: { connect: { id: dto.institution_id } },
+          created_by: userId,
+          updated_by: userId,
+          requested_by: userId,
+          submitted_date: new Date(),
+        }
+      });
+
+      if (planned > 0) {
+        await tx.budgetTransfer.create({
+          data: {
+            to_budget_id: budget.id,
+            amount: planned,
+            type: 'INITIAL_FUNDING',
+            description: dto.description || 'System: Initial Institution Funding',
+            created_by: userId
+          }
+        });
       }
+
+      if (expenses > 0 || allocated > 0) {
+        await tx.budgetTransaction.create({
+          data: {
+            annual_budget_id: budget.id,
+            type: 'INITIAL_BALANCE',
+            delta_expenses: expenses,
+            delta_allocated: allocated,
+            description: dto.description || 'System: Initial Expenses and Allocations',
+            created_by: userId
+          }
+        });
+      }
+
+      return budget;
     });
   }
 
@@ -788,9 +852,53 @@ export class AnnualBudgetRepository {
     if (dto.notes !== undefined) updateData.notes = dto.notes;
     if (dto.documents !== undefined) updateData.documents = dto.documents;
 
-    return this.prisma.annualBudget.update({
-      where: { id },
-      data: updateData
+    return this.prisma.$transaction(async (tx) => {
+      const budget = await tx.annualBudget.update({
+        where: { id },
+        data: updateData
+      });
+
+      if (dto.planned_budget !== undefined && newPlanned !== currentPlanned) {
+        const delta = newPlanned - currentPlanned;
+        if (delta > 0) {
+          await tx.budgetTransfer.create({
+            data: {
+              to_budget_id: id,
+              amount: delta,
+              type: 'INITIAL_FUNDING',
+              description: 'System: Institution Funding Increased',
+              created_by: userId
+            }
+          });
+        } else if (delta < 0) {
+          await tx.budgetTransfer.create({
+            data: {
+              from_budget_id: id,
+              amount: Math.abs(delta),
+              type: 'REDUCTION',
+              description: 'System: Institution Funding Reduced',
+              created_by: userId
+            }
+          });
+        }
+      }
+
+      const expensesDiff = newExpenses - currentExpenses;
+      const allocatedDiff = newAllocated - currentAllocated;
+      if (expensesDiff !== 0 || allocatedDiff !== 0) {
+        await tx.budgetTransaction.create({
+          data: {
+            annual_budget_id: id,
+            type: 'MANUAL_ADJUSTMENT',
+            delta_expenses: expensesDiff,
+            delta_allocated: allocatedDiff,
+            description: dto.description || 'System: Manual Expenses/Allocations Adjustment',
+            created_by: userId
+          }
+        });
+      }
+
+      return budget;
     });
   }
 
@@ -885,6 +993,33 @@ export class AnnualBudgetRepository {
           submitted_date: new Date(),
         }
       });
+
+      if (planned > 0) {
+        await tx.budgetTransfer.create({
+          data: {
+            from_budget_id: institutionBudget.id,
+            to_budget_id: departmentBudget.id,
+            amount: planned,
+            type: 'DISTRIBUTION',
+            description: dto.description || 'System: Department Budget Distribution',
+            created_by: userId
+          }
+        });
+      }
+
+      if (expenses > 0 || allocated > 0) {
+        await tx.budgetTransaction.create({
+          data: {
+            annual_budget_id: departmentBudget.id,
+            type: 'INITIAL_BALANCE',
+            delta_expenses: expenses,
+            delta_allocated: allocated,
+            description: dto.description || 'System: Initial Department Expenses and Allocations',
+            created_by: userId
+          }
+        });
+      }
+
 
       // Atualizar institution budget
       const newInstitutionAllocated = institutionAllocated + planned;
@@ -1033,6 +1168,46 @@ export class AnnualBudgetRepository {
         data: updateData
       });
 
+      if (dto.planned_budget !== undefined && plannedDiff !== 0) {
+        if (plannedDiff > 0) {
+          await tx.budgetTransfer.create({
+            data: {
+              from_budget_id: institutionBudget.id,
+              to_budget_id: id,
+              amount: plannedDiff,
+              type: 'DISTRIBUTION',
+              description: 'System: Department Budget Increased',
+              created_by: userId
+            }
+          });
+        } else if (plannedDiff < 0) {
+          await tx.budgetTransfer.create({
+            data: {
+              from_budget_id: id,
+              to_budget_id: institutionBudget.id,
+              amount: Math.abs(plannedDiff),
+              type: 'REDUCTION',
+              description: 'System: Department Funding Reduced',
+              created_by: userId
+            }
+          });
+        }
+      }
+
+      const allocatedDiff = newAllocated - currentAllocated;
+      if (expensesDiff !== 0 || allocatedDiff !== 0) {
+        await tx.budgetTransaction.create({
+          data: {
+            annual_budget_id: id,
+            type: 'MANUAL_ADJUSTMENT',
+            delta_expenses: expensesDiff,
+            delta_allocated: allocatedDiff,
+            description: dto.description || 'System: Manual Department Expenses/Allocations Adjustment',
+            created_by: userId
+          }
+        });
+      }
+
       // Atualizar institution budget com as diferenças
       const institutionAllocated = Number(institutionBudget.allocated_amount);
       const institutionExpenses = Number(institutionBudget.total_expenses);
@@ -1167,5 +1342,63 @@ export class AnnualBudgetRepository {
        });
     }
     });
+  }
+
+  async getComputedFinancials(budgetIds: string[]): Promise<Record<string, { planned: number; allocated: number; expenses: number; balance: number }>> {
+    if (budgetIds.length === 0) return {};
+
+    const queryStr = `
+      SELECT 
+        ab.id as budget_id,
+        ab.planned_budget,
+        ab.entity_type,
+        COALESCE(SUM(CASE WHEN bt.type::text = 'DISTRIBUTION' OR bt.type::text = 'INITIAL_FUNDING' OR bt.type::text = 'REALLOCATION' THEN bt.amount ELSE 0 END) FILTER (WHERE bt.to_budget_id = ab.id), 0) -
+        COALESCE(SUM(CASE WHEN bt.type::text = 'REDUCTION' OR bt.type::text = 'REALLOCATION' THEN bt.amount ELSE 0 END) FILTER (WHERE bt.from_budget_id = ab.id), 0) as derived_target,
+        COALESCE(SUM(CASE WHEN bt.type::text = 'DISTRIBUTION' THEN bt.amount ELSE 0 END) FILTER (WHERE bt.from_budget_id = ab.id), 0) as distributed_out,
+        (
+          SELECT COALESCE(SUM(bxt.delta_allocated), 0) FROM "BudgetTransaction" bxt WHERE bxt.annual_budget_id = ab.id
+        ) as total_reserved,
+        (
+          SELECT COALESCE(SUM(bxt.delta_allocated), 0) 
+          FROM "BudgetTransaction" bxt 
+          JOIN "AnnualBudget" child ON bxt.annual_budget_id = child.id
+          WHERE child.institution_id = ab.institution_id AND child.entity_type::text = 'INSTITUTION_DEPARTMENT'
+        ) as sum_child_reserved,
+        (
+          SELECT COALESCE(SUM(bxt.delta_expenses), 0) FROM "BudgetTransaction" bxt WHERE bxt.annual_budget_id = ab.id
+        ) as total_expenses,
+        (
+          SELECT COALESCE(SUM(bxt.delta_expenses), 0) 
+          FROM "BudgetTransaction" bxt 
+          JOIN "AnnualBudget" child ON bxt.annual_budget_id = child.id
+          WHERE child.institution_id = ab.institution_id AND child.entity_type::text = 'INSTITUTION_DEPARTMENT'
+        ) as sum_child_expenses
+      FROM "AnnualBudget" ab
+      LEFT JOIN "BudgetTransfer" bt ON bt.to_budget_id = ab.id OR bt.from_budget_id = ab.id
+      WHERE ab.id IN (${budgetIds.map(id => `'${id}'`).join(',')})
+      GROUP BY ab.id, ab.entity_type, ab.planned_budget, ab.institution_id
+    `;
+
+    const transactionsData = await this.prisma.$queryRawUnsafe<any[]>(queryStr);
+
+    const result: Record<string, { planned: number; allocated: number; expenses: number; balance: number }> = {};
+    for (const row of transactionsData) {
+      const isInst = row.entity_type === 'INSTITUTION';
+      const planned = isInst ? Number(row.planned_budget) : Number(row.derived_target);
+      // Opção 2: Dinheiro distribuído sai do Alocado e entra como Gasto imediato da Instituição.
+      // O campo Alocado fica puro, representando apenas reservas do próprio CNPJ em andamento.
+      const allocated = Number(row.total_reserved);
+      const expenses = isInst ? Number(row.total_expenses) + Number(row.distributed_out) : Number(row.total_expenses);
+      const balance = planned - expenses - allocated;
+
+      result[row.budget_id] = {
+        planned,
+        allocated,
+        expenses,
+        balance
+      };
+    }
+    
+    return result;
   }
 }

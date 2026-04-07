@@ -20,6 +20,7 @@ import { InstitutionNullableScalarRelationFilter } from '../institution/institut
 import { ChurchNullableScalarRelationFilter } from '../church/church-nullable-scalar-relation-filter.input';
 import { DepartmentNullableScalarRelationFilter } from '../department/department-nullable-scalar-relation-filter.input';
 import { BudgetTransactionListRelationFilter } from '../budget-transaction/budget-transaction-list-relation-filter.input';
+import { BudgetTransferListRelationFilter } from '../budget-transfer/budget-transfer-list-relation-filter.input';
 
 @InputType()
 export class AnnualBudgetWhereUniqueInput {
@@ -159,4 +160,12 @@ export class AnnualBudgetWhereUniqueInput {
     @Field(() => BudgetTransactionListRelationFilter, {nullable:true})
     @Type(() => BudgetTransactionListRelationFilter)
     transactions?: BudgetTransactionListRelationFilter;
+
+    @Field(() => BudgetTransferListRelationFilter, {nullable:true})
+    @Type(() => BudgetTransferListRelationFilter)
+    transfers_out?: BudgetTransferListRelationFilter;
+
+    @Field(() => BudgetTransferListRelationFilter, {nullable:true})
+    @Type(() => BudgetTransferListRelationFilter)
+    transfers_in?: BudgetTransferListRelationFilter;
 }

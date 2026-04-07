@@ -501,6 +501,8 @@ model AnnualBudget {
   has_budget_record Boolean                @default(true)
   entity_type       AnnualBudgetEntityType
   transactions      BudgetTransaction[]
+  transfers_out     BudgetTransfer[]  @relation("TransfersOut")
+  transfers_in      BudgetTransfer[]  @relation("TransfersIn")
 }
 
 enum BudgetTransactionType {
@@ -509,6 +511,7 @@ enum BudgetTransactionType {
   EXPENSE_APPROVED
   REFUND_TOTAL
   REFUND_PARTIAL
+  INITIAL_BALANCE
   MANUAL_ADJUSTMENT
 }
 
@@ -530,6 +533,30 @@ model BudgetTransaction {
   @@index([annual_budget_id])
   @@index([project_id])
   @@index([subsidy_request_id])
+}
+
+enum TransferType {
+  INITIAL_FUNDING // External injection into Institution
+  DISTRIBUTION    // Institution -> Department
+  REALLOCATION    // Dept -> Dept (or future Inst -> Inst)
+  REDUCTION       // Taking money back
+}
+
+model BudgetTransfer {
+  id              String       @id @default(uuid())
+  from_budget_id  String?      // Null for external influx
+  to_budget_id    String?      // Null if money is burnt/withdrawn from system
+  amount          Decimal      // Absolute value (positive)
+  type            TransferType
+  description     String
+  created_at      DateTime     @default(now())
+  created_by      String
+
+  from_budget     AnnualBudget? @relation("TransfersOut", fields: [from_budget_id], references: [id])
+  to_budget       AnnualBudget? @relation("TransfersIn", fields: [to_budget_id], references: [id])
+
+  @@index([from_budget_id])
+  @@index([to_budget_id])
 }
 
 model Contact {

@@ -15,6 +15,8 @@ import { EnumAnnualBudgetCategoryFieldUpdateOperationsInput } from '../prisma/en
 import { GraphQLJSON } from 'graphql-type-json';
 import { EnumAnnualBudgetEntityTypeFieldUpdateOperationsInput } from '../prisma/enum-annual-budget-entity-type-field-update-operations.input';
 import { BudgetTransactionUncheckedUpdateManyWithoutAnnual_budgetNestedInput } from '../budget-transaction/budget-transaction-unchecked-update-many-without-annual-budget-nested.input';
+import { BudgetTransferUncheckedUpdateManyWithoutFrom_budgetNestedInput } from '../budget-transfer/budget-transfer-unchecked-update-many-without-from-budget-nested.input';
+import { BudgetTransferUncheckedUpdateManyWithoutTo_budgetNestedInput } from '../budget-transfer/budget-transfer-unchecked-update-many-without-to-budget-nested.input';
 
 @InputType()
 export class AnnualBudgetUncheckedUpdateInput {
@@ -126,4 +128,12 @@ export class AnnualBudgetUncheckedUpdateInput {
     @Field(() => BudgetTransactionUncheckedUpdateManyWithoutAnnual_budgetNestedInput, {nullable:true})
     @Type(() => BudgetTransactionUncheckedUpdateManyWithoutAnnual_budgetNestedInput)
     transactions?: BudgetTransactionUncheckedUpdateManyWithoutAnnual_budgetNestedInput;
+
+    @Field(() => BudgetTransferUncheckedUpdateManyWithoutFrom_budgetNestedInput, {nullable:true})
+    @Type(() => BudgetTransferUncheckedUpdateManyWithoutFrom_budgetNestedInput)
+    transfers_out?: BudgetTransferUncheckedUpdateManyWithoutFrom_budgetNestedInput;
+
+    @Field(() => BudgetTransferUncheckedUpdateManyWithoutTo_budgetNestedInput, {nullable:true})
+    @Type(() => BudgetTransferUncheckedUpdateManyWithoutTo_budgetNestedInput)
+    transfers_in?: BudgetTransferUncheckedUpdateManyWithoutTo_budgetNestedInput;
 }

@@ -19,6 +19,8 @@ import { InstitutionUpdateOneWithoutAnnual_budgetsNestedInput } from '../institu
 import { ChurchUpdateOneWithoutAnnual_budgetsNestedInput } from '../church/church-update-one-without-annual-budgets-nested.input';
 import { DepartmentUpdateOneWithoutAnnual_budgetsNestedInput } from '../department/department-update-one-without-annual-budgets-nested.input';
 import { BudgetTransactionUpdateManyWithoutAnnual_budgetNestedInput } from '../budget-transaction/budget-transaction-update-many-without-annual-budget-nested.input';
+import { BudgetTransferUpdateManyWithoutFrom_budgetNestedInput } from '../budget-transfer/budget-transfer-update-many-without-from-budget-nested.input';
+import { BudgetTransferUpdateManyWithoutTo_budgetNestedInput } from '../budget-transfer/budget-transfer-update-many-without-to-budget-nested.input';
 
 @InputType()
 export class AnnualBudgetUpdateInput {
@@ -134,4 +136,12 @@ export class AnnualBudgetUpdateInput {
     @Field(() => BudgetTransactionUpdateManyWithoutAnnual_budgetNestedInput, {nullable:true})
     @Type(() => BudgetTransactionUpdateManyWithoutAnnual_budgetNestedInput)
     transactions?: BudgetTransactionUpdateManyWithoutAnnual_budgetNestedInput;
+
+    @Field(() => BudgetTransferUpdateManyWithoutFrom_budgetNestedInput, {nullable:true})
+    @Type(() => BudgetTransferUpdateManyWithoutFrom_budgetNestedInput)
+    transfers_out?: BudgetTransferUpdateManyWithoutFrom_budgetNestedInput;
+
+    @Field(() => BudgetTransferUpdateManyWithoutTo_budgetNestedInput, {nullable:true})
+    @Type(() => BudgetTransferUpdateManyWithoutTo_budgetNestedInput)
+    transfers_in?: BudgetTransferUpdateManyWithoutTo_budgetNestedInput;
 }

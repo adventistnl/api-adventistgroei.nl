@@ -61,6 +61,10 @@ export class AnnualBudgetService {
     return this.annualBudgetRepository.toggleLock(id, userId);
   }
 
+  async getComputedFinancials(budgetIds: string[]): Promise<Record<string, { planned: number, allocated: number, expenses: number, balance: number }>> {
+    return this.annualBudgetRepository.getComputedFinancials(budgetIds);
+  }
+
   async findMany(args: FindManyAnnualBudgetArgs): Promise<AnnualBudget[]> {
     return this.annualBudgetRepository.findMany(args);
   }
@@ -91,19 +95,19 @@ export class AnnualBudgetService {
       };
     }
 
-    // Calcular totais baseados nos dados reais do budget da instituição
-    const totalInstitutionBudget = DecimalHelper.toDecimal(budgets[0].planned_budget);
-    const totalAllocated = DecimalHelper.toDecimal(budgets[0].allocated_amount);
-    const totalSpent = DecimalHelper.toDecimal(budgets[0].total_expenses);
+    // Calcular totais baseados nos dados reais do budget da instituição dinamicamente (Ledger-based)
+    const financialsMap = await this.annualBudgetRepository.getComputedFinancials([budgets[0].id]);
+    const budgetFin = financialsMap[budgets[0].id] || { planned: 0, allocated: 0, expenses: 0, balance: 0 };
 
-    // budgetRemaining = saldo restante do orçamento da instituição
-    const budgetRemaining = DecimalHelper.toDecimal(budgets[0].balance);
+    const totalInstitutionBudget = budgetFin.planned;
+    const totalAllocated = budgetFin.allocated;
+    const totalSpent = budgetFin.expenses;
+    const budgetRemaining = budgetFin.balance;
 
     // budgetUtilization = % do budget que foi utilizado (alocado + gasto)
-    // = ((allocated_amount + total_expenses) / planned_budget) * 100
-    const utilizationRaw = totalInstitutionBudget.isPositive() 
-      ? totalAllocated.plus(totalSpent).dividedBy(totalInstitutionBudget).times(100)
-      : new Decimal(0);
+    const utilizationRaw = totalInstitutionBudget > 0 
+      ? ((totalAllocated + totalSpent) / totalInstitutionBudget) * 100
+      : 0;
 
     // Contar quantos departamentos têm budget ativo para este ano
     const departmentBudgets = await this.annualBudgetRepository.findMany({
@@ -117,11 +121,11 @@ export class AnnualBudgetService {
     const activeDepartments = departmentBudgets.length;
 
     return {
-      totalInstitutionBudget: totalInstitutionBudget.toNumber(),
-      totalAllocated: totalAllocated.toNumber(),
-      totalSpent: totalSpent.toNumber(),
-      budgetRemaining: budgetRemaining.toNumber(),
-      budgetUtilization: DecimalHelper.round(utilizationRaw, 2).toNumber(),
+      totalInstitutionBudget: totalInstitutionBudget,
+      totalAllocated: totalAllocated,
+      totalSpent: totalSpent,
+      budgetRemaining: budgetRemaining,
+      budgetUtilization: DecimalHelper.round(new Decimal(utilizationRaw), 2).toNumber(),
       activeDepartments
     };
   }
@@ -131,24 +135,34 @@ export class AnnualBudgetService {
     const departmentBudgets = await this.annualBudgetRepository.findManyWithRelations({
       where: {
         year: { equals: year },
-        institution_id: { equals: institutionId },
         entity_type: { equals: 'INSTITUTION_DEPARTMENT' },
-        is_deleted: { equals: false }
+        is_deleted: { equals: false },
+        department: {
+          is: {
+            institution_id: { equals: institutionId }
+          }
+        }
       }
     });
+
+    const budgetIds = departmentBudgets.map(b => b.id);
+    const financialsMap = await this.annualBudgetRepository.getComputedFinancials(budgetIds);
 
     // Mapear para o formato esperado
     return departmentBudgets
       .filter(budget => budget.department)
-      .map(budget => ({
-        name: budget.department?.name || 'Unknown Department',
-        planned: DecimalHelper.toDecimal(budget.planned_budget).toNumber(),
-        approved: DecimalHelper.toDecimal(budget.approved_amount).toNumber(),
-        reserved: DecimalHelper.toDecimal(budget.allocated_amount).toNumber(), // Reserved = Allocated (not yet spent)
-        spent: DecimalHelper.toDecimal(budget.total_expenses).toNumber(), // Spent = Total expenses (already used)
-        available: DecimalHelper.toDecimal(budget.balance).toNumber(), // Available = Balance (not allocated)
-        institution: institutionId
-      }));
+      .map(budget => {
+        const fin = financialsMap[budget.id] || { planned: 0, allocated: 0, expenses: 0, balance: 0 };
+        return {
+          name: budget.department?.name || 'Unknown Department',
+          planned: fin.planned,
+          approved: DecimalHelper.toDecimal(budget.approved_amount).toNumber(), // approved usually doesn't have a ledger, it's a fixed snapshot
+          reserved: fin.allocated,
+          spent: fin.expenses, 
+          available: fin.balance, 
+          institution: institutionId
+        };
+      });
   }
 
   async getSpendingOverTime(year: number, institutionId: string): Promise<SpendingOverTime[]> {
@@ -161,26 +175,60 @@ export class AnnualBudgetService {
     const departmentBudgets = await this.annualBudgetRepository.findManyWithRelations({
       where: {
         year: { equals: year },
-        institution_id: { equals: institutionId },
         entity_type: { equals: 'INSTITUTION_DEPARTMENT' },
-        is_deleted: { equals: false }
+        is_deleted: { equals: false },
+        department: {
+          is: {
+            institution_id: { equals: institutionId }
+          }
+        }
       }
     });
 
     // Filtrar apenas budgets com department válido
     const validBudgets = departmentBudgets.filter(budget => budget.department);
 
+    // Buscar todas as transações de despesas atreladas a esses orçamentos
+    const budgetIds = validBudgets.map(b => b.id);
+    let transactions: any[] = [];
+    
+    if (budgetIds.length > 0) {
+       transactions = await this.annualBudgetRepository.getBudgetTransactions(budgetIds);
+    }
+
+    // Agrupar despesas por mês (0 a 11) e por budget_id
+    const monthlyData: Record<number, Record<string, number>> = {};
+    for (let i = 0; i < 12; i++) monthlyData[i] = {};
+
+    for (const tx of transactions) {
+      const txYear = tx.created_at.getFullYear();
+      if (txYear !== year) continue; // Garante que a transação ocorreu no ano referenciado do gráfico
+      
+      const monthIdx = tx.created_at.getMonth();
+      const bId = tx.annual_budget_id;
+      const expense = DecimalHelper.toDecimal(tx.delta_expenses).toNumber();
+      
+      monthlyData[monthIdx][bId] = (monthlyData[monthIdx][bId] || 0) + expense;
+    }
+
+    const now = new Date();
+    const currentMonth = now.getMonth();
+    const currentYear = now.getFullYear();
+
     // Criar estrutura de dados mensal
     return months.map((month, index) => {
+      const isFuture = (year > currentYear) || (year === currentYear && index > currentMonth);
       const monthDate = `${year}-${String(index + 1).padStart(2, '0')}-01`;
       
-      // Para cada departamento, usar o valor atual de total_expenses
-      // Como não temos histórico mensal, mostramos o valor atual em cada mês
-      const departments = validBudgets.map(budget => ({
-        departmentId: budget.department_id || '',
-        departmentName: budget.department?.name || 'Unknown Department',
-        amount: DecimalHelper.toDecimal(budget.total_expenses).toNumber()
-      }));
+      const departments = validBudgets.map(budget => {
+        const monthAmount = monthlyData[index][budget.id] || 0;
+        
+        return {
+          departmentId: budget.department_id || '',
+          departmentName: budget.department?.name || 'Unknown Department',
+          amount: isFuture ? 0 : monthAmount
+        };
+      });
 
       return {
         date: monthDate,
@@ -191,7 +239,7 @@ export class AnnualBudgetService {
   }
 
   async getBudgetDistribution(year: number, institutionId: string): Promise<BudgetDistribution> {
-    // Buscar budget da instituição - COLETAR todos os dados diretamente (não calcular)
+    // Buscar budget da instituição
     const institutionBudgets = await this.annualBudgetRepository.findMany({
       where: {
         year: { equals: year },
@@ -201,22 +249,23 @@ export class AnnualBudgetService {
       }
     });
 
-    // COLETAR todos os valores diretamente do budget da instituição
-    const total = DecimalHelper.sum(institutionBudgets.map(b => b.planned_budget));
-    const spent = DecimalHelper.sum(institutionBudgets.map(b => b.total_expenses));
-    const allocated = DecimalHelper.sum(institutionBudgets.map(b => b.allocated_amount));
-    const available = DecimalHelper.sum(institutionBudgets.map(b => b.balance));
+    if (institutionBudgets.length === 0) {
+      return { total: 0, spent: 0, allocated: 0, available: 0, percentageUsed: 0 };
+    }
 
-    const percentageUsed = total.isPositive() 
-      ? spent.plus(allocated).dividedBy(total).times(100) 
-      : new Decimal(0);
+    const financialsMap = await this.annualBudgetRepository.getComputedFinancials([institutionBudgets[0].id]);
+    const fin = financialsMap[institutionBudgets[0].id] || { planned: 0, allocated: 0, expenses: 0, balance: 0 };
+
+    const percentageUsed = fin.planned > 0 
+      ? ((fin.expenses + fin.allocated) / fin.planned) * 100 
+      : 0;
 
     return {
-      total: total.toNumber(),
-      spent: spent.toNumber(),
-      allocated: allocated.toNumber(),
-      available: Decimal.max(0, available).toNumber(), // Garante que não seja negativo
-      percentageUsed: DecimalHelper.round(percentageUsed, 2).toNumber()
+      total: fin.planned,
+      spent: fin.expenses,
+      allocated: fin.allocated,
+      available: Decimal.max(0, fin.balance).toNumber(),
+      percentageUsed: DecimalHelper.round(new Decimal(percentageUsed), 2).toNumber()
     };
   }
 
@@ -280,11 +329,22 @@ export class AnnualBudgetService {
       }
     });
 
-    // COLETAR os valores agregados dos departamentos
-    const totalPlanned = DecimalHelper.sum(departmentBudgets.map(b => b.planned_budget));
-    const totalAllocated = DecimalHelper.sum(departmentBudgets.map(b => b.allocated_amount));
-    const totalSpent = DecimalHelper.sum(departmentBudgets.map(b => b.total_expenses));
-    const totalAvailable = DecimalHelper.sum(departmentBudgets.map(b => b.balance));
+    // COLETAR os valores agregados dos departamentos processados pelo Ledger
+    const budgetIds = departmentBudgets.map(b => b.id);
+    const financialsMap = await this.annualBudgetRepository.getComputedFinancials(budgetIds);
+
+    let totalPlanned = 0;
+    let totalAllocated = 0;
+    let totalSpent = 0;
+    let totalAvailable = 0;
+
+    for (const budget of departmentBudgets) {
+      const fin = financialsMap[budget.id] || { planned: 0, allocated: 0, expenses: 0, balance: 0 };
+      totalPlanned += fin.planned;
+      totalAllocated += fin.allocated;
+      totalSpent += fin.expenses;
+      totalAvailable += fin.balance;
+    }
 
     // Total de departamentos = TODOS os departamentos INSTITUCIONAIS (não de igrejas)
     const totalDepartments = institutionalDepartments.length;
@@ -295,10 +355,10 @@ export class AnnualBudgetService {
     ).length;
 
     return {
-      totalPlanned: totalPlanned.toNumber(),
-      totalAllocated: totalAllocated.toNumber(),
-      totalSpent: totalSpent.toNumber(),
-      totalAvailable: totalAvailable.toNumber(),
+      totalPlanned,
+      totalAllocated,
+      totalSpent,
+      totalAvailable,
       totalDepartments,
       departmentsWithBudget
     };

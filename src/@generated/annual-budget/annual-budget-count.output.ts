@@ -7,4 +7,10 @@ export class AnnualBudgetCount {
 
     @Field(() => Int, {nullable:false})
     transactions?: number;
+
+    @Field(() => Int, {nullable:false})
+    transfers_out?: number;
+
+    @Field(() => Int, {nullable:false})
+    transfers_in?: number;
 }

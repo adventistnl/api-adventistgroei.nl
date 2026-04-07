@@ -345,8 +345,30 @@ enum ProjectHistoryType {
   ADJUSTMENT_NEEDED
 }
 
+type BudgetTransfer {
+  id: ID!
+  from_budget_id: String
+  to_budget_id: String
+  amount: Decimal!
+  type: TransferType!
+  description: String!
+  created_at: DateTime!
+  created_by: String!
+  from_budget: AnnualBudget
+  to_budget: AnnualBudget
+}
+
+enum TransferType {
+  INITIAL_FUNDING
+  DISTRIBUTION
+  REALLOCATION
+  REDUCTION
+}
+
 type AnnualBudgetCount {
   transactions: Int!
+  transfers_out: Int!
+  transfers_in: Int!
 }
 
 type AnnualBudget {
@@ -388,6 +410,8 @@ type AnnualBudget {
   church: Church
   department: Department
   transactions: [BudgetTransaction!]
+  transfers_out: [BudgetTransfer!]
+  transfers_in: [BudgetTransfer!]
   _count: AnnualBudgetCount!
   approvedAmount: Float!
   spentAmount: Float!
@@ -449,6 +473,7 @@ enum BudgetTransactionType {
   EXPENSE_APPROVED
   REFUND_TOTAL
   REFUND_PARTIAL
+  INITIAL_BALANCE
   MANUAL_ADJUSTMENT
 }
 
@@ -1939,6 +1964,8 @@ input AnnualBudgetWhereInput {
   church: ChurchNullableScalarRelationFilter
   department: DepartmentNullableScalarRelationFilter
   transactions: BudgetTransactionListRelationFilter
+  transfers_out: BudgetTransferListRelationFilter
+  transfers_in: BudgetTransferListRelationFilter
 }
 
 input StringFilter {
@@ -3783,6 +3810,47 @@ input EventListRelationFilter {
   none: EventWhereInput
 }
 
+input BudgetTransferListRelationFilter {
+  every: BudgetTransferWhereInput
+  some: BudgetTransferWhereInput
+  none: BudgetTransferWhereInput
+}
+
+input BudgetTransferWhereInput {
+  AND: [BudgetTransferWhereInput!]
+  OR: [BudgetTransferWhereInput!]
+  NOT: [BudgetTransferWhereInput!]
+  id: StringFilter
+  from_budget_id: StringNullableFilter
+  to_budget_id: StringNullableFilter
+  amount: DecimalFilter
+  type: EnumTransferTypeFilter
+  description: StringFilter
+  created_at: DateTimeFilter
+  created_by: StringFilter
+  from_budget: AnnualBudgetNullableScalarRelationFilter
+  to_budget: AnnualBudgetNullableScalarRelationFilter
+}
+
+input EnumTransferTypeFilter {
+  equals: TransferType
+  in: [TransferType!]
+  notIn: [TransferType!]
+  not: NestedEnumTransferTypeFilter
+}
+
+input NestedEnumTransferTypeFilter {
+  equals: TransferType
+  in: [TransferType!]
+  notIn: [TransferType!]
+  not: NestedEnumTransferTypeFilter
+}
+
+input AnnualBudgetNullableScalarRelationFilter {
+  is: AnnualBudgetWhereInput
+  isNot: AnnualBudgetWhereInput
+}
+
 input AnnualBudgetOrderByWithRelationInput {
   id: SortOrder
   year: SortOrder
@@ -3822,6 +3890,8 @@ input AnnualBudgetOrderByWithRelationInput {
   church: ChurchOrderByWithRelationInput
   department: DepartmentOrderByWithRelationInput
   transactions: BudgetTransactionOrderByRelationAggregateInput
+  transfers_out: BudgetTransferOrderByRelationAggregateInput
+  transfers_in: BudgetTransferOrderByRelationAggregateInput
 }
 
 enum SortOrder {
@@ -4102,6 +4172,10 @@ input BudgetTransactionOrderByRelationAggregateInput {
   _count: SortOrder
 }
 
+input BudgetTransferOrderByRelationAggregateInput {
+  _count: SortOrder
+}
+
 input AnnualBudgetWhereUniqueInput {
   id: String
   AND: [AnnualBudgetWhereInput!]
@@ -4144,6 +4218,8 @@ input AnnualBudgetWhereUniqueInput {
   church: ChurchNullableScalarRelationFilter
   department: DepartmentNullableScalarRelationFilter
   transactions: BudgetTransactionListRelationFilter
+  transfers_out: BudgetTransferListRelationFilter
+  transfers_in: BudgetTransferListRelationFilter
 }
 
 enum AnnualBudgetScalarFieldEnum {

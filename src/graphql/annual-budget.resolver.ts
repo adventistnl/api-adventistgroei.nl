@@ -117,22 +117,31 @@ export class AnnualBudgetResolver {
   }
 
   @ResolveField(() => Float)
-  spentAmount(@Parent() annualBudget: AnnualBudget): number {
-    return Number(annualBudget.total_expenses);
+  async spentAmount(@Parent() annualBudget: AnnualBudget): Promise<number> {
+    const financials = await this.annualBudgetService.getComputedFinancials([annualBudget.id]);
+    const fin = financials[annualBudget.id] || { expenses: 0 };
+    return fin.expenses;
   }
 
   @ResolveField(() => Float)
-  usagePercentage(@Parent() annualBudget: AnnualBudget): number {
+  async usagePercentage(@Parent() annualBudget: AnnualBudget): Promise<number> {
+    const financials = await this.annualBudgetService.getComputedFinancials([annualBudget.id]);
+    const fin = financials[annualBudget.id] || { expenses: 0 };
+    
     const approvedAmount = Number(annualBudget.planned_budget || 0);
-    const spentAmount = Number(annualBudget.total_expenses);
+    const spentAmount = fin.expenses;
     return approvedAmount > 0 ? Math.round((spentAmount / approvedAmount) * 100) : 0;
   }
 
   @ResolveField(() => Float)
-  remainingAmount(@Parent() annualBudget: AnnualBudget): number {
-    const approvedAmount = Number(annualBudget.planned_budget || 0);
-    const spentAmount = Number(annualBudget.total_expenses);
-    return Math.max(0, approvedAmount - spentAmount);
+  async remainingAmount(@Parent() annualBudget: AnnualBudget): Promise<number> {
+    const financials = await this.annualBudgetService.getComputedFinancials([annualBudget.id]);
+    const fin = financials[annualBudget.id] || { balance: 0 };
+    // The balance is technically exact remaining according to our ledger logic.
+    // If we want exact raw budget - expenses calculation:
+    // return Math.max(0, Context's total budget - expenses)
+    // But since the frontend uses this for "available balance" explicitly:
+    return fin.balance;
   }
 
   @Mutation(() => DeleteBudgetResponse)
