@@ -117,6 +117,27 @@ export class AnnualBudgetResolver {
   }
 
   @ResolveField(() => Float)
+  async allocated_amount(@Parent() annualBudget: AnnualBudget): Promise<number> {
+    const financials = await this.annualBudgetService.getComputedFinancials([annualBudget.id]);
+    const fin = financials[annualBudget.id] || { allocated: 0 };
+    return fin.allocated;
+  }
+
+  @ResolveField(() => Float)
+  async total_expenses(@Parent() annualBudget: AnnualBudget): Promise<number> {
+    const financials = await this.annualBudgetService.getComputedFinancials([annualBudget.id]);
+    const fin = financials[annualBudget.id] || { expenses: 0 };
+    return fin.expenses;
+  }
+
+  @ResolveField(() => Float)
+  async balance(@Parent() annualBudget: AnnualBudget): Promise<number> {
+    const financials = await this.annualBudgetService.getComputedFinancials([annualBudget.id]);
+    const fin = financials[annualBudget.id] || { balance: 0 };
+    return fin.balance;
+  }
+
+  @ResolveField(() => Float)
   async spentAmount(@Parent() annualBudget: AnnualBudget): Promise<number> {
     const financials = await this.annualBudgetService.getComputedFinancials([annualBudget.id]);
     const fin = financials[annualBudget.id] || { expenses: 0 };
@@ -137,10 +158,6 @@ export class AnnualBudgetResolver {
   async remainingAmount(@Parent() annualBudget: AnnualBudget): Promise<number> {
     const financials = await this.annualBudgetService.getComputedFinancials([annualBudget.id]);
     const fin = financials[annualBudget.id] || { balance: 0 };
-    // The balance is technically exact remaining according to our ledger logic.
-    // If we want exact raw budget - expenses calculation:
-    // return Math.max(0, Context's total budget - expenses)
-    // But since the frontend uses this for "available balance" explicitly:
     return fin.balance;
   }
 

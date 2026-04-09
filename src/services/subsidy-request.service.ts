@@ -715,19 +715,10 @@ export class SubsidyRequestService {
 
         if (fullRequest?.department_id) {
           if (prevName === 'REJECTED') {
-            // REJECTED → CLOSED: release the reserved allocation (no expense was incurred)
-            await this.annualBudgetService.updateBudgetFinancials(
-              fullRequest.department_id,
-              new Date().getFullYear(),
-              -Number(fullRequest.total_budget || 0), // Release allocation
-              0,
-              userId,
-              {
-                type: 'ALLOCATION_RELEASED',
-                description: `Budget reservation released — request rejected`,
-                subsidy_request_id: id
-              }
-            );
+            // REJECTED → CLOSED: no budget change needed.
+            // The project's ALLOCATION_RESERVED covers all subsidy requests in aggregate;
+            // individual subsidies never create their own ALLOCATION_RESERVED, so there
+            // is nothing to release here. The project allocation remains intact.
           } else if (prevName === 'ADVANCED_CLOSED' || prevName === 'WAITING_REFUND') {
             // Budget already handled (ADVANCED_CLOSED recorded expense; WAITING_REFUND→CLOSED records refund below)
             // No additional BudgetTransaction needed here
@@ -809,7 +800,8 @@ export class SubsidyRequestService {
             );
           }
 
-          // Record the expected refund (reduces expenses) for all paths
+          // Record the pending refund as an informational ledger entry only (no financial impact yet).
+          // The actual adjustment (expenses ↓, allocated ↑) happens in confirmRefundDone.
           const refundAmt = Number(fullRequest.refund_amount || 0);
           if (refundAmt > 0) {
             const isTotal = fullRequest.refund_type === 'TOTAL' ||
@@ -818,14 +810,14 @@ export class SubsidyRequestService {
             await this.annualBudgetService.updateBudgetFinancials(
               fullRequest.department_id,
               new Date().getFullYear(),
-              0,
-              -refundAmt, // Return money to department (reduce expenses)
+              0, // No allocation change — refund not confirmed yet
+              0, // No expense change — refund not confirmed yet
               userId,
               {
                 type: isTotal ? 'REFUND_TOTAL' : 'REFUND_PARTIAL',
                 description: isTotal
-                  ? `Full refund — subsidy pending confirmation`
-                  : `Partial refund of ${refundAmt} — subsidy pending confirmation`,
+                  ? `Refund requested (full) — awaiting confirmation`
+                  : `Refund requested (partial: ${refundAmt}) — awaiting confirmation`,
                 subsidy_request_id: id
               }
             );
@@ -1227,26 +1219,10 @@ export class SubsidyRequestService {
       changed_by: userId,
     });
 
-    // Update Annual Budget (Release allocation only)
-    const fullRequest = await this.prisma.subsidyRequest.findUnique({
-      where: { id },
-      select: { department_id: true, total_budget: true }
-    });
-
-    if (fullRequest?.department_id) {
-       await this.annualBudgetService.updateBudgetFinancials(
-         fullRequest.department_id,
-         new Date().getFullYear(),
-         -Number(fullRequest.total_budget || 0), // Release allocation
-         0, // No expense
-         userId,
-         {
-           type: 'ALLOCATION_RELEASED',
-           description: `Budget reservation released — subsidy rejected`,
-           subsidy_request_id: id
-         }
-       );
-    }
+    // No budget transaction on rejection.
+    // The project's ALLOCATION_RESERVED covers all subsidy requests in aggregate;
+    // individual subsidies never create their own ALLOCATION_RESERVED, so there
+    // is nothing to release here. The project allocation remains intact.
 
     return result;
   }

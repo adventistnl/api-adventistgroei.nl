@@ -59,10 +59,13 @@ export class SubsidyRequestRepository {
         throw new CustomGraphQLError(`One or more ProjectActivities do not exist or have been deleted.`, ErrorCode.NOT_FOUND, 404);
       }
 
-      // Verificar duplicatas de subsídio por atividade
+      // Check for duplicate subsidy per activity — only block if the existing subsidy is NOT rejected
       const existingSubsidies = await this.prisma.subsidyRequest.findMany({
         where: {
           is_deleted: false,
+          subsidy_status: {
+            name: { not: 'REJECTED' }, // Allow re-submission after rejection
+          },
           items: {
             some: {
               project_activity_id: { in: activityIds },

@@ -1,14 +1,12 @@
 import { Injectable, NotFoundException, Logger } from '@nestjs/common';
 import { PrismaService } from '../services/prisma.service';
 import { AnnualBudget } from '@prisma/client';
-import { Decimal } from '@prisma/client/runtime/library';
 import { CustomGraphQLError, ErrorCode } from 'src/common/errors/custom-graphql-error';
 import { AnnualBudgetEntityType } from 'src/@generated/prisma/annual-budget-entity-type.enum';
 import { AnnualBudgetStatus } from 'src/@generated/prisma/annual-budget-status.enum';
 import { AnnualBudgetPriority } from 'src/@generated/prisma/annual-budget-priority.enum';
 import { AnnualBudgetCategory } from 'src/@generated/prisma/annual-budget-category.enum';
 import { FindManyAnnualBudgetArgs } from 'src/@generated/annual-budget/find-many-annual-budget.args';
-import { DecimalHelper } from 'src/common/helpers/decimal.helper';
 import { BudgetTransactionType } from '@prisma/client';
 
 @Injectable()
@@ -1208,25 +1206,6 @@ export class AnnualBudgetRepository {
         });
       }
 
-      // Atualizar institution budget com as diferenças
-      const institutionAllocated = Number(institutionBudget.allocated_amount);
-      const institutionExpenses = Number(institutionBudget.total_expenses);
-      const institutionPlanned = Number(institutionBudget.planned_budget);
-
-      const newInstitutionAllocated = institutionAllocated + plannedDiff;
-      const newInstitutionExpenses = institutionExpenses + expensesDiff;
-      const newInstitutionBalance = institutionPlanned - (newInstitutionAllocated + newInstitutionExpenses);
-
-      await tx.annualBudget.update({
-        where: { id: institutionBudget.id },
-        data: {
-          allocated_amount: newInstitutionAllocated,
-          total_expenses: newInstitutionExpenses,
-          balance: newInstitutionBalance,
-          updated_by: userId
-        }
-      });
-
       return updated;
     });
   }
@@ -1263,85 +1242,26 @@ export class AnnualBudgetRepository {
     }
 
     if (!deptBudget.department?.institution_id) {
-        throw new Error("Department not linked to institution");
+      throw new Error('Department not linked to institution');
     }
 
-    const institutionBudget = await this.prisma.annualBudget.findFirst({
-      where: {
-        institution_id: deptBudget.department.institution_id,
-        year: year,
-        entity_type: AnnualBudgetEntityType.INSTITUTION,
-        is_deleted: false
-      }
-    });
-
-    if (!institutionBudget) {
-        throw new CustomGraphQLError("Institution budget not found", ErrorCode.NOT_FOUND, 404);
-    }
-
-    // NOTE: is_locked check removed here because:
-    // - is_locked = true means budget is finalized and READY for project allocations
-    // - This method is called when creating projects/subsidies which NEED a locked budget
-    // - The is_locked check should only block modifications to the budget definition itself,
-    //   not the allocation of funds for projects
-
-    await this.prisma.$transaction(async (tx) => {
-      // Update Department using Decimal.js for precision
-      const currentAllocated = new Decimal(deptBudget.allocated_amount);
-      const currentExpenses = new Decimal(deptBudget.total_expenses);
-      const currentPlanned = new Decimal(deptBudget.planned_budget);
-
-      // Perform calculations using Decimal.js
-      const newAllocated = currentAllocated.plus(deltaAllocated);
-      const newExpenses = currentExpenses.plus(deltaSpent);
-      const newBalance = currentPlanned.minus(newExpenses.plus(newAllocated));
-
-      // Normalize values to prevent tiny floating point errors like -0.000000000001
-      await tx.annualBudget.update({
-        where: { id: deptBudget.id },
+    // Only create the ledger record — no direct column mutation.
+    // allocated_amount, total_expenses and balance are now derived
+    // on-the-fly via getComputedFinancials() from BudgetTransaction rows.
+    if (transactionContext) {
+      await this.prisma.budgetTransaction.create({
         data: {
-          allocated_amount: DecimalHelper.normalizeZero(newAllocated),
-          total_expenses: DecimalHelper.normalizeZero(newExpenses),
-          balance: DecimalHelper.normalizeZero(newBalance),
-          updated_by: userId
+          annual_budget_id: deptBudget.id,
+          type: transactionContext.type,
+          delta_allocated: deltaAllocated,
+          delta_expenses: deltaSpent,
+          description: transactionContext.description || 'System transaction',
+          project_id: transactionContext.project_id,
+          subsidy_request_id: transactionContext.subsidy_request_id,
+          created_by: userId,
         }
       });
-
-      // Create Ledger Transaction if context is provided
-      if (transactionContext) {
-        await tx.budgetTransaction.create({
-          data: {
-            annual_budget_id: deptBudget.id,
-            type: transactionContext.type,
-            delta_allocated: deltaAllocated,
-            delta_expenses: deltaSpent,
-            description: transactionContext.description || 'System transaction',
-            project_id: transactionContext.project_id,
-            subsidy_request_id: transactionContext.subsidy_request_id,
-            created_by: userId,
-          }
-        });
-      }
-
-      // Update Institution (Only Expenses propagate)
-    if (deltaSpent !== 0) {
-        const instExpenses = new Decimal(institutionBudget.total_expenses);
-        const instPlanned = new Decimal(institutionBudget.planned_budget);
-        const instAllocated = new Decimal(institutionBudget.allocated_amount);
-
-        const newInstExpenses = instExpenses.plus(deltaSpent);
-        const newInstBalance = instPlanned.minus(instAllocated);
-
-       await tx.annualBudget.update({
-         where: { id: institutionBudget.id },
-         data: {
-           total_expenses: newInstExpenses,
-           balance: newInstBalance,
-           updated_by: userId
-         }
-       });
     }
-    });
   }
 
   async getComputedFinancials(budgetIds: string[]): Promise<Record<string, { planned: number; allocated: number; expenses: number; balance: number }>> {
