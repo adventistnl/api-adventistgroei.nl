@@ -12,14 +12,5 @@ export class AnnualBudgetAvgOrderByAggregateInput {
     planned_budget?: `${SortOrder}`;
 
     @Field(() => SortOrder, {nullable:true})
-    total_expenses?: `${SortOrder}`;
-
-    @Field(() => SortOrder, {nullable:true})
-    balance?: `${SortOrder}`;
-
-    @Field(() => SortOrder, {nullable:true})
-    allocated_amount?: `${SortOrder}`;
-
-    @Field(() => SortOrder, {nullable:true})
     approved_amount?: `${SortOrder}`;
 }

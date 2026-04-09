@@ -29,12 +29,6 @@ export class AnnualBudget {
     @Field(() => GraphQLDecimal, {nullable:false})
     planned_budget!: Decimal;
 
-    @Field(() => GraphQLDecimal, {nullable:false})
-    total_expenses!: Decimal;
-
-    @Field(() => GraphQLDecimal, {nullable:false})
-    balance!: Decimal;
-
     @Field(() => String, {nullable:true})
     notes!: string | null;
 
@@ -79,9 +73,6 @@ export class AnnualBudget {
 
     @Field(() => String, {nullable:true})
     department_id!: string | null;
-
-    @Field(() => GraphQLDecimal, {nullable:false})
-    allocated_amount!: Decimal;
 
     @Field(() => GraphQLDecimal, {nullable:true})
     approved_amount!: Decimal | null;

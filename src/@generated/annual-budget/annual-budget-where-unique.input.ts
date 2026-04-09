@@ -47,14 +47,6 @@ export class AnnualBudgetWhereUniqueInput {
     @Type(() => DecimalFilter)
     planned_budget?: DecimalFilter;
 
-    @Field(() => DecimalFilter, {nullable:true})
-    @Type(() => DecimalFilter)
-    total_expenses?: DecimalFilter;
-
-    @Field(() => DecimalFilter, {nullable:true})
-    @Type(() => DecimalFilter)
-    balance?: DecimalFilter;
-
     @Field(() => StringNullableFilter, {nullable:true})
     notes?: StringNullableFilter;
 
@@ -99,10 +91,6 @@ export class AnnualBudgetWhereUniqueInput {
 
     @Field(() => StringNullableFilter, {nullable:true})
     department_id?: StringNullableFilter;
-
-    @Field(() => DecimalFilter, {nullable:true})
-    @Type(() => DecimalFilter)
-    allocated_amount?: DecimalFilter;
 
     @Field(() => DecimalNullableFilter, {nullable:true})
     @Type(() => DecimalNullableFilter)

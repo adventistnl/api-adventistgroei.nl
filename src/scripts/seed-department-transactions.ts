@@ -60,14 +60,8 @@ async function run() {
          }
        });
 
-       // Precisamos também atualizar o cache total no AnnualBudget para consistência do resto da plataforma
-       await prisma.annualBudget.update({
-         where: { id: budget.id },
-         data: {
-           total_expenses: { increment: expenseAmount }
-         }
-       });
-
+       // Note: total_expenses column was removed from AnnualBudget.
+       // The BudgetTransaction record above is the source of truth for expenses.
        totalTransactions++;
     }
     

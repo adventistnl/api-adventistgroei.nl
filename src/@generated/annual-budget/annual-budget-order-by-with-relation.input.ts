@@ -22,12 +22,6 @@ export class AnnualBudgetOrderByWithRelationInput {
     @Field(() => SortOrder, {nullable:true})
     planned_budget?: `${SortOrder}`;
 
-    @Field(() => SortOrder, {nullable:true})
-    total_expenses?: `${SortOrder}`;
-
-    @Field(() => SortOrder, {nullable:true})
-    balance?: `${SortOrder}`;
-
     @Field(() => SortOrderInput, {nullable:true})
     notes?: SortOrderInput;
 
@@ -72,9 +66,6 @@ export class AnnualBudgetOrderByWithRelationInput {
 
     @Field(() => SortOrderInput, {nullable:true})
     department_id?: SortOrderInput;
-
-    @Field(() => SortOrder, {nullable:true})
-    allocated_amount?: `${SortOrder}`;
 
     @Field(() => SortOrderInput, {nullable:true})
     @Type(() => SortOrderInput)

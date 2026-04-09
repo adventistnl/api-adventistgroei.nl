@@ -34,14 +34,6 @@ export class AnnualBudgetUpdateWithoutTransfers_outInput {
     @Type(() => DecimalFieldUpdateOperationsInput)
     planned_budget?: DecimalFieldUpdateOperationsInput;
 
-    @Field(() => DecimalFieldUpdateOperationsInput, {nullable:true})
-    @Type(() => DecimalFieldUpdateOperationsInput)
-    total_expenses?: DecimalFieldUpdateOperationsInput;
-
-    @Field(() => DecimalFieldUpdateOperationsInput, {nullable:true})
-    @Type(() => DecimalFieldUpdateOperationsInput)
-    balance?: DecimalFieldUpdateOperationsInput;
-
     @Field(() => NullableStringFieldUpdateOperationsInput, {nullable:true})
     notes?: NullableStringFieldUpdateOperationsInput;
 
@@ -74,10 +66,6 @@ export class AnnualBudgetUpdateWithoutTransfers_outInput {
 
     @Field(() => EnumAnnualBudgetStatusFieldUpdateOperationsInput, {nullable:true})
     status?: EnumAnnualBudgetStatusFieldUpdateOperationsInput;
-
-    @Field(() => DecimalFieldUpdateOperationsInput, {nullable:true})
-    @Type(() => DecimalFieldUpdateOperationsInput)
-    allocated_amount?: DecimalFieldUpdateOperationsInput;
 
     @Field(() => NullableDecimalFieldUpdateOperationsInput, {nullable:true})
     @Type(() => NullableDecimalFieldUpdateOperationsInput)

@@ -466,8 +466,7 @@ model AnnualBudget {
   id                String                 @id @default(uuid())
   year              Int
   planned_budget    Decimal
-  total_expenses    Decimal
-  balance           Decimal
+  // total_expenses and balance are now computed from BudgetTransaction — removed from schema
   notes             String?
   description       String?
   justification     String?
@@ -487,7 +486,7 @@ model AnnualBudget {
   church            Church?                @relation(fields: [church_id], references: [id])
   department_id     String?
   department        Department?            @relation(fields: [department_id], references: [id])
-  allocated_amount  Decimal
+  // allocated_amount is now computed from BudgetTransaction — removed from schema
   approved_amount   Decimal?
   requested_by      String
   reviewed_by       String?

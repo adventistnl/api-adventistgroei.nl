@@ -29,16 +29,6 @@ export class AnnualBudgetUncheckedCreateInput {
     @Transform(transformToDecimal)
     planned_budget!: Decimal;
 
-    @Field(() => GraphQLDecimal, {nullable:false})
-    @Type(() => Object)
-    @Transform(transformToDecimal)
-    total_expenses!: Decimal;
-
-    @Field(() => GraphQLDecimal, {nullable:false})
-    @Type(() => Object)
-    @Transform(transformToDecimal)
-    balance!: Decimal;
-
     @Field(() => String, {nullable:true})
     notes?: string;
 
@@ -83,11 +73,6 @@ export class AnnualBudgetUncheckedCreateInput {
 
     @Field(() => String, {nullable:true})
     department_id?: string;
-
-    @Field(() => GraphQLDecimal, {nullable:false})
-    @Type(() => Object)
-    @Transform(transformToDecimal)
-    allocated_amount!: Decimal;
 
     @Field(() => GraphQLDecimal, {nullable:true})
     @Type(() => Object)

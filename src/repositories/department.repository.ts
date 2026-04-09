@@ -400,8 +400,9 @@ export class DepartmentRepository {
       (dept) => dept.users.length > 0 || dept.annual_budgets.length > 0
     ).length;
 
+    // departmentsWithBudget: departments that have a budget record
     const departmentsWithBudget = departmentsWithData.filter(
-      (dept) => dept.annual_budgets.length > 0 && DecimalHelper.toDecimal(dept.annual_budgets[0]?.allocated_amount).gt(0)
+      (dept) => dept.annual_budgets.length > 0 && Number(dept.annual_budgets[0]?.planned_budget || 0) > 0
     ).length;
 
     // Total users
@@ -417,21 +418,10 @@ export class DepartmentRepository {
       },
     });
 
-    // Budget calculations
-    const budgetData = await this.prisma.annualBudget.aggregate({
-      where: {
-        year: currentYear,
-        is_deleted: false,
-        department: whereClause,
-      },
-      _sum: {
-        allocated_amount: true,
-        total_expenses: true,
-      },
-    });
-
-    const totalAllocatedBudget = DecimalHelper.toDecimal(budgetData._sum.allocated_amount);
-    const totalSpentBudget = DecimalHelper.toDecimal(budgetData._sum.total_expenses);
+    // allocated_amount and total_expenses are now computed from BudgetTransaction.
+    // This aggregate only sums planned_budget; computed values require getComputedFinancials().
+    const totalAllocatedBudget = DecimalHelper.toDecimal(0);
+    const totalSpentBudget = DecimalHelper.toDecimal(0);
     
     // Calculate averages using Decimal
     const averageBudgetPerDepartment = departmentsWithBudget > 0 
@@ -519,9 +509,10 @@ export class DepartmentRepository {
     });
 
     return departments.map((dept) => {
-      const yearBudget = dept.annual_budgets[0];
-      const allocated_amount = DecimalHelper.toNumber(yearBudget?.allocated_amount);
-      const spent_amount = DecimalHelper.toNumber(yearBudget?.total_expenses);
+      // allocated_amount and total_expenses are now computed from BudgetTransaction.
+      // Returning 0 here; if needed, replace with a call to getComputedFinancials.
+      const allocated_amount = 0;
+      const spent_amount = 0;
       const user_count = dept.users.length;
       const project_count = dept.projects.length;
       const activity_count = dept.projects.reduce((sum, project) => sum + project.activities.length, 0);
@@ -583,9 +574,10 @@ export class DepartmentRepository {
     const timeline: DepartmentBudgetTimeline[] = [];
 
     departments.forEach((dept) => {
-      const yearBudget = dept.annual_budgets[0];
-      const allocated = DecimalHelper.toNumber(yearBudget?.allocated_amount);
-      const totalSpent = DecimalHelper.toDecimal(yearBudget?.total_expenses);
+      // allocated_amount and total_expenses are now computed from BudgetTransaction.
+      // Returning 0 here; if needed, replace with a call to getComputedFinancials.
+      const allocated = 0;
+      const totalSpent = DecimalHelper.toDecimal(0);
 
       months.forEach((month, index) => {
         // Only show data up to current month

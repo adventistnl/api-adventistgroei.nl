@@ -375,8 +375,6 @@ type AnnualBudget {
   id: ID!
   year: Int!
   planned_budget: Decimal!
-  total_expenses: Decimal!
-  balance: Decimal!
   notes: String
   description: String
   justification: String
@@ -392,7 +390,6 @@ type AnnualBudget {
   institution_id: String
   church_id: String
   department_id: String
-  allocated_amount: Decimal!
   approved_amount: Decimal
   requested_by: String!
   reviewed_by: String
@@ -414,6 +411,9 @@ type AnnualBudget {
   transfers_in: [BudgetTransfer!]
   _count: AnnualBudgetCount!
   approvedAmount: Float!
+  allocated_amount: Float!
+  total_expenses: Float!
+  balance: Float!
   spentAmount: Float!
   usagePercentage: Float!
   remainingAmount: Float!
@@ -1929,8 +1929,6 @@ input AnnualBudgetWhereInput {
   id: StringFilter
   year: IntFilter
   planned_budget: DecimalFilter
-  total_expenses: DecimalFilter
-  balance: DecimalFilter
   notes: StringNullableFilter
   description: StringNullableFilter
   justification: StringNullableFilter
@@ -1946,7 +1944,6 @@ input AnnualBudgetWhereInput {
   institution_id: StringNullableFilter
   church_id: StringNullableFilter
   department_id: StringNullableFilter
-  allocated_amount: DecimalFilter
   approved_amount: DecimalNullableFilter
   requested_by: StringFilter
   reviewed_by: StringNullableFilter
@@ -3855,8 +3852,6 @@ input AnnualBudgetOrderByWithRelationInput {
   id: SortOrder
   year: SortOrder
   planned_budget: SortOrder
-  total_expenses: SortOrder
-  balance: SortOrder
   notes: SortOrderInput
   description: SortOrderInput
   justification: SortOrderInput
@@ -3872,7 +3867,6 @@ input AnnualBudgetOrderByWithRelationInput {
   institution_id: SortOrderInput
   church_id: SortOrderInput
   department_id: SortOrderInput
-  allocated_amount: SortOrder
   approved_amount: SortOrderInput
   requested_by: SortOrder
   reviewed_by: SortOrderInput
@@ -4183,8 +4177,6 @@ input AnnualBudgetWhereUniqueInput {
   NOT: [AnnualBudgetWhereInput!]
   year: IntFilter
   planned_budget: DecimalFilter
-  total_expenses: DecimalFilter
-  balance: DecimalFilter
   notes: StringNullableFilter
   description: StringNullableFilter
   justification: StringNullableFilter
@@ -4200,7 +4192,6 @@ input AnnualBudgetWhereUniqueInput {
   institution_id: StringNullableFilter
   church_id: StringNullableFilter
   department_id: StringNullableFilter
-  allocated_amount: DecimalFilter
   approved_amount: DecimalNullableFilter
   requested_by: StringFilter
   reviewed_by: StringNullableFilter
@@ -4226,8 +4217,6 @@ enum AnnualBudgetScalarFieldEnum {
   id
   year
   planned_budget
-  total_expenses
-  balance
   notes
   description
   justification
@@ -4243,7 +4232,6 @@ enum AnnualBudgetScalarFieldEnum {
   institution_id
   church_id
   department_id
-  allocated_amount
   approved_amount
   requested_by
   reviewed_by

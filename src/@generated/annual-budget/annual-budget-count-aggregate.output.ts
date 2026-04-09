@@ -15,12 +15,6 @@ export class AnnualBudgetCountAggregate {
     planned_budget!: number;
 
     @Field(() => Int, {nullable:false})
-    total_expenses!: number;
-
-    @Field(() => Int, {nullable:false})
-    balance!: number;
-
-    @Field(() => Int, {nullable:false})
     notes!: number;
 
     @Field(() => Int, {nullable:false})
@@ -64,9 +58,6 @@ export class AnnualBudgetCountAggregate {
 
     @Field(() => Int, {nullable:false})
     department_id!: number;
-
-    @Field(() => Int, {nullable:false})
-    allocated_amount!: number;
 
     @Field(() => Int, {nullable:false})
     approved_amount!: number;
