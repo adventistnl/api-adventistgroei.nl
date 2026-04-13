@@ -195,6 +195,61 @@ export class InstitutionBudgetUpdateDto {
 }
 
 // ============================================
+// LEDGER HISTORY DTOs
+// ============================================
+
+@InputType()
+export class LedgerHistoryFilterInput {
+  @Field(() => String, { nullable: true })
+  institutionId?: string;
+
+  @Field(() => Int, { nullable: false })
+  year!: number;
+
+  @Field(() => String, { nullable: true })
+  departmentId?: string;
+
+  @Field(() => String, { nullable: true })
+  churchId?: string;
+
+  @Field(() => String, { nullable: true })
+  regionId?: string;
+}
+
+@ObjectType()
+export class LedgerHistoryEntry {
+  @Field(() => String)
+  id!: string;
+
+  @Field(() => Date)
+  date!: Date;
+
+  @Field(() => String)
+  description!: string;
+
+  @Field(() => Float)
+  amount!: number;
+
+  @Field(() => String)
+  type!: string; // e.g., "EXPENSE", "ALLOCATION", "TRANSFER_IN", "TRANSFER_OUT"
+
+  @Field(() => String)
+  category!: string; // "TRANSACTION" or "TRANSFER"
+
+  @Field(() => String, { nullable: true })
+  entityName?: string; // Name of Department, Church, etc.
+
+  @Field(() => String, { nullable: true })
+  relatedEntity?: string; // Project Name or Subsidy Request ID
+
+  @Field(() => String, { nullable: true })
+  createdBy?: string;
+
+  @Field(() => Float, { nullable: true })
+  balanceAfter?: number;
+}
+
+// ============================================
 // DEPARTMENT BUDGET SPECIFIC DTOs
 // ============================================
 

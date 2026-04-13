@@ -1108,6 +1108,7 @@ enum PermissionResolverName {
   addAdjustmentTask
   toggleAdjustmentTask
   removeAdjustmentTask
+  ledgerHistory
 }
 
 enum PermissionGroup {
@@ -1647,6 +1648,19 @@ type RecalculateAllocatedAmountsResponse {
   message: String!
 }
 
+type LedgerHistoryEntry {
+  id: String!
+  date: DateTime!
+  description: String!
+  amount: Float!
+  type: String!
+  category: String!
+  entityName: String
+  relatedEntity: String
+  createdBy: String
+  balanceAfter: Float
+}
+
 type BudgetKPIs {
   totalInstitutionBudget: Float!
   totalAllocated: Float!
@@ -1900,6 +1914,7 @@ type Query {
   entityDistribution(year: Int!): [EntityDistribution!]!
   budgetDistribution(year: Int!, institutionId: String!): BudgetDistribution!
   institutionalDepartmentsKPIs(year: Int!, institutionId: String!): InstitutionalDepartmentsKPIs!
+  ledgerHistory(filters: LedgerHistoryFilterInput!): [LedgerHistoryEntry!]!
   projectHistories(projectId: ID!): [ProjectHistory!]!
   projectAdjustments(projectId: ID!): [ProjectAdjustment!]!
   projectAdjustment(id: ID!): ProjectAdjustment!
@@ -4244,6 +4259,14 @@ enum AnnualBudgetScalarFieldEnum {
   is_locked
   has_budget_record
   entity_type
+}
+
+input LedgerHistoryFilterInput {
+  institutionId: String
+  year: Int!
+  departmentId: String
+  churchId: String
+  regionId: String
 }
 
 type Mutation {

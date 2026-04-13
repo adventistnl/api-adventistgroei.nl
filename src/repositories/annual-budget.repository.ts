@@ -8,6 +8,7 @@ import { AnnualBudgetPriority } from 'src/@generated/prisma/annual-budget-priori
 import { AnnualBudgetCategory } from 'src/@generated/prisma/annual-budget-category.enum';
 import { FindManyAnnualBudgetArgs } from 'src/@generated/annual-budget/find-many-annual-budget.args';
 import { BudgetTransactionType } from '@prisma/client';
+import { LedgerHistoryEntry, LedgerHistoryFilterInput } from 'src/dto/annual_budget.dto';
 
 @Injectable()
 export class AnnualBudgetRepository {
@@ -1133,5 +1134,142 @@ export class AnnualBudgetRepository {
     }
     
     return result;
+  }
+
+  async getLedgerHistory(filters: LedgerHistoryFilterInput): Promise<LedgerHistoryEntry[]> {
+    const { year, institutionId, departmentId, churchId, regionId } = filters;
+
+    // 1. Find relevant budgets based on filters
+    const whereBudget: any = { year, is_deleted: false };
+    if (institutionId) whereBudget.institution_id = institutionId;
+    if (departmentId) whereBudget.department_id = departmentId;
+    if (churchId) whereBudget.church_id = churchId;
+    if (regionId) whereBudget.region_id = regionId;
+
+    const relevantBudgets = await this.prisma.annualBudget.findMany({
+      where: whereBudget,
+      select: { id: true, entity_type: true },
+    });
+
+    const budgetIds = relevantBudgets.map((b) => b.id);
+    if (budgetIds.length === 0) return [];
+
+    // 2. Fetch Transactions (Ledger Entries)
+    const transactions = await this.prisma.budgetTransaction.findMany({
+      where: { annual_budget_id: { in: budgetIds } },
+      include: {
+        annual_budget: {
+          include: {
+            department: { select: { name: true } },
+            institution: { select: { name: true } },
+            church: { select: { name: true } },
+          },
+        },
+        project: { select: { title: true } },
+        subsidy_request: { select: { id: true } },
+      },
+      orderBy: { created_at: 'desc' },
+    });
+
+    // 3. Fetch Transfers (Movement between budgets)
+    const transfers = await this.prisma.budgetTransfer.findMany({
+      where: {
+        OR: [
+          { from_budget_id: { in: budgetIds } },
+          { to_budget_id: { in: budgetIds } },
+        ],
+      },
+      include: {
+        from_budget: {
+          include: {
+            department: { select: { name: true } },
+            institution: { select: { name: true } },
+            church: { select: { name: true } },
+          },
+        },
+        to_budget: {
+          include: {
+            department: { select: { name: true } },
+            institution: { select: { name: true } },
+            church: { select: { name: true } },
+          },
+        },
+      },
+      orderBy: { created_at: 'desc' },
+    });
+
+    // 4. Transform and Unify
+    const history: LedgerHistoryEntry[] = [];
+
+    // Fetch user emails for all unique creators to provide readable names
+    const creatorIds = new Set([
+      ...transactions.map(tx => tx.created_by),
+      ...transfers.map(tr => tr.created_by)
+    ]);
+
+    const users = await this.prisma.user.findMany({
+      where: { id: { in: Array.from(creatorIds) } },
+      select: { id: true, email: true }
+    });
+
+    const userMap = new Map(users.map(u => [u.id, u.email]));
+
+    // Map Transactions
+    transactions.forEach((tx) => {
+      // In our ledger: 
+      // delta_allocated > 0 is a reservation (outflow from available)
+      // delta_expenses > 0 is a cost (outflow from alocated/available)
+      // For the history view, we show the absolute impact.
+      const amount = Number(tx.delta_allocated) !== 0 ? Number(tx.delta_allocated) : Number(tx.delta_expenses);
+
+      history.push({
+        id: tx.id,
+        date: tx.created_at,
+        description: tx.description,
+        amount: -amount, // Transactions are outflows in this context
+        type: tx.type,
+        category: 'TRANSACTION',
+        entityName: tx.annual_budget.department?.name || tx.annual_budget.institution?.name || tx.annual_budget.church?.name,
+        relatedEntity: tx.project?.title || tx.subsidy_request?.id,
+        createdBy: userMap.get(tx.created_by) || tx.created_by,
+      });
+    });
+
+    // Map Transfers
+    transfers.forEach((tr) => {
+      const isFrom = budgetIds.includes(tr.from_budget_id || '');
+      const isTo = budgetIds.includes(tr.to_budget_id || '');
+
+      if (isFrom) {
+        history.push({
+          id: `${tr.id}_out`,
+          date: tr.created_at,
+          description: tr.description,
+          amount: -Number(tr.amount),
+          type: `TRANSFER_OUT_${tr.type}`,
+          category: 'TRANSFER',
+          entityName: tr.from_budget?.department?.name || tr.from_budget?.institution?.name || tr.from_budget?.church?.name,
+          relatedEntity: tr.to_budget ? `To: ${tr.to_budget.department?.name || tr.to_budget.institution?.name || tr.to_budget.church?.name}` : undefined,
+          createdBy: userMap.get(tr.created_by) || tr.created_by,
+        });
+      }
+
+      if (isTo) {
+        history.push({
+          id: `${tr.id}_in`,
+          date: tr.created_at,
+          description: tr.description,
+          amount: Number(tr.amount),
+          type: `TRANSFER_IN_${tr.type}`,
+          category: 'TRANSFER',
+          entityName: tr.to_budget?.department?.name || tr.to_budget?.institution?.name || tr.to_budget?.church?.name,
+          relatedEntity: tr.from_budget ? `From: ${tr.from_budget.department?.name || tr.from_budget.institution?.name || tr.from_budget.church?.name}` : undefined,
+          createdBy: userMap.get(tr.created_by) || tr.created_by,
+        });
+      }
+    });
+
+    // 5. Sort by date descending
+    return history.sort((a, b) => b.date.getTime() - a.date.getTime());
   }
 }

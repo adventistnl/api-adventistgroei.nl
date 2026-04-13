@@ -156,6 +156,7 @@ const permissionsEnabledToClient = [
   { name: 'add adjustment task', description: 'Add a task to an existing adjustment', resolver_name: 'addAdjustmentTask' as PermissionResolverName, group: 'PROJECT_HISTORY' as PermissionGroup, key_code: 'PROJECT_ADJUSTMENT_TASK_ADD', disabled_to_client: false },
   { name: 'toggle adjustment task', description: 'Mark or unmark an adjustment task as completed', resolver_name: 'toggleAdjustmentTask' as PermissionResolverName, group: 'PROJECT_HISTORY' as PermissionGroup, key_code: 'PROJECT_ADJUSTMENT_TASK_TOGGLE', disabled_to_client: false },
   { name: 'remove adjustment task', description: 'Remove a task from an adjustment', resolver_name: 'removeAdjustmentTask' as PermissionResolverName, group: 'PROJECT_HISTORY' as PermissionGroup, key_code: 'PROJECT_ADJUSTMENT_TASK_REMOVE', disabled_to_client: false },
+  { name: 'read ledger history', description: 'Access to financial ledger history (statement)', resolver_name: 'ledgerHistory' as PermissionResolverName, group: 'ANNUAL_BUDGET' as PermissionGroup, key_code: 'LEDGER_HISTORY_ACCESS', disabled_to_client: false },
 ];
 
 async function main() {
