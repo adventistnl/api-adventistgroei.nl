@@ -1661,6 +1661,18 @@ type LedgerHistoryEntry {
   balanceAfter: Float
 }
 
+type LedgerHistoryPageInfo {
+  totalPages: Int!
+  hasNextPage: Boolean!
+  hasPreviousPage: Boolean!
+}
+
+type LedgerHistoryPaginatedResponse {
+  items: [LedgerHistoryEntry!]!
+  totalCount: Int!
+  pageInfo: LedgerHistoryPageInfo!
+}
+
 type BudgetKPIs {
   totalInstitutionBudget: Float!
   totalAllocated: Float!
@@ -1914,7 +1926,7 @@ type Query {
   entityDistribution(year: Int!): [EntityDistribution!]!
   budgetDistribution(year: Int!, institutionId: String!): BudgetDistribution!
   institutionalDepartmentsKPIs(year: Int!, institutionId: String!): InstitutionalDepartmentsKPIs!
-  ledgerHistory(filters: LedgerHistoryFilterInput!): [LedgerHistoryEntry!]!
+  ledgerHistory(filters: LedgerHistoryFilterInput!): LedgerHistoryPaginatedResponse!
   projectHistories(projectId: ID!): [ProjectHistory!]!
   projectAdjustments(projectId: ID!): [ProjectAdjustment!]!
   projectAdjustment(id: ID!): ProjectAdjustment!
@@ -4267,6 +4279,12 @@ input LedgerHistoryFilterInput {
   departmentId: String
   churchId: String
   regionId: String
+  startDate: DateTime
+  endDate: DateTime
+  search: String
+  type: String
+  page: Int = 1
+  limit: Int = 50
 }
 
 type Mutation {

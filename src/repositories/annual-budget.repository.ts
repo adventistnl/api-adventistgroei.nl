@@ -8,7 +8,7 @@ import { AnnualBudgetPriority } from 'src/@generated/prisma/annual-budget-priori
 import { AnnualBudgetCategory } from 'src/@generated/prisma/annual-budget-category.enum';
 import { FindManyAnnualBudgetArgs } from 'src/@generated/annual-budget/find-many-annual-budget.args';
 import { BudgetTransactionType } from '@prisma/client';
-import { LedgerHistoryEntry, LedgerHistoryFilterInput } from 'src/dto/annual_budget.dto';
+import { LedgerHistoryEntry, LedgerHistoryFilterInput, LedgerHistoryPaginatedResponse } from 'src/dto/annual_budget.dto';
 
 @Injectable()
 export class AnnualBudgetRepository {
@@ -1136,8 +1136,12 @@ export class AnnualBudgetRepository {
     return result;
   }
 
-  async getLedgerHistory(filters: LedgerHistoryFilterInput): Promise<LedgerHistoryEntry[]> {
-    const { year, institutionId, departmentId, churchId, regionId } = filters;
+  async getLedgerHistory(filters: LedgerHistoryFilterInput): Promise<LedgerHistoryPaginatedResponse> {
+    const { 
+      year, institutionId, departmentId, churchId, regionId, 
+      startDate, endDate, search, type,
+      page = 1, limit = 50 
+    } = filters;
 
     // 1. Find relevant budgets based on filters
     const whereBudget: any = { year, is_deleted: false };
@@ -1148,128 +1152,198 @@ export class AnnualBudgetRepository {
 
     const relevantBudgets = await this.prisma.annualBudget.findMany({
       where: whereBudget,
-      select: { id: true, entity_type: true },
+      select: { id: true },
     });
 
     const budgetIds = relevantBudgets.map((b) => b.id);
-    if (budgetIds.length === 0) return [];
+    if (budgetIds.length === 0) {
+      return { 
+        items: [], 
+        totalCount: 0, 
+        pageInfo: { totalPages: 0, hasNextPage: false, hasPreviousPage: false } 
+      };
+    }
 
-    // 2. Fetch Transactions (Ledger Entries)
-    const transactions = await this.prisma.budgetTransaction.findMany({
-      where: { annual_budget_id: { in: budgetIds } },
-      include: {
-        annual_budget: {
-          include: {
-            department: { select: { name: true } },
-            institution: { select: { name: true } },
-            church: { select: { name: true } },
-          },
-        },
-        project: { select: { title: true } },
-        subsidy_request: { select: { id: true } },
-      },
-      orderBy: { created_at: 'desc' },
-    });
+    const dateFilter: any = {};
+    if (startDate) dateFilter.gte = startDate;
+    if (endDate) dateFilter.lte = endDate;
 
-    // 3. Fetch Transfers (Movement between budgets)
-    const transfers = await this.prisma.budgetTransfer.findMany({
-      where: {
-        OR: [
-          { from_budget_id: { in: budgetIds } },
-          { to_budget_id: { in: budgetIds } },
-        ],
-      },
-      include: {
-        from_budget: {
-          include: {
-            department: { select: { name: true } },
-            institution: { select: { name: true } },
-            church: { select: { name: true } },
-          },
-        },
-        to_budget: {
-          include: {
-            department: { select: { name: true } },
-            institution: { select: { name: true } },
-            church: { select: { name: true } },
-          },
-        },
-      },
-      orderBy: { created_at: 'desc' },
-    });
+    const searchFilter = search ? { description: { contains: search, mode: 'insensitive' as const } } : {};
 
-    // 4. Transform and Unify
-    const history: LedgerHistoryEntry[] = [];
-
-    // Fetch user emails for all unique creators to provide readable names
-    const creatorIds = new Set([
-      ...transactions.map(tx => tx.created_by),
-      ...transfers.map(tr => tr.created_by)
+    // 2. Fetch Metadata (IDs and Dates only) for both tables in parallel
+    const [txMeta, trMeta] = await Promise.all([
+      // Transactions Metadata
+      (type === 'all' || type === 'TRANSACTION' || !type) 
+        ? this.prisma.budgetTransaction.findMany({
+            where: { 
+              annual_budget_id: { in: budgetIds },
+              ...(startDate || endDate ? { created_at: dateFilter } : {}),
+              ...searchFilter
+            },
+            select: { id: true, created_at: true },
+          })
+        : Promise.resolve([] as { id: string, created_at: Date }[]),
+      // Transfers Metadata
+      (type === 'all' || type === 'TRANSFER' || !type)
+        ? this.prisma.budgetTransfer.findMany({
+            where: {
+              OR: [
+                { from_budget_id: { in: budgetIds } },
+                { to_budget_id: { in: budgetIds } },
+              ],
+              ...(startDate || endDate ? { created_at: dateFilter } : {}),
+              ...searchFilter
+            },
+            select: { id: true, created_at: true, from_budget_id: true, to_budget_id: true },
+          })
+        : Promise.resolve([] as { id: string, created_at: Date, from_budget_id: string | null, to_budget_id: string | null }[])
     ]);
 
-    const users = await this.prisma.user.findMany({
-      where: { id: { in: Array.from(creatorIds) } },
-      select: { id: true, email: true }
+    // 3. Process and Paginate Metadata in Memory
+    const allMeta: { id: string; date: Date; category: 'TRANSACTION' | 'TRANSFER'; subId?: string }[] = [];
+    
+    (txMeta as any[]).forEach(m => allMeta.push({ id: m.id, date: m.created_at, category: 'TRANSACTION' }));
+    
+    (trMeta as any[]).forEach(m => {
+      const isFrom = budgetIds.includes(m.from_budget_id || '');
+      const isTo = budgetIds.includes(m.to_budget_id || '');
+      
+      if (isFrom) allMeta.push({ id: m.id, date: m.created_at, category: 'TRANSFER', subId: 'out' });
+      if (isTo) allMeta.push({ id: m.id, date: m.created_at, category: 'TRANSFER', subId: 'in' });
     });
+
+    // Sort by date descending
+    allMeta.sort((a, b) => b.date.getTime() - a.date.getTime());
+
+    const totalCount = allMeta.length;
+    const totalPages = Math.ceil(totalCount / limit);
+    const startIndex = (page - 1) * limit;
+    const pageSlice = allMeta.slice(startIndex, startIndex + limit);
+
+    if (pageSlice.length === 0) {
+      return { 
+        items: [], 
+        totalCount, 
+        pageInfo: { totalPages, hasNextPage: false, hasPreviousPage: page > 1 } 
+      };
+    }
+
+    // 4. Hydrate only the slice items
+    const txIdsToHydrate = pageSlice.filter(m => m.category === 'TRANSACTION').map(m => m.id);
+    const trIdsToHydrate = pageSlice.filter(m => m.category === 'TRANSFER').map(m => m.id);
+
+    const [fullTxs, fullTrs] = await Promise.all([
+      txIdsToHydrate.length > 0 
+        ? this.prisma.budgetTransaction.findMany({
+            where: { id: { in: txIdsToHydrate } },
+            include: {
+              annual_budget: {
+                include: {
+                  department: { select: { name: true } },
+                  institution: { select: { name: true } },
+                  church: { select: { name: true } },
+                },
+              },
+              project: { select: { title: true } },
+              subsidy_request: { select: { id: true } },
+            }
+          })
+        : Promise.resolve([] as any[]),
+      trIdsToHydrate.length > 0
+        ? this.prisma.budgetTransfer.findMany({
+            where: { id: { in: trIdsToHydrate } },
+            include: {
+              from_budget: {
+                include: {
+                  department: { select: { name: true } },
+                  institution: { select: { name: true } },
+                  church: { select: { name: true } },
+                },
+              },
+              to_budget: {
+                include: {
+                  department: { select: { name: true } },
+                  institution: { select: { name: true } },
+                  church: { select: { name: true } },
+                },
+              },
+            }
+          })
+        : Promise.resolve([] as any[])
+    ]);
+
+    // Fetch user emails for hydrated items only
+    const creatorIds = new Set([
+      ...(fullTxs as any[]).map(tx => tx.created_by),
+      ...(fullTrs as any[]).map(tr => tr.created_by)
+    ]);
+
+    const users = creatorIds.size > 0 
+      ? await this.prisma.user.findMany({
+          where: { id: { in: Array.from(creatorIds) } },
+          select: { id: true, email: true }
+        })
+      : [];
 
     const userMap = new Map(users.map(u => [u.id, u.email]));
 
-    // Map Transactions
-    transactions.forEach((tx) => {
-      // In our ledger: 
-      // delta_allocated > 0 is a reservation (outflow from available)
-      // delta_expenses > 0 is a cost (outflow from alocated/available)
-      // For the history view, we show the absolute impact.
-      const amount = Number(tx.delta_allocated) !== 0 ? Number(tx.delta_allocated) : Number(tx.delta_expenses);
+    // 5. Final Assembly (Map in the order of the pageSlice)
+    const txMapData = new Map((fullTxs as any[]).map(tx => [tx.id, tx]));
+    const trMapData = new Map((fullTrs as any[]).map(tr => [tr.id, tr]));
 
-      history.push({
-        id: tx.id,
-        date: tx.created_at,
-        description: tx.description,
-        amount: -amount, // Transactions are outflows in this context
-        type: tx.type,
-        category: 'TRANSACTION',
-        entityName: tx.annual_budget.department?.name || tx.annual_budget.institution?.name || tx.annual_budget.church?.name,
-        relatedEntity: tx.project?.title || tx.subsidy_request?.id,
-        createdBy: userMap.get(tx.created_by) || tx.created_by,
-      });
-    });
-
-    // Map Transfers
-    transfers.forEach((tr) => {
-      const isFrom = budgetIds.includes(tr.from_budget_id || '');
-      const isTo = budgetIds.includes(tr.to_budget_id || '');
-
-      if (isFrom) {
-        history.push({
-          id: `${tr.id}_out`,
-          date: tr.created_at,
-          description: tr.description,
-          amount: -Number(tr.amount),
-          type: `TRANSFER_OUT_${tr.type}`,
-          category: 'TRANSFER',
-          entityName: tr.from_budget?.department?.name || tr.from_budget?.institution?.name || tr.from_budget?.church?.name,
-          relatedEntity: tr.to_budget ? `To: ${tr.to_budget.department?.name || tr.to_budget.institution?.name || tr.to_budget.church?.name}` : undefined,
-          createdBy: userMap.get(tr.created_by) || tr.created_by,
-        });
-      }
-
-      if (isTo) {
-        history.push({
-          id: `${tr.id}_in`,
-          date: tr.created_at,
-          description: tr.description,
-          amount: Number(tr.amount),
-          type: `TRANSFER_IN_${tr.type}`,
-          category: 'TRANSFER',
-          entityName: tr.to_budget?.department?.name || tr.to_budget?.institution?.name || tr.to_budget?.church?.name,
-          relatedEntity: tr.from_budget ? `From: ${tr.from_budget.department?.name || tr.from_budget.institution?.name || tr.from_budget.church?.name}` : undefined,
-          createdBy: userMap.get(tr.created_by) || tr.created_by,
-        });
+    const items: LedgerHistoryEntry[] = pageSlice.map(meta => {
+      if (meta.category === 'TRANSACTION') {
+        const tx = txMapData.get(meta.id) as any;
+        const amount = Number(tx.delta_allocated) !== 0 ? Number(tx.delta_allocated) : Number(tx.delta_expenses);
+        return {
+          id: tx.id,
+          date: tx.created_at,
+          description: tx.description,
+          amount: -amount,
+          type: tx.type,
+          category: 'TRANSACTION',
+          entityName: tx.annual_budget.department?.name || tx.annual_budget.institution?.name || tx.annual_budget.church?.name,
+          relatedEntity: tx.project?.title || tx.subsidy_request?.id,
+          createdBy: userMap.get(tx.created_by) || tx.created_by,
+        };
+      } else {
+        const tr = trMapData.get(meta.id) as any;
+        if (meta.subId === 'out') {
+          return {
+            id: `${tr.id}_out`,
+            date: tr.created_at,
+            description: tr.description,
+            amount: -Number(tr.amount),
+            type: `TRANSFER_OUT_${tr.type}`,
+            category: 'TRANSFER',
+            entityName: tr.from_budget?.department?.name || tr.from_budget?.institution?.name || tr.from_budget?.church?.name,
+            relatedEntity: tr.to_budget ? `To: ${tr.to_budget.department?.name || tr.to_budget.institution?.name || tr.to_budget.church?.name}` : undefined,
+            createdBy: userMap.get(tr.created_by) || tr.created_by,
+          };
+        } else {
+          return {
+            id: `${tr.id}_in`,
+            date: tr.created_at,
+            description: tr.description,
+            amount: Number(tr.amount),
+            type: `TRANSFER_IN_${tr.type}`,
+            category: 'TRANSFER',
+            entityName: tr.to_budget?.department?.name || tr.to_budget?.institution?.name || tr.to_budget?.church?.name,
+            relatedEntity: tr.from_budget ? `From: ${tr.from_budget.department?.name || tr.from_budget.institution?.name || tr.from_budget.church?.name}` : undefined,
+            createdBy: userMap.get(tr.created_by) || tr.created_by,
+          };
+        }
       }
     });
 
-    // 5. Sort by date descending
-    return history.sort((a, b) => b.date.getTime() - a.date.getTime());
+    return {
+      items,
+      totalCount,
+      pageInfo: {
+        totalPages,
+        hasNextPage: page < totalPages,
+        hasPreviousPage: page > 1
+      }
+    };
   }
 }

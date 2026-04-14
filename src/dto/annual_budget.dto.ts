@@ -214,6 +214,24 @@ export class LedgerHistoryFilterInput {
 
   @Field(() => String, { nullable: true })
   regionId?: string;
+
+  @Field(() => Date, { nullable: true })
+  startDate?: Date;
+
+  @Field(() => Date, { nullable: true })
+  endDate?: Date;
+
+  @Field(() => String, { nullable: true })
+  search?: string;
+
+  @Field(() => String, { nullable: true })
+  type?: string;
+
+  @Field(() => Int, { nullable: true, defaultValue: 1 })
+  page?: number;
+
+  @Field(() => Int, { nullable: true, defaultValue: 50 })
+  limit?: number;
 }
 
 @ObjectType()
@@ -247,6 +265,30 @@ export class LedgerHistoryEntry {
 
   @Field(() => Float, { nullable: true })
   balanceAfter?: number;
+}
+
+@ObjectType()
+export class LedgerHistoryPageInfo {
+  @Field(() => Int)
+  totalPages!: number;
+
+  @Field(() => Boolean)
+  hasNextPage!: boolean;
+
+  @Field(() => Boolean)
+  hasPreviousPage!: boolean;
+}
+
+@ObjectType()
+export class LedgerHistoryPaginatedResponse {
+  @Field(() => [LedgerHistoryEntry])
+  items!: LedgerHistoryEntry[];
+
+  @Field(() => Int)
+  totalCount!: number;
+
+  @Field(() => LedgerHistoryPageInfo)
+  pageInfo!: LedgerHistoryPageInfo;
 }
 
 // ============================================

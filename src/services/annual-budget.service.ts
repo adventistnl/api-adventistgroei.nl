@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { AnnualBudget } from '@prisma/client';
 import { FindManyAnnualBudgetArgs } from 'src/@generated/annual-budget/find-many-annual-budget.args';
 import { BudgetKPIs, DepartmentSpending, SpendingOverTime, BudgetDistribution, EntityDistribution } from 'src/dto/budget-analytics.dto';
-import { LedgerHistoryEntry, LedgerHistoryFilterInput } from 'src/dto/annual_budget.dto';
+import { LedgerHistoryEntry, LedgerHistoryFilterInput, LedgerHistoryPaginatedResponse } from 'src/dto/annual_budget.dto';
 import { AnnualBudgetRepository } from 'src/repositories/annual-budget.repository';
 import { DepartmentRepository } from 'src/repositories/department.repository';
 import { DecimalHelper } from 'src/common/helpers/decimal.helper'; // New import
@@ -415,8 +415,7 @@ export class AnnualBudgetService {
       transactionContext as any
     );
   }
-
-  async getLedgerHistory(filters: LedgerHistoryFilterInput): Promise<LedgerHistoryEntry[]> {
+  async getLedgerHistory(filters: LedgerHistoryFilterInput): Promise<LedgerHistoryPaginatedResponse> {
     return this.annualBudgetRepository.getLedgerHistory(filters);
   }
 }
