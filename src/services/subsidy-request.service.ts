@@ -799,29 +799,6 @@ export class SubsidyRequestService {
               }
             );
           }
-
-          // Record the pending refund as an informational ledger entry only (no financial impact yet).
-          // The actual adjustment (expenses ↓, allocated ↑) happens in confirmRefundDone.
-          const refundAmt = Number(fullRequest.refund_amount || 0);
-          if (refundAmt > 0) {
-            const isTotal = fullRequest.refund_type === 'TOTAL' ||
-              (fullRequest.approved_amount && refundAmt >= Number(fullRequest.approved_amount));
-
-            await this.annualBudgetService.updateBudgetFinancials(
-              fullRequest.department_id,
-              new Date().getFullYear(),
-              0, // No allocation change — refund not confirmed yet
-              0, // No expense change — refund not confirmed yet
-              userId,
-              {
-                type: isTotal ? 'REFUND_TOTAL' : 'REFUND_PARTIAL',
-                description: isTotal
-                  ? `Refund requested (full) — awaiting confirmation`
-                  : `Refund requested (partial: ${refundAmt}) — awaiting confirmation`,
-                subsidy_request_id: id
-              }
-            );
-          }
         }
       }
     }
