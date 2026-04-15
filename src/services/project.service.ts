@@ -76,9 +76,8 @@ export class ProjectService {
       }
     }
 
-    // Allocate budget only when the project is submitted for review (DRAFT → OPEN_REQUEST),
-    // i.e. when the owner clicks the "Submit Request" button on the project page.
-    if (existingProject.status === ProjectStatus.DRAFT && data.status === ProjectStatus.OPEN_REQUEST) {
+    // Allocate budget only when the project transitions to IN_PROGRESS
+    if (existingProject.status !== ProjectStatus.IN_PROGRESS && data.status === ProjectStatus.IN_PROGRESS) {
       const budgetToAllocate = data.subsidized_budget ?? existingProject.subsidized_budget;
       if (budgetToAllocate && Number(budgetToAllocate) > 0) {
         await this.annualBudgetService.updateBudgetFinancials(
@@ -96,9 +95,8 @@ export class ProjectService {
       }
     }
 
-    // Release budget when project is manually reverted to DRAFT from any other status
-    // (covers manual status changes like OPEN_REQUEST → DRAFT or IN_REVIEW → DRAFT)
-    if (existingProject.status !== ProjectStatus.DRAFT && data.status === ProjectStatus.DRAFT) {
+    // Release budget when project is manually reverted to DRAFT from IN_PROGRESS
+    if (existingProject.status === ProjectStatus.IN_PROGRESS && data.status === ProjectStatus.DRAFT) {
       const budgetToRelease = existingProject.subsidized_budget;
       if (budgetToRelease && Number(budgetToRelease) > 0) {
         await this.annualBudgetService.updateBudgetFinancials(
@@ -237,7 +235,7 @@ export class ProjectService {
     });
 
     if (activeActivities === 0 && project.status !== ProjectStatus.DRAFT) {
-      if (project.subsidized_budget && Number(project.subsidized_budget) > 0) {
+      if (project.status === ProjectStatus.IN_PROGRESS && project.subsidized_budget && Number(project.subsidized_budget) > 0) {
         await this.annualBudgetService.updateBudgetFinancials(
           project.department_id,
           new Date(project.start_at).getFullYear(),
@@ -335,7 +333,7 @@ export class ProjectService {
       select: { department_id: true, subsidized_budget: true, start_at: true, status: true }
     });
 
-    if (projectData?.department_id && projectData.subsidized_budget && projectData.status !== ProjectStatus.DRAFT) {
+    if (projectData?.department_id && projectData.subsidized_budget && projectData.status === ProjectStatus.IN_PROGRESS) {
       const projectYear = new Date(projectData.start_at).getFullYear();
       console.log(`💰 Releasing subsidized_budget ${Number(projectData.subsidized_budget)} from annual budget (year: ${projectYear})...`);
       await this.annualBudgetService.updateBudgetFinancials(
