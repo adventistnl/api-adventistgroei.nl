@@ -4758,6 +4758,7 @@ input SubsidyRequestUpdateDto {
   rejection_reason: String
   notes: String
   priority: SubsidyRequestPriority
+  advance_amount: Float
 }
 
 input CreateWithoutDocumentSubsidyRequestDto {

@@ -206,6 +206,11 @@ export class SubsidyRequestUpdateDto {
   @IsOptional()
   priority?: SubsidyRequestPriority;
 
+  @Field(() => Float, { nullable: true })
+  @IsOptional()
+  @IsNumber()
+  advance_amount?: number;
+
   // campos de auditoria internos (não expostos no GraphQL)
   approved_at?: Date;
   approved_by?: string;
