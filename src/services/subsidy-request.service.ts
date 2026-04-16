@@ -534,6 +534,21 @@ export class SubsidyRequestService {
     // Checking if currently closed
     this.ensureNotClosed(current.subsidy_status?.name, language);
 
+    // Block modifying values if the request is already approved or past the review stage
+    const isEditingValues = data.total_budget !== undefined || data.description !== undefined || (data.items && data.items.length > 0) || data.advance_amount !== undefined;
+    if (isEditingValues) {
+      const allowedStatusesToEdit = ['PENDING', 'IN_REVIEW', 'REJECTED', 'ADJUSTMENTS_NEEDED'];
+      const currentName = current.subsidy_status?.name?.toUpperCase();
+      if (currentName && !allowedStatusesToEdit.includes(currentName)) {
+        throw new CustomGraphQLError(
+          translate('errors.action_not_allowed_closed', language, { ns: 'subsidy' }) || 'Editing values is not allowed for approved requests.',
+          ErrorCode.BAD_REQUEST,
+          400,
+          { additional: { errorCode: 'EDIT_NOT_ALLOWED_FOR_STATUS' } }
+        );
+      }
+    }
+
     // If status is being changed, validate BEFORE the update
     if (data.subsidy_status_id && data.subsidy_status_id !== current.subsidy_statuses_id) {
       const newStatus = await this.prisma.subsidyStatus.findUnique({ where: { id: data.subsidy_status_id } });
