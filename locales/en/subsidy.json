@@ -10,6 +10,10 @@
     "pending_status_not_found": "Pending status not found. Please create a PENDING status first.",
     "draft_status_not_found": "Draft status not found. Please create a DRAFT status first.",
     "invalid_transition_from_draft": "Cannot change status from DRAFT to {{to}}. Draft requests must be submitted (moved to PENDING) first.",
+    "invalid_transition_to_advanced_closed": "Cannot move to ADVANCED_CLOSED from {{from}}. Only APPROVED subsidies can transition to Advanced Closed.",
+    "invalid_transition_advanced_closed": "Cannot move from ADVANCED_CLOSED to {{to}}. Advanced Closed subsidies can only be CLOSED, WAITING_REFUND, or WAITING_DOCUMENTS.",
+    "invalid_transition_not_advance": "This status transition is only allowed for advance-type subsidy requests.",
+    "invalid_transition_to_waiting_documents": "Cannot move to WAITING_DOCUMENTS from {{from}}. Only APPROVED or ADVANCED_CLOSED subsidies can transition to this status.",
     "subsidy_not_found": "SubsidyRequest not found",
     "cannot_delete_approved_or_closed": "Cannot delete {{status}} subsidy requests",
     "approved_status_not_found": "Approved status not found",
@@ -47,6 +51,8 @@
     "approved": "Approved",
     "rejected": "Rejected",
     "advanced_closed": "Advanced Closed",
-    "closed": "Closed"
+    "closed": "Closed",
+    "waiting_documents": "Waiting for Documents",
+    "waiting_refund": "Waiting Refund"
   }
 }

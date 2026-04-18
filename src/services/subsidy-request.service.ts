@@ -73,7 +73,7 @@ export class SubsidyRequestService {
           );
       }
 
-      // Rule: Only APPROVED can go to ADVANCED_CLOSED
+      // Rule: Only APPROVED can go to ADVANCED_CLOSED or WAITING_DOCUMENTS
       if (to === 'ADVANCED_CLOSED' && from !== 'APPROVED') {
           throw new CustomGraphQLError(
               translate('errors.invalid_transition_to_advanced_closed', language, { ns: 'subsidy', from }),
@@ -83,8 +83,18 @@ export class SubsidyRequestService {
           );
       }
 
-      // Rule 3: ADVANCED_CLOSED can go to CLOSED or WAITING_REFUND
-      if (from === 'ADVANCED_CLOSED' && to !== 'CLOSED' && to !== 'WAITING_REFUND' && from !== to) {
+      // Rule: Only APPROVED or ADVANCED_CLOSED can go to WAITING_DOCUMENTS
+      if (to === 'WAITING_DOCUMENTS' && from !== 'APPROVED' && from !== 'ADVANCED_CLOSED') {
+          throw new CustomGraphQLError(
+              translate('errors.invalid_transition_final_state', language, { ns: 'subsidy', from, to }),
+              ErrorCode.BAD_REQUEST,
+              400,
+              { additional: { errorCode: 'INVALID_TRANSITION_TO_WAITING_DOCUMENTS' } }
+          );
+      }
+
+      // Rule 3: ADVANCED_CLOSED can go to CLOSED, WAITING_REFUND or WAITING_DOCUMENTS
+      if (from === 'ADVANCED_CLOSED' && to !== 'CLOSED' && to !== 'WAITING_REFUND' && to !== 'WAITING_DOCUMENTS' && from !== to) {
            throw new CustomGraphQLError(
               translate('errors.invalid_transition_advanced_closed', language, { ns: 'subsidy', to }),
               ErrorCode.BAD_REQUEST,
@@ -93,8 +103,18 @@ export class SubsidyRequestService {
           );
       }
 
-      // Rule 4: APPROVED can go to CLOSED, ADVANCED_CLOSED (advance) or WAITING_REFUND (refund needed)
-      if (from === 'APPROVED' && to !== 'CLOSED' && to !== 'ADVANCED_CLOSED' && to !== 'WAITING_REFUND' && from !== to) {
+      // Rule: WAITING_DOCUMENTS can go to CLOSED or WAITING_REFUND (after documents validated)
+      if (from === 'WAITING_DOCUMENTS' && to !== 'CLOSED' && to !== 'WAITING_REFUND' && from !== to) {
+           throw new CustomGraphQLError(
+              translate('errors.invalid_transition_final_state', language, { ns: 'subsidy', from, to }),
+              ErrorCode.BAD_REQUEST,
+              400,
+              { additional: { errorCode: 'INVALID_TRANSITION_FROM_WAITING_DOCUMENTS' } }
+          );
+      }
+
+      // Rule 4: APPROVED can go to CLOSED, ADVANCED_CLOSED (legacy), WAITING_DOCUMENTS (advance paid) or WAITING_REFUND (refund needed)
+      if (from === 'APPROVED' && to !== 'CLOSED' && to !== 'ADVANCED_CLOSED' && to !== 'WAITING_DOCUMENTS' && to !== 'WAITING_REFUND' && from !== to) {
            throw new CustomGraphQLError(
               translate('errors.invalid_transition_final_state', language, { ns: 'subsidy', from, to }),
               ErrorCode.BAD_REQUEST,
@@ -734,8 +754,9 @@ export class SubsidyRequestService {
             // The project's ALLOCATION_RESERVED covers all subsidy requests in aggregate;
             // individual subsidies never create their own ALLOCATION_RESERVED, so there
             // is nothing to release here. The project allocation remains intact.
-          } else if (prevName === 'ADVANCED_CLOSED' || prevName === 'WAITING_REFUND') {
-            // Budget already handled (ADVANCED_CLOSED recorded expense; WAITING_REFUND→CLOSED records refund below)
+          } else if (prevName === 'ADVANCED_CLOSED' || prevName === 'WAITING_REFUND' || prevName === 'WAITING_DOCUMENTS') {
+            // Budget already handled (expense was recorded when transitioning INTO ADVANCED_CLOSED or WAITING_DOCUMENTS;
+            // WAITING_REFUND→CLOSED refund is recorded separately below)
             // No additional BudgetTransaction needed here
           } else if (fullRequest.approved_amount) {
             // APPROVED → CLOSED (normal path, no refund): record expense
@@ -778,6 +799,39 @@ export class SubsidyRequestService {
         }
       }
 
+      // ── WAITING_DOCUMENTS ─────────────────────────────────────────────────────
+      // Triggered when a financial manager marks the advance as paid.
+      // This is the moment the money leaves the account — record it as an Expense in the Ledger.
+      if (nextName === 'WAITING_DOCUMENTS') {
+        const fullRequest = await this.prisma.subsidyRequest.findUnique({
+          where: { id },
+          select: { department_id: true, advance_amount: true, total_budget: true, is_for_advance: true, approved_amount: true }
+        });
+
+        // Only apply the financial transaction if coming from APPROVED or ADVANCED_CLOSED,
+        // and if not already recorded (ADVANCED_CLOSED already recorded it)
+        if (fullRequest?.department_id && prevName !== 'ADVANCED_CLOSED') {
+          const expenseAmt = fullRequest.advance_amount
+            ? Number(fullRequest.advance_amount)
+            : Number(fullRequest.approved_amount || 0);
+
+          if (expenseAmt > 0) {
+            await this.annualBudgetService.updateBudgetFinancials(
+              fullRequest.department_id,
+              new Date().getFullYear(),
+              -Number(fullRequest.total_budget || 0), // Release allocation
+              expenseAmt,                              // Record advance payment as expense
+              userId,
+              {
+                type: 'EXPENSE_APPROVED',
+                description: `Advance paid — waiting for receipt documents`,
+                subsidy_request_id: id
+              }
+            );
+          }
+        }
+      }
+
       // ── WAITING_REFUND ────────────────────────────────────────────────────────
       // Transition INTO WAITING_REFUND: record the expense for non-advance paths
       // (advances already recorded expense in ADVANCED_CLOSED; here we handle APPROVED→WAITING_REFUND)
@@ -814,6 +868,9 @@ export class SubsidyRequestService {
               }
             );
           }
+          // WAITING_DOCUMENTS → WAITING_REFUND: expense was already recorded at WAITING_DOCUMENTS transition
+          // ADVANCED_CLOSED → WAITING_REFUND: expense was already recorded at ADVANCED_CLOSED transition
+          // No double-recording needed
         }
       }
     }

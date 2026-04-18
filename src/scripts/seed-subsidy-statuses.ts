@@ -97,6 +97,15 @@ async function main() {
       created_by: user.id,
       updated_by: user.id,
     },
+    {
+      name: 'WAITING_DOCUMENTS',
+      description: 'Advance paid — waiting for receipt documents from the requester',
+      order: 8,
+      department_id: department.id,
+      assigned_to: user.id,
+      created_by: user.id,
+      updated_by: user.id,
+    },
   ];
 
   for (const status of statuses) {
