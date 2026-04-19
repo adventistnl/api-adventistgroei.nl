@@ -459,8 +459,7 @@ export class AnnualBudgetRepository {
     // Compute institution financials from ledger
     const institutionFinancials = await this.getComputedFinancials([institutionBudget.id]);
     const instFin = institutionFinancials[institutionBudget.id] || { planned: Number(institutionBudget.planned_budget), allocated: 0, expenses: 0, balance: 0 };
-    const plannedBudget = Number(institutionBudget.planned_budget);
-    const availableAmount = plannedBudget - instFin.allocated - instFin.expenses;
+    const availableAmount = instFin.balance;
 
     if (requestedAmount > availableAmount) {
       throw new CustomGraphQLError(
@@ -501,8 +500,7 @@ export class AnnualBudgetRepository {
     // Compute institution financials from ledger
     const institutionFinancials = await this.getComputedFinancials([institutionBudget.id]);
     const instFin = institutionFinancials[institutionBudget.id] || { planned: Number(institutionBudget.planned_budget), allocated: 0, expenses: 0, balance: 0 };
-    const plannedBudget = Number(institutionBudget.planned_budget);
-    const availableAmount = plannedBudget - instFin.allocated - instFin.expenses;
+    const availableAmount = instFin.balance;
 
     if (additionalAmount > availableAmount) {
       throw new CustomGraphQLError(
@@ -799,9 +797,8 @@ export class AnnualBudgetRepository {
 
     // Validate institution availability using computed ledger financials
     const institutionFinancials = await this.getComputedFinancials([institutionBudget.id]);
-    const instFin = institutionFinancials[institutionBudget.id] || { allocated: 0, expenses: 0 };
-    const institutionPlanned = Number(institutionBudget.planned_budget);
-    const available = institutionPlanned - instFin.allocated - instFin.expenses;
+    const instFin = institutionFinancials[institutionBudget.id] || { allocated: 0, expenses: 0, balance: 0 };
+    const available = instFin.balance;
 
     if (planned > available) {
       throw new CustomGraphQLError(
@@ -1119,11 +1116,14 @@ export class AnnualBudgetRepository {
     for (const row of transactionsData) {
       const isInst = row.entity_type === 'INSTITUTION';
       const planned = isInst ? Number(row.planned_budget) : Number(row.derived_target);
-      // Opção 2: Dinheiro distribuído sai do Alocado e entra como Gasto imediato da Instituição.
-      // O campo Alocado fica puro, representando apenas reservas do próprio CNPJ em andamento.
-      const allocated = Number(row.total_reserved);
-      const expenses = isInst ? Number(row.total_expenses) + Number(row.distributed_out) : Number(row.total_expenses);
-      const balance = planned - expenses - allocated;
+      // Transfers (Institution → Department) are ALLOCATIONS, not spending.
+      // allocated = project reservations within this budget + money distributed to departments (institution only)
+      // expenses  = only real project spending (delta_expenses from BudgetTransaction)
+      const allocated = isInst
+        ? Number(row.total_reserved) + Number(row.distributed_out)
+        : Number(row.total_reserved);
+      const expenses = Number(row.total_expenses);
+      const balance = planned - allocated - expenses;
 
       result[row.budget_id] = {
         planned,
@@ -1291,45 +1291,97 @@ export class AnnualBudgetRepository {
     const txMapData = new Map((fullTxs as any[]).map(tx => [tx.id, tx]));
     const trMapData = new Map((fullTrs as any[]).map(tr => [tr.id, tr]));
 
+    const TRANSFER_OUT_LABELS: Record<string, string> = {
+      DISTRIBUTION:    'Distribuição para Departamento',
+      INITIAL_FUNDING: 'Financiamento Inicial (saída)',
+      REALLOCATION:    'Realocação de Verba (saída)',
+      REDUCTION:       'Redução de Orçamento',
+    };
+
+    const TRANSFER_IN_LABELS: Record<string, string> = {
+      DISTRIBUTION:    'Recebimento de Distribuição',
+      INITIAL_FUNDING: 'Financiamento Inicial',
+      REALLOCATION:    'Realocação de Verba (entrada)',
+      REDUCTION:       'Redução Recebida',
+    };
+
     const items: LedgerHistoryEntry[] = pageSlice.map(meta => {
       if (meta.category === 'TRANSACTION') {
         const tx = txMapData.get(meta.id) as any;
-        const amount = Number(tx.delta_allocated) !== 0 ? Number(tx.delta_allocated) : Number(tx.delta_expenses);
+        const hasExpense = Number(tx.delta_expenses) !== 0;
+        const entryType = hasExpense ? 'EXPENSE' : 'ALLOCATION';
+        const entryAmount = hasExpense
+          ? -Math.abs(Number(tx.delta_expenses))
+          : -Math.abs(Number(tx.delta_allocated));
+        const entryLabel = hasExpense ? 'Despesa de Projeto' : 'Reserva Orçamentária';
+        const impactType = hasExpense ? 'EXPENSE' : 'ALLOCATION';
+
+        const entityName =
+          tx.annual_budget.department?.name ||
+          tx.annual_budget.institution?.name ||
+          tx.annual_budget.church?.name;
+
+        const relatedEntity = tx.project
+          ? `Projeto: ${tx.project.title}`
+          : tx.subsidy_request
+          ? `Subsídio: ${tx.subsidy_request.id}`
+          : undefined;
+
         return {
           id: tx.id,
           date: tx.created_at,
           description: tx.description,
-          amount: -amount,
-          type: tx.type,
+          amount: entryAmount,
+          type: entryType,
+          impactType,
+          label: entryLabel,
           category: 'TRANSACTION',
-          entityName: tx.annual_budget.department?.name || tx.annual_budget.institution?.name || tx.annual_budget.church?.name,
-          relatedEntity: tx.project?.title || tx.subsidy_request?.id,
+          entityName,
+          relatedEntity,
           createdBy: userMap.get(tx.created_by) || tx.created_by,
         };
       } else {
         const tr = trMapData.get(meta.id) as any;
         if (meta.subId === 'out') {
+          const toName =
+            tr.to_budget?.department?.name ||
+            tr.to_budget?.institution?.name ||
+            tr.to_budget?.church?.name;
           return {
             id: `${tr.id}_out`,
             date: tr.created_at,
             description: tr.description,
             amount: -Number(tr.amount),
-            type: `TRANSFER_OUT_${tr.type}`,
+            type: `${tr.type}_OUT`,
+            impactType: 'ALLOCATION',
+            label: TRANSFER_OUT_LABELS[tr.type] || `Transferência (saída): ${tr.type}`,
             category: 'TRANSFER',
-            entityName: tr.from_budget?.department?.name || tr.from_budget?.institution?.name || tr.from_budget?.church?.name,
-            relatedEntity: tr.to_budget ? `To: ${tr.to_budget.department?.name || tr.to_budget.institution?.name || tr.to_budget.church?.name}` : undefined,
+            entityName:
+              tr.from_budget?.department?.name ||
+              tr.from_budget?.institution?.name ||
+              tr.from_budget?.church?.name,
+            relatedEntity: toName ? `Destino: ${toName}` : undefined,
             createdBy: userMap.get(tr.created_by) || tr.created_by,
           };
         } else {
+          const fromName =
+            tr.from_budget?.department?.name ||
+            tr.from_budget?.institution?.name ||
+            tr.from_budget?.church?.name;
           return {
             id: `${tr.id}_in`,
             date: tr.created_at,
             description: tr.description,
             amount: Number(tr.amount),
-            type: `TRANSFER_IN_${tr.type}`,
+            type: `${tr.type}_IN`,
+            impactType: tr.type === 'INITIAL_FUNDING' ? 'FUNDING' : 'RECEIVED',
+            label: TRANSFER_IN_LABELS[tr.type] || `Transferência (entrada): ${tr.type}`,
             category: 'TRANSFER',
-            entityName: tr.to_budget?.department?.name || tr.to_budget?.institution?.name || tr.to_budget?.church?.name,
-            relatedEntity: tr.from_budget ? `From: ${tr.from_budget.department?.name || tr.from_budget.institution?.name || tr.from_budget.church?.name}` : undefined,
+            entityName:
+              tr.to_budget?.department?.name ||
+              tr.to_budget?.institution?.name ||
+              tr.to_budget?.church?.name,
+            relatedEntity: fromName ? `Origem: ${fromName}` : undefined,
             createdBy: userMap.get(tr.created_by) || tr.created_by,
           };
         }
