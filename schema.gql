@@ -1109,6 +1109,11 @@ enum PermissionResolverName {
   toggleAdjustmentTask
   removeAdjustmentTask
   ledgerHistory
+  institutionPositions
+  institutionPosition
+  createInstitutionPosition
+  updateInstitutionPosition
+  deleteInstitutionPosition
 }
 
 enum PermissionGroup {
@@ -1134,6 +1139,7 @@ enum PermissionGroup {
   INVITE
   ANNUAL_BUDGET
   PROJECT_HISTORY
+  INSTITUTION_POSITION
 }
 
 type RolePermission {
@@ -1299,6 +1305,28 @@ type Communication {
   _count: CommunicationCount!
 }
 
+type InstitutionPosition {
+  id: ID!
+  institution_id: String!
+  position_type: InstitutionPositionType!
+  user_id: String!
+  created_at: DateTime!
+  updated_at: DateTime!
+  created_by: String!
+  updated_by: String!
+  is_deleted: Boolean!
+  deleted_at: DateTime
+  deleted_by: String
+  institution: Institution!
+  user: User!
+}
+
+enum InstitutionPositionType {
+  PRESIDENT
+  SECRETARY
+  FINANCE_MANAGER
+}
+
 type UserCount {
   user_roles: Int!
   direct_messages: Int!
@@ -1318,6 +1346,7 @@ type UserCount {
   subsidy_status_history: Int!
   led_departments: Int!
   project_history: Int!
+  institution_positions: Int!
 }
 
 type User {
@@ -1361,6 +1390,7 @@ type User {
   led_departments: [Department!]
   led_church: Church
   project_history: [ProjectHistory!]
+  institution_positions: [InstitutionPosition!]
   _count: UserCount!
 }
 
@@ -1439,6 +1469,7 @@ type InstitutionCount {
   direct_messages: Int!
   subsidy_requests: Int!
   annual_budgets: Int!
+  positions: Int!
 }
 
 type Institution {
@@ -1466,6 +1497,7 @@ type Institution {
   direct_messages: [DirectMessage!]!
   subsidy_requests: [SubsidyRequest!]!
   annual_budgets: [AnnualBudget!]!
+  positions: [InstitutionPosition!]
   _count: InstitutionCount!
   churches_count: Int!
   departments_count: Int!
@@ -1930,6 +1962,8 @@ type Query {
   projectHistories(projectId: ID!): [ProjectHistory!]!
   projectAdjustments(projectId: ID!): [ProjectAdjustment!]!
   projectAdjustment(id: ID!): ProjectAdjustment!
+  institutionPositions(institution_id: String!): [InstitutionPosition!]!
+  institutionPosition(id: String!): InstitutionPosition
 
   """
   Get city and province information for a Dutch postal code (ZIP code) and house number
@@ -2297,6 +2331,7 @@ input UserWhereInput {
   led_departments: DepartmentListRelationFilter
   led_church: ChurchNullableScalarRelationFilter
   project_history: ProjectHistoryListRelationFilter
+  institution_positions: InstitutionPositionListRelationFilter
 }
 
 input EnumGenderTypeNullableFilter {
@@ -2397,6 +2432,7 @@ input InstitutionWhereInput {
   direct_messages: DirectMessageListRelationFilter
   subsidy_requests: SubsidyRequestListRelationFilter
   annual_budgets: AnnualBudgetListRelationFilter
+  positions: InstitutionPositionListRelationFilter
 }
 
 input ChurchListRelationFilter {
@@ -3828,6 +3864,45 @@ input NestedEnumPermissionGroupNullableFilter {
   not: NestedEnumPermissionGroupNullableFilter
 }
 
+input InstitutionPositionListRelationFilter {
+  every: InstitutionPositionWhereInput
+  some: InstitutionPositionWhereInput
+  none: InstitutionPositionWhereInput
+}
+
+input InstitutionPositionWhereInput {
+  AND: [InstitutionPositionWhereInput!]
+  OR: [InstitutionPositionWhereInput!]
+  NOT: [InstitutionPositionWhereInput!]
+  id: StringFilter
+  institution_id: StringFilter
+  position_type: EnumInstitutionPositionTypeFilter
+  user_id: StringFilter
+  created_at: DateTimeFilter
+  updated_at: DateTimeFilter
+  created_by: StringFilter
+  updated_by: StringFilter
+  is_deleted: BoolFilter
+  deleted_at: DateTimeNullableFilter
+  deleted_by: StringNullableFilter
+  institution: InstitutionScalarRelationFilter
+  user: UserScalarRelationFilter
+}
+
+input EnumInstitutionPositionTypeFilter {
+  equals: InstitutionPositionType
+  in: [InstitutionPositionType!]
+  notIn: [InstitutionPositionType!]
+  not: NestedEnumInstitutionPositionTypeFilter
+}
+
+input NestedEnumInstitutionPositionTypeFilter {
+  equals: InstitutionPositionType
+  in: [InstitutionPositionType!]
+  notIn: [InstitutionPositionType!]
+  not: NestedEnumInstitutionPositionTypeFilter
+}
+
 input EventListRelationFilter {
   every: EventWhereInput
   some: EventWhereInput
@@ -3971,6 +4046,7 @@ input UserOrderByWithRelationInput {
   led_departments: DepartmentOrderByRelationAggregateInput
   led_church: ChurchOrderByWithRelationInput
   project_history: ProjectHistoryOrderByRelationAggregateInput
+  institution_positions: InstitutionPositionOrderByRelationAggregateInput
 }
 
 input ContactOrderByWithRelationInput {
@@ -4027,6 +4103,7 @@ input InstitutionOrderByWithRelationInput {
   direct_messages: DirectMessageOrderByRelationAggregateInput
   subsidy_requests: SubsidyRequestOrderByRelationAggregateInput
   annual_budgets: AnnualBudgetOrderByRelationAggregateInput
+  positions: InstitutionPositionOrderByRelationAggregateInput
 }
 
 input ChurchOrderByRelationAggregateInput {
@@ -4066,6 +4143,10 @@ input SubsidyRequestOrderByRelationAggregateInput {
 }
 
 input AnnualBudgetOrderByRelationAggregateInput {
+  _count: SortOrder
+}
+
+input InstitutionPositionOrderByRelationAggregateInput {
   _count: SortOrder
 }
 
@@ -4386,6 +4467,9 @@ type Mutation {
   addAdjustmentTask(data: AddAdjustmentTaskDto!): AdjustmentTask!
   toggleAdjustmentTask(data: ToggleAdjustmentTaskDto!): AdjustmentTask!
   removeAdjustmentTask(taskId: ID!): AdjustmentTask!
+  createInstitutionPosition(data: InstitutionPositionCreateDto!): InstitutionPosition!
+  updateInstitutionPosition(id: String!, data: InstitutionPositionUpdateDto!): InstitutionPosition!
+  deleteInstitutionPosition(id: String!): InstitutionPosition!
 }
 
 input LoginInput {
@@ -4980,6 +5064,17 @@ input AddAdjustmentTaskDto {
 input ToggleAdjustmentTaskDto {
   task_id: String!
   completed: Boolean!
+}
+
+input InstitutionPositionCreateDto {
+  institution_id: String!
+  position_type: InstitutionPositionType!
+  user_id: String!
+}
+
+input InstitutionPositionUpdateDto {
+  position_type: InstitutionPositionType
+  user_id: String
 }
 
 type Subscription {

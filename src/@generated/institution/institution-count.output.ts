@@ -34,4 +34,7 @@ export class InstitutionCount {
 
     @Field(() => Int, {nullable:false})
     annual_budgets?: number;
+
+    @Field(() => Int, {nullable:false})
+    positions?: number;
 }

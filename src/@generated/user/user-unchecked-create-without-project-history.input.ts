@@ -21,6 +21,7 @@ import { ProjectActivityAssigneeUncheckedCreateNestedManyWithoutUserInput } from
 import { SubsidyStatusHistoryUncheckedCreateNestedManyWithoutUserInput } from '../subsidy-status-history/subsidy-status-history-unchecked-create-nested-many-without-user.input';
 import { DepartmentUncheckedCreateNestedManyWithoutLeaderInput } from '../department/department-unchecked-create-nested-many-without-leader.input';
 import { ChurchUncheckedCreateNestedOneWithoutLeaderInput } from '../church/church-unchecked-create-nested-one-without-leader.input';
+import { InstitutionPositionUncheckedCreateNestedManyWithoutUserInput } from '../institution-position/institution-position-unchecked-create-nested-many-without-user.input';
 
 @InputType()
 export class UserUncheckedCreateWithoutProject_historyInput {
@@ -142,4 +143,7 @@ export class UserUncheckedCreateWithoutProject_historyInput {
     @Field(() => ChurchUncheckedCreateNestedOneWithoutLeaderInput, {nullable:true})
     @Type(() => ChurchUncheckedCreateNestedOneWithoutLeaderInput)
     led_church?: ChurchUncheckedCreateNestedOneWithoutLeaderInput;
+
+    @Field(() => InstitutionPositionUncheckedCreateNestedManyWithoutUserInput, {nullable:true})
+    institution_positions?: InstitutionPositionUncheckedCreateNestedManyWithoutUserInput;
 }

@@ -24,6 +24,7 @@ import { ProjectActivityAssigneeOrderByRelationAggregateInput } from '../project
 import { SubsidyStatusHistoryOrderByRelationAggregateInput } from '../subsidy-status-history/subsidy-status-history-order-by-relation-aggregate.input';
 import { DepartmentOrderByRelationAggregateInput } from '../department/department-order-by-relation-aggregate.input';
 import { ProjectHistoryOrderByRelationAggregateInput } from '../project-history/project-history-order-by-relation-aggregate.input';
+import { InstitutionPositionOrderByRelationAggregateInput } from '../institution-position/institution-position-order-by-relation-aggregate.input';
 
 @InputType()
 export class UserOrderByWithRelationInput {
@@ -165,4 +166,7 @@ export class UserOrderByWithRelationInput {
     @Field(() => ProjectHistoryOrderByRelationAggregateInput, {nullable:true})
     @Type(() => ProjectHistoryOrderByRelationAggregateInput)
     project_history?: ProjectHistoryOrderByRelationAggregateInput;
+
+    @Field(() => InstitutionPositionOrderByRelationAggregateInput, {nullable:true})
+    institution_positions?: InstitutionPositionOrderByRelationAggregateInput;
 }

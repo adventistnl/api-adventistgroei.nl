@@ -27,3 +27,4 @@ export * from './emails/nodemailer.repository';
 export * from './verification-code.repository';
 export * from './project-history.repository';
 export * from './project-adjustment.repository';
+export * from './institution-position.repository';

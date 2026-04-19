@@ -14,6 +14,7 @@ import { ProjectOrderByRelationAggregateInput } from '../project/project-order-b
 import { DirectMessageOrderByRelationAggregateInput } from '../direct-message/direct-message-order-by-relation-aggregate.input';
 import { SubsidyRequestOrderByRelationAggregateInput } from '../subsidy-request/subsidy-request-order-by-relation-aggregate.input';
 import { AnnualBudgetOrderByRelationAggregateInput } from '../annual-budget/annual-budget-order-by-relation-aggregate.input';
+import { InstitutionPositionOrderByRelationAggregateInput } from '../institution-position/institution-position-order-by-relation-aggregate.input';
 
 @InputType()
 export class InstitutionOrderByWithRelationInput {
@@ -96,4 +97,7 @@ export class InstitutionOrderByWithRelationInput {
     @Field(() => AnnualBudgetOrderByRelationAggregateInput, {nullable:true})
     @Type(() => AnnualBudgetOrderByRelationAggregateInput)
     annual_budgets?: AnnualBudgetOrderByRelationAggregateInput;
+
+    @Field(() => InstitutionPositionOrderByRelationAggregateInput, {nullable:true})
+    positions?: InstitutionPositionOrderByRelationAggregateInput;
 }

@@ -17,6 +17,7 @@ import { SettingUpdateManyWithoutInstitutionNestedInput } from '../setting/setti
 import { ProjectUpdateManyWithoutInstitutionNestedInput } from '../project/project-update-many-without-institution-nested.input';
 import { DirectMessageUpdateManyWithoutInstitutionNestedInput } from '../direct-message/direct-message-update-many-without-institution-nested.input';
 import { SubsidyRequestUpdateManyWithoutInstitutionNestedInput } from '../subsidy-request/subsidy-request-update-many-without-institution-nested.input';
+import { InstitutionPositionUpdateManyWithoutInstitutionNestedInput } from '../institution-position/institution-position-update-many-without-institution-nested.input';
 
 @InputType()
 export class InstitutionUpdateWithoutAnnual_budgetsInput {
@@ -92,4 +93,7 @@ export class InstitutionUpdateWithoutAnnual_budgetsInput {
     @Field(() => SubsidyRequestUpdateManyWithoutInstitutionNestedInput, {nullable:true})
     @Type(() => SubsidyRequestUpdateManyWithoutInstitutionNestedInput)
     subsidy_requests?: SubsidyRequestUpdateManyWithoutInstitutionNestedInput;
+
+    @Field(() => InstitutionPositionUpdateManyWithoutInstitutionNestedInput, {nullable:true})
+    positions?: InstitutionPositionUpdateManyWithoutInstitutionNestedInput;
 }

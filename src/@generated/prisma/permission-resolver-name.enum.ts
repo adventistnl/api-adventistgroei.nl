@@ -148,7 +148,12 @@ export enum PermissionResolverName {
     addAdjustmentTask = "addAdjustmentTask",
     toggleAdjustmentTask = "toggleAdjustmentTask",
     removeAdjustmentTask = "removeAdjustmentTask",
-    ledgerHistory = "ledgerHistory"
+    ledgerHistory = "ledgerHistory",
+    institutionPositions = "institutionPositions",
+    institutionPosition = "institutionPosition",
+    createInstitutionPosition = "createInstitutionPosition",
+    updateInstitutionPosition = "updateInstitutionPosition",
+    deleteInstitutionPosition = "deleteInstitutionPosition"
 }
 
 

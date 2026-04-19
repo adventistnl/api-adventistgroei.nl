@@ -19,6 +19,7 @@ import { ProjectListRelationFilter } from '../project/project-list-relation-filt
 import { DirectMessageListRelationFilter } from '../direct-message/direct-message-list-relation-filter.input';
 import { SubsidyRequestListRelationFilter } from '../subsidy-request/subsidy-request-list-relation-filter.input';
 import { AnnualBudgetListRelationFilter } from '../annual-budget/annual-budget-list-relation-filter.input';
+import { InstitutionPositionListRelationFilter } from '../institution-position/institution-position-list-relation-filter.input';
 
 @InputType()
 export class InstitutionWhereUniqueInput {
@@ -110,4 +111,7 @@ export class InstitutionWhereUniqueInput {
     @Field(() => AnnualBudgetListRelationFilter, {nullable:true})
     @Type(() => AnnualBudgetListRelationFilter)
     annual_budgets?: AnnualBudgetListRelationFilter;
+
+    @Field(() => InstitutionPositionListRelationFilter, {nullable:true})
+    positions?: InstitutionPositionListRelationFilter;
 }

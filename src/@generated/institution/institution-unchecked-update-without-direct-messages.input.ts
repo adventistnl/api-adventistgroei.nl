@@ -16,6 +16,7 @@ import { SettingUncheckedUpdateManyWithoutInstitutionNestedInput } from '../sett
 import { ProjectUncheckedUpdateManyWithoutInstitutionNestedInput } from '../project/project-unchecked-update-many-without-institution-nested.input';
 import { SubsidyRequestUncheckedUpdateManyWithoutInstitutionNestedInput } from '../subsidy-request/subsidy-request-unchecked-update-many-without-institution-nested.input';
 import { AnnualBudgetUncheckedUpdateManyWithoutInstitutionNestedInput } from '../annual-budget/annual-budget-unchecked-update-many-without-institution-nested.input';
+import { InstitutionPositionUncheckedUpdateManyWithoutInstitutionNestedInput } from '../institution-position/institution-position-unchecked-update-many-without-institution-nested.input';
 
 @InputType()
 export class InstitutionUncheckedUpdateWithoutDirect_messagesInput {
@@ -91,4 +92,7 @@ export class InstitutionUncheckedUpdateWithoutDirect_messagesInput {
     @Field(() => AnnualBudgetUncheckedUpdateManyWithoutInstitutionNestedInput, {nullable:true})
     @Type(() => AnnualBudgetUncheckedUpdateManyWithoutInstitutionNestedInput)
     annual_budgets?: AnnualBudgetUncheckedUpdateManyWithoutInstitutionNestedInput;
+
+    @Field(() => InstitutionPositionUncheckedUpdateManyWithoutInstitutionNestedInput, {nullable:true})
+    positions?: InstitutionPositionUncheckedUpdateManyWithoutInstitutionNestedInput;
 }

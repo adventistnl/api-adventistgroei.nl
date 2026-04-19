@@ -23,6 +23,7 @@ import { ProjectActivityLog } from '../project-activity-log/project-activity-log
 import { ProjectActivityAssignee } from '../project-activity-assignee/project-activity-assignee.model';
 import { SubsidyStatusHistory } from '../subsidy-status-history/subsidy-status-history.model';
 import { ProjectHistory } from '../project-history/project-history.model';
+import { InstitutionPosition } from '../institution-position/institution-position.model';
 import { UserCount } from './user-count.output';
 
 @ObjectType()
@@ -147,6 +148,9 @@ export class User {
 
     @Field(() => [ProjectHistory], {nullable:true})
     project_history?: Array<ProjectHistory>;
+
+    @Field(() => [InstitutionPosition], {nullable:true})
+    institution_positions?: Array<InstitutionPosition>;
 
     @Field(() => UserCount, {nullable:false})
     _count?: UserCount;

@@ -28,6 +28,7 @@ export * from './annual-budget.service';
 export * from './mustache.service';
 export * from './forgot-password/forgot-password.service';
 export * from './project-kpi.service';
+export * from './institution-position.service';
 export * from './project-history.service';
 export * from './project-adjustment.service';
 export * from './pubsub.service';
