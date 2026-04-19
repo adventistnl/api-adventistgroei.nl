@@ -40,6 +40,9 @@ const permissionsDisabledToClient = [
   { name: 'remove project voluntary', description: 'Remover voluntário do projeto', resolver_name: 'removeProjectVoluntary' as PermissionResolverName, group: 'PROJECT' as PermissionGroup, key_code: 'PROJECT_VOLUNTARY_REMOVE', disabled_to_client: true },
   { name: 'update user department', description: 'Update or remove user department assignment (admin/developer only)', resolver_name: 'updateUserDepartment' as PermissionResolverName, group: 'USER' as PermissionGroup, key_code: 'USER_DEPARTMENT_UPDATE', disabled_to_client: true },
   { name: 'update church leader', description: 'Update church leader assignment (admin/developer only)', resolver_name: 'updateChurchLeader' as PermissionResolverName, group: 'CHURCH' as PermissionGroup, key_code: 'CHURCH_LEADER_UPDATE', disabled_to_client: true },
+  { name: 'create institution position', description: 'Assign a position (president/secretary/finance) in an institution', resolver_name: 'createInstitutionPosition' as PermissionResolverName, group: 'INSTITUTION_POSITION' as PermissionGroup, key_code: 'INSTITUTION_POSITION_CREATE', disabled_to_client: true },
+  { name: 'update institution position', description: 'Update an institution position assignment', resolver_name: 'updateInstitutionPosition' as PermissionResolverName, group: 'INSTITUTION_POSITION' as PermissionGroup, key_code: 'INSTITUTION_POSITION_UPDATE', disabled_to_client: true },
+  { name: 'delete institution position', description: 'Remove an institution position assignment', resolver_name: 'deleteInstitutionPosition' as PermissionResolverName, group: 'INSTITUTION_POSITION' as PermissionGroup, key_code: 'INSTITUTION_POSITION_DELETE', disabled_to_client: true },
 ];
 
 const permissionsEnabledToClient = [
@@ -83,6 +86,8 @@ const permissionsEnabledToClient = [
   { name: 'delete church', description: 'Delete a church', resolver_name: 'deleteChurch' as PermissionResolverName, group: 'CHURCH' as PermissionGroup, key_code: 'CHURCH_DELETE', disabled_to_client: false },
   { name: 'update department', description: 'Update a department', resolver_name: 'updateDepartment' as PermissionResolverName, group: 'DEPARTMENT' as PermissionGroup, key_code: 'DEPARTMENT_UPDATE', disabled_to_client: false },
   { name: 'delete department', description: 'Delete a department', resolver_name: 'deleteDepartment' as PermissionResolverName, group: 'DEPARTMENT' as PermissionGroup, key_code: 'DEPARTMENT_DELETE', disabled_to_client: false },
+  { name: 'read institution positions', description: 'Access to institution positions list', resolver_name: 'institutionPositions' as PermissionResolverName, group: 'INSTITUTION_POSITION' as PermissionGroup, key_code: 'INSTITUTION_POSITIONS_ACCESS', disabled_to_client: false },
+  { name: 'read institution position', description: 'Access to a single institution position', resolver_name: 'institutionPosition' as PermissionResolverName, group: 'INSTITUTION_POSITION' as PermissionGroup, key_code: 'INSTITUTION_POSITION_ACCESS', disabled_to_client: false },
   { name: 'send invite email', description: 'Send an invitation email', resolver_name: 'sendInviteEmail' as PermissionResolverName, group: 'INVITE' as PermissionGroup, key_code: 'INVITE_EMAIL', disabled_to_client: false },
   { name: 'read annual budgets', description: 'Access to annual budgets list', resolver_name: 'annualBudgets' as PermissionResolverName, group: 'ANNUAL_BUDGET' as PermissionGroup, key_code: 'ANNUAL_BUDGETS_ACCESS', disabled_to_client: false },
   { name: 'read annual budget', description: 'Access to a single annual budget', resolver_name: 'annualBudget' as PermissionResolverName, group: 'ANNUAL_BUDGET' as PermissionGroup, key_code: 'ANNUAL_BUDGET_ACCESS', disabled_to_client: false },

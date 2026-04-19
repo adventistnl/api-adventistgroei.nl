@@ -58,4 +58,7 @@ export class UserCount {
 
     @Field(() => Int, {nullable:false})
     project_history?: number;
+
+    @Field(() => Int, {nullable:false})
+    institution_positions?: number;
 }

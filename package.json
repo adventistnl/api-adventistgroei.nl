@@ -34,8 +34,9 @@
     "seed:prod:admin": "ts-node -r tsconfig-paths/register src/scripts/seed-admin-prod.ts",
     "seed:prod:developer": "ts-node -r tsconfig-paths/register src/scripts/seed-developer-prod.ts",
     "seed:prod:full": "ts-node -r tsconfig-paths/register src/scripts/seed-prod-full.ts",
-    "seed:prod:all": "pnpm run seed:permissions && pnpm run seed:roles && pnpm run seed:prod:full",
-    "seed:all": "pnpm run seed:permissions && pnpm run seed:roles && pnpm run seed:users && pnpm run seed:subsidy-statuses",
+    "seed:institution-positions": "ts-node -r tsconfig-paths/register src/scripts/seed-institution-positions.ts",
+    "seed:prod:all": "pnpm run seed:permissions && pnpm run seed:roles && pnpm run seed:prod:full && pnpm run seed:institution-positions",
+    "seed:all": "pnpm run seed:permissions && pnpm run seed:roles && pnpm run seed:users && pnpm run seed:subsidy-statuses && pnpm run seed:institution-positions",
     "cleanup:orphaned-subsidies": "ts-node -r tsconfig-paths/register src/scripts/cleanup-orphaned-subsidy-requests.ts",
     "prisma:reset:dev": "pnpm run prisma:migrate:reset && pnpm run prisma:generate && pnpm run seed:all && pnpm run start:dev"
   },

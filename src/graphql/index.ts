@@ -25,3 +25,4 @@ export * from './annual-budget.resolver';
 export * from '../resolvers/forgot-password/forgot-password.resolver';
 export * from './project-history.resolver';
 export * from './project-adjustment.resolver';
+export * from './institution-position.resolver';

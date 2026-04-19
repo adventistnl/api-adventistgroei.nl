@@ -194,6 +194,17 @@ enum PermissionResolverName {
   toggleAdjustmentTask
   removeAdjustmentTask
   ledgerHistory
+  institutionPositions
+  institutionPosition
+  createInstitutionPosition
+  updateInstitutionPosition
+  deleteInstitutionPosition
+}
+
+enum InstitutionPositionType {
+  PRESIDENT
+  SECRETARY
+  FINANCE_MANAGER
 }
 
 enum PermissionGroup {
@@ -219,6 +230,7 @@ enum PermissionGroup {
   INVITE
   ANNUAL_BUDGET
   PROJECT_HISTORY
+  INSTITUTION_POSITION
 }
 
 enum CommunicationType {
@@ -388,6 +400,7 @@ model Institution {
   direct_messages     DirectMessage[]
   subsidy_requests    SubsidyRequest[]
   annual_budgets      AnnualBudget[]
+  positions           InstitutionPosition[]
 }
 
 model Region {
@@ -629,6 +642,7 @@ model User {
   led_departments           Department[]              @relation("DepartmentLeader")
   led_church                Church?                   @relation("ChurchLeader")
   project_history           ProjectHistory[]
+  institution_positions     InstitutionPosition[]
 }
 
 model Project {
@@ -1326,4 +1340,24 @@ model AdjustmentTask {
   updated_at    DateTime          @updatedAt
 
   @@index([adjustment_id])
+}
+
+model InstitutionPosition {
+  id             String                  @id @default(uuid())
+  institution_id String
+  institution    Institution             @relation(fields: [institution_id], references: [id])
+  position_type  InstitutionPositionType
+  user_id        String
+  user           User                    @relation(fields: [user_id], references: [id])
+  created_at     DateTime                @default(now())
+  updated_at     DateTime                @updatedAt
+  created_by     String
+  updated_by     String
+  is_deleted     Boolean                 @default(false)
+  deleted_at     DateTime?
+  deleted_by     String?
+
+  @@unique([institution_id, position_type])
+  @@index([institution_id])
+  @@index([user_id])
 }

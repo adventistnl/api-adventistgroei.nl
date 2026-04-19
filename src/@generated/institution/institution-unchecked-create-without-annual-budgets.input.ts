@@ -11,6 +11,7 @@ import { SettingUncheckedCreateNestedManyWithoutInstitutionInput } from '../sett
 import { ProjectUncheckedCreateNestedManyWithoutInstitutionInput } from '../project/project-unchecked-create-nested-many-without-institution.input';
 import { DirectMessageUncheckedCreateNestedManyWithoutInstitutionInput } from '../direct-message/direct-message-unchecked-create-nested-many-without-institution.input';
 import { SubsidyRequestUncheckedCreateNestedManyWithoutInstitutionInput } from '../subsidy-request/subsidy-request-unchecked-create-nested-many-without-institution.input';
+import { InstitutionPositionUncheckedCreateNestedManyWithoutInstitutionInput } from '../institution-position/institution-position-unchecked-create-nested-many-without-institution.input';
 
 @InputType()
 export class InstitutionUncheckedCreateWithoutAnnual_budgetsInput {
@@ -85,4 +86,7 @@ export class InstitutionUncheckedCreateWithoutAnnual_budgetsInput {
     @Field(() => SubsidyRequestUncheckedCreateNestedManyWithoutInstitutionInput, {nullable:true})
     @Type(() => SubsidyRequestUncheckedCreateNestedManyWithoutInstitutionInput)
     subsidy_requests?: SubsidyRequestUncheckedCreateNestedManyWithoutInstitutionInput;
+
+    @Field(() => InstitutionPositionUncheckedCreateNestedManyWithoutInstitutionInput, {nullable:true})
+    positions?: InstitutionPositionUncheckedCreateNestedManyWithoutInstitutionInput;
 }

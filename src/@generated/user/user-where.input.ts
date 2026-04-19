@@ -29,6 +29,7 @@ import { ProjectActivityAssigneeListRelationFilter } from '../project-activity-a
 import { SubsidyStatusHistoryListRelationFilter } from '../subsidy-status-history/subsidy-status-history-list-relation-filter.input';
 import { DepartmentListRelationFilter } from '../department/department-list-relation-filter.input';
 import { ProjectHistoryListRelationFilter } from '../project-history/project-history-list-relation-filter.input';
+import { InstitutionPositionListRelationFilter } from '../institution-position/institution-position-list-relation-filter.input';
 
 @InputType()
 export class UserWhereInput {
@@ -179,4 +180,7 @@ export class UserWhereInput {
     @Field(() => ProjectHistoryListRelationFilter, {nullable:true})
     @Type(() => ProjectHistoryListRelationFilter)
     project_history?: ProjectHistoryListRelationFilter;
+
+    @Field(() => InstitutionPositionListRelationFilter, {nullable:true})
+    institution_positions?: InstitutionPositionListRelationFilter;
 }

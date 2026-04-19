@@ -12,6 +12,7 @@ import { SettingCreateNestedManyWithoutInstitutionInput } from '../setting/setti
 import { ProjectCreateNestedManyWithoutInstitutionInput } from '../project/project-create-nested-many-without-institution.input';
 import { DirectMessageCreateNestedManyWithoutInstitutionInput } from '../direct-message/direct-message-create-nested-many-without-institution.input';
 import { SubsidyRequestCreateNestedManyWithoutInstitutionInput } from '../subsidy-request/subsidy-request-create-nested-many-without-institution.input';
+import { InstitutionPositionCreateNestedManyWithoutInstitutionInput } from '../institution-position/institution-position-create-nested-many-without-institution.input';
 
 @InputType()
 export class InstitutionCreateWithoutAnnual_budgetsInput {
@@ -87,4 +88,7 @@ export class InstitutionCreateWithoutAnnual_budgetsInput {
     @Field(() => SubsidyRequestCreateNestedManyWithoutInstitutionInput, {nullable:true})
     @Type(() => SubsidyRequestCreateNestedManyWithoutInstitutionInput)
     subsidy_requests?: SubsidyRequestCreateNestedManyWithoutInstitutionInput;
+
+    @Field(() => InstitutionPositionCreateNestedManyWithoutInstitutionInput, {nullable:true})
+    positions?: InstitutionPositionCreateNestedManyWithoutInstitutionInput;
 }

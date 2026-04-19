@@ -26,6 +26,7 @@ import { SubsidyStatusHistoryCreateNestedManyWithoutUserInput } from '../subsidy
 import { DepartmentCreateNestedManyWithoutLeaderInput } from '../department/department-create-nested-many-without-leader.input';
 import { ChurchCreateNestedOneWithoutLeaderInput } from '../church/church-create-nested-one-without-leader.input';
 import { ProjectHistoryCreateNestedManyWithoutUserInput } from '../project-history/project-history-create-nested-many-without-user.input';
+import { InstitutionPositionCreateNestedManyWithoutUserInput } from '../institution-position/institution-position-create-nested-many-without-user.input';
 
 @InputType()
 export class UserCreateInput {
@@ -155,4 +156,7 @@ export class UserCreateInput {
     @Field(() => ProjectHistoryCreateNestedManyWithoutUserInput, {nullable:true})
     @Type(() => ProjectHistoryCreateNestedManyWithoutUserInput)
     project_history?: ProjectHistoryCreateNestedManyWithoutUserInput;
+
+    @Field(() => InstitutionPositionCreateNestedManyWithoutUserInput, {nullable:true})
+    institution_positions?: InstitutionPositionCreateNestedManyWithoutUserInput;
 }
