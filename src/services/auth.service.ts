@@ -17,7 +17,7 @@ export class AuthService {
     email: string,
     password: string,
   ): Promise<Omit<UserWithRoles, 'password'> | null> {
-    const user = await this.userService.findByEmail(email);
+    const user = await this.userService.findByEmail(email.toLowerCase());
     if (!user) return null;
     if (!user.password) return null
     const bcrypt = await import('bcryptjs');
@@ -30,7 +30,7 @@ export class AuthService {
   }
 
   async login(input: LoginInput): Promise<AuthModel> {
-    const user = await this.userService.findByEmail(input.email);
+    const user = await this.userService.findByEmail(input.email.toLowerCase());
     if (!user) throw new CustomGraphQLError('Invalid credentials', ErrorCode.UNAUTHORIZED, 401);
     if (!user.password) throw new CustomGraphQLError('Invalid credentials', ErrorCode.UNAUTHORIZED, 401);
     const bcrypt = await import('bcryptjs');
