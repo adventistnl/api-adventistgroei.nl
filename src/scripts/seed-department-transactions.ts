@@ -5,6 +5,8 @@ dotenv.config();
 
 const prisma = new PrismaClient();
 
+const SEED_USER_ID = '0921f5d6-b895-4ad4-8c1a-503a4868d7e8'; // admin@mail.com
+
 async function run() {
   console.log('🌱 Iniciando Seed de Transações Departamentais (Burn Rate)...');
 
@@ -55,7 +57,7 @@ async function run() {
            delta_expenses: expenseAmount,
            delta_allocated: 0,
            description: `Seed: Compra de material/Evento (Automático)`,
-           created_by: 'system-seed',
+           created_by: SEED_USER_ID,
            created_at: tsDate,
          }
        });

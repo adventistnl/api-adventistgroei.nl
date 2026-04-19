@@ -192,6 +192,11 @@ export class SubsidyRequestUpdateDto {
   @IsNumber()
   approved_amount?: number;
 
+  @Field(() => Float, { nullable: true })
+  @IsOptional()
+  @IsNumber()
+  advance_amount?: number;
+
   @Field({ nullable: true })
   @IsOptional()
   @IsString()
@@ -205,11 +210,6 @@ export class SubsidyRequestUpdateDto {
   @Field(() => SubsidyRequestPriority, { nullable: true })
   @IsOptional()
   priority?: SubsidyRequestPriority;
-
-  @Field(() => Float, { nullable: true })
-  @IsOptional()
-  @IsNumber()
-  advance_amount?: number;
 
   // campos de auditoria internos (não expostos no GraphQL)
   approved_at?: Date;

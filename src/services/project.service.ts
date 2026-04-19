@@ -25,15 +25,31 @@ export class ProjectService {
   ) {}
 
   async create(data: ProjectCreateDto, userId: string): Promise<Project> {
+    // Owner = Department Leader; co-owner = whoever is creating the project
+    if (data.department_id) {
+      const department = await this.prisma.department.findUnique({
+        where: { id: data.department_id },
+        select: { leader_id: true },
+      });
+      if (department?.leader_id) {
+        data.owner_id = department.leader_id;
+      }
+    }
+    data.co_owner_id = userId;
+
     const project = await this.projectRepository.create(data, userId);
 
+    // Grant PROJECT_CO_OWNER role to whoever registered the project
     try {
-      // A new project starts as DRAFT, so we do NOT allocate any budget yet.
-      // This is handled later during status transition in update().
-    } catch (e) {
-      console.error("Failed to allocate budget for new project, rolling back...", e);
-      await this.projectRepository.softDelete(project.id, userId);
-      throw e;
+      const coOwnerRole = await this.prisma.role.findUnique({
+        where: { key_code: 'PROJECT_CO_OWNER' },
+        select: { id: true },
+      });
+      if (coOwnerRole) {
+        await this.userRepository.addRoleToUser(userId, coOwnerRole.id, userId);
+      }
+    } catch {
+      // Role may already be assigned — safe to ignore
     }
 
     return project;
@@ -49,6 +65,21 @@ export class ProjectService {
         404,
         { additional: { errorCode: 'PROJECT_NOT_FOUND' } }
       );
+    }
+
+    // Prevent co-owners from changing the project owner
+    if (data.owner_id && data.owner_id !== existingProject.owner_id) {
+      const caller = await this.userRepository.findByIdWithRoles(userId);
+      const privilegedRoles = ['ADMIN', 'DEV', 'INSTITUTIONAL_LEADER', 'INSTITUTIONAL_DEPARTMENT_LEADER', 'CHURCH_LEADER', 'DEPARTMENT_CHURCH_LEADER', 'FINANCIAL_MANAGER'];
+      const hasPrivilege = caller?.user_roles?.some((ur: any) => privilegedRoles.includes(ur.role?.key_code));
+      if (!hasPrivilege) {
+        throw new CustomGraphQLError(
+          'Only administrators and leaders can change the project owner',
+          ErrorCode.FORBIDDEN,
+          403,
+          { additional: { errorCode: 'CANNOT_CHANGE_PROJECT_OWNER' } }
+        );
+      }
     }
 
     // Block any modifications if project is CONCLUDED

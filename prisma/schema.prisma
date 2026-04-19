@@ -193,6 +193,7 @@ enum PermissionResolverName {
   addAdjustmentTask
   toggleAdjustmentTask
   removeAdjustmentTask
+  ledgerHistory
 }
 
 enum PermissionGroup {

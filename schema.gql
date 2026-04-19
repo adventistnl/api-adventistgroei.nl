@@ -4755,10 +4755,10 @@ input SubsidyRequestUpdateDto {
   subsidy_status_id: String
   items: [SubsidyRequestItemInput!]
   approved_amount: Float
+  advance_amount: Float
   rejection_reason: String
   notes: String
   priority: SubsidyRequestPriority
-  advance_amount: Float
 }
 
 input CreateWithoutDocumentSubsidyRequestDto {
