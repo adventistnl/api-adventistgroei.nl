@@ -25,6 +25,7 @@ export class UserRepository {
 
   async create(data: UserCreateDto): Promise<Omit<User, 'password'>> {
     const { contact, church_id, church_department_id, institution_id, institution_department_id, language_preference, roles, invite_token, ...rest } = data;
+    rest.email = rest.email.toLowerCase();
 
     if (!Object.values(LanguagePreference).includes(language_preference as LanguagePreference)) {
       throw new Error('Invalid language preference');
@@ -112,6 +113,7 @@ export class UserRepository {
     if (data.language_preference && !Object.values(LanguagePreference).includes(data.language_preference as LanguagePreference)) {
       throw new Error('Invalid language preference');
     }
+    if (data.email) data.email = data.email.toLowerCase();
     const { contact_id, church_id, department_id, institution_id, phone, address, contact, ...rest } = data;
 
     // os métodos já estouram erros caso não encontrem
