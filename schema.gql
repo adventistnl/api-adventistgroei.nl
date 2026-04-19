@@ -1686,6 +1686,8 @@ type LedgerHistoryEntry {
   description: String!
   amount: Float!
   type: String!
+  impactType: String!
+  label: String!
   category: String!
   entityName: String
   relatedEntity: String

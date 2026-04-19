@@ -248,17 +248,35 @@ export class LedgerHistoryEntry {
   @Field(() => Float)
   amount!: number;
 
+  /**
+   * Semantic type of the entry:
+   * EXPENSE | ALLOCATION | DISTRIBUTION_OUT | DISTRIBUTION_IN |
+   * INITIAL_FUNDING_IN | REALLOCATION_OUT | REALLOCATION_IN | REDUCTION_OUT
+   */
   @Field(() => String)
-  type!: string; // e.g., "EXPENSE", "ALLOCATION", "TRANSFER_IN", "TRANSFER_OUT"
+  type!: string;
+
+  /**
+   * High-level impact classification for UI display:
+   * EXPENSE | ALLOCATION | RECEIVED | FUNDING | TRANSFER
+   */
+  @Field(() => String)
+  impactType!: string;
+
+  /**
+   * Human-readable label in pt-BR
+   */
+  @Field(() => String)
+  label!: string;
 
   @Field(() => String)
   category!: string; // "TRANSACTION" or "TRANSFER"
 
   @Field(() => String, { nullable: true })
-  entityName?: string; // Name of Department, Church, etc.
+  entityName?: string; // Name of Department, Institution, Church, etc.
 
   @Field(() => String, { nullable: true })
-  relatedEntity?: string; // Project Name or Subsidy Request ID
+  relatedEntity?: string; // e.g. "Projeto: Campanha 2026", "Destino: Departamento X"
 
   @Field(() => String, { nullable: true })
   createdBy?: string;
