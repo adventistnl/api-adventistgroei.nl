@@ -11,12 +11,15 @@ import { ProjectStatus } from '../prisma/project-status.enum';
 import { DepartmentCreateNestedOneWithoutProjectsInput } from '../department/department-create-nested-one-without-projects.input';
 import { DepartmentCreateNestedOneWithoutChurch_projectsInput } from '../department/department-create-nested-one-without-church-projects.input';
 import { UserCreateNestedOneWithoutProjectInput } from '../user/user-create-nested-one-without-project.input';
+import { UserCreateNestedOneWithoutCo_owned_projectsInput } from '../user/user-create-nested-one-without-co-owned-projects.input';
 import { EventCreateNestedOneWithoutProjectsInput } from '../event/event-create-nested-one-without-projects.input';
 import { ChurchCreateNestedOneWithoutProjectsInput } from '../church/church-create-nested-one-without-projects.input';
 import { VoluntariesOnProjectsCreateNestedManyWithoutProjectInput } from '../voluntaries-on-projects/voluntaries-on-projects-create-nested-many-without-project.input';
 import { ProjectActivityCreateNestedManyWithoutProjectInput } from '../project-activity/project-activity-create-nested-many-without-project.input';
 import { SubsidyRequestCreateNestedManyWithoutProjectInput } from '../subsidy-request/subsidy-request-create-nested-many-without-project.input';
 import { SpecialProjectsCreateNestedManyWithoutProjectInput } from '../special-projects/special-projects-create-nested-many-without-project.input';
+import { ProjectHistoryCreateNestedManyWithoutProjectInput } from '../project-history/project-history-create-nested-many-without-project.input';
+import { BudgetTransactionCreateNestedManyWithoutProjectInput } from '../budget-transaction/budget-transaction-create-nested-many-without-project.input';
 
 @InputType()
 export class ProjectCreateWithoutInstitutionInput {
@@ -102,6 +105,10 @@ export class ProjectCreateWithoutInstitutionInput {
     @Type(() => UserCreateNestedOneWithoutProjectInput)
     owner!: UserCreateNestedOneWithoutProjectInput;
 
+    @Field(() => UserCreateNestedOneWithoutCo_owned_projectsInput, {nullable:true})
+    @Type(() => UserCreateNestedOneWithoutCo_owned_projectsInput)
+    co_owner?: UserCreateNestedOneWithoutCo_owned_projectsInput;
+
     @Field(() => EventCreateNestedOneWithoutProjectsInput, {nullable:true})
     @Type(() => EventCreateNestedOneWithoutProjectsInput)
     event?: EventCreateNestedOneWithoutProjectsInput;
@@ -125,4 +132,12 @@ export class ProjectCreateWithoutInstitutionInput {
     @Field(() => SpecialProjectsCreateNestedManyWithoutProjectInput, {nullable:true})
     @Type(() => SpecialProjectsCreateNestedManyWithoutProjectInput)
     special_projects?: SpecialProjectsCreateNestedManyWithoutProjectInput;
+
+    @Field(() => ProjectHistoryCreateNestedManyWithoutProjectInput, {nullable:true})
+    @Type(() => ProjectHistoryCreateNestedManyWithoutProjectInput)
+    history?: ProjectHistoryCreateNestedManyWithoutProjectInput;
+
+    @Field(() => BudgetTransactionCreateNestedManyWithoutProjectInput, {nullable:true})
+    @Type(() => BudgetTransactionCreateNestedManyWithoutProjectInput)
+    budget_transactions?: BudgetTransactionCreateNestedManyWithoutProjectInput;
 }

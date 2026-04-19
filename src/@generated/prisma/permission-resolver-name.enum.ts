@@ -51,8 +51,10 @@ export enum PermissionResolverName {
     deleteDirectMessage = "deleteDirectMessage",
     projects = "projects",
     project = "project",
+    myProjects = "myProjects",
     createProject = "createProject",
     updateProject = "updateProject",
+    updateProjectCoOwner = "updateProjectCoOwner",
     deleteProject = "deleteProject",
     notifications = "notifications",
     notification = "notification",
@@ -71,6 +73,7 @@ export enum PermissionResolverName {
     deleteSubsidyRequest = "deleteSubsidyRequest",
     approveSubsidyRequest = "approveSubsidyRequest",
     rejectSubsidyRequest = "rejectSubsidyRequest",
+    submitSubsidyRequest = "submitSubsidyRequest",
     subsidyStatuses = "subsidyStatuses",
     subsidyStatus = "subsidyStatus",
     createSubsidyStatus = "createSubsidyStatus",
@@ -131,9 +134,21 @@ export enum PermissionResolverName {
     subsidyByMonth = "subsidyByMonth",
     subsidyByStatus = "subsidyByStatus",
     createAdvanceRequest = "createAdvanceRequest",
+    createSubsidyWithoutDocument = "createSubsidyWithoutDocument",
     requestSubsidyRefund = "requestSubsidyRefund",
     getSubsidiesWaitingRefund = "getSubsidiesWaitingRefund",
-    confirmRefundDone = "confirmRefundDone"
+    confirmRefundDone = "confirmRefundDone",
+    projectHistories = "projectHistories",
+    createProjectHistory = "createProjectHistory",
+    deleteProjectHistory = "deleteProjectHistory",
+    projectAdjustments = "projectAdjustments",
+    projectAdjustment = "projectAdjustment",
+    createAdjustment = "createAdjustment",
+    updateAdjustmentStatus = "updateAdjustmentStatus",
+    addAdjustmentTask = "addAdjustmentTask",
+    toggleAdjustmentTask = "toggleAdjustmentTask",
+    removeAdjustmentTask = "removeAdjustmentTask",
+    ledgerHistory = "ledgerHistory"
 }
 
 

@@ -23,6 +23,7 @@ import { ProjectActivityLogOrderByRelationAggregateInput } from '../project-acti
 import { ProjectActivityAssigneeOrderByRelationAggregateInput } from '../project-activity-assignee/project-activity-assignee-order-by-relation-aggregate.input';
 import { SubsidyStatusHistoryOrderByRelationAggregateInput } from '../subsidy-status-history/subsidy-status-history-order-by-relation-aggregate.input';
 import { DepartmentOrderByRelationAggregateInput } from '../department/department-order-by-relation-aggregate.input';
+import { ProjectHistoryOrderByRelationAggregateInput } from '../project-history/project-history-order-by-relation-aggregate.input';
 
 @InputType()
 export class UserOrderByWithRelationInput {
@@ -133,6 +134,10 @@ export class UserOrderByWithRelationInput {
     @Type(() => ProjectOrderByRelationAggregateInput)
     Project?: ProjectOrderByRelationAggregateInput;
 
+    @Field(() => ProjectOrderByRelationAggregateInput, {nullable:true})
+    @Type(() => ProjectOrderByRelationAggregateInput)
+    co_owned_projects?: ProjectOrderByRelationAggregateInput;
+
     @Field(() => AnnualBudgetOrderByRelationAggregateInput, {nullable:true})
     @Type(() => AnnualBudgetOrderByRelationAggregateInput)
     approved_annual_budgets?: AnnualBudgetOrderByRelationAggregateInput;
@@ -156,4 +161,8 @@ export class UserOrderByWithRelationInput {
     @Field(() => ChurchOrderByWithRelationInput, {nullable:true})
     @Type(() => ChurchOrderByWithRelationInput)
     led_church?: ChurchOrderByWithRelationInput;
+
+    @Field(() => ProjectHistoryOrderByRelationAggregateInput, {nullable:true})
+    @Type(() => ProjectHistoryOrderByRelationAggregateInput)
+    project_history?: ProjectHistoryOrderByRelationAggregateInput;
 }

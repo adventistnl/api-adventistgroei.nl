@@ -28,14 +28,6 @@ export class AnnualBudgetUpdateManyMutationInput {
     @Type(() => DecimalFieldUpdateOperationsInput)
     planned_budget?: DecimalFieldUpdateOperationsInput;
 
-    @Field(() => DecimalFieldUpdateOperationsInput, {nullable:true})
-    @Type(() => DecimalFieldUpdateOperationsInput)
-    total_expenses?: DecimalFieldUpdateOperationsInput;
-
-    @Field(() => DecimalFieldUpdateOperationsInput, {nullable:true})
-    @Type(() => DecimalFieldUpdateOperationsInput)
-    balance?: DecimalFieldUpdateOperationsInput;
-
     @Field(() => NullableStringFieldUpdateOperationsInput, {nullable:true})
     notes?: NullableStringFieldUpdateOperationsInput;
 
@@ -68,10 +60,6 @@ export class AnnualBudgetUpdateManyMutationInput {
 
     @Field(() => EnumAnnualBudgetStatusFieldUpdateOperationsInput, {nullable:true})
     status?: EnumAnnualBudgetStatusFieldUpdateOperationsInput;
-
-    @Field(() => DecimalFieldUpdateOperationsInput, {nullable:true})
-    @Type(() => DecimalFieldUpdateOperationsInput)
-    allocated_amount?: DecimalFieldUpdateOperationsInput;
 
     @Field(() => NullableDecimalFieldUpdateOperationsInput, {nullable:true})
     @Type(() => NullableDecimalFieldUpdateOperationsInput)

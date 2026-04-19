@@ -29,12 +29,14 @@
     "seed:roles": "ts-node -r tsconfig-paths/register src/scripts/seed-roles.ts",
     "seed:users": "ts-node -r tsconfig-paths/register src/scripts/seed-users.ts",
     "seed:subsidy-statuses": "ts-node -r tsconfig-paths/register src/scripts/seed-subsidy-statuses.ts",
+    "seed:department-transactions": "ts-node -r tsconfig-paths/register src/scripts/seed-department-transactions.ts",
     "seed:dev": "ts-node -r tsconfig-paths/register src/scripts/seed-developer-role.ts",
     "seed:prod:admin": "ts-node -r tsconfig-paths/register src/scripts/seed-admin-prod.ts",
     "seed:prod:developer": "ts-node -r tsconfig-paths/register src/scripts/seed-developer-prod.ts",
     "seed:prod:all": "pnpm run seed:prod:admin && pnpm run seed:prod:developer && pnpm run seed:subsidy-statuses",
     "seed:all": "pnpm run seed:permissions && pnpm run seed:roles && pnpm run seed:users && pnpm run seed:subsidy-statuses",
-    "cleanup:orphaned-subsidies": "ts-node -r tsconfig-paths/register src/scripts/cleanup-orphaned-subsidy-requests.ts"
+    "cleanup:orphaned-subsidies": "ts-node -r tsconfig-paths/register src/scripts/cleanup-orphaned-subsidy-requests.ts",
+    "prisma:reset:dev": "pnpm run prisma:migrate:reset && pnpm run prisma:generate && pnpm run seed:all && pnpm run start:dev"
   },
   "dependencies": {
     "@nestjs/apollo": "^13.1.0",
@@ -56,8 +58,10 @@
     "dotenv": "^17.2.2",
     "googleapis": "^169.0.0",
     "graphql": "^16.11.0",
+    "graphql-subscriptions": "^2.0.0",
     "graphql-type-json": "^0.3.2",
     "graphql-upload-minimal": "^1.6.4",
+    "graphql-ws": "^6.0.7",
     "i18next": "^25.6.0",
     "i18next-fs-backend": "^2.6.0",
     "i18next-http-middleware": "^3.8.1",

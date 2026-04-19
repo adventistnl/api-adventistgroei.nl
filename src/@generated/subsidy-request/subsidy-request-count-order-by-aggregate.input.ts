@@ -75,6 +75,9 @@ export class SubsidyRequestCountOrderByAggregateInput {
     advance_amount?: `${SortOrder}`;
 
     @Field(() => SortOrder, {nullable:true})
+    request_type?: `${SortOrder}`;
+
+    @Field(() => SortOrder, {nullable:true})
     refund_amount?: `${SortOrder}`;
 
     @Field(() => SortOrder, {nullable:true})
@@ -82,4 +85,10 @@ export class SubsidyRequestCountOrderByAggregateInput {
 
     @Field(() => SortOrder, {nullable:true})
     refund_done?: `${SortOrder}`;
+
+    @Field(() => SortOrder, {nullable:true})
+    refund_type?: `${SortOrder}`;
+
+    @Field(() => SortOrder, {nullable:true})
+    refund_rejected?: `${SortOrder}`;
 }

@@ -26,6 +26,15 @@ async function main() {
 
   const statuses = [
     {
+      name: 'DRAFT',
+      description: 'Rascunho — ainda não submetido',
+      order: 0,
+      department_id: department.id,
+      assigned_to: user.id,
+      created_by: user.id,
+      updated_by: user.id,
+    },
+    {
       name: 'PENDING',
       description: 'Aguardando aprovação',
       order: 1,
@@ -83,6 +92,15 @@ async function main() {
       name: 'WAITING_REFUND',
       description: 'Waiting for refund processing',
       order: 7,
+      department_id: department.id,
+      assigned_to: user.id,
+      created_by: user.id,
+      updated_by: user.id,
+    },
+    {
+      name: 'WAITING_DOCUMENTS',
+      description: 'Advance paid — waiting for receipt documents from the requester',
+      order: 8,
       department_id: department.id,
       assigned_to: user.id,
       created_by: user.id,

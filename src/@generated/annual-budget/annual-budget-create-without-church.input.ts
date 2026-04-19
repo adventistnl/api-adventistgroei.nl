@@ -14,6 +14,9 @@ import { AnnualBudgetEntityType } from '../prisma/annual-budget-entity-type.enum
 import { UserCreateNestedOneWithoutApproved_annual_budgetsInput } from '../user/user-create-nested-one-without-approved-annual-budgets.input';
 import { InstitutionCreateNestedOneWithoutAnnual_budgetsInput } from '../institution/institution-create-nested-one-without-annual-budgets.input';
 import { DepartmentCreateNestedOneWithoutAnnual_budgetsInput } from '../department/department-create-nested-one-without-annual-budgets.input';
+import { BudgetTransactionCreateNestedManyWithoutAnnual_budgetInput } from '../budget-transaction/budget-transaction-create-nested-many-without-annual-budget.input';
+import { BudgetTransferCreateNestedManyWithoutFrom_budgetInput } from '../budget-transfer/budget-transfer-create-nested-many-without-from-budget.input';
+import { BudgetTransferCreateNestedManyWithoutTo_budgetInput } from '../budget-transfer/budget-transfer-create-nested-many-without-to-budget.input';
 
 @InputType()
 export class AnnualBudgetCreateWithoutChurchInput {
@@ -28,16 +31,6 @@ export class AnnualBudgetCreateWithoutChurchInput {
     @Type(() => Object)
     @Transform(transformToDecimal)
     planned_budget!: Decimal;
-
-    @Field(() => GraphQLDecimal, {nullable:false})
-    @Type(() => Object)
-    @Transform(transformToDecimal)
-    total_expenses!: Decimal;
-
-    @Field(() => GraphQLDecimal, {nullable:false})
-    @Type(() => Object)
-    @Transform(transformToDecimal)
-    balance!: Decimal;
 
     @Field(() => String, {nullable:true})
     notes?: string;
@@ -71,11 +64,6 @@ export class AnnualBudgetCreateWithoutChurchInput {
 
     @Field(() => AnnualBudgetStatus, {nullable:true})
     status?: `${AnnualBudgetStatus}`;
-
-    @Field(() => GraphQLDecimal, {nullable:false})
-    @Type(() => Object)
-    @Transform(transformToDecimal)
-    allocated_amount!: Decimal;
 
     @Field(() => GraphQLDecimal, {nullable:true})
     @Type(() => Object)
@@ -126,4 +114,16 @@ export class AnnualBudgetCreateWithoutChurchInput {
     @Field(() => DepartmentCreateNestedOneWithoutAnnual_budgetsInput, {nullable:true})
     @Type(() => DepartmentCreateNestedOneWithoutAnnual_budgetsInput)
     department?: DepartmentCreateNestedOneWithoutAnnual_budgetsInput;
+
+    @Field(() => BudgetTransactionCreateNestedManyWithoutAnnual_budgetInput, {nullable:true})
+    @Type(() => BudgetTransactionCreateNestedManyWithoutAnnual_budgetInput)
+    transactions?: BudgetTransactionCreateNestedManyWithoutAnnual_budgetInput;
+
+    @Field(() => BudgetTransferCreateNestedManyWithoutFrom_budgetInput, {nullable:true})
+    @Type(() => BudgetTransferCreateNestedManyWithoutFrom_budgetInput)
+    transfers_out?: BudgetTransferCreateNestedManyWithoutFrom_budgetInput;
+
+    @Field(() => BudgetTransferCreateNestedManyWithoutTo_budgetInput, {nullable:true})
+    @Type(() => BudgetTransferCreateNestedManyWithoutTo_budgetInput)
+    transfers_in?: BudgetTransferCreateNestedManyWithoutTo_budgetInput;
 }

@@ -3,7 +3,7 @@ import { UseGuards } from '@nestjs/common';
 import { ProjectService } from '../services/project.service';
 import { Project } from '../@generated/project/project.model';
 import { SubsidyRequest } from '../@generated/subsidy-request/subsidy-request.model';
-import { ProjectCreateDto, ProjectUpdateDto } from '../dto/project.dto';
+import { ProjectCreateDto, ProjectUpdateDto, ProjectUpdateCoOwnerDto } from '../dto/project.dto';
 import { ProjectKPIs, ProjectsByDepartment, SubsidyStatusDistribution, ProjectsTimeline } from '../dto/project-analytics.dto';
 import { SubsidyRequestRepository } from '../repositories/subsidy-request.repository';
 import { ProjectKPIService } from '../services/project-kpi.service';
@@ -11,9 +11,11 @@ import { ProjectKPIsDto } from '../dto/project-kpi.dto';
 import { Permission } from '../middlewares';
 import { PermissionsGuard } from '../middlewares/permissions.guard';
 import { DepartmentService } from '../services/department.service';
-
+import { ProjectCollaborator } from '../models';
 import { Church } from '../@generated/church/church.model';
 import { Department } from '../@generated/department/department.model';
+import { ProjectHistory } from '../@generated/project-history/project-history.model';
+import { ProjectHistoryService } from '../services/project-history.service';
 
 @Resolver(() => Project)
 export class ProjectResolver {
@@ -22,6 +24,7 @@ export class ProjectResolver {
     private readonly subsidyRequestRepository: SubsidyRequestRepository,
     private readonly projectKPIService: ProjectKPIService,
     private readonly departmentService: DepartmentService,
+    private readonly projectHistoryService: ProjectHistoryService,
   ) {}
 
   @ResolveField(() => Church, { nullable: true, name: 'Church' })
@@ -60,6 +63,15 @@ export class ProjectResolver {
     return this.projectService.findAll(institutionId, context?.userId);
   }
 
+  @Query(() => [Project])
+  @UseGuards(PermissionsGuard)
+  @Permission()
+  async myProjects(
+    @Context() context: { userId: string },
+  ): Promise<Project[]> {
+    return this.projectService.getMyProjects(context.userId);
+  }
+
   @Query(() => Project, { nullable: true })
   @UseGuards(PermissionsGuard)
   @Permission()
@@ -86,6 +98,17 @@ export class ProjectResolver {
     @Context() context: { userId: string },
   ): Promise<Project> {
     return this.projectService.update(id, data, context.userId);
+  }
+
+  @Mutation(() => Project)
+  @UseGuards(PermissionsGuard)
+  @Permission()
+  async updateProjectCoOwner(
+    @Args('id') id: string,
+    @Args('data') data: ProjectUpdateCoOwnerDto,
+    @Context() context: { userId: string },
+  ): Promise<Project> {
+    return this.projectService.updateCoOwner(id, data, context.userId);
   }
 
   @Mutation(() => Project)
@@ -143,11 +166,23 @@ export class ProjectResolver {
     });
   }
 
-  // ResolveField para retornar KPIs calculados do projeto
+  // Retorna KPIs calculados do projeto
   @ResolveField(() => ProjectKPIsDto, { name: 'kpis' })
   @UseGuards(PermissionsGuard)
   @Permission()
   async getSpecificProjectKPIs(@Parent() project: Project): Promise<ProjectKPIsDto> {
     return this.projectKPIService.calculateProjectKPIs(project.id);
+  }
+
+  // Retorna todos os colaboradores: owner, co_owner e assignees das atividades
+  @ResolveField(() => [ProjectCollaborator], { name: 'collaborators' })
+  async getCollaborators(@Parent() project: Project): Promise<ProjectCollaborator[]> {
+    return this.projectService.getProjectCollaborators(project.id);
+  }
+
+  // Retorna o histórico de eventos e comentários do projeto
+  @ResolveField(() => [ProjectHistory], { name: 'history' })
+  async getHistory(@Parent() project: Project): Promise<ProjectHistory[]> {
+    return this.projectHistoryService.getByProjectId(project.id);
   }
 }

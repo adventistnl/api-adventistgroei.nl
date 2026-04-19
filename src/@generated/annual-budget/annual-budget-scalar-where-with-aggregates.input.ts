@@ -40,14 +40,6 @@ export class AnnualBudgetScalarWhereWithAggregatesInput {
     @Type(() => DecimalWithAggregatesFilter)
     planned_budget?: DecimalWithAggregatesFilter;
 
-    @Field(() => DecimalWithAggregatesFilter, {nullable:true})
-    @Type(() => DecimalWithAggregatesFilter)
-    total_expenses?: DecimalWithAggregatesFilter;
-
-    @Field(() => DecimalWithAggregatesFilter, {nullable:true})
-    @Type(() => DecimalWithAggregatesFilter)
-    balance?: DecimalWithAggregatesFilter;
-
     @Field(() => StringNullableWithAggregatesFilter, {nullable:true})
     notes?: StringNullableWithAggregatesFilter;
 
@@ -92,10 +84,6 @@ export class AnnualBudgetScalarWhereWithAggregatesInput {
 
     @Field(() => StringNullableWithAggregatesFilter, {nullable:true})
     department_id?: StringNullableWithAggregatesFilter;
-
-    @Field(() => DecimalWithAggregatesFilter, {nullable:true})
-    @Type(() => DecimalWithAggregatesFilter)
-    allocated_amount?: DecimalWithAggregatesFilter;
 
     @Field(() => DecimalNullableWithAggregatesFilter, {nullable:true})
     @Type(() => DecimalNullableWithAggregatesFilter)

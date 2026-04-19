@@ -22,6 +22,7 @@ import { AnnualBudget } from '../annual-budget/annual-budget.model';
 import { ProjectActivityLog } from '../project-activity-log/project-activity-log.model';
 import { ProjectActivityAssignee } from '../project-activity-assignee/project-activity-assignee.model';
 import { SubsidyStatusHistory } from '../subsidy-status-history/subsidy-status-history.model';
+import { ProjectHistory } from '../project-history/project-history.model';
 import { UserCount } from './user-count.output';
 
 @ObjectType()
@@ -123,6 +124,9 @@ export class User {
     @Field(() => [Project], {nullable:true})
     Project?: Array<Project>;
 
+    @Field(() => [Project], {nullable:true})
+    co_owned_projects?: Array<Project>;
+
     @Field(() => [AnnualBudget], {nullable:true})
     approved_annual_budgets?: Array<AnnualBudget>;
 
@@ -140,6 +144,9 @@ export class User {
 
     @Field(() => Church, {nullable:true})
     led_church?: Church | null;
+
+    @Field(() => [ProjectHistory], {nullable:true})
+    project_history?: Array<ProjectHistory>;
 
     @Field(() => UserCount, {nullable:false})
     _count?: UserCount;

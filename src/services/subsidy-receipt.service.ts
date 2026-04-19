@@ -13,9 +13,11 @@ import { SubsidyHistoryType } from 'src/@generated/prisma/subsidy-history-type.e
 export interface UploadSubsidyReceiptInput {
   subsidy_request_id: string;
   subsidy_request_item_id?: string;
-  project_activity_id: string;
+  project_activity_id?: string;
+  is_refund_receipt?: boolean;
   type: string;
   amount?: number;
+  note?: string;
 }
 
 @Injectable()
@@ -85,14 +87,18 @@ export class SubsidyReceiptService {
 
       this.ensureNotClosed(subsidyRequest.subsidy_status?.name);
 
+      // Todos os tipos de subsídio aceitam comprovantes — cada pedido precisa ter seus valores comprovados
+      // (WITH_DOCUMENT, WITHOUT_DOCUMENT e ADVANCE podem ter múltiplos recibos vinculados)
 
-      // 3. Buscar atividade relacionada
-      const activity = await this.prisma.projectActivity.findUnique({
-        where: { id: input.project_activity_id, is_deleted: false },
-      });
+      // 3. Buscar e validar atividade relacionada (opcional — dispensada para comprovantes de reembolso)
+      if (input.project_activity_id) {
+        const activity = await this.prisma.projectActivity.findUnique({
+          where: { id: input.project_activity_id, is_deleted: false },
+        });
 
-      if (!activity) {
-        throw new CustomGraphQLError('Activity not found', ErrorCode.NOT_FOUND, 404);
+        if (!activity) {
+          throw new CustomGraphQLError('Activity not found', ErrorCode.NOT_FOUND, 404);
+        }
       }
 
       // 4. Extrair dados da hierarquia
@@ -146,11 +152,13 @@ export class SubsidyReceiptService {
           subsidy_request_id: input.subsidy_request_id,
           subsidy_request_item_id: input.subsidy_request_item_id,
           project_activities_id: input.project_activity_id,
+          is_refund_receipt: input.is_refund_receipt ?? false,
           file_url: `https://drive.google.com/file/d/${driveFileId}/view`,
           drive_file_id: driveFileId,
           filename,
           type: input.type,
           amount: input.amount,
+          note: input.note,
           uploaded_by: userId,
           is_validated: false, // Sempre começa como não validado
           validated_at: null,
@@ -293,7 +301,7 @@ export class SubsidyReceiptService {
   /**
    * Validar recibo
    */
-  async validateReceipt(id: string, userId: string): Promise<SubsidyReceipt> {
+  async validateReceipt(id: string, userId: string, note?: string): Promise<SubsidyReceipt> {
     const receipt = await this.repository.findById(id);
 
     if (!receipt) {
@@ -310,7 +318,7 @@ export class SubsidyReceiptService {
         }
     }
 
-    const updatedReceipt = await this.repository.validateReceipt(id, userId);
+    const updatedReceipt = await this.repository.validateReceipt(id, userId, note);
 
     // Check for subsidy_request_id
     if (!updatedReceipt.subsidy_request_id) {

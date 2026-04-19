@@ -94,6 +94,11 @@ export class ProjectCreateDto {
   @IsString()
   owner_id?: string;
 
+  @Field({ nullable: true })
+  @IsOptional()
+  @IsString()
+  co_owner_id?: string;
+
   @Field()
   @IsDateString()
   start_at: string;
@@ -213,7 +218,13 @@ export class ProjectUpdateDto {
 
   @Field({ nullable: true })
   @IsOptional()
-  @IsString()  owner_id?: string;
+  @IsString()
+  owner_id?: string;
+
+  @Field({ nullable: true })
+  @IsOptional()
+  @IsString()
+  co_owner_id?: string;
 
   @Field({ nullable: true })
   @IsOptional()
@@ -242,4 +253,12 @@ export class ProjectUpdateDto {
   @IsOptional()
   activities?: ProjectActivityUpdateDto[];
 
+}
+
+@InputType()
+export class ProjectUpdateCoOwnerDto {
+  @Field({ nullable: true })
+  @IsOptional()
+  @IsString()
+  co_owner_id?: string;
 }

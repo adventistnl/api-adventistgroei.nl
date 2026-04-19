@@ -6,6 +6,8 @@ import { transformToDecimal } from 'prisma-graphql-type-decimal';
 import { Transform } from 'class-transformer';
 import { Type } from 'class-transformer';
 import { SubsidyRequestPriority } from '../prisma/subsidy-request-priority.enum';
+import { SubsidyRequestType } from '../prisma/subsidy-request-type.enum';
+import { RefundType } from '../prisma/refund-type.enum';
 
 @InputType()
 export class SubsidyRequestCreateManyProjectInput {
@@ -82,6 +84,9 @@ export class SubsidyRequestCreateManyProjectInput {
     @Transform(transformToDecimal)
     advance_amount?: Decimal;
 
+    @Field(() => SubsidyRequestType, {nullable:true})
+    request_type?: `${SubsidyRequestType}`;
+
     @Field(() => GraphQLDecimal, {nullable:true})
     @Type(() => Object)
     @Transform(transformToDecimal)
@@ -92,4 +97,10 @@ export class SubsidyRequestCreateManyProjectInput {
 
     @Field(() => Boolean, {nullable:true})
     refund_done?: boolean;
+
+    @Field(() => RefundType, {nullable:true})
+    refund_type?: `${RefundType}`;
+
+    @Field(() => Boolean, {nullable:true})
+    refund_rejected?: boolean;
 }

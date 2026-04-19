@@ -33,6 +33,9 @@ export class ProjectCountAggregate {
     owner_id!: number;
 
     @Field(() => Int, {nullable:false})
+    co_owner_id!: number;
+
+    @Field(() => Int, {nullable:false})
     language_preference!: number;
 
     @Field(() => Int, {nullable:false})

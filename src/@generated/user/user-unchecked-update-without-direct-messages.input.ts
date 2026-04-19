@@ -18,12 +18,14 @@ import { SubsidyRequestUncheckedUpdateManyWithoutRequesterNestedInput } from '..
 import { SubsidyStatusUncheckedUpdateManyWithoutAssigned_userNestedInput } from '../subsidy-status/subsidy-status-unchecked-update-many-without-assigned-user-nested.input';
 import { VoluntariesOnProjectsUncheckedUpdateManyWithoutUserNestedInput } from '../voluntaries-on-projects/voluntaries-on-projects-unchecked-update-many-without-user-nested.input';
 import { ProjectUncheckedUpdateManyWithoutOwnerNestedInput } from '../project/project-unchecked-update-many-without-owner-nested.input';
+import { ProjectUncheckedUpdateManyWithoutCo_ownerNestedInput } from '../project/project-unchecked-update-many-without-co-owner-nested.input';
 import { AnnualBudgetUncheckedUpdateManyWithoutApproved_userNestedInput } from '../annual-budget/annual-budget-unchecked-update-many-without-approved-user-nested.input';
 import { ProjectActivityLogUncheckedUpdateManyWithoutUserNestedInput } from '../project-activity-log/project-activity-log-unchecked-update-many-without-user-nested.input';
 import { ProjectActivityAssigneeUncheckedUpdateManyWithoutUserNestedInput } from '../project-activity-assignee/project-activity-assignee-unchecked-update-many-without-user-nested.input';
 import { SubsidyStatusHistoryUncheckedUpdateManyWithoutUserNestedInput } from '../subsidy-status-history/subsidy-status-history-unchecked-update-many-without-user-nested.input';
 import { DepartmentUncheckedUpdateManyWithoutLeaderNestedInput } from '../department/department-unchecked-update-many-without-leader-nested.input';
 import { ChurchUncheckedUpdateOneWithoutLeaderNestedInput } from '../church/church-unchecked-update-one-without-leader-nested.input';
+import { ProjectHistoryUncheckedUpdateManyWithoutUserNestedInput } from '../project-history/project-history-unchecked-update-many-without-user-nested.input';
 
 @InputType()
 export class UserUncheckedUpdateWithoutDirect_messagesInput {
@@ -115,6 +117,10 @@ export class UserUncheckedUpdateWithoutDirect_messagesInput {
     @Type(() => ProjectUncheckedUpdateManyWithoutOwnerNestedInput)
     Project?: ProjectUncheckedUpdateManyWithoutOwnerNestedInput;
 
+    @Field(() => ProjectUncheckedUpdateManyWithoutCo_ownerNestedInput, {nullable:true})
+    @Type(() => ProjectUncheckedUpdateManyWithoutCo_ownerNestedInput)
+    co_owned_projects?: ProjectUncheckedUpdateManyWithoutCo_ownerNestedInput;
+
     @Field(() => AnnualBudgetUncheckedUpdateManyWithoutApproved_userNestedInput, {nullable:true})
     @Type(() => AnnualBudgetUncheckedUpdateManyWithoutApproved_userNestedInput)
     approved_annual_budgets?: AnnualBudgetUncheckedUpdateManyWithoutApproved_userNestedInput;
@@ -138,4 +144,8 @@ export class UserUncheckedUpdateWithoutDirect_messagesInput {
     @Field(() => ChurchUncheckedUpdateOneWithoutLeaderNestedInput, {nullable:true})
     @Type(() => ChurchUncheckedUpdateOneWithoutLeaderNestedInput)
     led_church?: ChurchUncheckedUpdateOneWithoutLeaderNestedInput;
+
+    @Field(() => ProjectHistoryUncheckedUpdateManyWithoutUserNestedInput, {nullable:true})
+    @Type(() => ProjectHistoryUncheckedUpdateManyWithoutUserNestedInput)
+    project_history?: ProjectHistoryUncheckedUpdateManyWithoutUserNestedInput;
 }

@@ -9,6 +9,8 @@ import { DateTimeNullableWithAggregatesFilter } from '../prisma/date-time-nullab
 import { BoolWithAggregatesFilter } from '../prisma/bool-with-aggregates-filter.input';
 import { EnumSubsidyRequestPriorityWithAggregatesFilter } from '../prisma/enum-subsidy-request-priority-with-aggregates-filter.input';
 import { DecimalNullableWithAggregatesFilter } from '../prisma/decimal-nullable-with-aggregates-filter.input';
+import { EnumSubsidyRequestTypeWithAggregatesFilter } from '../prisma/enum-subsidy-request-type-with-aggregates-filter.input';
+import { EnumRefundTypeNullableWithAggregatesFilter } from '../prisma/enum-refund-type-nullable-with-aggregates-filter.input';
 
 @InputType()
 export class SubsidyRequestScalarWhereWithAggregatesInput {
@@ -97,6 +99,9 @@ export class SubsidyRequestScalarWhereWithAggregatesInput {
     @Type(() => DecimalNullableWithAggregatesFilter)
     advance_amount?: DecimalNullableWithAggregatesFilter;
 
+    @Field(() => EnumSubsidyRequestTypeWithAggregatesFilter, {nullable:true})
+    request_type?: EnumSubsidyRequestTypeWithAggregatesFilter;
+
     @Field(() => DecimalWithAggregatesFilter, {nullable:true})
     @Type(() => DecimalWithAggregatesFilter)
     refund_amount?: DecimalWithAggregatesFilter;
@@ -106,4 +111,10 @@ export class SubsidyRequestScalarWhereWithAggregatesInput {
 
     @Field(() => BoolWithAggregatesFilter, {nullable:true})
     refund_done?: BoolWithAggregatesFilter;
+
+    @Field(() => EnumRefundTypeNullableWithAggregatesFilter, {nullable:true})
+    refund_type?: EnumRefundTypeNullableWithAggregatesFilter;
+
+    @Field(() => BoolWithAggregatesFilter, {nullable:true})
+    refund_rejected?: BoolWithAggregatesFilter;
 }

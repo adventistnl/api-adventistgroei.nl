@@ -13,8 +13,11 @@ export class SubsidyReceipt {
     @Field(() => ID, {nullable:false})
     id!: string;
 
-    @Field(() => String, {nullable:false})
-    project_activities_id!: string;
+    @Field(() => String, {nullable:true})
+    project_activities_id!: string | null;
+
+    @Field(() => Boolean, {defaultValue:false,nullable:false})
+    is_refund_receipt!: boolean;
 
     @Field(() => String, {nullable:false})
     file_url!: string;
@@ -42,6 +45,12 @@ export class SubsidyReceipt {
 
     @Field(() => String, {nullable:true})
     validated_by!: string | null;
+
+    @Field(() => String, {nullable:true})
+    rejection_reason!: string | null;
+
+    @Field(() => String, {nullable:true})
+    note!: string | null;
 
     @Field(() => String, {nullable:false})
     uploaded_by!: string;
@@ -73,8 +82,8 @@ export class SubsidyReceipt {
     @Field(() => String, {nullable:true})
     subsidy_request_item_id!: string | null;
 
-    @Field(() => ProjectActivity, {nullable:false})
-    project_activity?: ProjectActivity;
+    @Field(() => ProjectActivity, {nullable:true})
+    project_activity?: ProjectActivity | null;
 
     @Field(() => SubsidyRequest, {nullable:true})
     subsidy_request?: SubsidyRequest | null;

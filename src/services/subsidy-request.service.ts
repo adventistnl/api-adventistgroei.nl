@@ -4,7 +4,7 @@ import { SubsidyRequestItemRepository } from '../repositories/subsidy-request-it
 import { SubsidyStatusHistoryRepository } from '../repositories/subsidy-status-history.repository';
 import { SubsidyReceiptRepository } from '../repositories/subsidy-receipt.repository';
 import { SubsidyRequest } from '../@generated/subsidy-request/subsidy-request.model';
-import { SubsidyRequestCreateDto, SubsidyRequestUpdateDto } from '../dto/subsidy-request.dto';
+import { SubsidyRequestCreateDto, SubsidyRequestUpdateDto, CreateWithoutDocumentSubsidyRequestDto } from '../dto/subsidy-request.dto';
 import { SubsidyKPIs, SubsidyByDepartment, SubsidyByMonth } from '../dto/subsidy-analytics.dto';
 import { CustomGraphQLError, ErrorCode } from '../common/errors/custom-graphql-error';
 import { PrismaService } from './prisma.service';
@@ -12,12 +12,15 @@ import { GoogleDriveService } from './google-drive.service';
 import { format } from 'date-fns';
 
 import { SubsidyHistoryType } from '../@generated/prisma/subsidy-history-type.enum';
+import { SubsidyRequestType } from '../@generated/prisma/subsidy-request-type.enum';
 import { AnnualBudgetService } from './annual-budget.service';
 import { DecimalHelper } from '../common/helpers/decimal.helper';
 import { SubsidyReceiptService } from './subsidy-receipt.service';
 import { EmailService } from './email.service';
 import { translate } from '../../i18n.config';
 import { LanguagePreference } from '../@generated/prisma/language-preference.enum';
+import { ProjectCollaborator, CollaboratorRole } from '../models';
+import { User } from '../@generated/user/user.model';
 
 @Injectable()
 export class SubsidyRequestService {
@@ -40,6 +43,16 @@ export class SubsidyRequestService {
       const from = currentStatusName.toUpperCase();
       const to = newStatusName.toUpperCase();
 
+      // Rule 0: DRAFT can only move to PENDING (submit) or stay as DRAFT
+      if (from === 'DRAFT' && to !== 'PENDING' && from !== to) {
+          throw new CustomGraphQLError(
+              translate('errors.invalid_transition_from_draft', language, { ns: 'subsidy', to }),
+              ErrorCode.BAD_REQUEST,
+              400,
+              { additional: { errorCode: 'INVALID_TRANSITION_FROM_DRAFT' } }
+          );
+      }
+
       // Rule 1: Closed status cannot be changed to anything else
       if (from === 'CLOSED' && from !== to) {
           throw new CustomGraphQLError(
@@ -60,7 +73,7 @@ export class SubsidyRequestService {
           );
       }
 
-      // Rule: Only APPROVED can go to ADVANCED_CLOSED
+      // Rule: Only APPROVED can go to ADVANCED_CLOSED or WAITING_DOCUMENTS
       if (to === 'ADVANCED_CLOSED' && from !== 'APPROVED') {
           throw new CustomGraphQLError(
               translate('errors.invalid_transition_to_advanced_closed', language, { ns: 'subsidy', from }),
@@ -70,8 +83,18 @@ export class SubsidyRequestService {
           );
       }
 
-      // Rule 3: ADVANCED_CLOSED can ONLY go to CLOSED
-      if (from === 'ADVANCED_CLOSED' && to !== 'CLOSED' && from !== to) {
+      // Rule: Only APPROVED or ADVANCED_CLOSED can go to WAITING_DOCUMENTS
+      if (to === 'WAITING_DOCUMENTS' && from !== 'APPROVED' && from !== 'ADVANCED_CLOSED') {
+          throw new CustomGraphQLError(
+              translate('errors.invalid_transition_final_state', language, { ns: 'subsidy', from, to }),
+              ErrorCode.BAD_REQUEST,
+              400,
+              { additional: { errorCode: 'INVALID_TRANSITION_TO_WAITING_DOCUMENTS' } }
+          );
+      }
+
+      // Rule 3: ADVANCED_CLOSED can go to CLOSED, WAITING_REFUND or WAITING_DOCUMENTS
+      if (from === 'ADVANCED_CLOSED' && to !== 'CLOSED' && to !== 'WAITING_REFUND' && to !== 'WAITING_DOCUMENTS' && from !== to) {
            throw new CustomGraphQLError(
               translate('errors.invalid_transition_advanced_closed', language, { ns: 'subsidy', to }),
               ErrorCode.BAD_REQUEST,
@@ -80,9 +103,18 @@ export class SubsidyRequestService {
           );
       }
 
-      // Rule 4: Approved can go to CLOSED or ADVANCED_CLOSED (for advance requests)
-      // Rejected can ONLY go to Closed
-      if (from === 'APPROVED' && to !== 'CLOSED' && to !== 'ADVANCED_CLOSED' && from !== to) {
+      // Rule: WAITING_DOCUMENTS can go to CLOSED or WAITING_REFUND (after documents validated)
+      if (from === 'WAITING_DOCUMENTS' && to !== 'CLOSED' && to !== 'WAITING_REFUND' && from !== to) {
+           throw new CustomGraphQLError(
+              translate('errors.invalid_transition_final_state', language, { ns: 'subsidy', from, to }),
+              ErrorCode.BAD_REQUEST,
+              400,
+              { additional: { errorCode: 'INVALID_TRANSITION_FROM_WAITING_DOCUMENTS' } }
+          );
+      }
+
+      // Rule 4: APPROVED can go to CLOSED, ADVANCED_CLOSED (legacy), WAITING_DOCUMENTS (advance paid) or WAITING_REFUND (refund needed)
+      if (from === 'APPROVED' && to !== 'CLOSED' && to !== 'ADVANCED_CLOSED' && to !== 'WAITING_DOCUMENTS' && to !== 'WAITING_REFUND' && from !== to) {
            throw new CustomGraphQLError(
               translate('errors.invalid_transition_final_state', language, { ns: 'subsidy', from, to }),
               ErrorCode.BAD_REQUEST,
@@ -91,6 +123,17 @@ export class SubsidyRequestService {
           );
       }
 
+      // Rule 5: WAITING_REFUND can only go to CLOSED (when refund is confirmed)
+      if (from === 'WAITING_REFUND' && to !== 'CLOSED' && from !== to) {
+           throw new CustomGraphQLError(
+              translate('errors.invalid_transition_final_state', language, { ns: 'subsidy', from, to }),
+              ErrorCode.BAD_REQUEST,
+              400,
+              { additional: { errorCode: 'INVALID_TRANSITION_FINAL_STATE' } }
+          );
+      }
+
+      // Rule 6: REJECTED can only go to CLOSED
       if (from === 'REJECTED' && to !== 'CLOSED' && from !== to) {
            throw new CustomGraphQLError(
               translate('errors.invalid_transition_final_state', language, { ns: 'subsidy', from, to }),
@@ -195,24 +238,58 @@ export class SubsidyRequestService {
   }
 
   async create(data: SubsidyRequestCreateDto, userId: string, language: LanguagePreference = LanguagePreference.en): Promise<SubsidyRequest> {
-    // Se subsidy_status_id não foi fornecido, buscar status "PENDING" automaticamente
+    const resolvedType = data.request_type ?? SubsidyRequestType.WITH_DOCUMENT;
+
+    console.log('🟡 [SubsidyRequestService.create] START', {
+      userId,
+      resolvedType,
+      project_id: data.project_id,
+      department_id: data.department_id,
+      institution_id: data.institution_id,
+      requester_id: data.requester_id,
+      items_count: data.items?.length ?? 0,
+      items: data.items?.map(i => ({
+        project_activity_id: i.project_activity_id,
+        requested_amount: i.requested_amount,
+        linked_docs: i.linked_activity_document_ids?.length ?? 0,
+      })),
+    });
+
+    // Se subsidy_status_id não foi fornecido, buscar status inicial automaticamente
     if (!data.subsidy_status_id) {
-      const pendingStatus = await this.prisma.subsidyStatus.findFirst({
-        where: { name: 'PENDING', is_deleted: false },
+      const initialStatusName = data.start_as_draft ? 'DRAFT' : 'PENDING';
+      const initialStatus = await this.prisma.subsidyStatus.findFirst({
+        where: { name: initialStatusName, is_deleted: false },
       });
 
-      if (!pendingStatus) {
+      if (!initialStatus) {
+        const errorKey = data.start_as_draft ? 'errors.draft_status_not_found' : 'errors.pending_status_not_found';
         throw new CustomGraphQLError(
-          translate('errors.pending_status_not_found', language, { ns: 'subsidy' }),
+          translate(errorKey, language, { ns: 'subsidy' }),
           ErrorCode.NOT_FOUND,
           404
         );
       }
 
-      data.subsidy_status_id = pendingStatus.id;
+      data.subsidy_status_id = initialStatus.id;
     }
 
-    const subsidyRequest = await this.subsidyRequestRepository.create(data, userId);
+    console.log('🟡 [SubsidyRequestService.create] Calling repository.create with subsidy_status_id:', data.subsidy_status_id);
+
+    let subsidyRequest: SubsidyRequest;
+    try {
+      subsidyRequest = await this.subsidyRequestRepository.create(data, userId);
+    } catch (repoError) {
+      console.error('🔴 [SubsidyRequestService.create] repository.create FAILED:', {
+        message: repoError?.message,
+        code: repoError?.code,
+        meta: repoError?.meta,
+        stack: repoError?.stack,
+      });
+      throw repoError;
+    }
+
+    console.log('🟢 [SubsidyRequestService.create] repository.create OK — id:', subsidyRequest.id);
 
     // Create initial history record
     await this.historyRepository.create({
@@ -220,15 +297,18 @@ export class SubsidyRequestService {
       status_id: data.subsidy_status_id,
       previous_status_id: undefined,
       type: SubsidyHistoryType.STATUS_CHANGE,
-      reason: translate('history.request_created', language, { ns: 'subsidy' }),
+      reason: translate(
+        data.start_as_draft ? 'history.request_created_as_draft' : 'history.request_created',
+        language,
+        { ns: 'subsidy' },
+      ),
       changed_by: userId,
     });
 
-    // Process linked_activity_document_ids if any
-    if (data.items && data.items.length > 0) {
-      // Fetch created items to get their IDs
+    // Processar documentos linkados apenas para WITH_DOCUMENT
+    if (resolvedType === SubsidyRequestType.WITH_DOCUMENT && data.items && data.items.length > 0) {
       const createdItems = await this.subsidyRequestItemRepository.findBySubsidyRequestId(subsidyRequest.id);
-      
+
       for (const itemInput of data.items) {
         if (itemInput.linked_activity_document_ids && itemInput.linked_activity_document_ids.length > 0) {
           const createdItem = createdItems.find(
@@ -239,7 +319,7 @@ export class SubsidyRequestService {
             for (let i = 0; i < itemInput.linked_activity_document_ids.length; i++) {
               const docId = itemInput.linked_activity_document_ids[i];
               const docAmount = itemInput.linked_document_amounts?.[i] || 0;
-              
+
               await this.subsidyReceiptService.createFromActivityDocument(
                 userId,
                 subsidyRequest.id,
@@ -252,15 +332,11 @@ export class SubsidyRequestService {
           }
         }
       }
-    }
 
-    // Validate that the sum of receipt amounts matches the requested amount for each item
-    if (data.items && data.items.length > 0) {
+      // Validar que a soma dos comprovantes bate com o valor solicitado de cada item
       for (const itemInput of data.items) {
-        // Calculate sum of document amounts for this item
         const documentAmountsSum = (itemInput.linked_document_amounts || []).reduce((sum, amount) => sum + amount, 0);
-        
-        // Check if sum matches requested amount
+
         if (documentAmountsSum > 0 && Math.abs(documentAmountsSum - itemInput.requested_amount) > 0.01) {
           throw new CustomGraphQLError(
             translate('errors.document_amounts_mismatch', language, { ns: 'subsidy', sum: documentAmountsSum, requested: itemInput.requested_amount }),
@@ -271,7 +347,63 @@ export class SubsidyRequestService {
       }
     }
 
+    console.log('🟢 [SubsidyRequestService.create] DONE — returning id:', subsidyRequest.id, 'request_type:', resolvedType);
     return subsidyRequest;
+  }
+
+  /**
+   * Criar subsídio do tipo WITHOUT_DOCUMENT.
+   * Vinculado a atividades, mas sem comprovante de documento.
+   * Fica com pendência de receipt (equivalente ao ADVANCE nesse sentido).
+   * Se institution_id não for fornecido, é derivado do projeto automaticamente.
+   */
+  async createWithoutDocumentRequest(
+    data: CreateWithoutDocumentSubsidyRequestDto,
+    userId: string,
+    language: LanguagePreference = LanguagePreference.en
+  ): Promise<SubsidyRequest> {
+    let institutionId = data.institution_id;
+
+    // Derivar institution_id do projeto se não fornecido
+    if (!institutionId) {
+      const project = await this.prisma.project.findUnique({
+        where: { id: data.project_id, is_deleted: false },
+        select: { institution_id: true },
+      });
+
+      if (!project) {
+        throw new CustomGraphQLError(
+          translate('errors.project_not_found', language, { ns: 'subsidy' }),
+          ErrorCode.NOT_FOUND,
+          404
+        );
+      }
+
+      if (!project.institution_id) {
+        throw new CustomGraphQLError(
+          translate('errors.project_has_no_institution', language, { ns: 'subsidy' }),
+          ErrorCode.BAD_REQUEST,
+          400
+        );
+      }
+
+      institutionId = project.institution_id;
+    }
+
+    console.log('🟡 [SubsidyRequestService.createWithoutDocumentRequest] START', {
+      project_id: data.project_id,
+      institution_id: institutionId,
+      department_id: data.department_id,
+      items_count: data.items?.length ?? 0,
+    });
+
+    const createDto: SubsidyRequestCreateDto = {
+      ...data,
+      institution_id: institutionId,
+      request_type: SubsidyRequestType.WITHOUT_DOCUMENT,
+      is_for_advance: false,
+    };
+    return this.create(createDto, userId, language);
   }
 
   /**
@@ -378,6 +510,7 @@ export class SubsidyRequestService {
         project_id: projectId,
         requester_id: userId,
         subsidy_statuses_id: pendingStatus.id,
+        request_type: SubsidyRequestType.ADVANCE,
         created_by: userId,
         updated_by: userId,
       },
@@ -421,6 +554,21 @@ export class SubsidyRequestService {
     // Checking if currently closed
     this.ensureNotClosed(current.subsidy_status?.name, language);
 
+    // Block modifying values if the request is already approved or past the review stage
+    const isEditingValues = data.total_budget !== undefined || data.description !== undefined || (data.items && data.items.length > 0) || data.advance_amount !== undefined;
+    if (isEditingValues) {
+      const allowedStatusesToEdit = ['PENDING', 'IN_REVIEW', 'REJECTED', 'ADJUSTMENTS_NEEDED'];
+      const currentName = current.subsidy_status?.name?.toUpperCase();
+      if (currentName && !allowedStatusesToEdit.includes(currentName)) {
+        throw new CustomGraphQLError(
+          translate('errors.action_not_allowed_closed', language, { ns: 'subsidy' }) || 'Editing values is not allowed for approved requests.',
+          ErrorCode.BAD_REQUEST,
+          400,
+          { additional: { errorCode: 'EDIT_NOT_ALLOWED_FOR_STATUS' } }
+        );
+      }
+    }
+
     // If status is being changed, validate BEFORE the update
     if (data.subsidy_status_id && data.subsidy_status_id !== current.subsidy_statuses_id) {
       const newStatus = await this.prisma.subsidyStatus.findUnique({ where: { id: data.subsidy_status_id } });
@@ -430,10 +578,27 @@ export class SubsidyRequestService {
         this.validateStatusTransition(current.subsidy_status?.name, newStatus.name, language);
         
         const targetName = newStatus.name.toUpperCase();
-        
-        // Validate documents for terminal states
-        if (['APPROVED', 'REJECTED', 'CLOSED'].includes(targetName)) {
+        const currentRequestType = (current as any).request_type as SubsidyRequestType | undefined;
+        const requiresDocValidation = !currentRequestType || currentRequestType === SubsidyRequestType.WITH_DOCUMENT;
+
+        // Validate documents for terminal states apenas para WITH_DOCUMENT
+        if (requiresDocValidation && ['APPROVED', 'REJECTED', 'CLOSED'].includes(targetName)) {
           await this.ensureAllDocumentsValidated(id, language);
+        }
+
+        // Transitioning to WAITING_REFUND: ensure refund_amount is already set on the record
+        // (set by the prior requestRefund mutation before this status update is triggered)
+        if (targetName === 'WAITING_REFUND') {
+          const existingRefundAmount = (current as any).refund_amount;
+          if (!existingRefundAmount || Number(existingRefundAmount) <= 0) {
+            throw new CustomGraphQLError(
+              translate('errors.refund_amount_required', language, { ns: 'subsidy' }) ||
+              'refund_amount must be set before transitioning to WAITING_REFUND',
+              ErrorCode.BAD_REQUEST,
+              400,
+              { additional: { errorCode: 'REFUND_AMOUNT_REQUIRED' } }
+            );
+          }
         }
         
         // Only FINANCIAL_MANAGER can close a subsidy request - MUST be checked BEFORE update
@@ -486,8 +651,11 @@ export class SubsidyRequestService {
       }
     }
 
-    // Process linked_activity_document_ids if any
-    if (data.items && data.items.length > 0) {
+    // Processar documentos linkados apenas para WITH_DOCUMENT
+    const currentRequestTypeForUpdate = (current as any).request_type as SubsidyRequestType | undefined;
+    const isWithDocument = !currentRequestTypeForUpdate || currentRequestTypeForUpdate === SubsidyRequestType.WITH_DOCUMENT;
+
+    if (isWithDocument && data.items && data.items.length > 0) {
       // Fetch created items to get their IDs
       const createdItems = await this.subsidyRequestItemRepository.findBySubsidyRequestId(id);
       
@@ -514,14 +682,12 @@ export class SubsidyRequestService {
 
           }
         }
-
-
       }
     }
 
     // Validate that the sum of receipt amounts matches the requested amount for each item
-    // For UPDATE, we need to check ALL receipts for each item, not just linked ones
-    if (data.items && data.items.length > 0) {
+    // Only for WITH_DOCUMENT type
+    if (isWithDocument && data.items && data.items.length > 0) {
       const createdItems = await this.subsidyRequestItemRepository.findBySubsidyRequestId(id);
       
       for (const itemInput of data.items) {
@@ -572,32 +738,46 @@ export class SubsidyRequestService {
         changed_by: userId,
       });
 
-      // When status changes to CLOSED, release allocation and add approved amount to spent
-      // EXCEPT when coming from ADVANCED_CLOSED (budget was already updated during advance)
-      if (newStatus?.name.toUpperCase() === 'CLOSED') {
-        const previousStatusName = previousStatus?.name?.toUpperCase();
-        
-        // Skip budget update if coming from ADVANCED_CLOSED
-        if (previousStatusName !== 'ADVANCED_CLOSED') {
-          const fullRequest = await this.prisma.subsidyRequest.findUnique({
-            where: { id },
-            select: { department_id: true, approved_amount: true, total_budget: true }
-          });
+      const prevName = previousStatus?.name?.toUpperCase();
+      const nextName = newStatus?.name?.toUpperCase();
 
-          if (fullRequest?.department_id && fullRequest.approved_amount) {
+      // ── CLOSED ────────────────────────────────────────────────────────────────
+      if (nextName === 'CLOSED') {
+        const fullRequest = await this.prisma.subsidyRequest.findUnique({
+          where: { id },
+          select: { department_id: true, approved_amount: true, total_budget: true, request_type: true }
+        });
+
+        if (fullRequest?.department_id) {
+          if (prevName === 'REJECTED') {
+            // REJECTED → CLOSED: no budget change needed.
+            // The project's ALLOCATION_RESERVED covers all subsidy requests in aggregate;
+            // individual subsidies never create their own ALLOCATION_RESERVED, so there
+            // is nothing to release here. The project allocation remains intact.
+          } else if (prevName === 'ADVANCED_CLOSED' || prevName === 'WAITING_REFUND' || prevName === 'WAITING_DOCUMENTS') {
+            // Budget already handled (expense was recorded when transitioning INTO ADVANCED_CLOSED or WAITING_DOCUMENTS;
+            // WAITING_REFUND→CLOSED refund is recorded separately below)
+            // No additional BudgetTransaction needed here
+          } else if (fullRequest.approved_amount) {
+            // APPROVED → CLOSED (normal path, no refund): record expense
             await this.annualBudgetService.updateBudgetFinancials(
               fullRequest.department_id,
               new Date().getFullYear(),
-              -Number(fullRequest.total_budget || 0), // Release allocation (remove from planned)
-              Number(fullRequest.approved_amount), // Add approved amount as expense (move to spent)
-              userId
+              -Number(fullRequest.total_budget || 0), // Release allocation
+              Number(fullRequest.approved_amount),    // Record as real expense
+              userId,
+              {
+                type: 'EXPENSE_APPROVED',
+                description: `Subsidy converted to actual expense`,
+                subsidy_request_id: id
+              }
             );
           }
         }
       }
 
-      // When status changes to ADVANCED_CLOSED, update budget with advance amount
-      if (newStatus?.name.toUpperCase() === 'ADVANCED_CLOSED') {
+      // ── ADVANCED_CLOSED ───────────────────────────────────────────────────────
+      if (nextName === 'ADVANCED_CLOSED') {
         const fullRequest = await this.prisma.subsidyRequest.findUnique({
           where: { id },
           select: { department_id: true, advance_amount: true, total_budget: true, is_for_advance: true }
@@ -608,9 +788,89 @@ export class SubsidyRequestService {
             fullRequest.department_id,
             new Date().getFullYear(),
             -Number(fullRequest.total_budget || 0), // Release allocation
-            Number(fullRequest.advance_amount), // Add advance amount as expense
-            userId
+            Number(fullRequest.advance_amount),      // Record advance as expense
+            userId,
+            {
+              type: 'EXPENSE_APPROVED',
+              description: `Advance subsidy converted to actual expense`,
+              subsidy_request_id: id
+            }
           );
+        }
+      }
+
+      // ── WAITING_DOCUMENTS ─────────────────────────────────────────────────────
+      // Triggered when a financial manager marks the advance as paid.
+      // This is the moment the money leaves the account — record it as an Expense in the Ledger.
+      if (nextName === 'WAITING_DOCUMENTS') {
+        const fullRequest = await this.prisma.subsidyRequest.findUnique({
+          where: { id },
+          select: { department_id: true, advance_amount: true, total_budget: true, is_for_advance: true, approved_amount: true }
+        });
+
+        // Only apply the financial transaction if coming from APPROVED or ADVANCED_CLOSED,
+        // and if not already recorded (ADVANCED_CLOSED already recorded it)
+        if (fullRequest?.department_id && prevName !== 'ADVANCED_CLOSED') {
+          const expenseAmt = fullRequest.advance_amount
+            ? Number(fullRequest.advance_amount)
+            : Number(fullRequest.approved_amount || 0);
+
+          if (expenseAmt > 0) {
+            await this.annualBudgetService.updateBudgetFinancials(
+              fullRequest.department_id,
+              new Date().getFullYear(),
+              -Number(fullRequest.total_budget || 0), // Release allocation
+              expenseAmt,                              // Record advance payment as expense
+              userId,
+              {
+                type: 'EXPENSE_APPROVED',
+                description: `Advance paid — waiting for receipt documents`,
+                subsidy_request_id: id
+              }
+            );
+          }
+        }
+      }
+
+      // ── WAITING_REFUND ────────────────────────────────────────────────────────
+      // Transition INTO WAITING_REFUND: record the expense for non-advance paths
+      // (advances already recorded expense in ADVANCED_CLOSED; here we handle APPROVED→WAITING_REFUND)
+      if (nextName === 'WAITING_REFUND') {
+        const fullRequest = await this.prisma.subsidyRequest.findUnique({
+          where: { id },
+          select: {
+            department_id: true,
+            approved_amount: true,
+            total_budget: true,
+            refund_amount: true,
+            refund_type: true,
+            is_for_advance: true
+          }
+        });
+
+        if (fullRequest?.department_id && fullRequest.approved_amount) {
+          if (prevName === 'APPROVED' && !fullRequest.is_for_advance) {
+            // Non-advance: expense not yet recorded — record net expense (approved - refund)
+            const refundAmt  = Number(fullRequest.refund_amount || 0);
+            const approvedAmt = Number(fullRequest.approved_amount);
+            const netExpense  = approvedAmt - refundAmt;
+
+            await this.annualBudgetService.updateBudgetFinancials(
+              fullRequest.department_id,
+              new Date().getFullYear(),
+              -Number(fullRequest.total_budget || 0), // Release allocation
+              netExpense > 0 ? netExpense : 0,        // Record net expense
+              userId,
+              {
+                type: 'EXPENSE_APPROVED',
+                description: `Subsidy approved — pending partial/full refund`,
+                subsidy_request_id: id
+              }
+            );
+          }
+          // WAITING_DOCUMENTS → WAITING_REFUND: expense was already recorded at WAITING_DOCUMENTS transition
+          // ADVANCED_CLOSED → WAITING_REFUND: expense was already recorded at ADVANCED_CLOSED transition
+          // No double-recording needed
         }
       }
     }
@@ -775,8 +1035,125 @@ export class SubsidyRequestService {
     return this.subsidyRequestRepository.findAll();
   }
 
+  async getCollaboratorsForSubsidyRequest(subsidyRequest: SubsidyRequest): Promise<ProjectCollaborator[]> {
+    const rolesPriority: Record<CollaboratorRole, number> = {
+      [CollaboratorRole.owner]: 0,
+      [CollaboratorRole.co_owner]: 1,
+      [CollaboratorRole.requester]: 2,
+      [CollaboratorRole.finance]: 3,
+      [CollaboratorRole.assignee]: 4,
+    };
+
+    const collaboratorsMap = new Map<string, ProjectCollaborator>();
+
+    const addOrKeep = (userId: string, entry: ProjectCollaborator) => {
+      const existing = collaboratorsMap.get(userId);
+      if (!existing || rolesPriority[entry.role] < rolesPriority[existing.role]) {
+        collaboratorsMap.set(userId, entry);
+      }
+    };
+
+    const project = (subsidyRequest as any).project as {
+      owner_id?: string;
+      owner?: unknown;
+      co_owner_id?: string | null;
+      co_owner?: unknown;
+    } | null;
+
+    // 1. Owner do projeto vinculado
+    if (project?.owner && project.owner_id) {
+      addOrKeep(project.owner_id, {
+        user: project.owner as unknown as User,
+        role: CollaboratorRole.owner,
+        activity_ids: [],
+      });
+    }
+
+    // 2. Co-owner do projeto vinculado
+    if (project?.co_owner && project.co_owner_id) {
+      addOrKeep(project.co_owner_id, {
+        user: project.co_owner as unknown as User,
+        role: CollaboratorRole.co_owner,
+        activity_ids: [],
+      });
+    }
+
+    // 3. Solicitante (quem criou o pedido)
+    if (subsidyRequest.requester && subsidyRequest.requester_id) {
+      addOrKeep(subsidyRequest.requester_id, {
+        user: subsidyRequest.requester as unknown as User,
+        role: CollaboratorRole.requester,
+        activity_ids: [],
+      });
+    }
+
+    // 4. Gestores financeiros (FINANCIAL_MANAGER) da mesma instituição
+    if (subsidyRequest.institution_id) {
+      const financeUsers = await this.prisma.user.findMany({
+        where: {
+          institution_id: subsidyRequest.institution_id,
+          is_deleted: false,
+          user_roles: {
+            some: {
+              is_deleted: false,
+              role: { key_code: 'FINANCIAL_MANAGER' },
+            },
+          },
+        },
+      });
+
+      for (const financeUser of financeUsers) {
+        addOrKeep(financeUser.id, {
+          user: financeUser as unknown as User,
+          role: CollaboratorRole.finance,
+          activity_ids: [],
+        });
+      }
+    }
+
+    return Array.from(collaboratorsMap.values());
+  }
+
   async findByProjectId(projectId: string): Promise<SubsidyRequest[]> {
     return this.subsidyRequestRepository.findManyByFilters({ project_id: projectId });
+  }
+
+  /**
+   * Submit a DRAFT subsidy request for review (DRAFT → PENDING).
+   */
+  async submit(id: string, userId: string, language: LanguagePreference = LanguagePreference.en): Promise<SubsidyRequest> {
+    const current = await this.subsidyRequestRepository.findById(id);
+
+    if (!current) {
+      throw new CustomGraphQLError(
+        translate('errors.subsidy_not_found', language, { ns: 'subsidy' }),
+        ErrorCode.NOT_FOUND,
+        404,
+      );
+    }
+
+    if (current.subsidy_status?.name?.toUpperCase() !== 'DRAFT') {
+      throw new CustomGraphQLError(
+        translate('errors.invalid_transition_from_draft', language, { ns: 'subsidy', to: current.subsidy_status?.name ?? 'UNKNOWN' }),
+        ErrorCode.BAD_REQUEST,
+        400,
+        { additional: { errorCode: 'INVALID_TRANSITION_FROM_DRAFT' } },
+      );
+    }
+
+    const pendingStatus = await this.prisma.subsidyStatus.findFirst({
+      where: { name: 'PENDING', is_deleted: false },
+    });
+
+    if (!pendingStatus) {
+      throw new CustomGraphQLError(
+        translate('errors.pending_status_not_found', language, { ns: 'subsidy' }),
+        ErrorCode.NOT_FOUND,
+        404,
+      );
+    }
+
+    return this.update(id, { subsidy_status_id: pendingStatus.id, notes: translate('history.request_submitted', language, { ns: 'subsidy' }) }, userId, language);
   }
 
   async approve(id: string, approvedAmount: number, userId: string, language: LanguagePreference = LanguagePreference.en): Promise<SubsidyRequest> {
@@ -794,8 +1171,14 @@ export class SubsidyRequestService {
     // Validate Status Transition
     this.validateStatusTransition(current.subsidy_status?.name, 'APPROVED', language);
 
-    // Ensure all documents are approved (not just validated - rejects any with rejected docs)
-    await this.ensureAllDocumentsApproved(id, language);
+    // Validação de documentos: apenas obrigatória para WITH_DOCUMENT
+    const requestType = (current as any).request_type as SubsidyRequestType | undefined;
+    const requiresDocumentValidation = !requestType || requestType === SubsidyRequestType.WITH_DOCUMENT;
+
+    if (requiresDocumentValidation) {
+      // Ensure all documents are approved (not just validated - rejects any with rejected docs)
+      await this.ensureAllDocumentsApproved(id, language);
+    }
 
     // Buscar status "APPROVED"
     const approvedStatus = await this.prisma.subsidyStatus.findFirst({
@@ -885,21 +1268,10 @@ export class SubsidyRequestService {
       changed_by: userId,
     });
 
-    // Update Annual Budget (Release allocation only)
-    const fullRequest = await this.prisma.subsidyRequest.findUnique({
-      where: { id },
-      select: { department_id: true, total_budget: true }
-    });
-
-    if (fullRequest?.department_id) {
-       await this.annualBudgetService.updateBudgetFinancials(
-         fullRequest.department_id,
-         new Date().getFullYear(),
-         -Number(fullRequest.total_budget || 0), // Release allocation
-         0, // No expense
-         userId
-       );
-    }
+    // No budget transaction on rejection.
+    // The project's ALLOCATION_RESERVED covers all subsidy requests in aggregate;
+    // individual subsidies never create their own ALLOCATION_RESERVED, so there
+    // is nothing to release here. The project allocation remains intact.
 
     return result;
   }
@@ -942,7 +1314,13 @@ export class SubsidyRequestService {
     console.log(`📊 [recalculateStatus] Subsidy ${id}: ${approvedDocs}/${totalDocs} approved, ${rejectedDocs}/${totalDocs} rejected, ${pendingDocs}/${totalDocs} pending. Suggested status: ${suggestedStatus}`);
 
     // Only auto-update to IN_REVIEW when documents start being validated
-    // APPROVED/REJECTED/CLOSED must be set manually to trigger budget calculations once
+    // Skip auto-update if still in DRAFT — wait for explicit submission
+    const currentStatusName = subsidyRequest.subsidy_status?.name?.toUpperCase();
+    if (currentStatusName === 'DRAFT') {
+      console.log(`⏭️  Skipping auto-status for subsidy ${id}: still in DRAFT`);
+      return;
+    }
+
     if (suggestedStatus === 'IN_REVIEW') {
       const status = await this.prisma.subsidyStatus.findFirst({
         where: { name: 'IN_REVIEW', is_deleted: false }
@@ -1066,6 +1444,7 @@ export class SubsidyRequestService {
   async requestRefund(
     id: string,
     refundAmount: number,
+    refundType: 'TOTAL' | 'PARTIAL',
     reason: string,
     userId: string,
     language: LanguagePreference = LanguagePreference.en
@@ -1077,17 +1456,6 @@ export class SubsidyRequestService {
         translate('errors.subsidy_not_found', language, { ns: 'subsidy' }),
         ErrorCode.NOT_FOUND,
         404
-      );
-    }
-
-    // Validate that subsidy is in ADVANCED_CLOSED or CLOSED status
-    const validStatuses = ['ADVANCED_CLOSED', 'CLOSED'];
-    if (!validStatuses.includes(subsidyRequest.subsidy_status?.name?.toUpperCase() || '')) {
-      throw new CustomGraphQLError(
-        translate('errors.refund_invalid_status', language, { ns: 'subsidy' }),
-        ErrorCode.BAD_REQUEST,
-        400,
-        { additional: { errorCode: 'REFUND_INVALID_STATUS' } }
       );
     }
 
@@ -1105,7 +1473,9 @@ export class SubsidyRequestService {
       id,
       {
         refund_amount: refundAmount,
+        refund_type: refundType,
         have_refund: true,
+        refund_rejected: false, // Reset rejection if requested again
       } as any,
       userId
     );
@@ -1216,7 +1586,12 @@ export class SubsidyRequestService {
         new Date().getFullYear(),
         refundAmount, // Add back to allocated
         -refundAmount, // Remove from spent
-        userId
+        userId,
+        {
+          type: (subsidyRequest as any).refund_type === 'PARTIAL' ? 'REFUND_PARTIAL' : 'REFUND_TOTAL',
+          description: `Subsidy refund processed`,
+          subsidy_request_id: id
+        }
       );
     }
 
@@ -1270,6 +1645,62 @@ export class SubsidyRequestService {
       // Log error but don't fail the refund confirmation
       console.error('[SubsidyRequestService] Failed to send refund email:', emailError);
     }
+
+    return result;
+  }
+
+  /**
+   * Rejects a requested refund.
+   * Sets refund_rejected = true so frontend knows.
+   */
+  async rejectRefund(
+    id: string,
+    reason: string,
+    userId: string,
+    language: LanguagePreference = LanguagePreference.en
+  ): Promise<SubsidyRequest> {
+    const subsidyRequest = await this.subsidyRequestRepository.findById(id);
+    
+    if (!subsidyRequest) {
+      throw new CustomGraphQLError(
+        translate('errors.subsidy_not_found', language, { ns: 'subsidy' }),
+        ErrorCode.NOT_FOUND,
+        404
+      );
+    }
+
+    if (!(subsidyRequest as any).have_refund) {
+      throw new CustomGraphQLError(
+        translate('errors.no_refund_requested', language, { ns: 'subsidy' }),
+        ErrorCode.BAD_REQUEST,
+        400
+      );
+    }
+
+    if ((subsidyRequest as any).refund_done) {
+      throw new CustomGraphQLError(
+        translate('errors.refund_already_done', language, { ns: 'subsidy' }),
+        ErrorCode.BAD_REQUEST,
+        400
+      );
+    }
+
+    const result = await this.subsidyRequestRepository.update(
+      id,
+      {
+        refund_rejected: true,
+      } as any,
+      userId
+    );
+
+    // Create history record
+    await this.historyRepository.create({
+      subsidy_request_id: id,
+      status_id: subsidyRequest.subsidy_statuses_id,
+      type: SubsidyHistoryType.COMMENT,
+      reason: translate('history.refund_rejected', language, { ns: 'subsidy', reason }),
+      changed_by: userId,
+    });
 
     return result;
   }

@@ -36,6 +36,9 @@ export class ProjectMaxAggregate {
     @Field(() => String, {nullable:true})
     owner_id?: string;
 
+    @Field(() => String, {nullable:true})
+    co_owner_id?: string;
+
     @Field(() => LanguagePreference, {nullable:true})
     language_preference?: `${LanguagePreference}`;
 

@@ -12,8 +12,11 @@ export class SubsidyReceiptCreateManySubsidy_request_itemInput {
     @Field(() => String, {nullable:true})
     id?: string;
 
-    @Field(() => String, {nullable:false})
-    project_activities_id!: string;
+    @Field(() => String, {nullable:true})
+    project_activities_id?: string;
+
+    @Field(() => Boolean, {nullable:true})
+    is_refund_receipt?: boolean;
 
     @Field(() => String, {nullable:false})
     file_url!: string;
@@ -43,6 +46,12 @@ export class SubsidyReceiptCreateManySubsidy_request_itemInput {
 
     @Field(() => String, {nullable:true})
     validated_by?: string;
+
+    @Field(() => String, {nullable:true})
+    rejection_reason?: string;
+
+    @Field(() => String, {nullable:true})
+    note?: string;
 
     @Field(() => String, {nullable:false})
     uploaded_by!: string;

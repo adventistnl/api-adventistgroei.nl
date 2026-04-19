@@ -11,6 +11,8 @@ import { ProjectStatus } from '../prisma/project-status.enum';
 import { VoluntariesOnProjectsUncheckedCreateNestedManyWithoutProjectInput } from '../voluntaries-on-projects/voluntaries-on-projects-unchecked-create-nested-many-without-project.input';
 import { ProjectActivityUncheckedCreateNestedManyWithoutProjectInput } from '../project-activity/project-activity-unchecked-create-nested-many-without-project.input';
 import { SubsidyRequestUncheckedCreateNestedManyWithoutProjectInput } from '../subsidy-request/subsidy-request-unchecked-create-nested-many-without-project.input';
+import { ProjectHistoryUncheckedCreateNestedManyWithoutProjectInput } from '../project-history/project-history-unchecked-create-nested-many-without-project.input';
+import { BudgetTransactionUncheckedCreateNestedManyWithoutProjectInput } from '../budget-transaction/budget-transaction-unchecked-create-nested-many-without-project.input';
 
 @InputType()
 export class ProjectUncheckedCreateWithoutSpecial_projectsInput {
@@ -47,6 +49,9 @@ export class ProjectUncheckedCreateWithoutSpecial_projectsInput {
 
     @Field(() => String, {nullable:false})
     owner_id!: string;
+
+    @Field(() => String, {nullable:true})
+    co_owner_id?: string;
 
     @Field(() => LanguagePreference, {nullable:false})
     language_preference!: `${LanguagePreference}`;
@@ -113,4 +118,12 @@ export class ProjectUncheckedCreateWithoutSpecial_projectsInput {
     @Field(() => SubsidyRequestUncheckedCreateNestedManyWithoutProjectInput, {nullable:true})
     @Type(() => SubsidyRequestUncheckedCreateNestedManyWithoutProjectInput)
     subsidies?: SubsidyRequestUncheckedCreateNestedManyWithoutProjectInput;
+
+    @Field(() => ProjectHistoryUncheckedCreateNestedManyWithoutProjectInput, {nullable:true})
+    @Type(() => ProjectHistoryUncheckedCreateNestedManyWithoutProjectInput)
+    history?: ProjectHistoryUncheckedCreateNestedManyWithoutProjectInput;
+
+    @Field(() => BudgetTransactionUncheckedCreateNestedManyWithoutProjectInput, {nullable:true})
+    @Type(() => BudgetTransactionUncheckedCreateNestedManyWithoutProjectInput)
+    budget_transactions?: BudgetTransactionUncheckedCreateNestedManyWithoutProjectInput;
 }

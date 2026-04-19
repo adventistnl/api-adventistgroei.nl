@@ -41,6 +41,9 @@ export class ProjectUncheckedUpdateManyWithoutOwnerInput {
     @Type(() => DecimalFieldUpdateOperationsInput)
     balance?: DecimalFieldUpdateOperationsInput;
 
+    @Field(() => NullableStringFieldUpdateOperationsInput, {nullable:true})
+    co_owner_id?: NullableStringFieldUpdateOperationsInput;
+
     @Field(() => EnumLanguagePreferenceFieldUpdateOperationsInput, {nullable:true})
     language_preference?: EnumLanguagePreferenceFieldUpdateOperationsInput;
 

@@ -12,9 +12,15 @@ export class UploadSubsidyReceiptDto {
   @IsString()
   subsidy_request_item_id?: string;
 
-  @Field()
+  @Field({ nullable: true })
+  @IsOptional()
   @IsString()
-  project_activity_id: string;
+  project_activity_id?: string;
+
+  @Field({ nullable: true, defaultValue: false })
+  @IsOptional()
+  @IsBoolean()
+  is_refund_receipt?: boolean;
 
   @Field()
   @IsString()
@@ -24,6 +30,11 @@ export class UploadSubsidyReceiptDto {
   @IsOptional()
   @IsNumber()
   amount?: number;
+
+  @Field({ nullable: true })
+  @IsOptional()
+  @IsString()
+  note?: string;
 }
 
 @InputType()
@@ -68,6 +79,23 @@ export class ValidateSubsidyReceiptDto {
   @Field()
   @IsString()
   id: string;
+
+  @Field({ nullable: true })
+  @IsOptional()
+  @IsString()
+  note?: string;
+}
+
+@InputType()
+export class RejectSubsidyReceiptDto {
+  @Field()
+  @IsString()
+  id: string;
+
+  @Field({ nullable: true })
+  @IsOptional()
+  @IsString()
+  reason?: string;
 }
 
 @InputType()

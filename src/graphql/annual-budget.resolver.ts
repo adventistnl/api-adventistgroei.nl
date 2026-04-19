@@ -3,7 +3,7 @@ import { UseGuards } from '@nestjs/common';
 import { PermissionsGuard } from '../middlewares/permissions.guard';
 import { AnnualBudget } from 'src/@generated/annual-budget/annual-budget.model';
 import { FindManyAnnualBudgetArgs } from 'src/@generated/annual-budget/find-many-annual-budget.args';
-import { DeleteBudgetResponse, ApproveAnnualBudgetDto, ApproveBudgetResponse, RejectAnnualBudgetDto, RejectBudgetResponse, RequestRevisionAnnualBudgetDto, RequestRevisionBudgetResponse, ToggleLockBudgetResponse, RecalculateAllocatedAmountsResponse, InstitutionBudgetCreateDto, InstitutionBudgetUpdateDto, DepartmentBudgetCreateDto, DepartmentBudgetUpdateDto } from 'src/dto/annual_budget.dto';
+import { DeleteBudgetResponse, ApproveAnnualBudgetDto, ApproveBudgetResponse, RejectAnnualBudgetDto, RejectBudgetResponse, RequestRevisionAnnualBudgetDto, RequestRevisionBudgetResponse, ToggleLockBudgetResponse, RecalculateAllocatedAmountsResponse, InstitutionBudgetCreateDto, InstitutionBudgetUpdateDto, DepartmentBudgetCreateDto, DepartmentBudgetUpdateDto, LedgerHistoryEntry, LedgerHistoryFilterInput, LedgerHistoryPaginatedResponse } from 'src/dto/annual_budget.dto';
 import { BudgetKPIs, DepartmentSpending, SpendingOverTime, BudgetDistribution, EntityDistribution, InstitutionalDepartmentsKPIs } from 'src/dto/budget-analytics.dto';
 import { Permission } from 'src/middlewares';
 import { AnnualBudgetService } from 'src/services/annual-budget.service';
@@ -87,6 +87,14 @@ export class AnnualBudgetResolver {
     return await this.annualBudgetService.getInstitutionalDepartmentsKPIs(year, institutionId);
   }
 
+  @Query(() => LedgerHistoryPaginatedResponse)
+  @Permission()
+  async ledgerHistory(
+    @Args('filters') filters: LedgerHistoryFilterInput
+  ): Promise<LedgerHistoryPaginatedResponse> {
+    return await this.annualBudgetService.getLedgerHistory(filters);
+  }
+
   @ResolveField(() => Institution, { nullable: true })
   async institution(@Parent() annualBudget: AnnualBudget): Promise<Institution | null> {
     if (!annualBudget.institution_id) {
@@ -117,22 +125,48 @@ export class AnnualBudgetResolver {
   }
 
   @ResolveField(() => Float)
-  spentAmount(@Parent() annualBudget: AnnualBudget): number {
-    return Number(annualBudget.total_expenses);
+  async allocated_amount(@Parent() annualBudget: AnnualBudget): Promise<number> {
+    const financials = await this.annualBudgetService.getComputedFinancials([annualBudget.id]);
+    const fin = financials[annualBudget.id] || { allocated: 0 };
+    return fin.allocated;
   }
 
   @ResolveField(() => Float)
-  usagePercentage(@Parent() annualBudget: AnnualBudget): number {
+  async total_expenses(@Parent() annualBudget: AnnualBudget): Promise<number> {
+    const financials = await this.annualBudgetService.getComputedFinancials([annualBudget.id]);
+    const fin = financials[annualBudget.id] || { expenses: 0 };
+    return fin.expenses;
+  }
+
+  @ResolveField(() => Float)
+  async balance(@Parent() annualBudget: AnnualBudget): Promise<number> {
+    const financials = await this.annualBudgetService.getComputedFinancials([annualBudget.id]);
+    const fin = financials[annualBudget.id] || { balance: 0 };
+    return fin.balance;
+  }
+
+  @ResolveField(() => Float)
+  async spentAmount(@Parent() annualBudget: AnnualBudget): Promise<number> {
+    const financials = await this.annualBudgetService.getComputedFinancials([annualBudget.id]);
+    const fin = financials[annualBudget.id] || { expenses: 0 };
+    return fin.expenses;
+  }
+
+  @ResolveField(() => Float)
+  async usagePercentage(@Parent() annualBudget: AnnualBudget): Promise<number> {
+    const financials = await this.annualBudgetService.getComputedFinancials([annualBudget.id]);
+    const fin = financials[annualBudget.id] || { expenses: 0 };
+    
     const approvedAmount = Number(annualBudget.planned_budget || 0);
-    const spentAmount = Number(annualBudget.total_expenses);
+    const spentAmount = fin.expenses;
     return approvedAmount > 0 ? Math.round((spentAmount / approvedAmount) * 100) : 0;
   }
 
   @ResolveField(() => Float)
-  remainingAmount(@Parent() annualBudget: AnnualBudget): number {
-    const approvedAmount = Number(annualBudget.planned_budget || 0);
-    const spentAmount = Number(annualBudget.total_expenses);
-    return Math.max(0, approvedAmount - spentAmount);
+  async remainingAmount(@Parent() annualBudget: AnnualBudget): Promise<number> {
+    const financials = await this.annualBudgetService.getComputedFinancials([annualBudget.id]);
+    const fin = financials[annualBudget.id] || { balance: 0 };
+    return fin.balance;
   }
 
   @Mutation(() => DeleteBudgetResponse)

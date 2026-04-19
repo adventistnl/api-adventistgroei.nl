@@ -12,6 +12,8 @@ import { VoluntariesOnProjectsUncheckedCreateNestedManyWithoutProjectInput } fro
 import { ProjectActivityUncheckedCreateNestedManyWithoutProjectInput } from '../project-activity/project-activity-unchecked-create-nested-many-without-project.input';
 import { SubsidyRequestUncheckedCreateNestedManyWithoutProjectInput } from '../subsidy-request/subsidy-request-unchecked-create-nested-many-without-project.input';
 import { SpecialProjectsUncheckedCreateNestedManyWithoutProjectInput } from '../special-projects/special-projects-unchecked-create-nested-many-without-project.input';
+import { ProjectHistoryUncheckedCreateNestedManyWithoutProjectInput } from '../project-history/project-history-unchecked-create-nested-many-without-project.input';
+import { BudgetTransactionUncheckedCreateNestedManyWithoutProjectInput } from '../budget-transaction/budget-transaction-unchecked-create-nested-many-without-project.input';
 
 @InputType()
 export class ProjectUncheckedCreateInput {
@@ -48,6 +50,9 @@ export class ProjectUncheckedCreateInput {
 
     @Field(() => String, {nullable:false})
     owner_id!: string;
+
+    @Field(() => String, {nullable:true})
+    co_owner_id?: string;
 
     @Field(() => LanguagePreference, {nullable:false})
     language_preference!: `${LanguagePreference}`;
@@ -118,4 +123,12 @@ export class ProjectUncheckedCreateInput {
     @Field(() => SpecialProjectsUncheckedCreateNestedManyWithoutProjectInput, {nullable:true})
     @Type(() => SpecialProjectsUncheckedCreateNestedManyWithoutProjectInput)
     special_projects?: SpecialProjectsUncheckedCreateNestedManyWithoutProjectInput;
+
+    @Field(() => ProjectHistoryUncheckedCreateNestedManyWithoutProjectInput, {nullable:true})
+    @Type(() => ProjectHistoryUncheckedCreateNestedManyWithoutProjectInput)
+    history?: ProjectHistoryUncheckedCreateNestedManyWithoutProjectInput;
+
+    @Field(() => BudgetTransactionUncheckedCreateNestedManyWithoutProjectInput, {nullable:true})
+    @Type(() => BudgetTransactionUncheckedCreateNestedManyWithoutProjectInput)
+    budget_transactions?: BudgetTransactionUncheckedCreateNestedManyWithoutProjectInput;
 }

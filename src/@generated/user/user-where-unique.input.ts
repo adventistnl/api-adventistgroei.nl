@@ -29,6 +29,7 @@ import { ProjectActivityLogListRelationFilter } from '../project-activity-log/pr
 import { ProjectActivityAssigneeListRelationFilter } from '../project-activity-assignee/project-activity-assignee-list-relation-filter.input';
 import { SubsidyStatusHistoryListRelationFilter } from '../subsidy-status-history/subsidy-status-history-list-relation-filter.input';
 import { DepartmentListRelationFilter } from '../department/department-list-relation-filter.input';
+import { ProjectHistoryListRelationFilter } from '../project-history/project-history-list-relation-filter.input';
 
 @InputType()
 export class UserWhereUniqueInput {
@@ -148,6 +149,10 @@ export class UserWhereUniqueInput {
     @Type(() => ProjectListRelationFilter)
     Project?: ProjectListRelationFilter;
 
+    @Field(() => ProjectListRelationFilter, {nullable:true})
+    @Type(() => ProjectListRelationFilter)
+    co_owned_projects?: ProjectListRelationFilter;
+
     @Field(() => AnnualBudgetListRelationFilter, {nullable:true})
     @Type(() => AnnualBudgetListRelationFilter)
     approved_annual_budgets?: AnnualBudgetListRelationFilter;
@@ -171,4 +176,8 @@ export class UserWhereUniqueInput {
     @Field(() => ChurchNullableScalarRelationFilter, {nullable:true})
     @Type(() => ChurchNullableScalarRelationFilter)
     led_church?: ChurchNullableScalarRelationFilter;
+
+    @Field(() => ProjectHistoryListRelationFilter, {nullable:true})
+    @Type(() => ProjectHistoryListRelationFilter)
+    project_history?: ProjectHistoryListRelationFilter;
 }

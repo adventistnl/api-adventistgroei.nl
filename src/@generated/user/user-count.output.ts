@@ -39,6 +39,9 @@ export class UserCount {
     Project?: number;
 
     @Field(() => Int, {nullable:false})
+    co_owned_projects?: number;
+
+    @Field(() => Int, {nullable:false})
     approved_annual_budgets?: number;
 
     @Field(() => Int, {nullable:false})
@@ -52,4 +55,7 @@ export class UserCount {
 
     @Field(() => Int, {nullable:false})
     led_departments?: number;
+
+    @Field(() => Int, {nullable:false})
+    project_history?: number;
 }

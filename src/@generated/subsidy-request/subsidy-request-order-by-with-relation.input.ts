@@ -12,6 +12,7 @@ import { SubsidyRequestItemOrderByRelationAggregateInput } from '../subsidy-requ
 import { ProjectOrderByWithRelationInput } from '../project/project-order-by-with-relation.input';
 import { SubsidyReceiptOrderByRelationAggregateInput } from '../subsidy-receipt/subsidy-receipt-order-by-relation-aggregate.input';
 import { SubsidyStatusHistoryOrderByRelationAggregateInput } from '../subsidy-status-history/subsidy-status-history-order-by-relation-aggregate.input';
+import { BudgetTransactionOrderByRelationAggregateInput } from '../budget-transaction/budget-transaction-order-by-relation-aggregate.input';
 
 @InputType()
 export class SubsidyRequestOrderByWithRelationInput {
@@ -87,6 +88,9 @@ export class SubsidyRequestOrderByWithRelationInput {
     advance_amount?: SortOrderInput;
 
     @Field(() => SortOrder, {nullable:true})
+    request_type?: `${SortOrder}`;
+
+    @Field(() => SortOrder, {nullable:true})
     refund_amount?: `${SortOrder}`;
 
     @Field(() => SortOrder, {nullable:true})
@@ -94,6 +98,12 @@ export class SubsidyRequestOrderByWithRelationInput {
 
     @Field(() => SortOrder, {nullable:true})
     refund_done?: `${SortOrder}`;
+
+    @Field(() => SortOrderInput, {nullable:true})
+    refund_type?: SortOrderInput;
+
+    @Field(() => SortOrder, {nullable:true})
+    refund_rejected?: `${SortOrder}`;
 
     @Field(() => InstitutionOrderByWithRelationInput, {nullable:true})
     @Type(() => InstitutionOrderByWithRelationInput)
@@ -130,4 +140,8 @@ export class SubsidyRequestOrderByWithRelationInput {
     @Field(() => SubsidyStatusHistoryOrderByRelationAggregateInput, {nullable:true})
     @Type(() => SubsidyStatusHistoryOrderByRelationAggregateInput)
     status_history?: SubsidyStatusHistoryOrderByRelationAggregateInput;
+
+    @Field(() => BudgetTransactionOrderByRelationAggregateInput, {nullable:true})
+    @Type(() => BudgetTransactionOrderByRelationAggregateInput)
+    budget_transactions?: BudgetTransactionOrderByRelationAggregateInput;
 }

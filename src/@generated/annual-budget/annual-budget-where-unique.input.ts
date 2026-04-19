@@ -19,6 +19,8 @@ import { UserNullableScalarRelationFilter } from '../user/user-nullable-scalar-r
 import { InstitutionNullableScalarRelationFilter } from '../institution/institution-nullable-scalar-relation-filter.input';
 import { ChurchNullableScalarRelationFilter } from '../church/church-nullable-scalar-relation-filter.input';
 import { DepartmentNullableScalarRelationFilter } from '../department/department-nullable-scalar-relation-filter.input';
+import { BudgetTransactionListRelationFilter } from '../budget-transaction/budget-transaction-list-relation-filter.input';
+import { BudgetTransferListRelationFilter } from '../budget-transfer/budget-transfer-list-relation-filter.input';
 
 @InputType()
 export class AnnualBudgetWhereUniqueInput {
@@ -44,14 +46,6 @@ export class AnnualBudgetWhereUniqueInput {
     @Field(() => DecimalFilter, {nullable:true})
     @Type(() => DecimalFilter)
     planned_budget?: DecimalFilter;
-
-    @Field(() => DecimalFilter, {nullable:true})
-    @Type(() => DecimalFilter)
-    total_expenses?: DecimalFilter;
-
-    @Field(() => DecimalFilter, {nullable:true})
-    @Type(() => DecimalFilter)
-    balance?: DecimalFilter;
 
     @Field(() => StringNullableFilter, {nullable:true})
     notes?: StringNullableFilter;
@@ -97,10 +91,6 @@ export class AnnualBudgetWhereUniqueInput {
 
     @Field(() => StringNullableFilter, {nullable:true})
     department_id?: StringNullableFilter;
-
-    @Field(() => DecimalFilter, {nullable:true})
-    @Type(() => DecimalFilter)
-    allocated_amount?: DecimalFilter;
 
     @Field(() => DecimalNullableFilter, {nullable:true})
     @Type(() => DecimalNullableFilter)
@@ -154,4 +144,16 @@ export class AnnualBudgetWhereUniqueInput {
     @Field(() => DepartmentNullableScalarRelationFilter, {nullable:true})
     @Type(() => DepartmentNullableScalarRelationFilter)
     department?: DepartmentNullableScalarRelationFilter;
+
+    @Field(() => BudgetTransactionListRelationFilter, {nullable:true})
+    @Type(() => BudgetTransactionListRelationFilter)
+    transactions?: BudgetTransactionListRelationFilter;
+
+    @Field(() => BudgetTransferListRelationFilter, {nullable:true})
+    @Type(() => BudgetTransferListRelationFilter)
+    transfers_out?: BudgetTransferListRelationFilter;
+
+    @Field(() => BudgetTransferListRelationFilter, {nullable:true})
+    @Type(() => BudgetTransferListRelationFilter)
+    transfers_in?: BudgetTransferListRelationFilter;
 }

@@ -32,6 +32,9 @@ export class ProjectCountAggregateInput {
     owner_id?: true;
 
     @Field(() => Boolean, {nullable:true})
+    co_owner_id?: true;
+
+    @Field(() => Boolean, {nullable:true})
     language_preference?: true;
 
     @Field(() => Boolean, {nullable:true})

@@ -20,12 +20,6 @@ export class AnnualBudgetMaxAggregate {
     @Field(() => GraphQLDecimal, {nullable:true})
     planned_budget?: Decimal;
 
-    @Field(() => GraphQLDecimal, {nullable:true})
-    total_expenses?: Decimal;
-
-    @Field(() => GraphQLDecimal, {nullable:true})
-    balance?: Decimal;
-
     @Field(() => String, {nullable:true})
     notes?: string;
 
@@ -70,9 +64,6 @@ export class AnnualBudgetMaxAggregate {
 
     @Field(() => String, {nullable:true})
     department_id?: string;
-
-    @Field(() => GraphQLDecimal, {nullable:true})
-    allocated_amount?: Decimal;
 
     @Field(() => GraphQLDecimal, {nullable:true})
     approved_amount?: Decimal;

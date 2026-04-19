@@ -3,17 +3,19 @@ import { InputType } from '@nestjs/graphql';
 import { StringFieldUpdateOperationsInput } from '../prisma/string-field-update-operations.input';
 import { DecimalFieldUpdateOperationsInput } from '../prisma/decimal-field-update-operations.input';
 import { Type } from 'class-transformer';
+import { NullableStringFieldUpdateOperationsInput } from '../prisma/nullable-string-field-update-operations.input';
 import { EnumLanguagePreferenceFieldUpdateOperationsInput } from '../prisma/enum-language-preference-field-update-operations.input';
 import { EnumProjectTypeFieldUpdateOperationsInput } from '../prisma/enum-project-type-field-update-operations.input';
 import { EnumProjectStatusFieldUpdateOperationsInput } from '../prisma/enum-project-status-field-update-operations.input';
 import { BoolFieldUpdateOperationsInput } from '../prisma/bool-field-update-operations.input';
 import { DateTimeFieldUpdateOperationsInput } from '../prisma/date-time-field-update-operations.input';
 import { NullableDateTimeFieldUpdateOperationsInput } from '../prisma/nullable-date-time-field-update-operations.input';
-import { NullableStringFieldUpdateOperationsInput } from '../prisma/nullable-string-field-update-operations.input';
 import { VoluntariesOnProjectsUncheckedUpdateManyWithoutProjectNestedInput } from '../voluntaries-on-projects/voluntaries-on-projects-unchecked-update-many-without-project-nested.input';
 import { ProjectActivityUncheckedUpdateManyWithoutProjectNestedInput } from '../project-activity/project-activity-unchecked-update-many-without-project-nested.input';
 import { SubsidyRequestUncheckedUpdateManyWithoutProjectNestedInput } from '../subsidy-request/subsidy-request-unchecked-update-many-without-project-nested.input';
 import { SpecialProjectsUncheckedUpdateManyWithoutProjectNestedInput } from '../special-projects/special-projects-unchecked-update-many-without-project-nested.input';
+import { ProjectHistoryUncheckedUpdateManyWithoutProjectNestedInput } from '../project-history/project-history-unchecked-update-many-without-project-nested.input';
+import { BudgetTransactionUncheckedUpdateManyWithoutProjectNestedInput } from '../budget-transaction/budget-transaction-unchecked-update-many-without-project-nested.input';
 
 @InputType()
 export class ProjectUncheckedUpdateWithoutChurch_departmentInput {
@@ -44,6 +46,9 @@ export class ProjectUncheckedUpdateWithoutChurch_departmentInput {
 
     @Field(() => StringFieldUpdateOperationsInput, {nullable:true})
     owner_id?: StringFieldUpdateOperationsInput;
+
+    @Field(() => NullableStringFieldUpdateOperationsInput, {nullable:true})
+    co_owner_id?: NullableStringFieldUpdateOperationsInput;
 
     @Field(() => EnumLanguagePreferenceFieldUpdateOperationsInput, {nullable:true})
     language_preference?: EnumLanguagePreferenceFieldUpdateOperationsInput;
@@ -114,4 +119,12 @@ export class ProjectUncheckedUpdateWithoutChurch_departmentInput {
     @Field(() => SpecialProjectsUncheckedUpdateManyWithoutProjectNestedInput, {nullable:true})
     @Type(() => SpecialProjectsUncheckedUpdateManyWithoutProjectNestedInput)
     special_projects?: SpecialProjectsUncheckedUpdateManyWithoutProjectNestedInput;
+
+    @Field(() => ProjectHistoryUncheckedUpdateManyWithoutProjectNestedInput, {nullable:true})
+    @Type(() => ProjectHistoryUncheckedUpdateManyWithoutProjectNestedInput)
+    history?: ProjectHistoryUncheckedUpdateManyWithoutProjectNestedInput;
+
+    @Field(() => BudgetTransactionUncheckedUpdateManyWithoutProjectNestedInput, {nullable:true})
+    @Type(() => BudgetTransactionUncheckedUpdateManyWithoutProjectNestedInput)
+    budget_transactions?: BudgetTransactionUncheckedUpdateManyWithoutProjectNestedInput;
 }

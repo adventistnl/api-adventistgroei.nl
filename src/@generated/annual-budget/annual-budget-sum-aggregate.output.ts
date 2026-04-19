@@ -14,14 +14,5 @@ export class AnnualBudgetSumAggregate {
     planned_budget?: Decimal;
 
     @Field(() => GraphQLDecimal, {nullable:true})
-    total_expenses?: Decimal;
-
-    @Field(() => GraphQLDecimal, {nullable:true})
-    balance?: Decimal;
-
-    @Field(() => GraphQLDecimal, {nullable:true})
-    allocated_amount?: Decimal;
-
-    @Field(() => GraphQLDecimal, {nullable:true})
     approved_amount?: Decimal;
 }

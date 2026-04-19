@@ -25,3 +25,5 @@ export * from './annual-budget.repository';
 export * from './emails/sendgrid.repository';
 export * from './emails/nodemailer.repository';
 export * from './verification-code.repository';
+export * from './project-history.repository';
+export * from './project-adjustment.repository';

@@ -39,6 +39,9 @@ export class ProjectOrderByWithAggregationInput {
     @Field(() => SortOrder, {nullable:true})
     owner_id?: `${SortOrder}`;
 
+    @Field(() => SortOrderInput, {nullable:true})
+    co_owner_id?: SortOrderInput;
+
     @Field(() => SortOrder, {nullable:true})
     language_preference?: `${SortOrder}`;
 

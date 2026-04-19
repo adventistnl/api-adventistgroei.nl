@@ -7,6 +7,8 @@ import { UserOrderByWithRelationInput } from '../user/user-order-by-with-relatio
 import { InstitutionOrderByWithRelationInput } from '../institution/institution-order-by-with-relation.input';
 import { ChurchOrderByWithRelationInput } from '../church/church-order-by-with-relation.input';
 import { DepartmentOrderByWithRelationInput } from '../department/department-order-by-with-relation.input';
+import { BudgetTransactionOrderByRelationAggregateInput } from '../budget-transaction/budget-transaction-order-by-relation-aggregate.input';
+import { BudgetTransferOrderByRelationAggregateInput } from '../budget-transfer/budget-transfer-order-by-relation-aggregate.input';
 
 @InputType()
 export class AnnualBudgetOrderByWithRelationInput {
@@ -19,12 +21,6 @@ export class AnnualBudgetOrderByWithRelationInput {
 
     @Field(() => SortOrder, {nullable:true})
     planned_budget?: `${SortOrder}`;
-
-    @Field(() => SortOrder, {nullable:true})
-    total_expenses?: `${SortOrder}`;
-
-    @Field(() => SortOrder, {nullable:true})
-    balance?: `${SortOrder}`;
 
     @Field(() => SortOrderInput, {nullable:true})
     notes?: SortOrderInput;
@@ -70,9 +66,6 @@ export class AnnualBudgetOrderByWithRelationInput {
 
     @Field(() => SortOrderInput, {nullable:true})
     department_id?: SortOrderInput;
-
-    @Field(() => SortOrder, {nullable:true})
-    allocated_amount?: `${SortOrder}`;
 
     @Field(() => SortOrderInput, {nullable:true})
     @Type(() => SortOrderInput)
@@ -126,4 +119,16 @@ export class AnnualBudgetOrderByWithRelationInput {
     @Field(() => DepartmentOrderByWithRelationInput, {nullable:true})
     @Type(() => DepartmentOrderByWithRelationInput)
     department?: DepartmentOrderByWithRelationInput;
+
+    @Field(() => BudgetTransactionOrderByRelationAggregateInput, {nullable:true})
+    @Type(() => BudgetTransactionOrderByRelationAggregateInput)
+    transactions?: BudgetTransactionOrderByRelationAggregateInput;
+
+    @Field(() => BudgetTransferOrderByRelationAggregateInput, {nullable:true})
+    @Type(() => BudgetTransferOrderByRelationAggregateInput)
+    transfers_out?: BudgetTransferOrderByRelationAggregateInput;
+
+    @Field(() => BudgetTransferOrderByRelationAggregateInput, {nullable:true})
+    @Type(() => BudgetTransferOrderByRelationAggregateInput)
+    transfers_in?: BudgetTransferOrderByRelationAggregateInput;
 }

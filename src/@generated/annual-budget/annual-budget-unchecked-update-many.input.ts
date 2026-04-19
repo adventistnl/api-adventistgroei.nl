@@ -28,14 +28,6 @@ export class AnnualBudgetUncheckedUpdateManyInput {
     @Type(() => DecimalFieldUpdateOperationsInput)
     planned_budget?: DecimalFieldUpdateOperationsInput;
 
-    @Field(() => DecimalFieldUpdateOperationsInput, {nullable:true})
-    @Type(() => DecimalFieldUpdateOperationsInput)
-    total_expenses?: DecimalFieldUpdateOperationsInput;
-
-    @Field(() => DecimalFieldUpdateOperationsInput, {nullable:true})
-    @Type(() => DecimalFieldUpdateOperationsInput)
-    balance?: DecimalFieldUpdateOperationsInput;
-
     @Field(() => NullableStringFieldUpdateOperationsInput, {nullable:true})
     notes?: NullableStringFieldUpdateOperationsInput;
 
@@ -80,10 +72,6 @@ export class AnnualBudgetUncheckedUpdateManyInput {
 
     @Field(() => NullableStringFieldUpdateOperationsInput, {nullable:true})
     department_id?: NullableStringFieldUpdateOperationsInput;
-
-    @Field(() => DecimalFieldUpdateOperationsInput, {nullable:true})
-    @Type(() => DecimalFieldUpdateOperationsInput)
-    allocated_amount?: DecimalFieldUpdateOperationsInput;
 
     @Field(() => NullableDecimalFieldUpdateOperationsInput, {nullable:true})
     @Type(() => NullableDecimalFieldUpdateOperationsInput)

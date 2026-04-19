@@ -9,6 +9,8 @@ import { DateTimeNullableFilter } from '../prisma/date-time-nullable-filter.inpu
 import { BoolFilter } from '../prisma/bool-filter.input';
 import { EnumSubsidyRequestPriorityFilter } from '../prisma/enum-subsidy-request-priority-filter.input';
 import { DecimalNullableFilter } from '../prisma/decimal-nullable-filter.input';
+import { EnumSubsidyRequestTypeFilter } from '../prisma/enum-subsidy-request-type-filter.input';
+import { EnumRefundTypeNullableFilter } from '../prisma/enum-refund-type-nullable-filter.input';
 
 @InputType()
 export class SubsidyRequestScalarWhereInput {
@@ -97,6 +99,9 @@ export class SubsidyRequestScalarWhereInput {
     @Type(() => DecimalNullableFilter)
     advance_amount?: DecimalNullableFilter;
 
+    @Field(() => EnumSubsidyRequestTypeFilter, {nullable:true})
+    request_type?: EnumSubsidyRequestTypeFilter;
+
     @Field(() => DecimalFilter, {nullable:true})
     @Type(() => DecimalFilter)
     refund_amount?: DecimalFilter;
@@ -106,4 +111,10 @@ export class SubsidyRequestScalarWhereInput {
 
     @Field(() => BoolFilter, {nullable:true})
     refund_done?: BoolFilter;
+
+    @Field(() => EnumRefundTypeNullableFilter, {nullable:true})
+    refund_type?: EnumRefundTypeNullableFilter;
+
+    @Field(() => BoolFilter, {nullable:true})
+    refund_rejected?: BoolFilter;
 }

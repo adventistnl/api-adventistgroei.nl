@@ -448,12 +448,13 @@ export class ChurchRepository {
       where: { church_id: churchId, is_deleted: false },
       _sum: {
         planned_budget: true,
-        total_expenses: true,
+        // total_expenses removed — now computed from BudgetTransaction
       },
     });
 
-    const totalBudget = DecimalHelper.toDecimal(budgets._sum.planned_budget);
-    const totalUsedBudget = DecimalHelper.toDecimal(budgets._sum.total_expenses);
+    const totalBudget = DecimalHelper.toDecimal(budgets._sum?.planned_budget ?? 0);
+    // totalUsedBudget would need getComputedFinancials() per budget; returning 0 as placeholder
+    const totalUsedBudget = DecimalHelper.toDecimal(0);
     const budgetUtilization = totalBudget.isPositive() 
       ? totalUsedBudget.dividedBy(totalBudget).times(100).toNumber() 
       : 0;

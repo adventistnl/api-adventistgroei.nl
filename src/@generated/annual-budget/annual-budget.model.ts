@@ -13,6 +13,9 @@ import { User } from '../user/user.model';
 import { Institution } from '../institution/institution.model';
 import { Church } from '../church/church.model';
 import { Department } from '../department/department.model';
+import { BudgetTransaction } from '../budget-transaction/budget-transaction.model';
+import { BudgetTransfer } from '../budget-transfer/budget-transfer.model';
+import { AnnualBudgetCount } from './annual-budget-count.output';
 
 @ObjectType()
 export class AnnualBudget {
@@ -25,12 +28,6 @@ export class AnnualBudget {
 
     @Field(() => GraphQLDecimal, {nullable:false})
     planned_budget!: Decimal;
-
-    @Field(() => GraphQLDecimal, {nullable:false})
-    total_expenses!: Decimal;
-
-    @Field(() => GraphQLDecimal, {nullable:false})
-    balance!: Decimal;
 
     @Field(() => String, {nullable:true})
     notes!: string | null;
@@ -76,9 +73,6 @@ export class AnnualBudget {
 
     @Field(() => String, {nullable:true})
     department_id!: string | null;
-
-    @Field(() => GraphQLDecimal, {nullable:false})
-    allocated_amount!: Decimal;
 
     @Field(() => GraphQLDecimal, {nullable:true})
     approved_amount!: Decimal | null;
@@ -127,4 +121,16 @@ export class AnnualBudget {
 
     @Field(() => Department, {nullable:true})
     department?: Department | null;
+
+    @Field(() => [BudgetTransaction], {nullable:true})
+    transactions?: Array<BudgetTransaction>;
+
+    @Field(() => [BudgetTransfer], {nullable:true})
+    transfers_out?: Array<BudgetTransfer>;
+
+    @Field(() => [BudgetTransfer], {nullable:true})
+    transfers_in?: Array<BudgetTransfer>;
+
+    @Field(() => AnnualBudgetCount, {nullable:false})
+    _count?: AnnualBudgetCount;
 }

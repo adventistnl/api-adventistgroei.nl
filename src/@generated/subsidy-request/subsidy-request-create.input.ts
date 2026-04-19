@@ -6,6 +6,8 @@ import { transformToDecimal } from 'prisma-graphql-type-decimal';
 import { Transform } from 'class-transformer';
 import { Type } from 'class-transformer';
 import { SubsidyRequestPriority } from '../prisma/subsidy-request-priority.enum';
+import { SubsidyRequestType } from '../prisma/subsidy-request-type.enum';
+import { RefundType } from '../prisma/refund-type.enum';
 import { InstitutionCreateNestedOneWithoutSubsidy_requestsInput } from '../institution/institution-create-nested-one-without-subsidy-requests.input';
 import { UserCreateNestedOneWithoutSubsidyRequestInput } from '../user/user-create-nested-one-without-subsidy-request.input';
 import { DepartmentCreateNestedOneWithoutSubsidy_requestsInput } from '../department/department-create-nested-one-without-subsidy-requests.input';
@@ -15,6 +17,7 @@ import { SubsidyRequestItemCreateNestedManyWithoutSubsidy_requestInput } from '.
 import { ProjectCreateNestedOneWithoutSubsidiesInput } from '../project/project-create-nested-one-without-subsidies.input';
 import { SubsidyReceiptCreateNestedManyWithoutSubsidy_requestInput } from '../subsidy-receipt/subsidy-receipt-create-nested-many-without-subsidy-request.input';
 import { SubsidyStatusHistoryCreateNestedManyWithoutSubsidy_requestInput } from '../subsidy-status-history/subsidy-status-history-create-nested-many-without-subsidy-request.input';
+import { BudgetTransactionCreateNestedManyWithoutSubsidy_requestInput } from '../budget-transaction/budget-transaction-create-nested-many-without-subsidy-request.input';
 
 @InputType()
 export class SubsidyRequestCreateInput {
@@ -76,6 +79,9 @@ export class SubsidyRequestCreateInput {
     @Transform(transformToDecimal)
     advance_amount?: Decimal;
 
+    @Field(() => SubsidyRequestType, {nullable:true})
+    request_type?: `${SubsidyRequestType}`;
+
     @Field(() => GraphQLDecimal, {nullable:true})
     @Type(() => Object)
     @Transform(transformToDecimal)
@@ -86,6 +92,12 @@ export class SubsidyRequestCreateInput {
 
     @Field(() => Boolean, {nullable:true})
     refund_done?: boolean;
+
+    @Field(() => RefundType, {nullable:true})
+    refund_type?: `${RefundType}`;
+
+    @Field(() => Boolean, {nullable:true})
+    refund_rejected?: boolean;
 
     @Field(() => InstitutionCreateNestedOneWithoutSubsidy_requestsInput, {nullable:false})
     @Type(() => InstitutionCreateNestedOneWithoutSubsidy_requestsInput)
@@ -122,4 +134,8 @@ export class SubsidyRequestCreateInput {
     @Field(() => SubsidyStatusHistoryCreateNestedManyWithoutSubsidy_requestInput, {nullable:true})
     @Type(() => SubsidyStatusHistoryCreateNestedManyWithoutSubsidy_requestInput)
     status_history?: SubsidyStatusHistoryCreateNestedManyWithoutSubsidy_requestInput;
+
+    @Field(() => BudgetTransactionCreateNestedManyWithoutSubsidy_requestInput, {nullable:true})
+    @Type(() => BudgetTransactionCreateNestedManyWithoutSubsidy_requestInput)
+    budget_transactions?: BudgetTransactionCreateNestedManyWithoutSubsidy_requestInput;
 }

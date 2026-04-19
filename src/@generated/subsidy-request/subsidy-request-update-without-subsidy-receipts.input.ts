@@ -9,6 +9,8 @@ import { NullableDateTimeFieldUpdateOperationsInput } from '../prisma/nullable-d
 import { BoolFieldUpdateOperationsInput } from '../prisma/bool-field-update-operations.input';
 import { EnumSubsidyRequestPriorityFieldUpdateOperationsInput } from '../prisma/enum-subsidy-request-priority-field-update-operations.input';
 import { NullableDecimalFieldUpdateOperationsInput } from '../prisma/nullable-decimal-field-update-operations.input';
+import { EnumSubsidyRequestTypeFieldUpdateOperationsInput } from '../prisma/enum-subsidy-request-type-field-update-operations.input';
+import { NullableEnumRefundTypeFieldUpdateOperationsInput } from '../prisma/nullable-enum-refund-type-field-update-operations.input';
 import { InstitutionUpdateOneRequiredWithoutSubsidy_requestsNestedInput } from '../institution/institution-update-one-required-without-subsidy-requests-nested.input';
 import { UserUpdateOneRequiredWithoutSubsidyRequestNestedInput } from '../user/user-update-one-required-without-subsidy-request-nested.input';
 import { DepartmentUpdateOneRequiredWithoutSubsidy_requestsNestedInput } from '../department/department-update-one-required-without-subsidy-requests-nested.input';
@@ -17,6 +19,7 @@ import { SubsidyStatusUpdateOneRequiredWithoutSubsidy_requestsNestedInput } from
 import { SubsidyRequestItemUpdateManyWithoutSubsidy_requestNestedInput } from '../subsidy-request-item/subsidy-request-item-update-many-without-subsidy-request-nested.input';
 import { ProjectUpdateOneRequiredWithoutSubsidiesNestedInput } from '../project/project-update-one-required-without-subsidies-nested.input';
 import { SubsidyStatusHistoryUpdateManyWithoutSubsidy_requestNestedInput } from '../subsidy-status-history/subsidy-status-history-update-many-without-subsidy-request-nested.input';
+import { BudgetTransactionUpdateManyWithoutSubsidy_requestNestedInput } from '../budget-transaction/budget-transaction-update-many-without-subsidy-request-nested.input';
 
 @InputType()
 export class SubsidyRequestUpdateWithoutSubsidy_receiptsInput {
@@ -75,6 +78,9 @@ export class SubsidyRequestUpdateWithoutSubsidy_receiptsInput {
     @Type(() => NullableDecimalFieldUpdateOperationsInput)
     advance_amount?: NullableDecimalFieldUpdateOperationsInput;
 
+    @Field(() => EnumSubsidyRequestTypeFieldUpdateOperationsInput, {nullable:true})
+    request_type?: EnumSubsidyRequestTypeFieldUpdateOperationsInput;
+
     @Field(() => DecimalFieldUpdateOperationsInput, {nullable:true})
     @Type(() => DecimalFieldUpdateOperationsInput)
     refund_amount?: DecimalFieldUpdateOperationsInput;
@@ -84,6 +90,12 @@ export class SubsidyRequestUpdateWithoutSubsidy_receiptsInput {
 
     @Field(() => BoolFieldUpdateOperationsInput, {nullable:true})
     refund_done?: BoolFieldUpdateOperationsInput;
+
+    @Field(() => NullableEnumRefundTypeFieldUpdateOperationsInput, {nullable:true})
+    refund_type?: NullableEnumRefundTypeFieldUpdateOperationsInput;
+
+    @Field(() => BoolFieldUpdateOperationsInput, {nullable:true})
+    refund_rejected?: BoolFieldUpdateOperationsInput;
 
     @Field(() => InstitutionUpdateOneRequiredWithoutSubsidy_requestsNestedInput, {nullable:true})
     @Type(() => InstitutionUpdateOneRequiredWithoutSubsidy_requestsNestedInput)
@@ -116,4 +128,8 @@ export class SubsidyRequestUpdateWithoutSubsidy_receiptsInput {
     @Field(() => SubsidyStatusHistoryUpdateManyWithoutSubsidy_requestNestedInput, {nullable:true})
     @Type(() => SubsidyStatusHistoryUpdateManyWithoutSubsidy_requestNestedInput)
     status_history?: SubsidyStatusHistoryUpdateManyWithoutSubsidy_requestNestedInput;
+
+    @Field(() => BudgetTransactionUpdateManyWithoutSubsidy_requestNestedInput, {nullable:true})
+    @Type(() => BudgetTransactionUpdateManyWithoutSubsidy_requestNestedInput)
+    budget_transactions?: BudgetTransactionUpdateManyWithoutSubsidy_requestNestedInput;
 }

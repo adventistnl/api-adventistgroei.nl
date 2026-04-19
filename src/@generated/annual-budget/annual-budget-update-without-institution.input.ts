@@ -17,6 +17,9 @@ import { EnumAnnualBudgetEntityTypeFieldUpdateOperationsInput } from '../prisma/
 import { UserUpdateOneWithoutApproved_annual_budgetsNestedInput } from '../user/user-update-one-without-approved-annual-budgets-nested.input';
 import { ChurchUpdateOneWithoutAnnual_budgetsNestedInput } from '../church/church-update-one-without-annual-budgets-nested.input';
 import { DepartmentUpdateOneWithoutAnnual_budgetsNestedInput } from '../department/department-update-one-without-annual-budgets-nested.input';
+import { BudgetTransactionUpdateManyWithoutAnnual_budgetNestedInput } from '../budget-transaction/budget-transaction-update-many-without-annual-budget-nested.input';
+import { BudgetTransferUpdateManyWithoutFrom_budgetNestedInput } from '../budget-transfer/budget-transfer-update-many-without-from-budget-nested.input';
+import { BudgetTransferUpdateManyWithoutTo_budgetNestedInput } from '../budget-transfer/budget-transfer-update-many-without-to-budget-nested.input';
 
 @InputType()
 export class AnnualBudgetUpdateWithoutInstitutionInput {
@@ -30,14 +33,6 @@ export class AnnualBudgetUpdateWithoutInstitutionInput {
     @Field(() => DecimalFieldUpdateOperationsInput, {nullable:true})
     @Type(() => DecimalFieldUpdateOperationsInput)
     planned_budget?: DecimalFieldUpdateOperationsInput;
-
-    @Field(() => DecimalFieldUpdateOperationsInput, {nullable:true})
-    @Type(() => DecimalFieldUpdateOperationsInput)
-    total_expenses?: DecimalFieldUpdateOperationsInput;
-
-    @Field(() => DecimalFieldUpdateOperationsInput, {nullable:true})
-    @Type(() => DecimalFieldUpdateOperationsInput)
-    balance?: DecimalFieldUpdateOperationsInput;
 
     @Field(() => NullableStringFieldUpdateOperationsInput, {nullable:true})
     notes?: NullableStringFieldUpdateOperationsInput;
@@ -71,10 +66,6 @@ export class AnnualBudgetUpdateWithoutInstitutionInput {
 
     @Field(() => EnumAnnualBudgetStatusFieldUpdateOperationsInput, {nullable:true})
     status?: EnumAnnualBudgetStatusFieldUpdateOperationsInput;
-
-    @Field(() => DecimalFieldUpdateOperationsInput, {nullable:true})
-    @Type(() => DecimalFieldUpdateOperationsInput)
-    allocated_amount?: DecimalFieldUpdateOperationsInput;
 
     @Field(() => NullableDecimalFieldUpdateOperationsInput, {nullable:true})
     @Type(() => NullableDecimalFieldUpdateOperationsInput)
@@ -124,4 +115,16 @@ export class AnnualBudgetUpdateWithoutInstitutionInput {
     @Field(() => DepartmentUpdateOneWithoutAnnual_budgetsNestedInput, {nullable:true})
     @Type(() => DepartmentUpdateOneWithoutAnnual_budgetsNestedInput)
     department?: DepartmentUpdateOneWithoutAnnual_budgetsNestedInput;
+
+    @Field(() => BudgetTransactionUpdateManyWithoutAnnual_budgetNestedInput, {nullable:true})
+    @Type(() => BudgetTransactionUpdateManyWithoutAnnual_budgetNestedInput)
+    transactions?: BudgetTransactionUpdateManyWithoutAnnual_budgetNestedInput;
+
+    @Field(() => BudgetTransferUpdateManyWithoutFrom_budgetNestedInput, {nullable:true})
+    @Type(() => BudgetTransferUpdateManyWithoutFrom_budgetNestedInput)
+    transfers_out?: BudgetTransferUpdateManyWithoutFrom_budgetNestedInput;
+
+    @Field(() => BudgetTransferUpdateManyWithoutTo_budgetNestedInput, {nullable:true})
+    @Type(() => BudgetTransferUpdateManyWithoutTo_budgetNestedInput)
+    transfers_in?: BudgetTransferUpdateManyWithoutTo_budgetNestedInput;
 }

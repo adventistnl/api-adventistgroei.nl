@@ -24,9 +24,12 @@ export enum SubsidyRequestScalarFieldEnum {
     project_id = "project_id",
     is_for_advance = "is_for_advance",
     advance_amount = "advance_amount",
+    request_type = "request_type",
     refund_amount = "refund_amount",
     have_refund = "have_refund",
-    refund_done = "refund_done"
+    refund_done = "refund_done",
+    refund_type = "refund_type",
+    refund_rejected = "refund_rejected"
 }
 
 

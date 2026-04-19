@@ -13,6 +13,8 @@ import { NullableDateTimeFieldUpdateOperationsInput } from '../prisma/nullable-d
 import { ProjectActivityUncheckedUpdateManyWithoutProjectNestedInput } from '../project-activity/project-activity-unchecked-update-many-without-project-nested.input';
 import { SubsidyRequestUncheckedUpdateManyWithoutProjectNestedInput } from '../subsidy-request/subsidy-request-unchecked-update-many-without-project-nested.input';
 import { SpecialProjectsUncheckedUpdateManyWithoutProjectNestedInput } from '../special-projects/special-projects-unchecked-update-many-without-project-nested.input';
+import { ProjectHistoryUncheckedUpdateManyWithoutProjectNestedInput } from '../project-history/project-history-unchecked-update-many-without-project-nested.input';
+import { BudgetTransactionUncheckedUpdateManyWithoutProjectNestedInput } from '../budget-transaction/budget-transaction-unchecked-update-many-without-project-nested.input';
 
 @InputType()
 export class ProjectUncheckedUpdateWithoutVoluntary_usersInput {
@@ -46,6 +48,9 @@ export class ProjectUncheckedUpdateWithoutVoluntary_usersInput {
 
     @Field(() => StringFieldUpdateOperationsInput, {nullable:true})
     owner_id?: StringFieldUpdateOperationsInput;
+
+    @Field(() => NullableStringFieldUpdateOperationsInput, {nullable:true})
+    co_owner_id?: NullableStringFieldUpdateOperationsInput;
 
     @Field(() => EnumLanguagePreferenceFieldUpdateOperationsInput, {nullable:true})
     language_preference?: EnumLanguagePreferenceFieldUpdateOperationsInput;
@@ -112,4 +117,12 @@ export class ProjectUncheckedUpdateWithoutVoluntary_usersInput {
     @Field(() => SpecialProjectsUncheckedUpdateManyWithoutProjectNestedInput, {nullable:true})
     @Type(() => SpecialProjectsUncheckedUpdateManyWithoutProjectNestedInput)
     special_projects?: SpecialProjectsUncheckedUpdateManyWithoutProjectNestedInput;
+
+    @Field(() => ProjectHistoryUncheckedUpdateManyWithoutProjectNestedInput, {nullable:true})
+    @Type(() => ProjectHistoryUncheckedUpdateManyWithoutProjectNestedInput)
+    history?: ProjectHistoryUncheckedUpdateManyWithoutProjectNestedInput;
+
+    @Field(() => BudgetTransactionUncheckedUpdateManyWithoutProjectNestedInput, {nullable:true})
+    @Type(() => BudgetTransactionUncheckedUpdateManyWithoutProjectNestedInput)
+    budget_transactions?: BudgetTransactionUncheckedUpdateManyWithoutProjectNestedInput;
 }

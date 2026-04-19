@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { ProjectRepository } from '../repositories/project.repository';
 import { DecimalHelper } from '../common/helpers/decimal.helper';
 import { Project } from '../@generated/project/project.model';
-import { ProjectCreateDto, ProjectUpdateDto } from '../dto/project.dto';
+import { ProjectCreateDto, ProjectUpdateDto, ProjectUpdateCoOwnerDto } from '../dto/project.dto';
 import { PrismaService } from './prisma.service';
 import { ProjectKPIs, ProjectsByDepartment, SubsidyStatusDistribution, ProjectsTimeline } from '../dto/project-analytics.dto';
 import { SubsidyRequestService } from './subsidy-request.service';
@@ -10,7 +10,7 @@ import { ProjectActivityService } from './project-activity.service';
 import { CustomGraphQLError, ErrorCode } from '../common/errors/custom-graphql-error';
 import { AnnualBudgetService } from './annual-budget.service';
 import { UserRepository } from '../repositories/user.repository';
-import { UserWithRoles } from '../models';
+import { UserWithRoles, ProjectCollaborator } from '../models';
 import { ProjectStatus } from '../@generated/prisma/project-status.enum';
 
 @Injectable()
@@ -25,24 +25,31 @@ export class ProjectService {
   ) {}
 
   async create(data: ProjectCreateDto, userId: string): Promise<Project> {
+    // Owner = Department Leader; co-owner = whoever is creating the project
+    if (data.department_id) {
+      const department = await this.prisma.department.findUnique({
+        where: { id: data.department_id },
+        select: { leader_id: true },
+      });
+      if (department?.leader_id) {
+        data.owner_id = department.leader_id;
+      }
+    }
+    data.co_owner_id = userId;
+
     const project = await this.projectRepository.create(data, userId);
 
+    // Grant PROJECT_CO_OWNER role to whoever registered the project
     try {
-      // Update Annual Budget if there is a subsidized budget
-      if (data.subsidized_budget && data.subsidized_budget > 0) {
-        const year = new Date().getFullYear();
-        await this.annualBudgetService.updateBudgetFinancials(
-          data.department_id,
-          year,
-          data.subsidized_budget, // Add to Allocated
-          0, // No spending yet
-          userId
-        );
+      const coOwnerRole = await this.prisma.role.findUnique({
+        where: { key_code: 'PROJECT_CO_OWNER' },
+        select: { id: true },
+      });
+      if (coOwnerRole) {
+        await this.userRepository.addRoleToUser(userId, coOwnerRole.id, userId);
       }
-    } catch (e) {
-      console.error("Failed to allocate budget for new project, rolling back...", e);
-      await this.projectRepository.softDelete(project.id, userId);
-      throw e;
+    } catch {
+      // Role may already be assigned — safe to ignore
     }
 
     return project;
@@ -58,6 +65,21 @@ export class ProjectService {
         404,
         { additional: { errorCode: 'PROJECT_NOT_FOUND' } }
       );
+    }
+
+    // Prevent co-owners from changing the project owner
+    if (data.owner_id && data.owner_id !== existingProject.owner_id) {
+      const caller = await this.userRepository.findByIdWithRoles(userId);
+      const privilegedRoles = ['ADMIN', 'DEV', 'INSTITUTIONAL_LEADER', 'INSTITUTIONAL_DEPARTMENT_LEADER', 'CHURCH_LEADER', 'DEPARTMENT_CHURCH_LEADER', 'FINANCIAL_MANAGER'];
+      const hasPrivilege = caller?.user_roles?.some((ur: any) => privilegedRoles.includes(ur.role?.key_code));
+      if (!hasPrivilege) {
+        throw new CustomGraphQLError(
+          'Only administrators and leaders can change the project owner',
+          ErrorCode.FORBIDDEN,
+          403,
+          { additional: { errorCode: 'CANNOT_CHANGE_PROJECT_OWNER' } }
+        );
+      }
     }
 
     // Block any modifications if project is CONCLUDED
@@ -85,7 +107,77 @@ export class ProjectService {
       }
     }
 
+    // Allocate budget only when the project transitions to IN_PROGRESS
+    if (existingProject.status !== ProjectStatus.IN_PROGRESS && data.status === ProjectStatus.IN_PROGRESS) {
+      const budgetToAllocate = data.subsidized_budget ?? existingProject.subsidized_budget;
+      if (budgetToAllocate && Number(budgetToAllocate) > 0) {
+        await this.annualBudgetService.updateBudgetFinancials(
+          existingProject.department_id,
+          new Date(existingProject.start_at).getFullYear(),
+          Number(budgetToAllocate),
+          0,
+          userId,
+          {
+            type: 'ALLOCATION_RESERVED',
+            description: `Initial project budget reservation: ${existingProject.title}`,
+            project_id: existingProject.id
+          }
+        );
+      }
+    }
+
+    // Release budget when project is manually reverted to DRAFT from IN_PROGRESS
+    if (existingProject.status === ProjectStatus.IN_PROGRESS && data.status === ProjectStatus.DRAFT) {
+      const budgetToRelease = existingProject.subsidized_budget;
+      if (budgetToRelease && Number(budgetToRelease) > 0) {
+        await this.annualBudgetService.updateBudgetFinancials(
+          existingProject.department_id,
+          new Date(existingProject.start_at).getFullYear(),
+          -Number(budgetToRelease), // negative = release
+          0,
+          userId,
+          {
+            type: 'ALLOCATION_RELEASED',
+            description: `Project reverted to DRAFT, budget released: ${existingProject.title}`,
+            project_id: existingProject.id
+          }
+        );
+      }
+    }
+
     return this.projectRepository.update(id, data, userId);
+  }
+
+  /**
+   * Atualiza apenas o co_owner_id de um projeto
+   * @param projectId - ID do projeto
+   * @param data - Dados contendo o co_owner_id
+   * @param userId - ID do usuário que está realizando a atualização
+   * @returns Projeto atualizado
+   */
+  async updateCoOwner(projectId: string, data: ProjectUpdateCoOwnerDto, userId: string): Promise<Project> {
+    // Validar se o projeto existe e se não está concluído
+    const existingProject = await this.findById(projectId);
+    if (!existingProject) {
+      throw new CustomGraphQLError(
+        'Project not found',
+        ErrorCode.NOT_FOUND,
+        404,
+        { additional: { errorCode: 'PROJECT_NOT_FOUND' } }
+      );
+    }
+
+    // Block modification if project is CONCLUDED
+    if (existingProject.status === ProjectStatus.CONCLUDED) {
+      throw new CustomGraphQLError(
+        'Cannot modify a concluded project',
+        ErrorCode.BAD_REQUEST,
+        400,
+        { additional: { errorCode: 'PROJECT_IS_CONCLUDED' } }
+      );
+    }
+
+    return this.projectRepository.updateCoOwner(projectId, data, userId);
   }
 
   /**
@@ -174,6 +266,20 @@ export class ProjectService {
     });
 
     if (activeActivities === 0 && project.status !== ProjectStatus.DRAFT) {
+      if (project.status === ProjectStatus.IN_PROGRESS && project.subsidized_budget && Number(project.subsidized_budget) > 0) {
+        await this.annualBudgetService.updateBudgetFinancials(
+          project.department_id,
+          new Date(project.start_at).getFullYear(),
+          -Number(project.subsidized_budget), // release
+          0,
+          userId,
+          {
+            type: 'ALLOCATION_RELEASED',
+            description: `Project ${project.title} reverted to DRAFT status (no activities)`,
+            project_id: project.id
+          }
+        );
+      }
       await this.projectRepository.update(projectId, { status: ProjectStatus.DRAFT }, userId);
       console.log(`📋 Project ${projectId} reverted to DRAFT (no activities)`);
     }
@@ -255,10 +361,10 @@ export class ProjectService {
     // 7. Release subsidized_budget from annual budget
     const projectData = await this.prisma.project.findUnique({
       where: { id },
-      select: { department_id: true, subsidized_budget: true, start_at: true }
+      select: { department_id: true, subsidized_budget: true, start_at: true, status: true }
     });
 
-    if (projectData?.department_id && projectData.subsidized_budget) {
+    if (projectData?.department_id && projectData.subsidized_budget && projectData.status === ProjectStatus.IN_PROGRESS) {
       const projectYear = new Date(projectData.start_at).getFullYear();
       console.log(`💰 Releasing subsidized_budget ${Number(projectData.subsidized_budget)} from annual budget (year: ${projectYear})...`);
       await this.annualBudgetService.updateBudgetFinancials(
@@ -266,7 +372,12 @@ export class ProjectService {
         projectYear,
         -Number(projectData.subsidized_budget), // Release allocation
         0,
-        userId
+        userId,
+        {
+           type: 'ALLOCATION_RELEASED',
+           description: `Project deleted: reserved budget released`,
+           project_id: id
+        }
       );
     }
 
@@ -292,6 +403,14 @@ export class ProjectService {
 
   async getProjectsByChurch(churchId: string): Promise<Project[]> {
     return this.projectRepository.findByChurchId(churchId);
+  }
+
+  async getMyProjects(userId: string): Promise<Project[]> {
+    return this.projectRepository.findMyProjects(userId);
+  }
+
+  async getProjectCollaborators(projectId: string): Promise<ProjectCollaborator[]> {
+    return this.projectRepository.findCollaboratorsByProjectId(projectId);
   }
 
   async getProjectKPIs(institutionId?: string): Promise<ProjectKPIs> {

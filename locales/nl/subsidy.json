@@ -8,6 +8,12 @@
     "documents_pending_validation": "Kan subsidie niet goedkeuren. {{count}} document(en) wachten nog op validatie.",
     "documents_rejected": "Kan subsidie niet goedkeuren. {{count}} document(en) zijn afgewezen.",
     "pending_status_not_found": "Status 'In afwachting' niet gevonden. Maak eerst een PENDING status aan.",
+    "draft_status_not_found": "Conceptstatus niet gevonden. Maak eerst een DRAFT status aan.",
+    "invalid_transition_from_draft": "Kan de status niet wijzigen van CONCEPT naar {{to}}. Conceptaanvragen moeten eerst worden ingediend (naar IN_AFWACHTING verplaatst).",
+    "invalid_transition_to_advanced_closed": "Kan niet overgaan naar VOORSCHOT_GESLOTEN vanuit {{from}}. Alleen GOEDGEKEURDE subsidies kunnen naar Voorschot Gesloten.",
+    "invalid_transition_advanced_closed": "Kan niet overgaan vanuit VOORSCHOT_GESLOTEN naar {{to}}. Voorschot Gesloten subsidies kunnen alleen GESLOTEN, WACHT_OP_TERUGBETALING of WACHT_OP_DOCUMENTEN worden.",
+    "invalid_transition_not_advance": "Deze statusovergang is alleen toegestaan voor voorschot-type subsidieaanvragen.",
+    "invalid_transition_to_waiting_documents": "Kan niet overgaan naar WACHT_OP_DOCUMENTEN vanuit {{from}}. Alleen GOEDGEKEURDE of VOORSCHOT_GESLOTEN subsidies kunnen deze status krijgen.",
     "subsidy_not_found": "Subsidieaanvraag niet gevonden",
     "cannot_delete_approved_or_closed": "Kan {{status}} subsidieaanvragen niet verwijderen",
     "approved_status_not_found": "Goedgekeurde status niet gevonden",
@@ -20,6 +26,8 @@
     "refund_already_done": "Terugbetaling is al verwerkt voor deze subsidie"
   },
   "history": {
+    "request_created_as_draft": "Aanvraag aangemaakt als concept",
+    "request_submitted": "Aanvraag ingediend ter beoordeling",
     "request_created": "Aanvraag aangemaakt",
     "subsidy_created_advance": "Subsidieaanvraag aangemaakt in afwachting",
     "activity_linked_to_advance": "Activiteit gekoppeld aan subsidieaanvraag in afwachting",
@@ -37,11 +45,14 @@
   },
   "status": {
     "unknown": "Onbekend",
+    "draft": "Concept",
     "pending": "In afwachting",
     "in_review": "In beoordeling",
     "approved": "Goedgekeurd",
     "rejected": "Afgewezen",
     "advanced_closed": "Voorschot Gesloten",
-    "closed": "Gesloten"
+    "closed": "Gesloten",
+    "waiting_documents": "Wacht op Documenten",
+    "waiting_refund": "Wacht op Terugbetaling"
   }
 }

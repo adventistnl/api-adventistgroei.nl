@@ -11,6 +11,9 @@ import { AnnualBudgetPriority } from '../prisma/annual-budget-priority.enum';
 import { AnnualBudgetCategory } from '../prisma/annual-budget-category.enum';
 import { GraphQLJSON } from 'graphql-type-json';
 import { AnnualBudgetEntityType } from '../prisma/annual-budget-entity-type.enum';
+import { BudgetTransactionUncheckedCreateNestedManyWithoutAnnual_budgetInput } from '../budget-transaction/budget-transaction-unchecked-create-nested-many-without-annual-budget.input';
+import { BudgetTransferUncheckedCreateNestedManyWithoutFrom_budgetInput } from '../budget-transfer/budget-transfer-unchecked-create-nested-many-without-from-budget.input';
+import { BudgetTransferUncheckedCreateNestedManyWithoutTo_budgetInput } from '../budget-transfer/budget-transfer-unchecked-create-nested-many-without-to-budget.input';
 
 @InputType()
 export class AnnualBudgetUncheckedCreateWithoutDepartmentInput {
@@ -25,16 +28,6 @@ export class AnnualBudgetUncheckedCreateWithoutDepartmentInput {
     @Type(() => Object)
     @Transform(transformToDecimal)
     planned_budget!: Decimal;
-
-    @Field(() => GraphQLDecimal, {nullable:false})
-    @Type(() => Object)
-    @Transform(transformToDecimal)
-    total_expenses!: Decimal;
-
-    @Field(() => GraphQLDecimal, {nullable:false})
-    @Type(() => Object)
-    @Transform(transformToDecimal)
-    balance!: Decimal;
 
     @Field(() => String, {nullable:true})
     notes?: string;
@@ -78,11 +71,6 @@ export class AnnualBudgetUncheckedCreateWithoutDepartmentInput {
     @Field(() => String, {nullable:true})
     church_id?: string;
 
-    @Field(() => GraphQLDecimal, {nullable:false})
-    @Type(() => Object)
-    @Transform(transformToDecimal)
-    allocated_amount!: Decimal;
-
     @Field(() => GraphQLDecimal, {nullable:true})
     @Type(() => Object)
     @Transform(transformToDecimal)
@@ -120,4 +108,16 @@ export class AnnualBudgetUncheckedCreateWithoutDepartmentInput {
 
     @Field(() => AnnualBudgetEntityType, {nullable:false})
     entity_type!: `${AnnualBudgetEntityType}`;
+
+    @Field(() => BudgetTransactionUncheckedCreateNestedManyWithoutAnnual_budgetInput, {nullable:true})
+    @Type(() => BudgetTransactionUncheckedCreateNestedManyWithoutAnnual_budgetInput)
+    transactions?: BudgetTransactionUncheckedCreateNestedManyWithoutAnnual_budgetInput;
+
+    @Field(() => BudgetTransferUncheckedCreateNestedManyWithoutFrom_budgetInput, {nullable:true})
+    @Type(() => BudgetTransferUncheckedCreateNestedManyWithoutFrom_budgetInput)
+    transfers_out?: BudgetTransferUncheckedCreateNestedManyWithoutFrom_budgetInput;
+
+    @Field(() => BudgetTransferUncheckedCreateNestedManyWithoutTo_budgetInput, {nullable:true})
+    @Type(() => BudgetTransferUncheckedCreateNestedManyWithoutTo_budgetInput)
+    transfers_in?: BudgetTransferUncheckedCreateNestedManyWithoutTo_budgetInput;
 }

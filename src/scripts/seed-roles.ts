@@ -73,6 +73,7 @@ const roles = [
       { key_code: 'ENTITY_DISTRIBUTION_ACCESS', is_essential: true },
       { key_code: 'BUDGET_DISTRIBUTION_ACCESS', is_essential: true },
       { key_code: 'INSTITUTIONAL_DEPARTMENTS_KPIS_ACCESS', is_essential: true },
+      { key_code: 'LEDGER_HISTORY_ACCESS', is_essential: true },
       { key_code: 'INSTITUTION_BUDGET_CREATE', is_essential: true },
       { key_code: 'INSTITUTION_BUDGET_UPDATE', is_essential: true },
       { key_code: 'DEPARTMENT_BUDGET_CREATE', is_essential: true },
@@ -82,6 +83,7 @@ const roles = [
       { key_code: 'SUBSIDY_REQUESTS_ACCESS', is_essential: true },
       { key_code: 'SUBSIDY_REQUEST_ACCESS', is_essential: true },
       { key_code: 'SUBSIDY_REQUEST_CREATE', is_essential: true },
+      { key_code: 'SUBSIDY_REQUEST_SUBMIT', is_essential: true },
       { key_code: 'SUBSIDY_REQUEST_UPDATE', is_essential: true },
       { key_code: 'SUBSIDY_REQUEST_DELETE', is_essential: true },
       { key_code: 'SUBSIDY_REQUEST_APPROVE', is_essential: true },
@@ -92,10 +94,25 @@ const roles = [
       { key_code: 'SUBSIDY_BY_MONTH_ACCESS', is_essential: true },
       { key_code: 'SUBSIDY_BY_STATUS_ACCESS', is_essential: true },
       { key_code: 'SUBSIDY_REQUEST_ADVANCE_CREATE', is_essential: true },
+      { key_code: 'SUBSIDY_REQUEST_WITHOUT_DOCUMENT_CREATE', is_essential: true },
       // Refund permissions
       { key_code: 'REQUEST_SUBSIDY_REFUND', is_essential: true },
       { key_code: 'GET_SUBSIDIES_WAITING_REFUND', is_essential: true },
       { key_code: 'CONFIRM_REFUND_DONE', is_essential: true },
+      // My Projects
+      { key_code: 'MY_PROJECTS_ACCESS', is_essential: true },
+      // Project History (full CRUD)
+      { key_code: 'PROJECT_HISTORIES_ACCESS', is_essential: true },
+      { key_code: 'PROJECT_HISTORY_CREATE', is_essential: true },
+      { key_code: 'PROJECT_HISTORY_DELETE', is_essential: true },
+      // Project Adjustment (full CRUD)
+      { key_code: 'PROJECT_ADJUSTMENTS_ACCESS', is_essential: true },
+      { key_code: 'PROJECT_ADJUSTMENT_ACCESS', is_essential: true },
+      { key_code: 'PROJECT_ADJUSTMENT_CREATE', is_essential: true },
+      { key_code: 'PROJECT_ADJUSTMENT_STATUS_UPDATE', is_essential: true },
+      { key_code: 'PROJECT_ADJUSTMENT_TASK_ADD', is_essential: true },
+      { key_code: 'PROJECT_ADJUSTMENT_TASK_TOGGLE', is_essential: true },
+      { key_code: 'PROJECT_ADJUSTMENT_TASK_REMOVE', is_essential: true },
     ],
   },
   {
@@ -111,8 +128,11 @@ const roles = [
       { key_code: 'ROLE_ACCESS', is_essential: true },
       { key_code: 'CHURCHES_ACCESS', is_essential: true },
       { key_code: 'CHURCH_ACCESS', is_essential: true },
-      // { key_code: 'DEPARTMENTS_ACCESS', is_essential: true },
+      { key_code: 'DEPARTMENTS_ACCESS', is_essential: true },
       { key_code: 'DEPARTMENT_ACCESS', is_essential: true },
+      { key_code: 'PROJECT_CREATE', is_essential: true },
+      // My Projects
+      { key_code: 'MY_PROJECTS_ACCESS', is_essential: true },
     ],
   },
   {
@@ -163,18 +183,22 @@ const roles = [
       { key_code: 'SUBSIDY_REQUESTS_ACCESS', is_essential: true },
       { key_code: 'SUBSIDY_REQUEST_ACCESS', is_essential: true },
       { key_code: 'SUBSIDY_REQUEST_CREATE', is_essential: true },
+      { key_code: 'SUBSIDY_REQUEST_SUBMIT', is_essential: true },
       { key_code: 'SUBSIDY_REQUEST_UPDATE', is_essential: true },
       { key_code: 'SUBSIDY_KPIS_ACCESS', is_essential: true },
       { key_code: 'SUBSIDY_BY_DEPARTMENT_ACCESS', is_essential: true },
       { key_code: 'SUBSIDY_BY_MONTH_ACCESS', is_essential: true },
       { key_code: 'SUBSIDY_BY_STATUS_ACCESS', is_essential: true },
       { key_code: 'SUBSIDY_REQUEST_ADVANCE_CREATE', is_essential: true },
+      { key_code: 'SUBSIDY_REQUEST_WITHOUT_DOCUMENT_CREATE', is_essential: true },
       // Refund permissions
       { key_code: 'GET_SUBSIDIES_WAITING_REFUND', is_essential: true },
       // Subsidy Receipts
       { key_code: 'UPLOAD_SUBSIDY_RECEIPT', is_essential: true },
       { key_code: 'DOWNLOAD_SUBSIDY_RECEIPT', is_essential: true },
       { key_code: 'GET_SUBSIDY_RECEIPTS', is_essential: true },
+      // My Projects
+      { key_code: 'MY_PROJECTS_ACCESS', is_essential: true },
     ],
   },
   {
@@ -198,6 +222,7 @@ const roles = [
       { key_code: 'ENTITY_DISTRIBUTION_ACCESS', is_essential: true },
       { key_code: 'BUDGET_DISTRIBUTION_ACCESS', is_essential: true },
       { key_code: 'INSTITUTIONAL_DEPARTMENTS_KPIS_ACCESS', is_essential: true },
+      { key_code: 'LEDGER_HISTORY_ACCESS', is_essential: true },
       { key_code: 'ANNUAL_BUDGET_DELETE', is_essential: true },
       { key_code: 'ANNUAL_BUDGET_APPROVE', is_essential: true },
       { key_code: 'ANNUAL_BUDGET_REJECT', is_essential: true },
@@ -224,6 +249,7 @@ const roles = [
       { key_code: 'GET_SUBSIDY_RECEIPTS', is_essential: true },
       { key_code: 'VALIDATE_SUBSIDY_RECEIPT', is_essential: true },
       { key_code: 'DOWNLOAD_SUBSIDY_RECEIPT', is_essential: true },
+      { key_code: 'VALIDATE_ACTIVITY_DOCUMENT', is_essential: true },
       { key_code: 'SUBSIDY_KPIS_ACCESS', is_essential: true },
       { key_code: 'SUBSIDY_BY_DEPARTMENT_ACCESS', is_essential: true },
       { key_code: 'SUBSIDY_BY_MONTH_ACCESS', is_essential: true },
@@ -232,6 +258,8 @@ const roles = [
       { key_code: 'REQUEST_SUBSIDY_REFUND', is_essential: true },
       { key_code: 'GET_SUBSIDIES_WAITING_REFUND', is_essential: true },
       { key_code: 'CONFIRM_REFUND_DONE', is_essential: true },
+      // My Projects
+      { key_code: 'MY_PROJECTS_ACCESS', is_essential: true },
     ],
   },
   {
@@ -257,6 +285,16 @@ const roles = [
       { key_code: 'INSTITUTION_ACCESS', is_essential: true },
       { key_code: 'DEPARTMENTS_ACCESS', is_essential: true },
       { key_code: 'DEPARTMENT_ACCESS', is_essential: true },
+      // My Projects
+      { key_code: 'MY_PROJECTS_ACCESS', is_essential: true },
+      // Project Adjustment (full CRUD)
+      { key_code: 'PROJECT_ADJUSTMENTS_ACCESS', is_essential: true },
+      { key_code: 'PROJECT_ADJUSTMENT_ACCESS', is_essential: true },
+      { key_code: 'PROJECT_ADJUSTMENT_CREATE', is_essential: true },
+      { key_code: 'PROJECT_ADJUSTMENT_STATUS_UPDATE', is_essential: true },
+      { key_code: 'PROJECT_ADJUSTMENT_TASK_ADD', is_essential: true },
+      { key_code: 'PROJECT_ADJUSTMENT_TASK_TOGGLE', is_essential: true },
+      { key_code: 'PROJECT_ADJUSTMENT_TASK_REMOVE', is_essential: true },
     ],
   },
   {
@@ -325,6 +363,7 @@ const roles = [
       { key_code: 'SUBSIDY_REQUESTS_ACCESS', is_essential: true },
       { key_code: 'SUBSIDY_REQUEST_ACCESS', is_essential: true },
       { key_code: 'SUBSIDY_REQUEST_CREATE', is_essential: true },
+      { key_code: 'SUBSIDY_REQUEST_SUBMIT', is_essential: true },
       { key_code: 'SUBSIDY_REQUEST_UPDATE', is_essential: true },
       { key_code: 'SUBSIDY_REQUEST_DELETE', is_essential: true },
       { key_code: 'SUBSIDY_REQUEST_APPROVE', is_essential: true },
@@ -334,12 +373,15 @@ const roles = [
       { key_code: 'SUBSIDY_BY_MONTH_ACCESS', is_essential: true },
       { key_code: 'SUBSIDY_BY_STATUS_ACCESS', is_essential: true },
       { key_code: 'SUBSIDY_STATUS_HISTORY_GET', is_essential: true },
+      { key_code: 'SUBSIDY_REQUEST_WITHOUT_DOCUMENT_CREATE', is_essential: true },
       // Subsidy Receipts
       { key_code: 'UPLOAD_SUBSIDY_RECEIPT', is_essential: true },
       { key_code: 'DOWNLOAD_SUBSIDY_RECEIPT', is_essential: true },
       { key_code: 'DELETE_SUBSIDY_RECEIPT', is_essential: true },
-      // { key_code: 'VALIDATE_SUBSIDY_RECEIPT', is_essential: true },
+      { key_code: 'VALIDATE_SUBSIDY_RECEIPT', is_essential: true },
       { key_code: 'GET_SUBSIDY_RECEIPTS', is_essential: true },
+      // My Projects
+      { key_code: 'MY_PROJECTS_ACCESS', is_essential: true },
     ],
   },
   {
@@ -390,17 +432,22 @@ const roles = [
       { key_code: 'DELETE_ACTIVITY_DOCUMENT', is_essential: true },
       { key_code: 'VALIDATE_ACTIVITY_DOCUMENT', is_essential: true },
       { key_code: 'GET_ACTIVITY_DOCUMENTS', is_essential: true },
-      // Subsidies (can create, update, but NOT approve/reject)
+      // Subsidies
       { key_code: 'SUBSIDY_REQUESTS_ACCESS', is_essential: true },
+      { key_code: 'SUBSIDY_STATUSES_ACCESS', is_essential: true },
       { key_code: 'SUBSIDY_REQUEST_ACCESS', is_essential: true },
       { key_code: 'SUBSIDY_REQUEST_CREATE', is_essential: true },
+      { key_code: 'SUBSIDY_REQUEST_SUBMIT', is_essential: true },
       { key_code: 'SUBSIDY_REQUEST_UPDATE', is_essential: true },
+      { key_code: 'SUBSIDY_REQUEST_APPROVE', is_essential: true },
+      { key_code: 'SUBSIDY_REQUEST_REJECT', is_essential: true },
       { key_code: 'SUBSIDY_KPIS_ACCESS', is_essential: true },
       { key_code: 'SUBSIDY_BY_DEPARTMENT_ACCESS', is_essential: true },
       { key_code: 'SUBSIDY_BY_MONTH_ACCESS', is_essential: true },
       { key_code: 'SUBSIDY_BY_STATUS_ACCESS', is_essential: true },
       { key_code: 'SUBSIDY_STATUS_HISTORY_GET', is_essential: true },
       { key_code: 'SUBSIDY_REQUEST_ADVANCE_CREATE', is_essential: true },
+      { key_code: 'SUBSIDY_REQUEST_WITHOUT_DOCUMENT_CREATE', is_essential: true },
       // Refund permissions
       { key_code: 'REQUEST_SUBSIDY_REFUND', is_essential: true },
       { key_code: 'GET_SUBSIDIES_WAITING_REFUND', is_essential: true },
@@ -408,7 +455,18 @@ const roles = [
       { key_code: 'UPLOAD_SUBSIDY_RECEIPT', is_essential: true },
       { key_code: 'DOWNLOAD_SUBSIDY_RECEIPT', is_essential: true },
       { key_code: 'DELETE_SUBSIDY_RECEIPT', is_essential: true },
+      { key_code: 'VALIDATE_SUBSIDY_RECEIPT', is_essential: true },
       { key_code: 'GET_SUBSIDY_RECEIPTS', is_essential: true },
+      // My Projects
+      { key_code: 'MY_PROJECTS_ACCESS', is_essential: true },
+      // Project Adjustment (full CRUD)
+      { key_code: 'PROJECT_ADJUSTMENTS_ACCESS', is_essential: true },
+      { key_code: 'PROJECT_ADJUSTMENT_ACCESS', is_essential: true },
+      { key_code: 'PROJECT_ADJUSTMENT_CREATE', is_essential: true },
+      { key_code: 'PROJECT_ADJUSTMENT_STATUS_UPDATE', is_essential: true },
+      { key_code: 'PROJECT_ADJUSTMENT_TASK_ADD', is_essential: true },
+      { key_code: 'PROJECT_ADJUSTMENT_TASK_TOGGLE', is_essential: true },
+      { key_code: 'PROJECT_ADJUSTMENT_TASK_REMOVE', is_essential: true },
     ],
   },
   {
@@ -452,16 +510,33 @@ const roles = [
       { key_code: 'VALIDATE_ACTIVITY_DOCUMENT', is_essential: true },
       { key_code: 'GET_ACTIVITY_DOCUMENTS', is_essential: true },
       { key_code: 'SUBSIDY_REQUEST_ADVANCE_CREATE', is_essential: true },
-      // Subsidies (can create, update, but NOT approve/reject)
+      { key_code: 'SUBSIDY_REQUEST_WITHOUT_DOCUMENT_CREATE', is_essential: true },
+      // Subsidies
       { key_code: 'SUBSIDY_REQUESTS_ACCESS', is_essential: true },
+      { key_code: 'SUBSIDY_STATUSES_ACCESS', is_essential: true },
       { key_code: 'SUBSIDY_REQUEST_ACCESS', is_essential: true },
       { key_code: 'SUBSIDY_REQUEST_CREATE', is_essential: true },
+      { key_code: 'SUBSIDY_REQUEST_SUBMIT', is_essential: true },
       { key_code: 'SUBSIDY_REQUEST_UPDATE', is_essential: true },
+      { key_code: 'SUBSIDY_REQUEST_APPROVE', is_essential: true },
+      { key_code: 'SUBSIDY_REQUEST_REJECT', is_essential: true },
+      { key_code: 'SUBSIDY_STATUS_HISTORY_GET', is_essential: true },
       { key_code: 'SUBSIDY_KPIS_ACCESS', is_essential: true },
       // Subsidy Receipts
       { key_code: 'UPLOAD_SUBSIDY_RECEIPT', is_essential: true },
       { key_code: 'DOWNLOAD_SUBSIDY_RECEIPT', is_essential: true },
+      { key_code: 'VALIDATE_SUBSIDY_RECEIPT', is_essential: true },
       { key_code: 'GET_SUBSIDY_RECEIPTS', is_essential: true },
+      // My Projects
+      { key_code: 'MY_PROJECTS_ACCESS', is_essential: true },
+      // Project Adjustment (full CRUD)
+      { key_code: 'PROJECT_ADJUSTMENTS_ACCESS', is_essential: true },
+      { key_code: 'PROJECT_ADJUSTMENT_ACCESS', is_essential: true },
+      { key_code: 'PROJECT_ADJUSTMENT_CREATE', is_essential: true },
+      { key_code: 'PROJECT_ADJUSTMENT_STATUS_UPDATE', is_essential: true },
+      { key_code: 'PROJECT_ADJUSTMENT_TASK_ADD', is_essential: true },
+      { key_code: 'PROJECT_ADJUSTMENT_TASK_TOGGLE', is_essential: true },
+      { key_code: 'PROJECT_ADJUSTMENT_TASK_REMOVE', is_essential: true },
     ],
   },
   {
@@ -507,12 +582,14 @@ const roles = [
       { key_code: 'SUBSIDY_REQUESTS_ACCESS', is_essential: true },
       { key_code: 'SUBSIDY_REQUEST_ACCESS', is_essential: true },
       { key_code: 'SUBSIDY_REQUEST_CREATE', is_essential: true },
+      { key_code: 'SUBSIDY_REQUEST_SUBMIT', is_essential: true },
       { key_code: 'SUBSIDY_REQUEST_UPDATE', is_essential: true },
       { key_code: 'SUBSIDY_KPIS_ACCESS', is_essential: true },
       { key_code: 'SUBSIDY_BY_DEPARTMENT_ACCESS', is_essential: true },
       { key_code: 'SUBSIDY_BY_MONTH_ACCESS', is_essential: true },
       { key_code: 'SUBSIDY_BY_STATUS_ACCESS', is_essential: true },
       { key_code: 'SUBSIDY_REQUEST_ADVANCE_CREATE', is_essential: true },
+      { key_code: 'SUBSIDY_REQUEST_WITHOUT_DOCUMENT_CREATE', is_essential: true },
       { key_code: 'SUBSIDY_STATUS_HISTORY_GET', is_essential: true },
       // Subsidy Receipts
       { key_code: 'UPLOAD_SUBSIDY_RECEIPT', is_essential: true },
@@ -521,6 +598,129 @@ const roles = [
       // Refund permissions
       { key_code: 'REQUEST_SUBSIDY_REFUND', is_essential: true },
       { key_code: 'GET_SUBSIDIES_WAITING_REFUND', is_essential: true },
+      // My Projects
+      { key_code: 'MY_PROJECTS_ACCESS', is_essential: true },
+      // Project History (full CRUD)
+      { key_code: 'PROJECT_HISTORIES_ACCESS', is_essential: true },
+      { key_code: 'PROJECT_HISTORY_CREATE', is_essential: true },
+      { key_code: 'PROJECT_HISTORY_DELETE', is_essential: true },
+      // Project Adjustment (full CRUD)
+      { key_code: 'PROJECT_ADJUSTMENTS_ACCESS', is_essential: true },
+      { key_code: 'PROJECT_ADJUSTMENT_ACCESS', is_essential: true },
+      { key_code: 'PROJECT_ADJUSTMENT_CREATE', is_essential: true },
+      { key_code: 'PROJECT_ADJUSTMENT_STATUS_UPDATE', is_essential: true },
+      { key_code: 'PROJECT_ADJUSTMENT_TASK_ADD', is_essential: true },
+      { key_code: 'PROJECT_ADJUSTMENT_TASK_TOGGLE', is_essential: true },
+      { key_code: 'PROJECT_ADJUSTMENT_TASK_REMOVE', is_essential: true },
+    ],
+  },
+  {
+    name: 'Project Collaborator',
+    key_code: 'PROJECT_COLLABORATOR',
+    description: 'Collaborator assigned to a project — can manage activities and comment on project history',
+    is_fixed: true,
+    permissions: [
+      // Basic reads
+      { key_code: 'USERS_ACCESS', is_essential: true },
+      { key_code: 'USER_ACCESS', is_essential: true },
+      { key_code: 'USER_OWN_UPDATE', is_essential: true },
+      { key_code: 'ROLES_ACCESS', is_essential: true },
+      { key_code: 'ROLE_ACCESS', is_essential: true },
+      { key_code: 'PROJECTS_ACCESS', is_essential: true },
+      { key_code: 'PROJECT_ACCESS', is_essential: true },
+      // My Projects
+      { key_code: 'MY_PROJECTS_ACCESS', is_essential: true },
+      // Activities (create + update; no delete, no batch, no validate)
+      { key_code: 'PROJECT_ACTIVITIES_ACCESS', is_essential: true },
+      { key_code: 'ACTIVITY_ACCESS', is_essential: true },
+      { key_code: 'PROJECT_ACTIVITY_CREATE', is_essential: true },
+      { key_code: 'PROJECT_ACTIVITY_UPDATE', is_essential: true },
+      { key_code: 'PROJECT_ACTIVITY_LOGS_ACCESS', is_essential: true },
+      // Activity Documents (read + download only)
+      { key_code: 'GET_ACTIVITY_DOCUMENTS', is_essential: true },
+      { key_code: 'DOWNLOAD_ACTIVITY_DOCUMENT', is_essential: true },
+      { key_code: 'UPLOAD_ACTIVITY_DOCUMENT', is_essential: true },
+      // Project History (read + comment only; no delete)
+      { key_code: 'PROJECT_HISTORIES_ACCESS', is_essential: true },
+      { key_code: 'PROJECT_HISTORY_CREATE', is_essential: true },
+      // Project Adjustment (read only)
+      { key_code: 'PROJECT_ADJUSTMENTS_ACCESS', is_essential: true },
+      { key_code: 'PROJECT_ADJUSTMENT_ACCESS', is_essential: true },
+    ],
+  },
+  {
+    name: 'Project Co-Owner',
+    key_code: 'PROJECT_CO_OWNER',
+    description: 'Co-owner of a project — full project management except changing the project owner',
+    is_fixed: true,
+    permissions: [
+      // Read permissions
+      { key_code: 'USERS_ACCESS', is_essential: true },
+      { key_code: 'USER_ACCESS', is_essential: true },
+      { key_code: 'USER_OWN_UPDATE', is_essential: true },
+      { key_code: 'ROLES_ACCESS', is_essential: true },
+      { key_code: 'ROLE_ACCESS', is_essential: true },
+      { key_code: 'PROJECTS_ACCESS', is_essential: true },
+      { key_code: 'PROJECT_ACCESS', is_essential: true },
+      // Project management (cannot change owner_id — enforced in service)
+      { key_code: 'PROJECT_UPDATE', is_essential: true },
+      { key_code: 'PROJECT_DELETE', is_essential: true },
+      { key_code: 'PROJECT_VOLUNTARY_ADD', is_essential: true },
+      { key_code: 'PROJECT_VOLUNTARY_REMOVE', is_essential: true },
+      // Project KPIs
+      { key_code: 'PROJECT_KPIS_ACCESS', is_essential: true },
+      { key_code: 'PROJECTS_BY_DEPARTMENT_ACCESS', is_essential: true },
+      { key_code: 'SUBSIDY_STATUS_DISTRIBUTION_ACCESS', is_essential: true },
+      { key_code: 'PROJECTS_TIMELINE_ACCESS', is_essential: true },
+      { key_code: 'SPECIFIC_PROJECT_KPIS_ACCESS', is_essential: true },
+      // Activities (full access)
+      { key_code: 'PROJECT_ACTIVITIES_ACCESS', is_essential: true },
+      { key_code: 'ACTIVITY_ACCESS', is_essential: true },
+      { key_code: 'PROJECT_ACTIVITY_CREATE', is_essential: true },
+      { key_code: 'PROJECT_ACTIVITY_UPDATE', is_essential: true },
+      { key_code: 'PROJECT_ACTIVITY_DELETE', is_essential: true },
+      { key_code: 'PROJECT_ACTIVITIES_BATCH_UPDATE', is_essential: true },
+      { key_code: 'PROJECT_ACTIVITY_LOGS_ACCESS', is_essential: true },
+      // Activity Documents
+      { key_code: 'UPLOAD_ACTIVITY_DOCUMENT', is_essential: true },
+      { key_code: 'DOWNLOAD_ACTIVITY_DOCUMENT', is_essential: true },
+      { key_code: 'DELETE_ACTIVITY_DOCUMENT', is_essential: true },
+      { key_code: 'VALIDATE_ACTIVITY_DOCUMENT', is_essential: true },
+      { key_code: 'GET_ACTIVITY_DOCUMENTS', is_essential: true },
+      // Subsidies (create, update, submit — NOT approve/reject)
+      { key_code: 'SUBSIDY_REQUESTS_ACCESS', is_essential: true },
+      { key_code: 'SUBSIDY_REQUEST_ACCESS', is_essential: true },
+      { key_code: 'SUBSIDY_REQUEST_CREATE', is_essential: true },
+      { key_code: 'SUBSIDY_REQUEST_SUBMIT', is_essential: true },
+      { key_code: 'SUBSIDY_REQUEST_UPDATE', is_essential: true },
+      { key_code: 'SUBSIDY_KPIS_ACCESS', is_essential: true },
+      { key_code: 'SUBSIDY_BY_DEPARTMENT_ACCESS', is_essential: true },
+      { key_code: 'SUBSIDY_BY_MONTH_ACCESS', is_essential: true },
+      { key_code: 'SUBSIDY_BY_STATUS_ACCESS', is_essential: true },
+      { key_code: 'SUBSIDY_REQUEST_ADVANCE_CREATE', is_essential: true },
+      { key_code: 'SUBSIDY_REQUEST_WITHOUT_DOCUMENT_CREATE', is_essential: true },
+      { key_code: 'SUBSIDY_STATUS_HISTORY_GET', is_essential: true },
+      // Subsidy Receipts
+      { key_code: 'UPLOAD_SUBSIDY_RECEIPT', is_essential: true },
+      { key_code: 'DOWNLOAD_SUBSIDY_RECEIPT', is_essential: true },
+      { key_code: 'GET_SUBSIDY_RECEIPTS', is_essential: true },
+      // Refund permissions
+      { key_code: 'REQUEST_SUBSIDY_REFUND', is_essential: true },
+      { key_code: 'GET_SUBSIDIES_WAITING_REFUND', is_essential: true },
+      // My Projects
+      { key_code: 'MY_PROJECTS_ACCESS', is_essential: true },
+      // Project History (full CRUD)
+      { key_code: 'PROJECT_HISTORIES_ACCESS', is_essential: true },
+      { key_code: 'PROJECT_HISTORY_CREATE', is_essential: true },
+      { key_code: 'PROJECT_HISTORY_DELETE', is_essential: true },
+      // Project Adjustment (full CRUD)
+      { key_code: 'PROJECT_ADJUSTMENTS_ACCESS', is_essential: true },
+      { key_code: 'PROJECT_ADJUSTMENT_ACCESS', is_essential: true },
+      { key_code: 'PROJECT_ADJUSTMENT_CREATE', is_essential: true },
+      { key_code: 'PROJECT_ADJUSTMENT_STATUS_UPDATE', is_essential: true },
+      { key_code: 'PROJECT_ADJUSTMENT_TASK_ADD', is_essential: true },
+      { key_code: 'PROJECT_ADJUSTMENT_TASK_TOGGLE', is_essential: true },
+      { key_code: 'PROJECT_ADJUSTMENT_TASK_REMOVE', is_essential: true },
     ],
   },
   {

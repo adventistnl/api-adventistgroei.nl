@@ -7,3 +7,4 @@ export * from './department.model';
 export * from './user.model';
 export * from './invite.model';
 export * from './contact.model';
+export * from './project-collaborator.model';
