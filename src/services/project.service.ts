@@ -12,6 +12,8 @@ import { AnnualBudgetService } from './annual-budget.service';
 import { UserRepository } from '../repositories/user.repository';
 import { UserWithRoles, ProjectCollaborator } from '../models';
 import { ProjectStatus } from '../@generated/prisma/project-status.enum';
+import { EmailService } from './email.service';
+import { NotificationService } from './notification.service';
 
 @Injectable()
 export class ProjectService {
@@ -22,6 +24,8 @@ export class ProjectService {
     private readonly projectActivityService: ProjectActivityService,
     private readonly annualBudgetService: AnnualBudgetService,
     private readonly userRepository: UserRepository,
+    private readonly emailService: EmailService,
+    private readonly notificationService: NotificationService,
   ) {}
 
   async create(data: ProjectCreateDto, userId: string): Promise<Project> {
@@ -92,6 +96,54 @@ export class ProjectService {
       );
     }
 
+    const isOwner = userId === existingProject.owner_id;
+    const isCoOwner = userId === existingProject.co_owner_id;
+
+    // 1. Status Change Permissions
+    if (data.status && data.status !== existingProject.status) {
+      if (!isOwner) {
+        // Co-owner can only transition from DRAFT to OPEN_REQUEST
+        if (isCoOwner && existingProject.status === ProjectStatus.DRAFT && data.status === ProjectStatus.OPEN_REQUEST) {
+           // allowed
+        } else {
+           throw new CustomGraphQLError(
+             'Only the institutional owner can change the project status',
+             ErrorCode.UNAUTHORIZED,
+             401,
+             { additional: { errorCode: 'UNAUTHORIZED_STATUS_CHANGE' } }
+           );
+        }
+      }
+    }
+
+    // 2. Edit Limit for Co-Owner
+    if (isCoOwner && !isOwner && existingProject.status !== ProjectStatus.DRAFT) {
+      // Allow them to update co_owner_id or other non-financial fields if needed, 
+      // but "só pode editar valores e atividades enquanto o projeto estiver em modo Draft"
+      if (data.budget !== undefined || data.title !== undefined || data.description !== undefined || data.subsidized_budget !== undefined) {
+         throw new CustomGraphQLError(
+           'Members can only edit project details while it is in DRAFT status',
+           ErrorCode.BAD_REQUEST,
+           400,
+           { additional: { errorCode: 'EDIT_LOCKED_NOT_DRAFT' } }
+         );
+      }
+    }
+
+    // 3. Budget Lock (Teto de Gastos)
+    // Se não estiver nas fases iniciais, o subsidized_budget não pode ser alterado.
+    const initialStatuses = [ProjectStatus.DRAFT, ProjectStatus.OPEN_REQUEST, ProjectStatus.IN_REVIEW, ProjectStatus.ADJUSTMENTS_NEEDED];
+    if (!initialStatuses.includes(existingProject.status as ProjectStatus)) {
+       if (data.subsidized_budget !== undefined && Number(data.subsidized_budget) !== Number(existingProject.subsidized_budget)) {
+           throw new CustomGraphQLError(
+             'Cannot change subsidized budget after project approval',
+             ErrorCode.BAD_REQUEST,
+             400,
+             { additional: { errorCode: 'BUDGET_LOCKED_AFTER_APPROVAL' } }
+           );
+       }
+    }
+
     // Validate transition to CONCLUDED
     if (data.status === ProjectStatus.CONCLUDED) {
       await this.validateConcludedTransition(id);
@@ -145,7 +197,62 @@ export class ProjectService {
       }
     }
 
-    return this.projectRepository.update(id, data, userId);
+    const updatedProject = await this.projectRepository.update(id, data, userId);
+
+    // 4. Notifications on Status Change
+    if (data.status && data.status !== existingProject.status) {
+      this.handleStatusChangeNotifications(updatedProject).catch(e => {
+        console.error('Failed to send status change notifications:', e);
+      });
+    }
+
+    return updatedProject;
+  }
+
+  private async handleStatusChangeNotifications(project: Project): Promise<void> {
+    const owner = await this.userRepository.findById(project.owner_id);
+    const coOwner = project.co_owner_id ? await this.userRepository.findById(project.co_owner_id) : null;
+    
+    const notificationMessage = `Project "${project.title}" status changed to ${project.status}`;
+
+    // Helper to send email
+    const sendEmail = async (user: any) => {
+      if (user?.email) {
+        await this.emailService.sendProjectStatusChangedEmail({
+          to: user.email,
+          projectName: project.title,
+          projectUrl: `${process.env.FRONTEND_URL}/dashboard/projects/${project.id}`,
+          newStatus: project.status,
+          recipientName: user.name,
+          language: user.language_preference,
+        });
+      }
+    };
+
+    // Helper to send in-app notification
+    const sendAppNotification = async (user: any) => {
+       if (user?.id && project.institution_id) {
+         await this.notificationService.create({
+            user_id: user.id,
+            institution_id: project.institution_id,
+            type: 'PROJECT_STATUS_CHANGED',
+            message: notificationMessage,
+            read_status: false,
+         }, 'system');
+       }
+    };
+
+    // Notify Co-Owner (Member)
+    if (coOwner) {
+       await sendEmail(coOwner);
+       await sendAppNotification(coOwner);
+    }
+
+    // Notify Owner (Ministerial)
+    if (owner && owner.id !== coOwner?.id) {
+       await sendEmail(owner);
+       await sendAppNotification(owner);
+    }
   }
 
   /**
@@ -311,7 +418,7 @@ export class ProjectService {
       if (blockedSubsidies.length > 0) {
         const statusNames = blockedSubsidies.map((s) => s.subsidy_status?.name).join(', ');
         throw new CustomGraphQLError(
-          `Cannot delete project with ${statusNames.toLowerCase()} subsidy requests. Please remove or change the status of associated subsidies first.`,
+          `Cannot delete project because it has subsidies with statuses: ${statusNames}. Financial records (approved or closed subsidies) must be preserved. Please remove or reject these subsidies if you truly wish to delete the project, or conclude the project instead.`,
           ErrorCode.BAD_REQUEST,
           400,
           { additional: { errorCode: 'PROJECT_HAS_APPROVED_SUBSIDIES' } }

@@ -1,0 +1,13 @@
+{
+  "status": {
+    "DRAFT": "Draft",
+    "OPEN_REQUEST": "Open Request",
+    "IN_REVIEW": "In Review",
+    "ADJUSTMENTS_NEEDED": "Adjustments Needed",
+    "IN_PROGRESS": "In Progress",
+    "PENDING_RECEIPT": "Pending Receipt",
+    "WAITING_REFUND": "Waiting Refund",
+    "CONCLUDED": "Concluded",
+    "EXPIRED": "Expired"
+  }
+}

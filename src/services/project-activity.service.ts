@@ -11,6 +11,7 @@ import { SubsidyRequestService } from './subsidy-request.service';
 import { ActivityDocumentsRepository } from '../repositories/activity-documents.repository';
 import { GoogleDriveService } from './google-drive.service';
 import { PrismaService } from './prisma.service';
+import { ProjectStatus } from '../@generated/prisma/project-status.enum';
 
 @Injectable()
 export class ProjectActivityService {
@@ -71,6 +72,8 @@ export class ProjectActivityService {
 
   async create(input: ProjectActivityCreateDto, userId: string): Promise<ProjectActivity> {
     try {
+      await this.validateActivityEditPermission(input.project_id, userId);
+
       const activity = await this.repository.create(input, userId);
 
       // Log creation
@@ -81,6 +84,9 @@ export class ProjectActivityService {
 
       return activity;
     } catch (error) {
+      if (error instanceof CustomGraphQLError) {
+        throw error;
+      }
       throw new CustomGraphQLError('Erro ao criar atividade do projeto', ErrorCode.INTERNAL_SERVER_ERROR, error);
     }
   }
@@ -97,6 +103,8 @@ export class ProjectActivityService {
         throw new CustomGraphQLError('Atividade não encontrada', ErrorCode.NOT_FOUND, 404);
       }
 
+      await this.validateActivityEditPermission(oldActivity.project_id, userId);
+
       // Perform update
       const updatedActivity = await this.repository.update(input, userId);
 
@@ -110,6 +118,9 @@ export class ProjectActivityService {
 
       return updatedActivity;
     } catch (error) {
+      if (error instanceof CustomGraphQLError) {
+        throw error;
+      }
       throw new CustomGraphQLError('Erro ao atualizar atividade do projeto', ErrorCode.INTERNAL_SERVER_ERROR, error);
     }
   }
@@ -130,6 +141,8 @@ export class ProjectActivityService {
     if (!activity) {
       throw new CustomGraphQLError('Activity not found', ErrorCode.NOT_FOUND, 404);
     }
+
+    await this.validateActivityEditPermission(activity.project_id, userId);
 
     // 1. Find all subsidy requests linked to this activity
     const subsidyRequestIds = await this.subsidyRequestItemRepository.findSubsidyRequestsByActivityId(id);
@@ -255,6 +268,10 @@ export class ProjectActivityService {
       }
     }
 
+    for (const projectId of projectIdsToUpdate) {
+      await this.validateActivityEditPermission(projectId, userId);
+    }
+
     // Perform batch update
     const updatedActivities = await this.repository.batchUpdate(data, userId);
 
@@ -272,5 +289,33 @@ export class ProjectActivityService {
     }
 
     return updatedActivities;
+  }
+
+  private async validateActivityEditPermission(projectId: string, userId: string): Promise<void> {
+    const project = await this.projectRepository.findById(projectId);
+    if (!project) {
+      throw new CustomGraphQLError('Project not found', ErrorCode.NOT_FOUND, 404);
+    }
+    
+    if (project.status === ProjectStatus.CONCLUDED) {
+      throw new CustomGraphQLError(
+        'Cannot modify activities in a concluded project',
+        ErrorCode.BAD_REQUEST,
+        400,
+        { additional: { errorCode: 'PROJECT_IS_CONCLUDED' } }
+      );
+    }
+
+    const isOwner = userId === project.owner_id;
+    const isCoOwner = userId === project.co_owner_id;
+
+    if (isCoOwner && !isOwner && project.status !== ProjectStatus.DRAFT) {
+      throw new CustomGraphQLError(
+        'Members can only edit activities while the project is in DRAFT status',
+        ErrorCode.BAD_REQUEST,
+        400,
+        { additional: { errorCode: 'EDIT_LOCKED_NOT_DRAFT' } }
+      );
+    }
   }
 }

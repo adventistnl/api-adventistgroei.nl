@@ -12,6 +12,8 @@ import { UserService } from '../../services/user.service';
 import { MustacheService } from '../../services/mustache.service';
 import { LanguagePreference } from '../../@generated/prisma/language-preference.enum';
 import { RefundRequestedEmailDto } from '../../dto/refund-requested-email.dto';
+import { ProjectStatusChangedEmailDto } from '../../dto/project-status-changed-email.dto';
+import { SubsidyStatusChangedEmailDto } from '../../dto/subsidy-status-changed-email.dto';
 
 @Injectable()
 export class NodemailerEmailRepository {
@@ -163,5 +165,101 @@ export class NodemailerEmailRepository {
         cta: translate('refundReceived.cta', language, { ns: 'emails' }) || 'View Project',
       };
       await this.sendEmail(data.to, subject, 'refund-received', templateData);
+    }
+
+    async sendProjectStatusChangedEmail(data: ProjectStatusChangedEmailDto): Promise<void> {
+      const language = data.language || LanguagePreference.en;
+      await loadNamespaces(['emails', 'project']);
+
+      // We'll use translations if they exist, or fallback to the provided data
+      const translatedStatus = translate(`status.${data.newStatus}`, language, { ns: 'project' }) || data.newStatus;
+      const subject = translate('projectStatusChanged.subject', language, { ns: 'emails', projectName: data.projectName, newStatus: translatedStatus }) || `Project Status Update: ${data.projectName} - ${translatedStatus}`;
+      
+      const templateData = {
+        projectName: data.projectName,
+        projectUrl: data.projectUrl,
+        newStatus: translatedStatus,
+        recipientName: data.recipientName,
+        subject,
+        body: translate('projectStatusChanged.body', language, { ns: 'emails', projectName: data.projectName, newStatus: translatedStatus }) || `The status of the project "${data.projectName}" has been changed to ${translatedStatus}.`,
+        greeting: translate('projectStatusChanged.greeting', language, { ns: 'emails', name: data.recipientName }) || `Hello ${data.recipientName},`,
+        footer: translate('projectStatusChanged.footer', language, { ns: 'emails' }) || '',
+        cta: translate('projectStatusChanged.cta', language, { ns: 'emails' }) || 'View Project',
+      };
+      await this.sendEmail(data.to, subject, 'project-status-changed', templateData);
+    }
+
+    async sendSubsidyStatusChangedEmail(data: SubsidyStatusChangedEmailDto): Promise<void> {
+      const language = data.language || LanguagePreference.en;
+      await loadNamespaces(['emails', 'subsidy']);
+
+      const translatedStatus = translate(`status.${data.newStatus.toLowerCase().replace(' ', '_')}`, language, { ns: 'subsidy' }) || data.newStatus;
+      const subject = translate('subsidyStatusChanged.subject', language, {
+        ns: 'emails',
+        subsidyDescription: data.subsidyDescription,
+        newStatus: translatedStatus,
+      }) || `Subsidy Status Update: ${data.subsidyDescription} - ${translatedStatus}`;
+
+      const templateData = {
+        subsidyDescription: data.subsidyDescription,
+        projectName: data.projectName,
+        projectUrl: data.projectUrl,
+        newStatus: translatedStatus,
+        recipientName: data.recipientName,
+        subject,
+        body: translate('subsidyStatusChanged.body', language, {
+          ns: 'emails',
+          subsidyDescription: data.subsidyDescription,
+          projectName: data.projectName,
+          newStatus: translatedStatus,
+        }) || `The status of the subsidy request "${data.subsidyDescription}" for project "${data.projectName}" has been updated to ${translatedStatus}.`,
+        greeting: translate('subsidyStatusChanged.greeting', language, { ns: 'emails', name: data.recipientName }) || `Hello ${data.recipientName},`,
+        footer: translate('subsidyStatusChanged.footer', language, { ns: 'emails' }) || '',
+        cta: translate('subsidyStatusChanged.cta', language, { ns: 'emails' }) || 'View Project',
+      };
+      // Reuse the same visual template as project status changed
+      await this.sendEmail(data.to, subject, 'project-status-changed', templateData);
+    }
+
+    /**
+     * Sends a targeted email to finance users when a subsidy reaches a status
+     * that requires their action (PENDING, APPROVED, ADVANCED_CLOSED, WAITING_REFUND).
+     * Uses status-specific subject/body keys for clear, actionable messaging.
+     */
+    async sendSubsidyStatusChangedFinanceEmail(data: SubsidyStatusChangedEmailDto): Promise<void> {
+      const language = data.language || LanguagePreference.en;
+      await loadNamespaces(['emails', 'subsidy']);
+
+      const statusKey = data.newStatus.toLowerCase().replace(/ /g, '_');
+      const interpolation = {
+        ns: 'emails',
+        subsidyDescription: data.subsidyDescription,
+        projectName: data.projectName,
+      };
+
+      const subject =
+        translate(`subsidyStatusChanged.finance.${statusKey}.subject`, language, interpolation) ||
+        translate('subsidyStatusChanged.subject', language, { ...interpolation, newStatus: data.newStatus }) ||
+        `Subsidy Update (${data.newStatus}): ${data.subsidyDescription}`;
+
+      const body =
+        translate(`subsidyStatusChanged.finance.${statusKey}.body`, language, interpolation) ||
+        translate('subsidyStatusChanged.body', language, { ...interpolation, newStatus: data.newStatus }) ||
+        `The subsidy "${data.subsidyDescription}" for project "${data.projectName}" is now ${data.newStatus}.`;
+
+      const templateData = {
+        subsidyDescription: data.subsidyDescription,
+        projectName: data.projectName,
+        projectUrl: data.projectUrl,
+        newStatus: data.newStatus,
+        recipientName: data.recipientName,
+        subject,
+        body,
+        greeting: translate('subsidyStatusChanged.greeting', language, { ns: 'emails', name: data.recipientName }) || `Hello ${data.recipientName},`,
+        footer: translate('subsidyStatusChanged.footer', language, { ns: 'emails' }) || '',
+        cta: translate('subsidyStatusChanged.cta', language, { ns: 'emails' }) || 'View Project',
+      };
+
+      await this.sendEmail(data.to, subject, 'project-status-changed', templateData);
     }
 }
