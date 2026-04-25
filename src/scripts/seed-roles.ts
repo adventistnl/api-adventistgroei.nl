@@ -39,6 +39,9 @@ const roles = [
       { key_code: 'PROJECTS_ACCESS', is_essential: true },
       { key_code: 'PROJECT_ACCESS', is_essential: true },
       // Permissões de criação/manipulação
+      { key_code: 'PROJECT_CREATE', is_essential: true },
+      { key_code: 'PROJECT_UPDATE', is_essential: true },
+      { key_code: 'PROJECT_DELETE', is_essential: true },
       { key_code: 'ROLE_CREATE', is_essential: true },
       { key_code: 'ROLE_UPDATE', is_essential: true },
       { key_code: 'ROLE_DELETE', is_essential: true },
@@ -286,6 +289,7 @@ const roles = [
       { key_code: 'CHURCH_ACCESS', is_essential: true },
       { key_code: 'PROJECTS_ACCESS', is_essential: true },
       { key_code: 'PROJECT_ACCESS', is_essential: true },
+      { key_code: 'PROJECT_CREATE', is_essential: true },
       { key_code: 'PROJECT_KPIS_ACCESS', is_essential: true },
       { key_code: 'INSTITUTIONS_ACCESS', is_essential: true },
       { key_code: 'INSTITUTION_ACCESS', is_essential: true },

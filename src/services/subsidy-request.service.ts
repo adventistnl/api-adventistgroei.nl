@@ -554,12 +554,30 @@ export class SubsidyRequestService {
     // Checking if currently closed
     this.ensureNotClosed(current.subsidy_status?.name, language);
 
-    // Block modifying values if the request is already approved or past the review stage
-    const isEditingValues = data.total_budget !== undefined || data.description !== undefined || (data.items && data.items.length > 0) || data.advance_amount !== undefined;
-    if (isEditingValues) {
-      const allowedStatusesToEdit = ['PENDING', 'IN_REVIEW', 'REJECTED', 'ADJUSTMENTS_NEEDED'];
-      const currentName = current.subsidy_status?.name?.toUpperCase();
-      if (currentName && !allowedStatusesToEdit.includes(currentName)) {
+    // Block modifying structural values if the request is past the review stage.
+    // Note: WAITING_DOCUMENTS is intentionally excluded from the structural edit guard because
+    // the entire purpose of that status is for the user to submit receipt documents (items).
+    const isEditingStructuralValues = data.total_budget !== undefined || data.description !== undefined || data.advance_amount !== undefined;
+    const isEditingItems = !!(data.items && data.items.length > 0);
+    const currentStatusName = current.subsidy_status?.name?.toUpperCase();
+
+    // Structural fields (budget, description, advance_amount) are locked after review
+    if (isEditingStructuralValues) {
+      const allowedStatusesToEditStructure = ['PENDING', 'IN_REVIEW', 'REJECTED', 'ADJUSTMENTS_NEEDED'];
+      if (currentStatusName && !allowedStatusesToEditStructure.includes(currentStatusName)) {
+        throw new CustomGraphQLError(
+          translate('errors.action_not_allowed_closed', language, { ns: 'subsidy' }) || 'Editing values is not allowed for approved requests.',
+          ErrorCode.BAD_REQUEST,
+          400,
+          { additional: { errorCode: 'EDIT_NOT_ALLOWED_FOR_STATUS' } }
+        );
+      }
+    }
+
+    // Items (receipt documents) can be submitted in WAITING_DOCUMENTS as well
+    if (isEditingItems) {
+      const allowedStatusesToEditItems = ['PENDING', 'IN_REVIEW', 'REJECTED', 'ADJUSTMENTS_NEEDED', 'WAITING_DOCUMENTS'];
+      if (currentStatusName && !allowedStatusesToEditItems.includes(currentStatusName)) {
         throw new CustomGraphQLError(
           translate('errors.action_not_allowed_closed', language, { ns: 'subsidy' }) || 'Editing values is not allowed for approved requests.',
           ErrorCode.BAD_REQUEST,
@@ -602,7 +620,7 @@ export class SubsidyRequestService {
         }
         
         // Only FINANCIAL_MANAGER can close a subsidy request - MUST be checked BEFORE update
-        if (targetName === 'CLOSED') {
+        if (targetName === 'CLOSED' || targetName === 'ADVANCED_CLOSED' || targetName === 'WAITING_DOCUMENTS') {
           const hasFinancialRole = await this.userHasFinancialRole(userId);
           if (!hasFinancialRole) {
             throw new CustomGraphQLError(
@@ -873,6 +891,12 @@ export class SubsidyRequestService {
           // No double-recording needed
         }
       }
+
+      // ── Email notifications on status change ───────────────────────────────────
+      // Fire-and-forget: email failures must never block the mutation response
+      this.handleSubsidyStatusChangeNotifications(id, newStatus?.name ?? '', language).catch(e => {
+        console.error('[SubsidyRequestService] Failed to send subsidy status change notifications:', e);
+      });
     }
 
     // If priority changed, create history record
@@ -888,6 +912,126 @@ export class SubsidyRequestService {
 
     return result;
   }
+
+  /**
+   * ── Subsidy Status Change Notification Matrix ──────────────────────────────
+   *
+   * │ Status            │ Owner/Co-owner │ Finance Users        │
+   * │───────────────────│────────────────│──────────────────────│
+   * │ PENDING           │ ❌             │ ✅ (review needed)   │
+   * │ IN_REVIEW         │ ✅             │ ❌                   │
+   * │ APPROVED          │ ✅             │ ✅ (payment needed)  │
+   * │ REJECTED          │ ✅             │ ❌                   │
+   * │ ADVANCED_CLOSED   │ ✅             │ ✅ (docs expected)   │
+   * │ WAITING_DOCUMENTS │ ✅             │ ❌                   │
+   * │ WAITING_REFUND    │ ✅             │ ✅ (refund needed)   │
+   * │ CLOSED            │ ✅             │ ❌                   │
+   *
+   * Finance users are all active FINANCIAL_MANAGER role holders in the same institution.
+   * Called fire-and-forget — failures never block the mutation.
+   */
+  private async handleSubsidyStatusChangeNotifications(
+    subsidyId: string,
+    newStatusName: string,
+    language: LanguagePreference,
+  ): Promise<void> {
+    const statusUp = newStatusName.toUpperCase();
+
+    // Fetch subsidy with all data needed for notifications in one query
+    const subsidy = await this.prisma.subsidyRequest.findUnique({
+      where: { id: subsidyId },
+      select: {
+        description: true,
+        institution_id: true,
+        project: {
+          select: {
+            id: true,
+            title: true,
+            owner: { select: { id: true, name: true, email: true, language_preference: true } },
+            co_owner: { select: { id: true, name: true, email: true, language_preference: true } },
+          },
+        },
+      },
+    });
+
+    if (!subsidy?.project) return;
+
+    const { project } = subsidy;
+    const subsidyDescription = subsidy.description || project.title || subsidyId;
+    const projectUrl = `${process.env.FRONTEND_URL}/dashboard/projects/${project.id}`;
+
+    // ── Helper: send generic status-change email to owner/co-owner ─────────
+    const sendMemberEmail = async (user: { id: string; name: string; email: string; language_preference?: string | null } | null) => {
+      if (!user?.email) return;
+      const recipientLang = (user.language_preference as LanguagePreference) || language;
+      await this.emailService.sendSubsidyStatusChangedEmail({
+        to: user.email,
+        recipientName: user.name,
+        subsidyDescription,
+        projectName: project.title,
+        projectUrl,
+        newStatus: newStatusName,
+        language: recipientLang,
+      });
+    };
+
+    // ── Helper: send targeted finance email ────────────────────────────────
+    const sendFinanceEmail = async (user: { id: string; name: string; email: string | null; language_preference: string | null }) => {
+      if (!user.email) return;
+      const recipientLang = (user.language_preference as LanguagePreference) || language;
+      await this.emailService.sendSubsidyStatusChangedFinanceEmail({
+        to: user.email,
+        recipientName: user.name,
+        subsidyDescription,
+        projectName: project.title,
+        projectUrl,
+        newStatus: newStatusName,
+        language: recipientLang,
+      });
+    };
+
+    // ── Statuses that require finance action ───────────────────────────────
+    // PENDING removed: finance doesn't need to act at submission, department leader does
+    // WAITING_DOCUMENTS added: finance needs to know documents arrived for validation
+    const FINANCE_ALERT_STATUSES = ['APPROVED', 'ADVANCED_CLOSED', 'WAITING_DOCUMENTS', 'WAITING_REFUND'];
+    const notifyFinance = FINANCE_ALERT_STATUSES.includes(statusUp);
+
+    // ── All statuses notify members (owner/co-owner) ────────────────────────
+    // PENDING: member submitted the request — notify them of confirmation
+    const notifyMembers = true;
+
+    // ── Send member emails ─────────────────────────────────────────────────
+    if (notifyMembers) {
+      if (project.co_owner) {
+        await sendMemberEmail(project.co_owner);
+      }
+      if (project.owner && project.owner.id !== project.co_owner?.id) {
+        await sendMemberEmail(project.owner);
+      }
+    }
+
+    // ── Send finance emails ────────────────────────────────────────────────
+    if (notifyFinance && subsidy.institution_id) {
+      const financeUsers = await this.prisma.user.findMany({
+        where: {
+          institution_id: subsidy.institution_id,
+          is_deleted: false,
+          user_roles: {
+            some: {
+              is_deleted: false,
+              role: { key_code: 'FINANCIAL_MANAGER' },
+            },
+          },
+        },
+        select: { id: true, name: true, email: true, language_preference: true },
+      });
+
+      for (const financeUser of financeUsers) {
+        await sendFinanceEmail(financeUser);
+      }
+    }
+  }
+
 
   async addMessage(subsidyRequestId: string, message: string, userId: string, language: LanguagePreference = LanguagePreference.en): Promise<any> {
     const subsidyRequest = await this.subsidyRequestRepository.findById(subsidyRequestId);

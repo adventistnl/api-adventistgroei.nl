@@ -1,0 +1,13 @@
+{
+  "status": {
+    "DRAFT": "Concept",
+    "OPEN_REQUEST": "Open Verzoek",
+    "IN_REVIEW": "In Beoordeling",
+    "ADJUSTMENTS_NEEDED": "Aanpassingen Nodig",
+    "IN_PROGRESS": "In Behandeling",
+    "PENDING_RECEIPT": "In Afwachting van Bon",
+    "WAITING_REFUND": "In Afwachting van Terugbetaling",
+    "CONCLUDED": "Afgerond",
+    "EXPIRED": "Verlopen"
+  }
+}
