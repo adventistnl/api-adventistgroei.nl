@@ -53,9 +53,9 @@ export class DepartmentCreateWithoutSubsidy_statusesInput {
     @Type(() => ChurchCreateNestedOneWithoutDepartmentsInput)
     church?: ChurchCreateNestedOneWithoutDepartmentsInput;
 
-    @Field(() => UserCreateNestedOneWithoutLed_departmentsInput, {nullable:false})
+    @Field(() => UserCreateNestedOneWithoutLed_departmentsInput, {nullable:true})
     @Type(() => UserCreateNestedOneWithoutLed_departmentsInput)
-    leader!: UserCreateNestedOneWithoutLed_departmentsInput;
+    leader?: UserCreateNestedOneWithoutLed_departmentsInput;
 
     @Field(() => ContactCreateNestedOneWithoutDepartmentInput, {nullable:true})
     @Type(() => ContactCreateNestedOneWithoutDepartmentInput)

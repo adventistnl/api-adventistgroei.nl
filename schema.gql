@@ -914,7 +914,7 @@ type Department {
   church_id: String
   name: String!
   description: String!
-  leader_id: String!
+  leader_id: String
   contact_id: String
   created_at: DateTime!
   updated_at: DateTime!
@@ -925,7 +925,7 @@ type Department {
   deleted_by: String
   institution: Institution!
   church: Church
-  leader: User!
+  leader: User
   contact: Contact
   subsidy_statuses: [SubsidyStatus!]
   projects: [Project!]
@@ -2554,7 +2554,7 @@ input DepartmentWhereInput {
   church_id: StringNullableFilter
   name: StringFilter
   description: StringFilter
-  leader_id: StringFilter
+  leader_id: StringNullableFilter
   contact_id: StringNullableFilter
   created_at: DateTimeFilter
   updated_at: DateTimeFilter
@@ -2565,7 +2565,7 @@ input DepartmentWhereInput {
   deleted_by: StringNullableFilter
   institution: InstitutionScalarRelationFilter
   church: ChurchNullableScalarRelationFilter
-  leader: UserScalarRelationFilter
+  leader: UserNullableScalarRelationFilter
   contact: ContactNullableScalarRelationFilter
   subsidy_statuses: SubsidyStatusListRelationFilter
   projects: ProjectListRelationFilter
@@ -2579,11 +2579,6 @@ input DepartmentWhereInput {
 input ChurchNullableScalarRelationFilter {
   is: ChurchWhereInput
   isNot: ChurchWhereInput
-}
-
-input UserScalarRelationFilter {
-  is: UserWhereInput
-  isNot: UserWhereInput
 }
 
 input SubsidyStatusListRelationFilter {
@@ -2620,6 +2615,11 @@ input SubsidyStatusWhereInput {
 input DepartmentScalarRelationFilter {
   is: DepartmentWhereInput
   isNot: DepartmentWhereInput
+}
+
+input UserScalarRelationFilter {
+  is: UserWhereInput
+  isNot: UserWhereInput
 }
 
 input SubsidyRequestListRelationFilter {
@@ -4206,7 +4206,7 @@ input DepartmentOrderByWithRelationInput {
   church_id: SortOrderInput
   name: SortOrder
   description: SortOrder
-  leader_id: SortOrder
+  leader_id: SortOrderInput
   contact_id: SortOrderInput
   created_at: SortOrder
   updated_at: SortOrder
@@ -4482,7 +4482,7 @@ input LoginInput {
 input ChurchCreateDto {
   institution_id: String!
   name: String!
-  leader_id: String!
+  leader_id: String
   contact: ContactCreateDto
   type: ChurchType
   zip_code: String
@@ -4614,7 +4614,7 @@ input DepartmentCreateDto {
   name: String!
   description: String!
   institution: String!
-  leader_id: String!
+  leader_id: String
   church: String
   contact: ContactCreateDto
 }

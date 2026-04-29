@@ -455,8 +455,8 @@ model Department {
   church           Church?          @relation(fields: [church_id], references: [id])
   name             String
   description      String
-  leader_id        String
-  leader           User             @relation("DepartmentLeader", fields: [leader_id], references: [id])
+  leader_id        String?
+  leader           User?            @relation("DepartmentLeader", fields: [leader_id], references: [id])
   contact_id       String?
   contact          Contact?         @relation(fields: [contact_id], references: [id])
   created_at       DateTime         @default(now())

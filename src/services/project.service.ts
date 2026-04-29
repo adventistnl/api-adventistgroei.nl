@@ -29,16 +29,43 @@ export class ProjectService {
   ) {}
 
   async create(data: ProjectCreateDto, userId: string): Promise<Project> {
-    // Owner = Department Leader; co-owner = whoever is creating the project
+    // Validate: department must have a leader assigned
     if (data.department_id) {
       const department = await this.prisma.department.findUnique({
         where: { id: data.department_id },
-        select: { leader_id: true },
+        select: { leader_id: true, name: true },
       });
-      if (department?.leader_id) {
-        data.owner_id = department.leader_id;
+
+      if (!department?.leader_id) {
+        throw new CustomGraphQLError(
+          `Department "${department?.name ?? data.department_id}" has no leader assigned. Please assign a leader to the department before creating a project.`,
+          ErrorCode.BAD_REQUEST,
+          400,
+          { additional: { errorCode: 'DEPARTMENT_HAS_NO_LEADER' } }
+        );
+      }
+
+      // Owner = Department Leader
+      data.owner_id = department.leader_id;
+    }
+
+    // Validate: church must have a leader assigned
+    if (data.church_id) {
+      const church = await this.prisma.church.findUnique({
+        where: { id: data.church_id },
+        select: { leader_id: true, name: true },
+      });
+
+      if (!church?.leader_id) {
+        throw new CustomGraphQLError(
+          `Church "${church?.name ?? data.church_id}" has no leader assigned. Please assign a leader to the church before creating a project.`,
+          ErrorCode.BAD_REQUEST,
+          400,
+          { additional: { errorCode: 'CHURCH_HAS_NO_LEADER' } }
+        );
       }
     }
+
     data.co_owner_id = userId;
 
     const project = await this.projectRepository.create(data, userId);

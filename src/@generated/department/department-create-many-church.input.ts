@@ -16,8 +16,8 @@ export class DepartmentCreateManyChurchInput {
     @Field(() => String, {nullable:false})
     description!: string;
 
-    @Field(() => String, {nullable:false})
-    leader_id!: string;
+    @Field(() => String, {nullable:true})
+    leader_id?: string;
 
     @Field(() => String, {nullable:true})
     contact_id?: string;
