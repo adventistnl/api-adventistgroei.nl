@@ -33,8 +33,8 @@ export class DepartmentScalarWhereInput {
     @Field(() => StringFilter, {nullable:true})
     description?: StringFilter;
 
-    @Field(() => StringFilter, {nullable:true})
-    leader_id?: StringFilter;
+    @Field(() => StringNullableFilter, {nullable:true})
+    leader_id?: StringNullableFilter;
 
     @Field(() => StringNullableFilter, {nullable:true})
     contact_id?: StringNullableFilter;

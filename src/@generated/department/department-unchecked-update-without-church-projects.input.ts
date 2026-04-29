@@ -31,8 +31,8 @@ export class DepartmentUncheckedUpdateWithoutChurch_projectsInput {
     @Field(() => StringFieldUpdateOperationsInput, {nullable:true})
     description?: StringFieldUpdateOperationsInput;
 
-    @Field(() => StringFieldUpdateOperationsInput, {nullable:true})
-    leader_id?: StringFieldUpdateOperationsInput;
+    @Field(() => NullableStringFieldUpdateOperationsInput, {nullable:true})
+    leader_id?: NullableStringFieldUpdateOperationsInput;
 
     @Field(() => NullableStringFieldUpdateOperationsInput, {nullable:true})
     contact_id?: NullableStringFieldUpdateOperationsInput;

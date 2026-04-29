@@ -24,8 +24,8 @@ export class DepartmentUncheckedUpdateManyWithoutContactInput {
     @Field(() => StringFieldUpdateOperationsInput, {nullable:true})
     description?: StringFieldUpdateOperationsInput;
 
-    @Field(() => StringFieldUpdateOperationsInput, {nullable:true})
-    leader_id?: StringFieldUpdateOperationsInput;
+    @Field(() => NullableStringFieldUpdateOperationsInput, {nullable:true})
+    leader_id?: NullableStringFieldUpdateOperationsInput;
 
     @Field(() => DateTimeFieldUpdateOperationsInput, {nullable:true})
     created_at?: DateTimeFieldUpdateOperationsInput;

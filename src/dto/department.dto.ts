@@ -16,9 +16,10 @@ export class DepartmentCreateDto {
   @IsString()
   institution: string;
 
-  @Field()
+  @Field({ nullable: true })
+  @IsOptional()
   @IsString()
-  leader_id: string;
+  leader_id?: string;
 
   @Field({ nullable: true })
   @IsOptional()

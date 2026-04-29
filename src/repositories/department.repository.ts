@@ -43,10 +43,12 @@ export class DepartmentRepository {
     const churchId = data.church && data.church.trim() !== '' ? data.church : undefined;
     if (churchId) await this.churchRepository.findById(churchId);
 
-    // Validate leader exists
-    const leader = await this.prisma.user.findUnique({ where: { id: data.leader_id } });
-    if (!leader) {
-      throw new CustomGraphQLError('Leader user not found', ErrorCode.NOT_FOUND, 404);
+    // Validate leader exists only if a leader_id was provided
+    if (data.leader_id) {
+      const leader = await this.prisma.user.findUnique({ where: { id: data.leader_id } });
+      if (!leader) {
+        throw new CustomGraphQLError('Leader user not found', ErrorCode.NOT_FOUND, 404);
+      }
     }
 
     let contactId: string | undefined;
@@ -69,7 +71,8 @@ export class DepartmentRepository {
         name: data.name,
         description: data.description,
         institution: { connect: { id: data.institution } },
-        leader: { connect: { id: data.leader_id } },
+        // Connect leader only if provided
+        ...(data.leader_id ? { leader: { connect: { id: data.leader_id } } } : {}),
         church: churchId ? { connect: { id: churchId } } : undefined,
         contact: contactId ? { connect: { id: contactId } } : undefined,
         created_by: userId,

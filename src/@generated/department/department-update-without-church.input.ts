@@ -7,7 +7,7 @@ import { NullableDateTimeFieldUpdateOperationsInput } from '../prisma/nullable-d
 import { NullableStringFieldUpdateOperationsInput } from '../prisma/nullable-string-field-update-operations.input';
 import { InstitutionUpdateOneRequiredWithoutDepartmentsNestedInput } from '../institution/institution-update-one-required-without-departments-nested.input';
 import { Type } from 'class-transformer';
-import { UserUpdateOneRequiredWithoutLed_departmentsNestedInput } from '../user/user-update-one-required-without-led-departments-nested.input';
+import { UserUpdateOneWithoutLed_departmentsNestedInput } from '../user/user-update-one-without-led-departments-nested.input';
 import { ContactUpdateOneWithoutDepartmentNestedInput } from '../contact/contact-update-one-without-department-nested.input';
 import { SubsidyStatusUpdateManyWithoutDepartmentNestedInput } from '../subsidy-status/subsidy-status-update-many-without-department-nested.input';
 import { ProjectUpdateManyWithoutDepartmentNestedInput } from '../project/project-update-many-without-department-nested.input';
@@ -54,9 +54,9 @@ export class DepartmentUpdateWithoutChurchInput {
     @Type(() => InstitutionUpdateOneRequiredWithoutDepartmentsNestedInput)
     institution?: InstitutionUpdateOneRequiredWithoutDepartmentsNestedInput;
 
-    @Field(() => UserUpdateOneRequiredWithoutLed_departmentsNestedInput, {nullable:true})
-    @Type(() => UserUpdateOneRequiredWithoutLed_departmentsNestedInput)
-    leader?: UserUpdateOneRequiredWithoutLed_departmentsNestedInput;
+    @Field(() => UserUpdateOneWithoutLed_departmentsNestedInput, {nullable:true})
+    @Type(() => UserUpdateOneWithoutLed_departmentsNestedInput)
+    leader?: UserUpdateOneWithoutLed_departmentsNestedInput;
 
     @Field(() => ContactUpdateOneWithoutDepartmentNestedInput, {nullable:true})
     @Type(() => ContactUpdateOneWithoutDepartmentNestedInput)

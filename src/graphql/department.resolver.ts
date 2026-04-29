@@ -71,6 +71,7 @@ export class DepartmentResolver {
 
   @ResolveField(() => UserModel, { nullable: true })
   async leader(@Parent() department: Department): Promise<Omit<User, 'password'> | null> {
+    if (!department.leader_id) return null;
     return this.userService.getUserById(department.leader_id);
   }
 
