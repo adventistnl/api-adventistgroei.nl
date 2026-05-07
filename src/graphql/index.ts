@@ -23,6 +23,7 @@ export * from './invite.resolver';
 export * from './email.resolver';
 export * from './annual-budget.resolver';
 export * from '../resolvers/forgot-password/forgot-password.resolver';
+export * from '../resolvers/email-verification/email-verification.resolver';
 export * from './project-history.resolver';
 export * from './project-adjustment.resolver';
 export * from './institution-position.resolver';

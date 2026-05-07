@@ -6,6 +6,7 @@ import { RefundApprovedEmailDto } from '../dto/refund-approved-email.dto';
 import { RefundRequestedEmailDto } from '../dto/refund-requested-email.dto';
 import { ProjectStatusChangedEmailDto } from '../dto/project-status-changed-email.dto';
 import { SubsidyStatusChangedEmailDto } from '../dto/subsidy-status-changed-email.dto';
+import { EmailVerificationDto } from '../dto/email-verification.dto';
 
 @Injectable()
 export class EmailService {
@@ -19,6 +20,10 @@ export class EmailService {
 
   async sendForgotPasswordEmail(data: ForgotPasswordEmailDto): Promise<void> {
     await this.nodemailerRepository.sendForgotPasswordEmail(data);
+  }
+
+  async sendEmailVerificationCode(data: EmailVerificationDto): Promise<void> {
+    await this.nodemailerRepository.sendEmailVerificationCode(data);
   }
 
   async sendRefundApprovedEmail(data: RefundApprovedEmailDto): Promise<void> {

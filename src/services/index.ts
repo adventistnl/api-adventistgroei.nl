@@ -24,6 +24,7 @@ export * from './subsidy-receipt.service';
 export * from './subsidy-status-history.service';
 export * from './invite.service';
 export * from './email.service';
+export * from './email-verification.service';
 export * from './annual-budget.service';
 export * from './mustache.service';
 export * from './forgot-password/forgot-password.service';

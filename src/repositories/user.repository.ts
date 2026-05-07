@@ -33,10 +33,20 @@ export class UserRepository {
     // os métodos já estouram erros caso não encontrem
     // Verificar se a institution existe
     await this.institutioRepository.findById(institution_id);
-    if (church_id) {
-      // Verificar se a church existe
-      await this.churchRepository.findById(church_id);
+
+    // Para a church usamos findByIdSafe: se a church do convite foi removida ou
+    // nunca existiu, criamos o usuário sem church em vez de bloquear o registro.
+    let resolvedChurchId: string | undefined = church_id || undefined;
+    if (resolvedChurchId) {
+      const church = await this.churchRepository.findByIdSafe(resolvedChurchId);
+      if (!church) {
+        console.warn(
+          `[UserRepository.create] church_id "${resolvedChurchId}" not found or deleted — registering user without church association.`
+        );
+        resolvedChurchId = undefined;
+      }
     }
+
     if (institution_department_id) {
       // Verificar se o department existe
       await this.departmentRepository.findById(institution_department_id);
@@ -64,7 +74,7 @@ export class UserRepository {
     const userData = {
       ...rest,
       language_preference: LanguagePreference[language_preference],
-      church: church_id ? { connect: { id: church_id } } : undefined,
+      church: resolvedChurchId ? { connect: { id: resolvedChurchId } } : undefined,
       department: institution_department_id ? { connect: { id: institution_department_id } } 
         : church_department_id ? { connect: { id: church_department_id } } 
         : undefined,
@@ -74,6 +84,7 @@ export class UserRepository {
       created_by: 'self',
       updated_by: 'self',
     };
+
 
     const createdUser = await this.prisma.user.create({ data: userData });
 

@@ -40,6 +40,22 @@ export class InviteRepository {
 
       const decodedToken = this.jwtService.verify<ValidateOutputModel>(token);
 
+      // Validate that the church referenced in the token still exists.
+      // If it was deleted after the invite was issued, null out church_id so the
+      // frontend and createUser don't attempt to associate the user with a ghost church.
+      let resolvedChurchId: string | undefined = decodedToken.church_id || undefined;
+      if (resolvedChurchId) {
+        const church = await this.prisma.church.findUnique({
+          where: { id: resolvedChurchId },
+        });
+        if (!church || church.is_deleted) {
+          console.warn(
+            `[validateInviteToken] church_id "${resolvedChurchId}" in token no longer exists — clearing from payload.`
+          );
+          resolvedChurchId = undefined;
+        }
+      }
+
       const payload: ValidateOutputModel = {
         inviter_id: decodedToken.inviter_id,
         email: decodedToken.email,
@@ -48,7 +64,7 @@ export class InviteRepository {
         language_preference: decodedToken.language_preference,
         exp: decodedToken.exp,
         institution_department_id: decodedToken.institution_department_id,
-        church_id: decodedToken.church_id,
+        church_id: resolvedChurchId,
         church_department_id: decodedToken.church_department_id,
       };
       return payload;
@@ -56,7 +72,7 @@ export class InviteRepository {
       if (error instanceof JsonWebTokenError) {
         throw new CustomGraphQLError(`Invalid token: ${error.message}`, ErrorCode.BAD_REQUEST, 400);
       } else {
-        throw new CustomGraphQLError(`Invalid token`, ErrorCode.BAD_REQUEST, 400);
+        throw error;
       }
     }
   }
