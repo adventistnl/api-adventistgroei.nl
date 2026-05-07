@@ -14,6 +14,7 @@ import { LanguagePreference } from '../../@generated/prisma/language-preference.
 import { RefundRequestedEmailDto } from '../../dto/refund-requested-email.dto';
 import { ProjectStatusChangedEmailDto } from '../../dto/project-status-changed-email.dto';
 import { SubsidyStatusChangedEmailDto } from '../../dto/subsidy-status-changed-email.dto';
+import { EmailVerificationDto } from '../../dto/email-verification.dto';
 
 @Injectable()
 export class NodemailerEmailRepository {
@@ -105,6 +106,30 @@ export class NodemailerEmailRepository {
       };
       await this.sendEmail(data.to, subject, 'forgot-password', templateData);
     }
+
+    async sendEmailVerificationCode(data: EmailVerificationDto): Promise<void> {
+      const language = (data.language as LanguagePreference) || LanguagePreference.en;
+      await loadNamespaces(['emails']);
+
+      const subject = translate('emailVerification.subject', language, { ns: 'emails' }) || 'Your Email Verification Code';
+      const greeting = data.userName
+        ? translate('emailVerification.greetingNamed', language, { ns: 'emails', name: data.userName }) || `Hello ${data.userName},`
+        : translate('emailVerification.greeting', language, { ns: 'emails' }) || 'Hello!';
+
+      const templateData = {
+        code: data.code,
+        expiresIn: data.expiresIn,
+        subject,
+        greeting,
+        body: translate('emailVerification.body', language, { ns: 'emails', code: data.code, expiresIn: data.expiresIn }) || `Your email verification code is: ${data.code}\nThis code expires in ${data.expiresIn}.`,
+        expiry: translate('emailVerification.expiry', language, { ns: 'emails', expiresIn: data.expiresIn }) || `This code will expire in ${data.expiresIn}.`,
+        ignore: translate('emailVerification.ignore', language, { ns: 'emails' }) || 'If you did not request this verification, please ignore this email.',
+        footer: translate('emailVerification.footer', language, { ns: 'emails' }) || 'Best regards,\nThe Adventist Groei Team',
+      };
+      await this.sendEmail(data.to, subject, 'email-verification', templateData);
+    }
+
+
 
     async sendRefundApprovedEmail(data: RefundApprovedEmailDto): Promise<void> {
       const language = data.language || LanguagePreference.en;

@@ -1892,6 +1892,12 @@ type ForgotPasswordResponse {
   resetToken: String
 }
 
+type EmailVerificationResponse {
+  success: Boolean!
+  message: String
+  error: String
+}
+
 type ZipInfo {
   city: String
   province: String
@@ -4462,6 +4468,8 @@ type Mutation {
   sendForgotPasswordCode(input: SendCodeInput!): ForgotPasswordResponse!
   verifyForgotPasswordCode(input: VerifyCodeInput!): ForgotPasswordResponse!
   resetPassword(input: ResetPasswordInput!): ForgotPasswordResponse!
+  sendEmailVerificationCode(input: SendEmailVerificationCodeInput!): EmailVerificationResponse!
+  verifyEmailRegistrationCode(input: VerifyEmailCodeInput!): EmailVerificationResponse!
   createProjectHistory(data: ProjectHistoryCreateDto!): ProjectHistory!
   deleteProjectHistory(id: ID!): ProjectHistory!
   createAdjustment(data: CreateAdjustmentDto!): ProjectAdjustment!
@@ -5029,6 +5037,17 @@ input ResetPasswordInput {
   code: String!
   newPassword: String!
   resetToken: String!
+}
+
+input SendEmailVerificationCodeInput {
+  email: String!
+  userName: String
+  language: String
+}
+
+input VerifyEmailCodeInput {
+  email: String!
+  code: String!
 }
 
 input ProjectHistoryCreateDto {
