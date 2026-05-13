@@ -44,6 +44,9 @@ export class UserMinAggregateInput {
     deleted_by?: true;
 
     @Field(() => Boolean, {nullable:true})
+    recieve_emails?: true;
+
+    @Field(() => Boolean, {nullable:true})
     contact_id?: true;
 
     @Field(() => Boolean, {nullable:true})

@@ -69,6 +69,9 @@ export class UserCreateWithoutApproved_annual_budgetsInput {
     @Field(() => String, {nullable:true})
     deleted_by?: string;
 
+    @Field(() => Boolean, {nullable:true})
+    recieve_emails?: boolean;
+
     @Field(() => ContactCreateNestedOneWithoutUserInput, {nullable:true})
     @Type(() => ContactCreateNestedOneWithoutUserInput)
     contact?: ContactCreateNestedOneWithoutUserInput;

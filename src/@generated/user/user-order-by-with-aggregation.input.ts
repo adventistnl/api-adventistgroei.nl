@@ -48,6 +48,9 @@ export class UserOrderByWithAggregationInput {
     @Field(() => SortOrderInput, {nullable:true})
     deleted_by?: SortOrderInput;
 
+    @Field(() => SortOrder, {nullable:true})
+    recieve_emails?: `${SortOrder}`;
+
     @Field(() => SortOrderInput, {nullable:true})
     contact_id?: SortOrderInput;
 

@@ -125,7 +125,7 @@ export class UserRepository {
       throw new Error('Invalid language preference');
     }
     if (data.email) data.email = data.email.toLowerCase();
-    const { contact_id, church_id, department_id, institution_id, phone, address, contact, ...rest } = data;
+    const { contact_id, church_id, department_id, institution_id, phone, address, contact, recieve_emails, ...rest } = data;
 
     // os métodos já estouram erros caso não encontrem
     if (institution_id) await this.institutioRepository.findById(institution_id);
@@ -178,6 +178,7 @@ export class UserRepository {
         ...filteredData,
         language_preference: data.language_preference ? LanguagePreference[data.language_preference] : undefined,
         updated_by: requester_id,
+        ...(recieve_emails !== undefined && { recieve_emails }),
         ...(contactData && { contact: contactData }),
         ...(church_id && { church: { connect: { id: church_id } } }),
         ...(department_id !== undefined && {
@@ -188,6 +189,15 @@ export class UserRepository {
         ...(institution_id && { institution: { connect: { id: institution_id } } }),
       },
     });
+  }
+
+  async getUserReceivesEmails(userId: string): Promise<boolean> {
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId, is_deleted: false },
+      select: { recieve_emails: true },
+    });
+    // If user not found, default to true (don't silently block emails)
+    return user?.recieve_emails ?? true;
   }
 
   async softDelete(id: string, userId: string): Promise<Omit<User, 'password'>> {

@@ -66,6 +66,9 @@ export class UserUncheckedCreateWithoutContactInput {
     @Field(() => String, {nullable:true})
     deleted_by?: string;
 
+    @Field(() => Boolean, {nullable:true})
+    recieve_emails?: boolean;
+
     @Field(() => String, {nullable:false})
     institution_id!: string;
 

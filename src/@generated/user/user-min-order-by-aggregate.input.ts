@@ -45,6 +45,9 @@ export class UserMinOrderByAggregateInput {
     deleted_by?: `${SortOrder}`;
 
     @Field(() => SortOrder, {nullable:true})
+    recieve_emails?: `${SortOrder}`;
+
+    @Field(() => SortOrder, {nullable:true})
     contact_id?: `${SortOrder}`;
 
     @Field(() => SortOrder, {nullable:true})

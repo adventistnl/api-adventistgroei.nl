@@ -65,6 +65,9 @@ export class UserUncheckedCreateWithoutDirect_messagesInput {
     @Field(() => String, {nullable:true})
     deleted_by?: string;
 
+    @Field(() => Boolean, {nullable:true})
+    recieve_emails?: boolean;
+
     @Field(() => String, {nullable:true})
     contact_id?: string;
 

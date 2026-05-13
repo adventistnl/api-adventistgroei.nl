@@ -615,6 +615,7 @@ model User {
   is_deleted                Boolean                   @default(false)
   deleted_at                DateTime?
   deleted_by                String?
+  recieve_emails            Boolean                   @default(true)
   contact_id                String?
   contact                   Contact?                  @relation(fields: [contact_id], references: [id])
   institution_id            String

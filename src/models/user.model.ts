@@ -54,6 +54,9 @@ export class UserModel {
   @Field()
   is_deleted: boolean;
 
+  @Field()
+  recieve_emails: boolean;
+
   @Field(() => Date, { nullable: true })
   deleted_at: Date | null;
 
