@@ -382,6 +382,7 @@ export class ChurchRepository {
       region: true,
       users: true,
       departments: {
+        where: { is_deleted: false },
         include: {
           annual_budgets: true,
           contact: true,
@@ -394,6 +395,7 @@ export class ChurchRepository {
 
     return this.prisma.church.findMany({
       where: {
+        ...(includeDeleted ? {} : { is_deleted: false }),
         ...filters,
       },
       include: options?.include || defaultInclude,

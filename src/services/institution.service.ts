@@ -61,7 +61,7 @@ export class InstitutionService {
   }
 
   async getChurches(institutionId: string) {
-    const churches = await this.churchRepository.findManyByFilters({ institution_id: institutionId}, true);
+    const churches = await this.churchRepository.findManyByFilters({ institution_id: institutionId }, false);
     return churches;
   }
 
