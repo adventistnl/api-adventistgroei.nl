@@ -59,6 +59,9 @@ export class UserScalarWhereInput {
     @Field(() => StringNullableFilter, {nullable:true})
     deleted_by?: StringNullableFilter;
 
+    @Field(() => BoolFilter, {nullable:true})
+    recieve_emails?: BoolFilter;
+
     @Field(() => StringNullableFilter, {nullable:true})
     contact_id?: StringNullableFilter;
 

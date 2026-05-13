@@ -45,6 +45,9 @@ export class UserCountAggregate {
     deleted_by!: number;
 
     @Field(() => Int, {nullable:false})
+    recieve_emails!: number;
+
+    @Field(() => Int, {nullable:false})
     contact_id!: number;
 
     @Field(() => Int, {nullable:false})

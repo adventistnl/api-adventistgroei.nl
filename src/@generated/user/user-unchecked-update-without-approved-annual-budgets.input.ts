@@ -70,6 +70,9 @@ export class UserUncheckedUpdateWithoutApproved_annual_budgetsInput {
     @Field(() => NullableStringFieldUpdateOperationsInput, {nullable:true})
     deleted_by?: NullableStringFieldUpdateOperationsInput;
 
+    @Field(() => BoolFieldUpdateOperationsInput, {nullable:true})
+    recieve_emails?: BoolFieldUpdateOperationsInput;
+
     @Field(() => NullableStringFieldUpdateOperationsInput, {nullable:true})
     contact_id?: NullableStringFieldUpdateOperationsInput;
 

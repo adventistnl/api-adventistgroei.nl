@@ -14,6 +14,7 @@ export enum UserScalarFieldEnum {
     is_deleted = "is_deleted",
     deleted_at = "deleted_at",
     deleted_by = "deleted_by",
+    recieve_emails = "recieve_emails",
     contact_id = "contact_id",
     institution_id = "institution_id",
     church_id = "church_id",

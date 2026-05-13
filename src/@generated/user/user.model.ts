@@ -68,6 +68,9 @@ export class User {
     @Field(() => String, {nullable:true})
     deleted_by!: string | null;
 
+    @Field(() => Boolean, {defaultValue:true,nullable:false})
+    recieve_emails!: boolean;
+
     @Field(() => String, {nullable:true})
     contact_id!: string | null;
 

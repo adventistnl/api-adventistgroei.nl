@@ -74,6 +74,9 @@ export class UserUpdateWithoutApproved_annual_budgetsInput {
     @Field(() => NullableStringFieldUpdateOperationsInput, {nullable:true})
     deleted_by?: NullableStringFieldUpdateOperationsInput;
 
+    @Field(() => BoolFieldUpdateOperationsInput, {nullable:true})
+    recieve_emails?: BoolFieldUpdateOperationsInput;
+
     @Field(() => ContactUpdateOneWithoutUserNestedInput, {nullable:true})
     @Type(() => ContactUpdateOneWithoutUserNestedInput)
     contact?: ContactUpdateOneWithoutUserNestedInput;
