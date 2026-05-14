@@ -73,8 +73,8 @@ export class DepartmentRepository {
         institution: { connect: { id: data.institution } },
         // Connect leader only if provided
         ...(data.leader_id ? { leader: { connect: { id: data.leader_id } } } : {}),
-        church: churchId ? { connect: { id: churchId } } : undefined,
-        contact: contactId ? { connect: { id: contactId } } : undefined,
+        ...(churchId ? { church: { connect: { id: churchId } } } : {}),
+        ...(contactId ? { contact: { connect: { id: contactId } } } : {}),
         created_by: userId,
         updated_by: userId,
       },
