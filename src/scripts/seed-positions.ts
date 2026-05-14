@@ -93,23 +93,28 @@ async function main() {
   for (const assignment of assignments) {
     if (!assignment.user_id) continue;
 
-    // Verificar se já existe um position ativo para esse cargo
+    // Verificar se já existe um position para esse cargo (incluindo soft-deleted)
     const existing = await prisma.institutionPosition.findFirst({
       where: {
         institution_id: institution.id,
         position_type: assignment.position_type,
-        is_deleted: false,
       },
     });
 
     const user = usersWithRoles.find((u) => u.id === assignment.user_id);
 
     if (existing) {
-      // Atualizar se o user mudou
-      if (existing.user_id !== assignment.user_id) {
+      // Restaurar se estava deletado ou atualizar o user se mudou
+      if (existing.is_deleted || existing.user_id !== assignment.user_id) {
         await prisma.institutionPosition.update({
           where: { id: existing.id },
-          data: { user_id: assignment.user_id, updated_by: SYS },
+          data: {
+            user_id: assignment.user_id,
+            updated_by: SYS,
+            is_deleted: false,
+            deleted_at: null,
+            deleted_by: null,
+          },
         });
         console.log(`🔄 ${assignment.label}: updated → ${user?.name} (${user?.email})`);
       } else {
