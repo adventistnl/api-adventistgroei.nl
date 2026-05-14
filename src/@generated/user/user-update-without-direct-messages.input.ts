@@ -74,6 +74,9 @@ export class UserUpdateWithoutDirect_messagesInput {
     @Field(() => NullableStringFieldUpdateOperationsInput, {nullable:true})
     deleted_by?: NullableStringFieldUpdateOperationsInput;
 
+    @Field(() => BoolFieldUpdateOperationsInput, {nullable:true})
+    recieve_emails?: BoolFieldUpdateOperationsInput;
+
     @Field(() => ContactUpdateOneWithoutUserNestedInput, {nullable:true})
     @Type(() => ContactUpdateOneWithoutUserNestedInput)
     contact?: ContactUpdateOneWithoutUserNestedInput;

@@ -33,10 +33,20 @@ export class UserRepository {
     // os métodos já estouram erros caso não encontrem
     // Verificar se a institution existe
     await this.institutioRepository.findById(institution_id);
-    if (church_id) {
-      // Verificar se a church existe
-      await this.churchRepository.findById(church_id);
+
+    // Para a church usamos findByIdSafe: se a church do convite foi removida ou
+    // nunca existiu, criamos o usuário sem church em vez de bloquear o registro.
+    let resolvedChurchId: string | undefined = church_id || undefined;
+    if (resolvedChurchId) {
+      const church = await this.churchRepository.findByIdSafe(resolvedChurchId);
+      if (!church) {
+        console.warn(
+          `[UserRepository.create] church_id "${resolvedChurchId}" not found or deleted — registering user without church association.`
+        );
+        resolvedChurchId = undefined;
+      }
     }
+
     if (institution_department_id) {
       // Verificar se o department existe
       await this.departmentRepository.findById(institution_department_id);
@@ -64,7 +74,7 @@ export class UserRepository {
     const userData = {
       ...rest,
       language_preference: LanguagePreference[language_preference],
-      church: church_id ? { connect: { id: church_id } } : undefined,
+      church: resolvedChurchId ? { connect: { id: resolvedChurchId } } : undefined,
       department: institution_department_id ? { connect: { id: institution_department_id } } 
         : church_department_id ? { connect: { id: church_department_id } } 
         : undefined,
@@ -74,6 +84,7 @@ export class UserRepository {
       created_by: 'self',
       updated_by: 'self',
     };
+
 
     const createdUser = await this.prisma.user.create({ data: userData });
 
@@ -114,7 +125,7 @@ export class UserRepository {
       throw new Error('Invalid language preference');
     }
     if (data.email) data.email = data.email.toLowerCase();
-    const { contact_id, church_id, department_id, institution_id, phone, address, contact, ...rest } = data;
+    const { contact_id, church_id, department_id, institution_id, phone, address, contact, recieve_emails, ...rest } = data;
 
     // os métodos já estouram erros caso não encontrem
     if (institution_id) await this.institutioRepository.findById(institution_id);
@@ -167,6 +178,7 @@ export class UserRepository {
         ...filteredData,
         language_preference: data.language_preference ? LanguagePreference[data.language_preference] : undefined,
         updated_by: requester_id,
+        ...(recieve_emails !== undefined && { recieve_emails }),
         ...(contactData && { contact: contactData }),
         ...(church_id && { church: { connect: { id: church_id } } }),
         ...(department_id !== undefined && {
@@ -177,6 +189,15 @@ export class UserRepository {
         ...(institution_id && { institution: { connect: { id: institution_id } } }),
       },
     });
+  }
+
+  async getUserReceivesEmails(userId: string): Promise<boolean> {
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId, is_deleted: false },
+      select: { recieve_emails: true },
+    });
+    // If user not found, default to true (don't silently block emails)
+    return user?.recieve_emails ?? true;
   }
 
   async softDelete(id: string, userId: string): Promise<Omit<User, 'password'>> {

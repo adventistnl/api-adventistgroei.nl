@@ -1363,6 +1363,7 @@ type User {
   is_deleted: Boolean!
   deleted_at: DateTime
   deleted_by: String
+  recieve_emails: Boolean!
   contact_id: String
   institution_id: String!
   church_id: String
@@ -1563,6 +1564,7 @@ type UserModel {
   created_by: String!
   updated_by: String!
   is_deleted: Boolean!
+  recieve_emails: Boolean!
   deleted_at: DateTime
   deleted_by: String
   contact: Contact
@@ -1585,6 +1587,7 @@ type UserWithRoles {
   created_by: String!
   updated_by: String!
   is_deleted: Boolean!
+  recieve_emails: Boolean!
   deleted_at: DateTime
   deleted_by: String
   contact: Contact
@@ -1890,6 +1893,12 @@ type ForgotPasswordResponse {
   message: String
   error: String
   resetToken: String
+}
+
+type EmailVerificationResponse {
+  success: Boolean!
+  message: String
+  error: String
 }
 
 type ZipInfo {
@@ -2306,6 +2315,7 @@ input UserWhereInput {
   is_deleted: BoolFilter
   deleted_at: DateTimeNullableFilter
   deleted_by: StringNullableFilter
+  recieve_emails: BoolFilter
   contact_id: StringNullableFilter
   institution_id: StringFilter
   church_id: StringNullableFilter
@@ -4021,6 +4031,7 @@ input UserOrderByWithRelationInput {
   is_deleted: SortOrder
   deleted_at: SortOrderInput
   deleted_by: SortOrderInput
+  recieve_emails: SortOrder
   contact_id: SortOrderInput
   institution_id: SortOrder
   church_id: SortOrderInput
@@ -4462,6 +4473,8 @@ type Mutation {
   sendForgotPasswordCode(input: SendCodeInput!): ForgotPasswordResponse!
   verifyForgotPasswordCode(input: VerifyCodeInput!): ForgotPasswordResponse!
   resetPassword(input: ResetPasswordInput!): ForgotPasswordResponse!
+  sendEmailVerificationCode(input: SendEmailVerificationCodeInput!): EmailVerificationResponse!
+  verifyEmailRegistrationCode(input: VerifyEmailCodeInput!): EmailVerificationResponse!
   createProjectHistory(data: ProjectHistoryCreateDto!): ProjectHistory!
   deleteProjectHistory(id: ID!): ProjectHistory!
   createAdjustment(data: CreateAdjustmentDto!): ProjectAdjustment!
@@ -4588,6 +4601,7 @@ input UserUpdateDto {
   department_id: String
   contact_id: String
   is_deleted: Boolean
+  recieve_emails: Boolean
   contact: ContactUpdateDto
   gender: GenderType
   phone: String
@@ -5029,6 +5043,17 @@ input ResetPasswordInput {
   code: String!
   newPassword: String!
   resetToken: String!
+}
+
+input SendEmailVerificationCodeInput {
+  email: String!
+  userName: String
+  language: String
+}
+
+input VerifyEmailCodeInput {
+  email: String!
+  code: String!
 }
 
 input ProjectHistoryCreateDto {

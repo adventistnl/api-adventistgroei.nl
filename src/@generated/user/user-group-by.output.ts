@@ -48,6 +48,9 @@ export class UserGroupBy {
     @Field(() => String, {nullable:true})
     deleted_by?: string;
 
+    @Field(() => Boolean, {nullable:false})
+    recieve_emails!: boolean;
+
     @Field(() => String, {nullable:true})
     contact_id?: string;
 

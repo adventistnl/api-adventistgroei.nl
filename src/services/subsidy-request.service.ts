@@ -1360,6 +1360,11 @@ export class SubsidyRequestService {
     // Budget remains as planned/allocated when approved
     // Expense will only be added to spent when status changes to CLOSED
 
+    // Fire-and-forget email notifications
+    this.handleSubsidyStatusChangeNotifications(id, 'APPROVED', language).catch(e => {
+      console.error('[SubsidyRequestService] Failed to send approve notifications:', e);
+    });
+
     return result;
   }
 
@@ -1416,6 +1421,11 @@ export class SubsidyRequestService {
     // The project's ALLOCATION_RESERVED covers all subsidy requests in aggregate;
     // individual subsidies never create their own ALLOCATION_RESERVED, so there
     // is nothing to release here. The project allocation remains intact.
+
+    // Fire-and-forget email notifications
+    this.handleSubsidyStatusChangeNotifications(id, 'REJECTED', language).catch(e => {
+      console.error('[SubsidyRequestService] Failed to send reject notifications:', e);
+    });
 
     return result;
   }

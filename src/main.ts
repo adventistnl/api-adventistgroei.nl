@@ -26,7 +26,7 @@ async function bootstrap() {
     origin: origins,
     credentials: true,
     methods: 'GET,POST,DELETE,OPTIONS',
-    allowedHeaders: 'Content-Type,Authorization,apollo-require-preflight',
+    allowedHeaders: 'Content-Type,Authorization,apollo-require-preflight,ngrok-skip-browser-warning',
   });
 
   logger.info('CORS configured', {

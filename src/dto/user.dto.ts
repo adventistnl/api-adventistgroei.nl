@@ -83,6 +83,9 @@ export class UserUpdateDto {
   @Field(() => Boolean, { nullable: true })
   is_deleted?: boolean;
 
+  @Field(() => Boolean, { nullable: true })
+  recieve_emails?: boolean;
+
   @Field(() => ContactUpdateDto, { nullable: true })
   contact?: ContactUpdateDto;
 
