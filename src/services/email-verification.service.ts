@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { EmailService } from './email.service';
 import { VerificationCodeRepository } from '../repositories/verification-code.repository';
+import { UserRepository } from '../repositories/user.repository';
 
 export interface SendEmailVerificationCodeInput {
   email: string;
@@ -24,7 +25,17 @@ export class EmailVerificationService {
   constructor(
     private readonly emailService: EmailService,
     private readonly verificationCodeRepository: VerificationCodeRepository,
+    private readonly userRepository: UserRepository,
   ) {}
+
+  async checkEmailAvailability(email: string): Promise<EmailVerificationResponse> {
+    const normalizedEmail = email.toLowerCase().trim();
+    const existing = await this.userRepository.findOneByFilters({ email: normalizedEmail });
+    if (existing) {
+      return { success: false, error: 'Email already in use' };
+    }
+    return { success: true, message: 'Email is available' };
+  }
 
   async sendCode(input: SendEmailVerificationCodeInput): Promise<EmailVerificationResponse> {
     const { email, userName, language = 'en' } = input;
@@ -61,14 +72,23 @@ export class EmailVerificationService {
       createdAt: new Date(),
     });
 
-    // Send the verification email
-    await this.emailService.sendEmailVerificationCode({
-      to: email,
-      code,
-      expiresIn: '15 minutes',
-      language,
-      userName,
-    });
+    // Send the verification email — surface any error to the caller instead of throwing
+    try {
+      await this.emailService.sendEmailVerificationCode({
+        to: email,
+        code,
+        expiresIn: '15 minutes',
+        language,
+        userName,
+      });
+    } catch (err: any) {
+      // Clean up the code we just saved so the user can retry cleanly
+      await this.verificationCodeRepository.deleteByEmail(email);
+      return {
+        success: false,
+        error: err?.message || 'Failed to send verification email. Please try again.',
+      };
+    }
 
     return { success: true, message: 'Verification code sent to email' };
   }

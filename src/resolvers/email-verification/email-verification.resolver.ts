@@ -1,4 +1,4 @@
-import { Resolver, Mutation, Args } from '@nestjs/graphql';
+import { Resolver, Mutation, Args, Query } from '@nestjs/graphql';
 import { EmailVerificationService } from '../../services/email-verification.service';
 import { SendEmailVerificationCodeInput, VerifyEmailCodeInput } from './dto/email-verification.input';
 import { EmailVerificationResponse } from './dto/email-verification.response';
@@ -6,6 +6,13 @@ import { EmailVerificationResponse } from './dto/email-verification.response';
 @Resolver()
 export class EmailVerificationResolver {
   constructor(private readonly emailVerificationService: EmailVerificationService) {}
+
+  @Query(() => EmailVerificationResponse)
+  async checkEmailAvailability(
+    @Args('email') email: string,
+  ): Promise<EmailVerificationResponse> {
+    return this.emailVerificationService.checkEmailAvailability(email);
+  }
 
   @Mutation(() => EmailVerificationResponse)
   async sendEmailVerificationCode(

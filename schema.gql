@@ -1970,6 +1970,7 @@ type Query {
   budgetDistribution(year: Int!, institutionId: String!): BudgetDistribution!
   institutionalDepartmentsKPIs(year: Int!, institutionId: String!): InstitutionalDepartmentsKPIs!
   ledgerHistory(filters: LedgerHistoryFilterInput!): LedgerHistoryPaginatedResponse!
+  checkEmailAvailability(email: String!): EmailVerificationResponse!
   projectHistories(projectId: ID!): [ProjectHistory!]!
   projectAdjustments(projectId: ID!): [ProjectAdjustment!]!
   projectAdjustment(id: ID!): ProjectAdjustment!
