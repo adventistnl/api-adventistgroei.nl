@@ -631,6 +631,22 @@ export class SubsidyRequestService {
             );
           }
         }
+
+        // FINANCIAL_MANAGER cannot change status on pre-approved subsidies (PENDING, IN_REVIEW)
+        // Finance can only act AFTER the subsidy has been APPROVED
+        const preApprovedStatuses = ['PENDING', 'IN_REVIEW'];
+        if (preApprovedStatuses.includes(currentStatusName!)) {
+          const hasFinancialRole = await this.userHasFinancialRole(userId);
+          if (hasFinancialRole) {
+            throw new CustomGraphQLError(
+              translate('errors.financial_cannot_act_before_approval', language, { ns: 'subsidy' }),
+              ErrorCode.FORBIDDEN,
+              403,
+              { additional: { errorCode: 'FINANCIAL_CANNOT_ACT_BEFORE_APPROVAL' } }
+            );
+          }
+        }
+
       }
     }
 
