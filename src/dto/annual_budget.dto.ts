@@ -281,6 +281,10 @@ export class LedgerHistoryEntry {
   @Field(() => String, { nullable: true })
   createdBy?: string;
 
+  @Field(() => String, { nullable: true })
+  createdByName?: string;
+
+
   @Field(() => Float, { nullable: true })
   balanceAfter?: number;
 }

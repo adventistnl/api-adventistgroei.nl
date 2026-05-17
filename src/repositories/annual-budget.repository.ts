@@ -1281,11 +1281,12 @@ export class AnnualBudgetRepository {
     const users = creatorIds.size > 0 
       ? await this.prisma.user.findMany({
           where: { id: { in: Array.from(creatorIds) } },
-          select: { id: true, email: true }
+          select: { id: true, email: true, name: true }
         })
       : [];
 
     const userMap = new Map(users.map(u => [u.id, u.email]));
+    const nameMap = new Map(users.map(u => [u.id, u.name]));
 
     // 5. Final Assembly (Map in the order of the pageSlice)
     const txMapData = new Map((fullTxs as any[]).map(tx => [tx.id, tx]));
@@ -1322,9 +1323,9 @@ export class AnnualBudgetRepository {
           tx.annual_budget.church?.name;
 
         const relatedEntity = tx.project
-          ? `Projeto: ${tx.project.title}`
+          ? `PROJECT|${tx.project.title}`
           : tx.subsidy_request
-          ? `Subsídio: ${tx.subsidy_request.id}`
+          ? `SUBSIDY|${tx.subsidy_request.id}`
           : undefined;
 
         return {
@@ -1339,6 +1340,7 @@ export class AnnualBudgetRepository {
           entityName,
           relatedEntity,
           createdBy: userMap.get(tx.created_by) || tx.created_by,
+          createdByName: nameMap.get(tx.created_by) ?? undefined,
         };
       } else {
         const tr = trMapData.get(meta.id) as any;
@@ -1360,8 +1362,9 @@ export class AnnualBudgetRepository {
               tr.from_budget?.department?.name ||
               tr.from_budget?.institution?.name ||
               tr.from_budget?.church?.name,
-            relatedEntity: toName ? `Destino: ${toName}` : undefined,
+            relatedEntity: toName ? `DESTINATION|${toName}` : undefined,
             createdBy: userMap.get(tr.created_by) || tr.created_by,
+            createdByName: nameMap.get(tr.created_by) ?? undefined,
           };
         } else {
           const fromName =
@@ -1381,8 +1384,9 @@ export class AnnualBudgetRepository {
               tr.to_budget?.department?.name ||
               tr.to_budget?.institution?.name ||
               tr.to_budget?.church?.name,
-            relatedEntity: fromName ? `Origem: ${fromName}` : undefined,
+            relatedEntity: fromName ? `ORIGIN|${fromName}` : undefined,
             createdBy: userMap.get(tr.created_by) || tr.created_by,
+            createdByName: nameMap.get(tr.created_by) ?? undefined,
           };
         }
       }
