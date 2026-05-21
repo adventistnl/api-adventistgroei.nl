@@ -14,6 +14,8 @@ import { UserWithRoles, ProjectCollaborator } from '../models';
 import { ProjectStatus } from '../@generated/prisma/project-status.enum';
 import { EmailService } from './email.service';
 import { NotificationService } from './notification.service';
+import { ProjectHistoryService } from './project-history.service';
+import { ProjectHistoryType } from '../@generated/prisma/project-history-type.enum';
 
 @Injectable()
 export class ProjectService {
@@ -26,6 +28,7 @@ export class ProjectService {
     private readonly userRepository: UserRepository,
     private readonly emailService: EmailService,
     private readonly notificationService: NotificationService,
+    private readonly projectHistoryService: ProjectHistoryService,
   ) {}
 
   async create(data: ProjectCreateDto, userId: string): Promise<Project> {
@@ -126,19 +129,81 @@ export class ProjectService {
     const isOwner = userId === existingProject.owner_id;
     const isCoOwner = userId === existingProject.co_owner_id;
 
-    // 1. Status Change Permissions
+    // 1. Status Change Permissions & Transitions
     if (data.status && data.status !== existingProject.status) {
-      if (!isOwner) {
-        // Co-owner can only transition from DRAFT to OPEN_REQUEST
-        if (isCoOwner && existingProject.status === ProjectStatus.DRAFT && data.status === ProjectStatus.OPEN_REQUEST) {
-           // allowed
-        } else {
-           throw new CustomGraphQLError(
-             'Only the institutional owner can change the project status',
-             ErrorCode.UNAUTHORIZED,
-             401,
-             { additional: { errorCode: 'UNAUTHORIZED_STATUS_CHANGE' } }
-           );
+      const caller = await this.userRepository.findByIdWithRoles(userId);
+      const privilegedRoles = ['ADMIN', 'DEV'];
+      const isAdmin = caller?.user_roles?.some((ur: any) => privilegedRoles.includes(ur.role?.key_code)) ?? false;
+
+      const fromStatus = existingProject.status;
+      const toStatus = data.status;
+
+      // Validate Transition
+      const PROJECT_TRANSITIONS: Record<string, string[]> = {
+        DRAFT: ['OPEN_REQUEST'],
+        OPEN_REQUEST: ['IN_REVIEW', 'ADJUSTMENTS_NEEDED', 'IN_PROGRESS'],
+        IN_REVIEW: ['IN_PROGRESS', 'ADJUSTMENTS_NEEDED'],
+        ADJUSTMENTS_NEEDED: ['OPEN_REQUEST', 'IN_REVIEW'],
+        IN_PROGRESS: ['PENDING_RECEIPT', 'WAITING_REFUND', 'OVERDUE', 'CONCLUDED'],
+        PENDING_RECEIPT: ['WAITING_REFUND', 'OVERDUE', 'CONCLUDED'],
+        WAITING_REFUND: ['CONCLUDED', 'OVERDUE'],
+        OVERDUE: ['CONCLUDED'],
+        CONCLUDED: []
+      };
+
+      const allowedTransitions = PROJECT_TRANSITIONS[fromStatus] || [];
+      if (!allowedTransitions.includes(toStatus)) {
+        throw new CustomGraphQLError(
+          'Invalid status transition',
+          ErrorCode.BAD_REQUEST,
+          400,
+          { additional: { errorCode: 'INVALID_STATUS_TRANSITION' } }
+        );
+      }
+
+      // Validate Permissions
+      if (fromStatus === 'DRAFT' && toStatus === 'OPEN_REQUEST') {
+        if (!isOwner && !isCoOwner && !isAdmin) {
+          throw new CustomGraphQLError(
+            'Only the institutional owner can change the project status',
+            ErrorCode.UNAUTHORIZED,
+            401,
+            { additional: { errorCode: 'UNAUTHORIZED_STATUS_CHANGE' } }
+          );
+        }
+      } else if (toStatus === 'IN_REVIEW' || toStatus === 'IN_PROGRESS' || toStatus === 'ADJUSTMENTS_NEEDED') {
+        if (!isAdmin && !isOwner) {
+          throw new CustomGraphQLError(
+            'Only administrators can perform this approval',
+            ErrorCode.UNAUTHORIZED,
+            401,
+            { additional: { errorCode: 'UNAUTHORIZED_STATUS_CHANGE' } }
+          );
+        }
+      } else {
+        // IN_PROGRESS -> PENDING_RECEIPT -> WAITING_REFUND -> OVERDUE -> CONCLUDED
+        if (!isOwner && !isAdmin) {
+          throw new CustomGraphQLError(
+            'Only the institutional owner can change the project status',
+            ErrorCode.UNAUTHORIZED,
+            401,
+            { additional: { errorCode: 'UNAUTHORIZED_STATUS_CHANGE' } }
+          );
+        }
+      }
+
+      // Validate Business Rules
+      if (toStatus === 'WAITING_REFUND') {
+        const subsidies = await this.prisma.subsidyRequest.count({
+          where: { project_id: id }
+        });
+        if (subsidies === 0) {
+          throw new CustomGraphQLError(
+            'Cannot move to waiting refund: no subsidies requested',
+            ErrorCode.BAD_REQUEST,
+            400,
+            { additional: { errorCode: 'NO_SUBSIDIES_FOR_REFUND' } }
+          );
         }
       }
     }
@@ -231,6 +296,18 @@ export class ProjectService {
       this.handleStatusChangeNotifications(updatedProject).catch(e => {
         console.error('Failed to send status change notifications:', e);
       });
+
+      this.projectHistoryService.logEvent(
+        id,
+        userId,
+        ProjectHistoryType.STATUS_CHANGED,
+        {
+          field_name: 'status',
+          old_value: existingProject.status,
+          new_value: updatedProject.status,
+          metadata: { newStatus: updatedProject.status }
+        }
+      ).catch(e => console.error('Failed to log project status change history:', e));
     }
 
     return updatedProject;
@@ -244,7 +321,8 @@ export class ProjectService {
 
     // Helper to send email
     const sendEmail = async (user: any) => {
-      if (user?.email) {
+      // Respect user's email preferences (default is true if undefined)
+      if (user?.email && user.recieve_emails !== false) {
         await this.emailService.sendProjectStatusChangedEmail({
           to: user.email,
           projectName: project.title,

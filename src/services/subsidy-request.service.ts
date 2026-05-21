@@ -13,6 +13,8 @@ import { format } from 'date-fns';
 
 import { SubsidyHistoryType } from '../@generated/prisma/subsidy-history-type.enum';
 import { SubsidyRequestType } from '../@generated/prisma/subsidy-request-type.enum';
+import { ProjectHistoryService } from './project-history.service';
+import { ProjectHistoryType } from '../@generated/prisma/project-history-type.enum';
 import { AnnualBudgetService } from './annual-budget.service';
 import { DecimalHelper } from '../common/helpers/decimal.helper';
 import { SubsidyReceiptService } from './subsidy-receipt.service';
@@ -35,6 +37,7 @@ export class SubsidyRequestService {
     @Inject(forwardRef(() => SubsidyReceiptService))
     private readonly subsidyReceiptService: SubsidyReceiptService,
     private readonly emailService: EmailService,
+    private readonly projectHistoryService: ProjectHistoryService,
   ) {}
 
   private validateStatusTransition(currentStatusName: string | undefined, newStatusName: string, language: LanguagePreference = LanguagePreference.en) {
@@ -955,7 +958,7 @@ export class SubsidyRequestService {
 
       // ── Email notifications on status change ───────────────────────────────────
       // Fire-and-forget: email failures must never block the mutation response
-      this.handleSubsidyStatusChangeNotifications(id, newStatus?.name ?? '', language).catch(e => {
+      this.handleSubsidyStatusChangeNotifications(id, newStatus?.name ?? '', language, userId).catch(e => {
         console.error('[SubsidyRequestService] Failed to send subsidy status change notifications:', e);
       });
     }
@@ -995,6 +998,7 @@ export class SubsidyRequestService {
     subsidyId: string,
     newStatusName: string,
     language: LanguagePreference,
+    userId: string,
   ): Promise<void> {
     const statusUp = newStatusName.toUpperCase();
 
@@ -1090,6 +1094,25 @@ export class SubsidyRequestService {
       for (const financeUser of financeUsers) {
         await sendFinanceEmail(financeUser);
       }
+    }
+
+    // ── Notify WebSockets via ProjectHistory ─────────────────────────────
+    if (project.id) {
+      this.projectHistoryService.logEvent(
+        project.id,
+        userId,
+        ProjectHistoryType.STATUS_CHANGED,
+        {
+          field_name: 'subsidy_status',
+          old_value: '', // We don't track the exact old status in this generic method
+          new_value: newStatusName,
+          comment: `subsidy_status_changed`, // Translation key
+          metadata: { 
+            subsidyDescription,
+            newStatus: newStatusName 
+          }
+        }
+      ).catch(e => console.error('[SubsidyRequestService] Failed to log project history for subsidy status change:', e));
     }
   }
 
@@ -1422,7 +1445,7 @@ export class SubsidyRequestService {
     // Expense will only be added to spent when status changes to CLOSED
 
     // Fire-and-forget email notifications
-    this.handleSubsidyStatusChangeNotifications(id, 'APPROVED', language).catch(e => {
+    this.handleSubsidyStatusChangeNotifications(id, 'APPROVED', language, userId).catch(e => {
       console.error('[SubsidyRequestService] Failed to send approve notifications:', e);
     });
 
@@ -1484,7 +1507,7 @@ export class SubsidyRequestService {
     // is nothing to release here. The project allocation remains intact.
 
     // Fire-and-forget email notifications
-    this.handleSubsidyStatusChangeNotifications(id, 'REJECTED', language).catch(e => {
+    this.handleSubsidyStatusChangeNotifications(id, 'REJECTED', language, userId).catch(e => {
       console.error('[SubsidyRequestService] Failed to send reject notifications:', e);
     });
 
