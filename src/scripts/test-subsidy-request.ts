@@ -33,7 +33,7 @@ interface TestResult {
   email: string;
   scenario: string;
   expected: 'ALLOW' | 'DENY';
-  actual: 'ALLOW' | 'DENY' | 'ERROR'; // eslint-disable-line @typescript-eslint/no-unused-vars
+  actual: 'ALLOW' | 'DENY' | 'ERROR';  
   passed: boolean;
   detail?: string;
 }

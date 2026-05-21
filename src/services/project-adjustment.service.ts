@@ -50,7 +50,7 @@ export class ProjectAdjustmentService {
 
   /** Altera o status: OPEN → IN_PROGRESS → CLOSED (ou qualquer transição). */
   async updateStatus(data: UpdateAdjustmentStatusDto, userId: string): Promise<ProjectAdjustment> {
-    return this.adjustmentRepository.updateStatus(data.id, data.status as AdjustmentStatus, userId);
+    return this.adjustmentRepository.updateStatus(data.id, data.status, userId);
   }
 
   /** Adiciona uma nova task ao todo list de um adjustment existente. */

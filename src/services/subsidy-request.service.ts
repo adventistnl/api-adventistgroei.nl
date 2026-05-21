@@ -276,6 +276,51 @@ export class SubsidyRequestService {
 
     console.log('🟡 [SubsidyRequestService.create] Calling repository.create with subsidy_status_id:', data.subsidy_status_id);
 
+    // Validate ADVANCE limits (frontend uses create() for ADVANCE too)
+    if (resolvedType === SubsidyRequestType.ADVANCE) {
+      const project = await this.prisma.project.findUnique({
+        where: { id: data.project_id },
+        select: { subsidized_budget: true }
+      });
+      if (!project) throw new CustomGraphQLError('Project not found', ErrorCode.NOT_FOUND, 404);
+
+      const existingSubsidies = await this.prisma.subsidyRequest.findMany({
+        where: {
+          project_id: data.project_id,
+          is_deleted: false,
+          subsidy_status: { name: { not: 'REJECTED' } }
+        }
+      });
+
+      const totalRequested = existingSubsidies.reduce((sum, req) => sum + Number(req.total_budget || 0), 0);
+      const availableBudget = Math.max(0, Number(project.subsidized_budget || 0) - totalRequested);
+      
+      const maxAdvanceAllowed = Number(project.subsidized_budget || 0) * 0.5;
+      const advanceRequested = Number(data.advance_amount || data.total_budget || 0);
+
+      if (advanceRequested > availableBudget) {
+         throw new CustomGraphQLError(
+           translate('errors.advance_exceeds_available', language, { ns: 'subsidy', max: availableBudget }),
+           ErrorCode.BAD_REQUEST,
+           400,
+           { additional: { errorCode: 'ADVANCE_EXCEEDS_AVAILABLE' } }
+         );
+      }
+
+      const existingAdvancesSum = existingSubsidies
+         .filter(s => s.is_for_advance || s.request_type === SubsidyRequestType.ADVANCE)
+         .reduce((sum, req) => sum + Number(req.advance_amount || req.total_budget || 0), 0);
+         
+      if (existingAdvancesSum + advanceRequested > maxAdvanceAllowed) {
+         throw new CustomGraphQLError(
+           translate('errors.advance_exceeds_limit', language, { ns: 'subsidy', max: maxAdvanceAllowed }),
+           ErrorCode.BAD_REQUEST,
+           400,
+           { additional: { errorCode: 'ADVANCE_EXCEEDS_LIMIT' } }
+         );
+      }
+    }
+
     let subsidyRequest: SubsidyRequest;
     try {
       subsidyRequest = await this.subsidyRequestRepository.create(data, userId);
