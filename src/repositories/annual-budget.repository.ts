@@ -346,7 +346,7 @@ export class AnnualBudgetRepository {
       this.logger.log(`Processing toggle lock for budget ${id}, type: ${existingBudget.entity_type}, current lock: ${existingBudget.is_locked}`);
 
       // Regras de negócio para toggle lock
-      let newLockState = !existingBudget.is_locked;
+      const newLockState = !existingBudget.is_locked;
 
       if (existingBudget.status === AnnualBudgetStatus.APPROVED && existingBudget.is_locked) {
         throw new CustomGraphQLError(
@@ -514,7 +514,7 @@ export class AnnualBudgetRepository {
   /**
    * Atualiza o valor alocado do orçamento da instituição somando/subtraindo a mudança nos departamentos
    */
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+   
   private async updateInstitutionAllocatedAmount(
     _tx: any,
     _institutionId: string,
@@ -1274,8 +1274,8 @@ export class AnnualBudgetRepository {
 
     // Fetch user emails for hydrated items only
     const creatorIds = new Set([
-      ...(fullTxs as any[]).map(tx => tx.created_by),
-      ...(fullTrs as any[]).map(tr => tr.created_by)
+      ...(fullTxs).map(tx => tx.created_by),
+      ...(fullTrs).map(tr => tr.created_by)
     ]);
 
     const users = creatorIds.size > 0 
@@ -1289,8 +1289,8 @@ export class AnnualBudgetRepository {
     const nameMap = new Map(users.map(u => [u.id, u.name]));
 
     // 5. Final Assembly (Map in the order of the pageSlice)
-    const txMapData = new Map((fullTxs as any[]).map(tx => [tx.id, tx]));
-    const trMapData = new Map((fullTrs as any[]).map(tr => [tr.id, tr]));
+    const txMapData = new Map((fullTxs).map(tx => [tx.id, tx]));
+    const trMapData = new Map((fullTrs).map(tr => [tr.id, tr]));
 
     const TRANSFER_OUT_LABELS: Record<string, string> = {
       DISTRIBUTION:    'Distribuição para Departamento',
@@ -1308,7 +1308,7 @@ export class AnnualBudgetRepository {
 
     const items: LedgerHistoryEntry[] = pageSlice.map(meta => {
       if (meta.category === 'TRANSACTION') {
-        const tx = txMapData.get(meta.id) as any;
+        const tx = txMapData.get(meta.id);
         const hasExpense = Number(tx.delta_expenses) !== 0;
         const entryType = hasExpense ? 'EXPENSE' : 'ALLOCATION';
         const entryAmount = hasExpense
@@ -1343,7 +1343,7 @@ export class AnnualBudgetRepository {
           createdByName: nameMap.get(tx.created_by) ?? undefined,
         };
       } else {
-        const tr = trMapData.get(meta.id) as any;
+        const tr = trMapData.get(meta.id);
         if (meta.subId === 'out') {
           const toName =
             tr.to_budget?.department?.name ||

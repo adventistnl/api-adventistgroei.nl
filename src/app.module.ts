@@ -65,8 +65,8 @@ const JWT_SECRET = process.env.JWT_SECRET;
         if (extra !== undefined) {
           return {
             req,
-            userId: (extra as any).userId ?? '',
-            userRoles: (extra as any).userRoles ?? [],
+            userId: (extra).userId ?? '',
+            userRoles: (extra).userRoles ?? [],
           };
         }
         // Contexto HTTP (query/mutation) — req nunca é undefined aqui

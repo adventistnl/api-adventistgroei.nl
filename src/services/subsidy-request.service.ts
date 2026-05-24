@@ -13,6 +13,8 @@ import { format } from 'date-fns';
 
 import { SubsidyHistoryType } from '../@generated/prisma/subsidy-history-type.enum';
 import { SubsidyRequestType } from '../@generated/prisma/subsidy-request-type.enum';
+import { ProjectHistoryService } from './project-history.service';
+import { ProjectHistoryType } from '../@generated/prisma/project-history-type.enum';
 import { AnnualBudgetService } from './annual-budget.service';
 import { DecimalHelper } from '../common/helpers/decimal.helper';
 import { SubsidyReceiptService } from './subsidy-receipt.service';
@@ -35,6 +37,7 @@ export class SubsidyRequestService {
     @Inject(forwardRef(() => SubsidyReceiptService))
     private readonly subsidyReceiptService: SubsidyReceiptService,
     private readonly emailService: EmailService,
+    private readonly projectHistoryService: ProjectHistoryService,
   ) {}
 
   private validateStatusTransition(currentStatusName: string | undefined, newStatusName: string, language: LanguagePreference = LanguagePreference.en) {
@@ -275,6 +278,51 @@ export class SubsidyRequestService {
     }
 
     console.log('🟡 [SubsidyRequestService.create] Calling repository.create with subsidy_status_id:', data.subsidy_status_id);
+
+    // Validate ADVANCE limits (frontend uses create() for ADVANCE too)
+    if (resolvedType === SubsidyRequestType.ADVANCE) {
+      const project = await this.prisma.project.findUnique({
+        where: { id: data.project_id },
+        select: { subsidized_budget: true }
+      });
+      if (!project) throw new CustomGraphQLError('Project not found', ErrorCode.NOT_FOUND, 404);
+
+      const existingSubsidies = await this.prisma.subsidyRequest.findMany({
+        where: {
+          project_id: data.project_id,
+          is_deleted: false,
+          subsidy_status: { name: { not: 'REJECTED' } }
+        }
+      });
+
+      const totalRequested = existingSubsidies.reduce((sum, req) => sum + Number(req.total_budget || 0), 0);
+      const availableBudget = Math.max(0, Number(project.subsidized_budget || 0) - totalRequested);
+      
+      const maxAdvanceAllowed = Number(project.subsidized_budget || 0) * 0.5;
+      const advanceRequested = Number(data.advance_amount || data.total_budget || 0);
+
+      if (advanceRequested > availableBudget) {
+         throw new CustomGraphQLError(
+           translate('errors.advance_exceeds_available', language, { ns: 'subsidy', max: availableBudget }),
+           ErrorCode.BAD_REQUEST,
+           400,
+           { additional: { errorCode: 'ADVANCE_EXCEEDS_AVAILABLE' } }
+         );
+      }
+
+      const existingAdvancesSum = existingSubsidies
+         .filter(s => s.is_for_advance || s.request_type === SubsidyRequestType.ADVANCE)
+         .reduce((sum, req) => sum + Number(req.advance_amount || req.total_budget || 0), 0);
+         
+      if (existingAdvancesSum + advanceRequested > maxAdvanceAllowed) {
+         throw new CustomGraphQLError(
+           translate('errors.advance_exceeds_limit', language, { ns: 'subsidy', max: maxAdvanceAllowed }),
+           ErrorCode.BAD_REQUEST,
+           400,
+           { additional: { errorCode: 'ADVANCE_EXCEEDS_LIMIT' } }
+         );
+      }
+    }
 
     let subsidyRequest: SubsidyRequest;
     try {
@@ -559,6 +607,32 @@ export class SubsidyRequestService {
     // the entire purpose of that status is for the user to submit receipt documents (items).
     const isEditingStructuralValues = data.total_budget !== undefined || data.description !== undefined || data.advance_amount !== undefined;
     const isEditingItems = !!(data.items && data.items.length > 0);
+
+    if (isEditingStructuralValues || isEditingItems) {
+      const isRequester = current.requester_id === userId || current.created_by === userId;
+      let isOwnerOrCoOwner = false;
+      
+      const project = await this.prisma.project.findUnique({
+        where: { id: current.project_id },
+        select: { owner_id: true, co_owner_id: true }
+      });
+      
+      if (project) {
+        isOwnerOrCoOwner = project.owner_id === userId || project.co_owner_id === userId;
+      }
+      
+      const userObj = await this.prisma.user.findUnique({ where: { id: userId }, include: { user_roles: { include: { role: true } } } });
+      const isAdmin = userObj?.user_roles.some(r => r.role.key_code === 'ADMIN' || r.role.key_code === 'DEV');
+      
+      if (!isRequester && !isOwnerOrCoOwner && !isAdmin) {
+        throw new CustomGraphQLError(
+          translate('errors.forbidden', language, { ns: 'common' }) || 'You do not have permission to edit this subsidy request.',
+          ErrorCode.FORBIDDEN,
+          403
+        );
+      }
+    }
+
     const currentStatusName = current.subsidy_status?.name?.toUpperCase();
 
     // Structural fields (budget, description, advance_amount) are locked after review
@@ -910,7 +984,7 @@ export class SubsidyRequestService {
 
       // ── Email notifications on status change ───────────────────────────────────
       // Fire-and-forget: email failures must never block the mutation response
-      this.handleSubsidyStatusChangeNotifications(id, newStatus?.name ?? '', language).catch(e => {
+      this.handleSubsidyStatusChangeNotifications(id, newStatus?.name ?? '', language, userId).catch(e => {
         console.error('[SubsidyRequestService] Failed to send subsidy status change notifications:', e);
       });
     }
@@ -950,6 +1024,7 @@ export class SubsidyRequestService {
     subsidyId: string,
     newStatusName: string,
     language: LanguagePreference,
+    userId: string,
   ): Promise<void> {
     const statusUp = newStatusName.toUpperCase();
 
@@ -1046,6 +1121,25 @@ export class SubsidyRequestService {
         await sendFinanceEmail(financeUser);
       }
     }
+
+    // ── Notify WebSockets via ProjectHistory ─────────────────────────────
+    if (project.id) {
+      this.projectHistoryService.logEvent(
+        project.id,
+        userId,
+        ProjectHistoryType.STATUS_CHANGED,
+        {
+          field_name: 'subsidy_status',
+          old_value: '', // We don't track the exact old status in this generic method
+          new_value: newStatusName,
+          comment: `subsidy_status_changed`, // Translation key
+          metadata: { 
+            subsidyDescription,
+            newStatus: newStatusName 
+          }
+        }
+      ).catch(e => console.error('[SubsidyRequestService] Failed to log project history for subsidy status change:', e));
+    }
   }
 
 
@@ -1085,6 +1179,30 @@ export class SubsidyRequestService {
         translate('errors.subsidy_not_found', language, { ns: 'subsidy' }),
         ErrorCode.NOT_FOUND,
         404
+      );
+    }
+
+    // Validação de acesso: apenas requester, owner, co-owner, ou admin podem deletar
+    const isRequester = subsidyRequest.requester_id === userId || subsidyRequest.created_by === userId;
+    let isOwnerOrCoOwner = false;
+    
+    const project = await this.prisma.project.findUnique({
+      where: { id: subsidyRequest.project_id },
+      select: { owner_id: true, co_owner_id: true }
+    });
+    
+    if (project) {
+      isOwnerOrCoOwner = project.owner_id === userId || project.co_owner_id === userId;
+    }
+    
+    const userObj = await this.prisma.user.findUnique({ where: { id: userId }, include: { user_roles: { include: { role: true } } } });
+    const isAdmin = userObj?.user_roles.some(r => r.role.key_code === 'ADMIN' || r.role.key_code === 'DEV');
+    
+    if (!isRequester && !isOwnerOrCoOwner && !isAdmin) {
+      throw new CustomGraphQLError(
+        translate('errors.forbidden', language, { ns: 'common' }) || 'You do not have permission to delete this subsidy request.',
+        ErrorCode.FORBIDDEN,
+        403
       );
     }
 
@@ -1377,7 +1495,7 @@ export class SubsidyRequestService {
     // Expense will only be added to spent when status changes to CLOSED
 
     // Fire-and-forget email notifications
-    this.handleSubsidyStatusChangeNotifications(id, 'APPROVED', language).catch(e => {
+    this.handleSubsidyStatusChangeNotifications(id, 'APPROVED', language, userId).catch(e => {
       console.error('[SubsidyRequestService] Failed to send approve notifications:', e);
     });
 
@@ -1439,7 +1557,7 @@ export class SubsidyRequestService {
     // is nothing to release here. The project allocation remains intact.
 
     // Fire-and-forget email notifications
-    this.handleSubsidyStatusChangeNotifications(id, 'REJECTED', language).catch(e => {
+    this.handleSubsidyStatusChangeNotifications(id, 'REJECTED', language, userId).catch(e => {
       console.error('[SubsidyRequestService] Failed to send reject notifications:', e);
     });
 

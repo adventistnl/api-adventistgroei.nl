@@ -465,6 +465,9 @@ export class ProjectRepository {
             },
           },
         },
+        special_projects: {
+          where: { is_deleted: false },
+        },
       },
     });
   }
@@ -505,6 +508,9 @@ export class ProjectRepository {
               },
             },
           },
+        },
+        special_projects: {
+          where: { is_deleted: false },
         },
       },
     });
@@ -582,6 +588,9 @@ export class ProjectRepository {
             },
           },
         },
+        special_projects: {
+          where: { is_deleted: false },
+        },
       },
     });
   }
@@ -625,6 +634,9 @@ export class ProjectRepository {
               where: { is_deleted: false },
             },
           },
+        },
+        special_projects: {
+          where: { is_deleted: false },
         },
       },
       orderBy: { created_at: 'desc' },
@@ -764,6 +776,9 @@ export class ProjectRepository {
               },
             },
           },
+        },
+        special_projects: {
+          where: { is_deleted: false },
         },
       },
     });
