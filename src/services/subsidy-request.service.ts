@@ -607,6 +607,32 @@ export class SubsidyRequestService {
     // the entire purpose of that status is for the user to submit receipt documents (items).
     const isEditingStructuralValues = data.total_budget !== undefined || data.description !== undefined || data.advance_amount !== undefined;
     const isEditingItems = !!(data.items && data.items.length > 0);
+
+    if (isEditingStructuralValues || isEditingItems) {
+      const isRequester = current.requester_id === userId || current.created_by === userId;
+      let isOwnerOrCoOwner = false;
+      
+      const project = await this.prisma.project.findUnique({
+        where: { id: current.project_id },
+        select: { owner_id: true, co_owner_id: true }
+      });
+      
+      if (project) {
+        isOwnerOrCoOwner = project.owner_id === userId || project.co_owner_id === userId;
+      }
+      
+      const userObj = await this.prisma.user.findUnique({ where: { id: userId }, include: { user_roles: { include: { role: true } } } });
+      const isAdmin = userObj?.user_roles.some(r => r.role.key_code === 'ADMIN' || r.role.key_code === 'DEV');
+      
+      if (!isRequester && !isOwnerOrCoOwner && !isAdmin) {
+        throw new CustomGraphQLError(
+          translate('errors.forbidden', language, { ns: 'common' }) || 'You do not have permission to edit this subsidy request.',
+          ErrorCode.FORBIDDEN,
+          403
+        );
+      }
+    }
+
     const currentStatusName = current.subsidy_status?.name?.toUpperCase();
 
     // Structural fields (budget, description, advance_amount) are locked after review
@@ -1153,6 +1179,30 @@ export class SubsidyRequestService {
         translate('errors.subsidy_not_found', language, { ns: 'subsidy' }),
         ErrorCode.NOT_FOUND,
         404
+      );
+    }
+
+    // Validação de acesso: apenas requester, owner, co-owner, ou admin podem deletar
+    const isRequester = subsidyRequest.requester_id === userId || subsidyRequest.created_by === userId;
+    let isOwnerOrCoOwner = false;
+    
+    const project = await this.prisma.project.findUnique({
+      where: { id: subsidyRequest.project_id },
+      select: { owner_id: true, co_owner_id: true }
+    });
+    
+    if (project) {
+      isOwnerOrCoOwner = project.owner_id === userId || project.co_owner_id === userId;
+    }
+    
+    const userObj = await this.prisma.user.findUnique({ where: { id: userId }, include: { user_roles: { include: { role: true } } } });
+    const isAdmin = userObj?.user_roles.some(r => r.role.key_code === 'ADMIN' || r.role.key_code === 'DEV');
+    
+    if (!isRequester && !isOwnerOrCoOwner && !isAdmin) {
+      throw new CustomGraphQLError(
+        translate('errors.forbidden', language, { ns: 'common' }) || 'You do not have permission to delete this subsidy request.',
+        ErrorCode.FORBIDDEN,
+        403
       );
     }
 
