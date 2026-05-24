@@ -20,6 +20,7 @@
     "rejected_status_not_found": "Rejected status not found",
     "document_amounts_mismatch": "The sum of document amounts ({{sum}}) does not match the requested amount ({{requested}}) for the activity",
     "only_financial_can_close": "Only users with the Financial Manager role can close subsidy requests",
+    "financial_cannot_act_before_approval": "Financial managers can only change the status of subsidies that have already been approved",
     "refund_invalid_status": "Refund can only be requested for subsidies in ADVANCED_CLOSED or CLOSED status",
     "refund_amount_invalid": "Refund amount must be greater than zero",
     "no_refund_requested": "No refund has been requested for this subsidy",

@@ -42,6 +42,9 @@ export class NodemailerEmailRepository {
         user: smtpUser,
         pass: smtpPass,
       },
+      connectionTimeout: 10000,  // 10s to establish connection
+      greetingTimeout: 10000,    // 10s for SMTP greeting
+      socketTimeout: 15000,      // 15s idle socket timeout
     }) as Transporter;
 
     this.nodemailerEmail = smtpUser;
@@ -74,20 +77,31 @@ export class NodemailerEmailRepository {
   }
 
   async sendEmail(to: string, subject: string, templateName: string, templateData: Record<string, any>): Promise<void> {
+    const SEND_TIMEOUT_MS = 15000;
     try {
-      // Load and render the template
       const html: string = this.mustacheService.renderMustacheTemplate(templateName, templateData);
-      // Send the email
-      await this.transporter.sendMail({
-        from: this.nodemailerEmail, // Sender address
-        to, // List of receivers
-        subject, // Subject line
-        html, // HTML body content
+
+      const sendPromise = this.transporter.sendMail({
+        from: this.nodemailerEmail,
+        to,
+        subject,
+        html,
       });
+
+      const timeoutPromise = new Promise<never>((_, reject) =>
+        setTimeout(() => reject(new Error(`Email sending timed out after ${SEND_TIMEOUT_MS / 1000}s`)), SEND_TIMEOUT_MS)
+      );
+
+      await Promise.race([sendPromise, timeoutPromise]);
     } catch (error) {
-      throw new CustomGraphQLError(`Failed to send email: ${error instanceof Error ? error.message : String(error)}`, ErrorCode.INTERNAL_SERVER_ERROR, 500);
+      throw new CustomGraphQLError(
+        `Failed to send email: ${error instanceof Error ? error.message : String(error)}`,
+        ErrorCode.INTERNAL_SERVER_ERROR,
+        500,
+      );
     }
   }
+
 
     async sendForgotPasswordEmail(data: ForgotPasswordEmailDto): Promise<void> {
       const language = (data.language as LanguagePreference) || LanguagePreference.en;
