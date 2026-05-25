@@ -20,6 +20,7 @@
     "rejected_status_not_found": "Afgewezen status niet gevonden",
     "document_amounts_mismatch": "De som van documentbedragen ({{sum}}) komt niet overeen met het aangevraagde bedrag ({{requested}}) voor de activiteit",
     "only_financial_can_close": "Alleen gebruikers met de rol Financieel Manager kunnen subsidieaanvragen sluiten",
+    "financial_cannot_act_before_approval": "Financieel managers kunnen alleen de status wijzigen van subsidies die al zijn goedgekeurd",
     "refund_invalid_status": "Terugbetaling kan alleen worden aangevraagd voor subsidies met status VOORSCHOT_GESLOTEN of GESLOTEN",
     "refund_amount_invalid": "Terugbetalingsbedrag moet groter zijn dan nul",
     "no_refund_requested": "Er is geen terugbetaling aangevraagd voor deze subsidie",

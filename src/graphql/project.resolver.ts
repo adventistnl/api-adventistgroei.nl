@@ -50,7 +50,7 @@ export class ProjectResolver {
     if (!project.church_department_id) {
       return null;
     }
-    return this.departmentService.getDepartmentById(project.church_department_id as string);
+    return this.departmentService.getDepartmentById(project.church_department_id);
   }
 
   @Query(() => [Project])

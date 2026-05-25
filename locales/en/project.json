@@ -9,5 +9,19 @@
     "WAITING_REFUND": "Waiting Refund",
     "CONCLUDED": "Concluded",
     "EXPIRED": "Expired"
+  },
+  "history": {
+    "status_changed": "Status changed from \"{{from}}\" to \"{{to}}\"",
+    "subsidy_status_changed": "Subsidy \"{{subsidy}}\" changed status to \"{{status}}\"",
+    "created": "Project created",
+    "updated": "Project updated"
+  },
+  "notifications": {
+    "status_change_title": "Update in {{projectTitle}}",
+    "status_change_message": "{{actor}} changed the project status to \"{{status}}\"",
+    "subsidy_change_title": "Subsidy update in {{projectTitle}}",
+    "subsidy_change_message": "Subsidy \"{{subsidy}}\" changed to \"{{status}}\"",
+    "new_message_title": "New message in {{projectTitle}}",
+    "new_message_body": "{{actor}}: {{message}}"
   }
 }

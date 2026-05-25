@@ -40,16 +40,32 @@ export class InstitutionPositionRepository {
         409,
       );
     }
-    return this.prisma.institutionPosition.create({
-      data: {
+
+    // Use upsert to handle soft-deleted records with the same unique key (institution_id, position_type)
+    return this.prisma.institutionPosition.upsert({
+      where: {
+        institution_id_position_type: {
+          institution_id: data.institution_id,
+          position_type: data.position_type,
+        },
+      },
+      create: {
         institution: { connect: { id: data.institution_id } },
         position_type: data.position_type,
         user: { connect: { id: data.user_id } },
         created_by: userId,
         updated_by: userId,
       },
+      update: {
+        user: { connect: { id: data.user_id } },
+        is_deleted: false,
+        deleted_at: null,
+        deleted_by: null,
+        updated_by: userId,
+      },
     });
   }
+
 
   async update(
     institutionPositionId: string,

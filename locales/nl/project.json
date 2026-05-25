@@ -9,5 +9,19 @@
     "WAITING_REFUND": "In Afwachting van Terugbetaling",
     "CONCLUDED": "Afgerond",
     "EXPIRED": "Verlopen"
+  },
+  "history": {
+    "status_changed": "Status gewijzigd van \"{{from}}\" naar \"{{to}}\"",
+    "subsidy_status_changed": "Subsidie \"{{subsidy}}\" heeft de status gewijzigd naar \"{{status}}\"",
+    "created": "Project aangemaakt",
+    "updated": "Project bijgewerkt"
+  },
+  "notifications": {
+    "status_change_title": "Update in {{projectTitle}}",
+    "status_change_message": "{{actor}} heeft de projectstatus gewijzigd naar \"{{status}}\"",
+    "subsidy_change_title": "Subsidie-update in {{projectTitle}}",
+    "subsidy_change_message": "Subsidie \"{{subsidy}}\" gewijzigd naar \"{{status}}\"",
+    "new_message_title": "Nieuw bericht in {{projectTitle}}",
+    "new_message_body": "{{actor}}: {{message}}"
   }
 }
