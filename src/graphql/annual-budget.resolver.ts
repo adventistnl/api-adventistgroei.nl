@@ -134,8 +134,8 @@ export class AnnualBudgetResolver {
   @ResolveField(() => Float)
   async total_expenses(@Parent() annualBudget: AnnualBudget): Promise<number> {
     const financials = await this.annualBudgetService.getComputedFinancials([annualBudget.id]);
-    const fin = financials[annualBudget.id] || { expenses: 0 };
-    return fin.expenses;
+    const fin = financials[annualBudget.id] || { expenses: 0, childExpenses: 0 };
+    return fin.expenses + (annualBudget.entity_type === 'INSTITUTION' ? (fin.childExpenses ?? 0) : 0);
   }
 
   @ResolveField(() => Float)
@@ -148,17 +148,17 @@ export class AnnualBudgetResolver {
   @ResolveField(() => Float)
   async spentAmount(@Parent() annualBudget: AnnualBudget): Promise<number> {
     const financials = await this.annualBudgetService.getComputedFinancials([annualBudget.id]);
-    const fin = financials[annualBudget.id] || { expenses: 0 };
-    return fin.expenses;
+    const fin = financials[annualBudget.id] || { expenses: 0, childExpenses: 0 };
+    return fin.expenses + (annualBudget.entity_type === 'INSTITUTION' ? (fin.childExpenses ?? 0) : 0);
   }
 
   @ResolveField(() => Float)
   async usagePercentage(@Parent() annualBudget: AnnualBudget): Promise<number> {
     const financials = await this.annualBudgetService.getComputedFinancials([annualBudget.id]);
-    const fin = financials[annualBudget.id] || { expenses: 0 };
+    const fin = financials[annualBudget.id] || { expenses: 0, childExpenses: 0 };
     
     const approvedAmount = Number(annualBudget.planned_budget || 0);
-    const spentAmount = fin.expenses;
+    const spentAmount = fin.expenses + (annualBudget.entity_type === 'INSTITUTION' ? (fin.childExpenses ?? 0) : 0);
     return approvedAmount > 0 ? Math.round((spentAmount / approvedAmount) * 100) : 0;
   }
 
