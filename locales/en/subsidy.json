@@ -24,7 +24,12 @@
     "refund_invalid_status": "Refund can only be requested for subsidies in ADVANCED_CLOSED or CLOSED status",
     "refund_amount_invalid": "Refund amount must be greater than zero",
     "no_refund_requested": "No refund has been requested for this subsidy",
-    "refund_already_done": "Refund has already been processed for this subsidy"
+    "refund_already_done": "Refund has already been processed for this subsidy",
+    "activity_budget_cap_exceeded": "Activity \"{{activityName}}\" budget cap exceeded. Total budget: €{{budget}}, already allocated: €{{allocated}}, requested: €{{requested}}, remaining: €{{remaining}}",
+    "activity_not_found_for_item": "Activity not found for item with id \"{{activityId}}\"",
+    "advance_exceeds_available": "Advance amount (€{{requested}}) exceeds the available budget (€{{available}}). Total subsidized budget: €{{subsidizedBudget}}, already requested: €{{totalRequested}}.",
+    "advance_exceeds_limit": "Advance amount (€{{requested}}) exceeds the maximum allowed (€{{max}}, which is 50% of the subsidized budget €{{subsidizedBudget}}). Already advanced: €{{existing}}.",
+    "advance_amount_invalid": "Advance amount must be greater than zero"
   },
   "history": {
     "request_created_as_draft": "Request created as draft",

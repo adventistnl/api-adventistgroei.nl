@@ -73,4 +73,32 @@ export class SubsidyRequestItemRepository {
 
     return items.map(item => item.subsidy_request_id);
   }
-}
+
+  /**
+   * Returns the sum of requested_amount per activity for all non-rejected, non-deleted subsidies.
+   * Uses a single aggregation query for performance.
+   */
+  async getAllocatedAmountsByActivityIds(
+    activityIds: string[],
+  ): Promise<Map<string, number>> {
+    const grouped = await this.prisma.subsidyRequestItem.groupBy({
+      by: ['project_activity_id'],
+      where: {
+        project_activity_id: { in: activityIds },
+        is_deleted: false,
+        subsidy_request: {
+          is_deleted: false,
+          subsidy_status: {
+            name: { notIn: ['REJECTED'] },
+          },
+        },
+      },
+      _sum: { requested_amount: true },
+    });
+
+    const result = new Map<string, number>();
+    for (const row of grouped) {
+      result.set(row.project_activity_id, Number(row._sum.requested_amount ?? 0));
+    }
+    return result;
+  }

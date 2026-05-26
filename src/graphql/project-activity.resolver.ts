@@ -7,6 +7,7 @@ import { ProjectActivity } from 'src/@generated/project-activity/project-activit
 import { ProjectActivityLog } from 'src/@generated/project-activity-log/project-activity-log.model';
 import { Permission } from 'src/middlewares';
 import { ProjectActivityBatchUpdateDto, ProjectActivityCreateDto, ProjectActivityUpdateDto } from '../dto/project-activity.dto';
+import { ActivityBudgetSummary } from '../models/activity-budget-summary.model';
 
 @Resolver(() => ProjectActivity)
 export class ProjectActivityResolver {
@@ -75,5 +76,14 @@ export class ProjectActivityResolver {
     @Context('userId') userId: string,
   ) {
     return this.service.batchUpdate(data, userId);
+  }
+
+  @Query(() => [ActivityBudgetSummary], { name: 'projectActivityBudgetSummaries' })
+  @UseGuards(PermissionsGuard)
+  @Permission()
+  async getProjectActivityBudgetSummaries(
+    @Args('projectId', { type: () => ID }) projectId: string,
+  ) {
+    return this.service.getProjectActivityBudgetSummaries(projectId);
   }
 }

@@ -59,49 +59,7 @@ export class SubsidyRequestRepository {
         throw new CustomGraphQLError(`One or more ProjectActivities do not exist or have been deleted.`, ErrorCode.NOT_FOUND, 404);
       }
 
-      // Check for duplicate subsidy per activity — only block if the existing subsidy is NOT rejected
-      const existingSubsidies = await this.prisma.subsidyRequest.findMany({
-        where: {
-          is_deleted: false,
-          subsidy_status: {
-            name: { not: 'REJECTED' }, // Allow re-submission after rejection
-          },
-          items: {
-            some: {
-              project_activity_id: { in: activityIds },
-              is_deleted: false,
-            },
-          },
-        },
-        include: {
-          items: {
-            where: {
-              project_activity_id: { in: activityIds },
-              is_deleted: false,
-            },
-            include: { project_activity: true },
-          },
-        },
-      });
-
-      if (existingSubsidies.length > 0) {
-        const duplicateActivities = existingSubsidies
-          .flatMap(s => s.items)
-          .map(item => item.project_activity.name);
-
-        console.error('🔴 [SubsidyRequestRepository.create] BLOCKED: duplicate activities found:', {
-          duplicateActivities,
-          existingSubsidyIds: existingSubsidies.map(s => s.id),
-        });
-
-        throw new CustomGraphQLError(
-          `As seguintes atividades já possuem pedido de subsídio: ${duplicateActivities.join(', ')}`,
-          ErrorCode.BAD_REQUEST,
-          400
-        );
-      }
-
-      console.log('🔵 [SubsidyRequestRepository.create] Duplicate check passed');
+      console.log('🔵 [SubsidyRequestRepository.create] Activity existence check passed');
     }
 
     console.log('� [SubsidyRequestRepository.create] Calling prisma.subsidyRequest.create...');

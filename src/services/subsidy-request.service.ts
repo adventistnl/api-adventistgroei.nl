@@ -5,6 +5,7 @@ import { SubsidyStatusHistoryRepository } from '../repositories/subsidy-status-h
 import { SubsidyReceiptRepository } from '../repositories/subsidy-receipt.repository';
 import { SubsidyRequest } from '../@generated/subsidy-request/subsidy-request.model';
 import { SubsidyRequestCreateDto, SubsidyRequestUpdateDto, CreateWithoutDocumentSubsidyRequestDto } from '../dto/subsidy-request.dto';
+import { SubsidyRequestItemInput } from '../dto/subsidy-request-item.dto';
 import { SubsidyKPIs, SubsidyByDepartment, SubsidyByMonth } from '../dto/subsidy-analytics.dto';
 import { CustomGraphQLError, ErrorCode } from '../common/errors/custom-graphql-error';
 import { PrismaService } from './prisma.service';
@@ -240,6 +241,98 @@ export class SubsidyRequestService {
     }
   }
 
+  /**
+   * Validates that the sum of all subsidy allocations for each activity does not exceed
+   * the activity's total budget_amount.
+   *
+   * Example: Activity budget = €2000
+   *   - Subsidy A requests €1000 → OK (total: €1000)
+   *   - Subsidy B requests €1000 → OK (total: €2000)
+   *   - Subsidy C requests €100  → BLOCKED (total: €2100 > €2000)
+   *
+   * @param items               Items being submitted in the new/updated subsidy request
+   * @param language            Language for i18n error messages
+   * @param excludeSubsidyId    When updating, exclude the current subsidy's own items from the cap check
+   */
+  private async validateActivityBudgetCap(
+    items: SubsidyRequestItemInput[],
+    language: LanguagePreference = LanguagePreference.en,
+    excludeSubsidyId?: string,
+  ): Promise<void> {
+    for (const item of items) {
+      if (!item.project_activity_id || !(item.requested_amount > 0)) continue;
+
+      const activity = await this.prisma.projectActivity.findUnique({
+        where: { id: item.project_activity_id, is_deleted: false },
+        select: { id: true, name: true, budget_amount: true },
+      });
+
+      if (!activity) {
+        throw new CustomGraphQLError(
+          translate('errors.activity_not_found_for_item', language, {
+            ns: 'subsidy',
+            activityId: item.project_activity_id,
+          }),
+          ErrorCode.NOT_FOUND,
+          404,
+          { additional: { errorCode: 'ACTIVITY_NOT_FOUND', activityId: item.project_activity_id } },
+        );
+      }
+
+      const budgetAmount = Number(activity.budget_amount);
+
+      // Sum all non-rejected, non-deleted items for this activity across other subsidies
+      const existingItems = await this.prisma.subsidyRequestItem.findMany({
+        where: {
+          project_activity_id: item.project_activity_id,
+          is_deleted: false,
+          ...(excludeSubsidyId ? { subsidy_request_id: { not: excludeSubsidyId } } : {}),
+          subsidy_request: {
+            is_deleted: false,
+            subsidy_status: {
+              name: { notIn: ['REJECTED'] },
+            },
+          },
+        },
+        select: { requested_amount: true },
+      });
+
+      const alreadyAllocated = existingItems.reduce(
+        (sum, i) => sum + Number(i.requested_amount),
+        0,
+      );
+
+      const requestedAmount = Number(item.requested_amount);
+      const remaining = budgetAmount - alreadyAllocated;
+
+      if (requestedAmount > remaining) {
+        throw new CustomGraphQLError(
+          translate('errors.activity_budget_cap_exceeded', language, {
+            ns: 'subsidy',
+            activityName: activity.name,
+            budget: budgetAmount,
+            allocated: alreadyAllocated,
+            requested: requestedAmount,
+            remaining: Math.max(0, remaining),
+          }),
+          ErrorCode.BAD_REQUEST,
+          400,
+          {
+            additional: {
+              errorCode: 'ACTIVITY_BUDGET_CAP_EXCEEDED',
+              activityId: activity.id,
+              activityName: activity.name,
+              budget: budgetAmount,
+              allocated: alreadyAllocated,
+              requested: requestedAmount,
+              remaining: Math.max(0, remaining),
+            },
+          },
+        );
+      }
+    }
+  }
+
   async create(data: SubsidyRequestCreateDto, userId: string, language: LanguagePreference = LanguagePreference.en): Promise<SubsidyRequest> {
     const resolvedType = data.request_type ?? SubsidyRequestType.WITH_DOCUMENT;
 
@@ -303,10 +396,24 @@ export class SubsidyRequestService {
 
       if (advanceRequested > availableBudget) {
          throw new CustomGraphQLError(
-           translate('errors.advance_exceeds_available', language, { ns: 'subsidy', max: availableBudget }),
+           translate('errors.advance_exceeds_available', language, {
+             ns: 'subsidy',
+             requested: advanceRequested,
+             available: availableBudget,
+             subsidizedBudget: Number(project.subsidized_budget || 0),
+             totalRequested,
+           }),
            ErrorCode.BAD_REQUEST,
            400,
-           { additional: { errorCode: 'ADVANCE_EXCEEDS_AVAILABLE' } }
+           {
+             additional: {
+               errorCode: 'ADVANCE_EXCEEDS_AVAILABLE',
+               requested: advanceRequested,
+               available: availableBudget,
+               subsidizedBudget: Number(project.subsidized_budget || 0),
+               totalRequested,
+             },
+           }
          );
       }
 
@@ -316,16 +423,35 @@ export class SubsidyRequestService {
          
       if (existingAdvancesSum + advanceRequested > maxAdvanceAllowed) {
          throw new CustomGraphQLError(
-           translate('errors.advance_exceeds_limit', language, { ns: 'subsidy', max: maxAdvanceAllowed }),
+           translate('errors.advance_exceeds_limit', language, {
+             ns: 'subsidy',
+             requested: advanceRequested,
+             max: maxAdvanceAllowed,
+             subsidizedBudget: Number(project.subsidized_budget || 0),
+             existing: existingAdvancesSum,
+           }),
            ErrorCode.BAD_REQUEST,
            400,
-           { additional: { errorCode: 'ADVANCE_EXCEEDS_LIMIT' } }
+           {
+             additional: {
+               errorCode: 'ADVANCE_EXCEEDS_LIMIT',
+               requested: advanceRequested,
+               max: maxAdvanceAllowed,
+               subsidizedBudget: Number(project.subsidized_budget || 0),
+               existing: existingAdvancesSum,
+             },
+           }
          );
       }
     }
 
     let subsidyRequest: SubsidyRequest;
     try {
+      // Validate activity budget cap for each item before persisting
+      if (data.items && data.items.length > 0) {
+        await this.validateActivityBudgetCap(data.items, language);
+      }
+
       subsidyRequest = await this.subsidyRequestRepository.create(data, userId);
     } catch (repoError) {
       console.error('🔴 [SubsidyRequestService.create] repository.create FAILED:', {
@@ -490,45 +616,37 @@ export class SubsidyRequestService {
       );
     }
 
-    // Validate advance amount (max 50% of subsidized budget)
-    const maxAdvance = Number(project.subsidized_budget || 0) * 0.5;
-    if (advanceAmount > maxAdvance) {
-      throw new CustomGraphQLError(
-        translate('errors.advance_exceeds_limit', language, { ns: 'subsidy', max: maxAdvance }),
-        ErrorCode.BAD_REQUEST,
-        400,
-        { additional: { errorCode: 'ADVANCE_EXCEEDS_LIMIT' } }
-      );
-    }
-
     if (advanceAmount <= 0) {
       throw new CustomGraphQLError(
         translate('errors.advance_amount_invalid', language, { ns: 'subsidy' }),
         ErrorCode.BAD_REQUEST,
-        400
+        400,
+        { additional: { errorCode: 'ADVANCE_AMOUNT_INVALID' } }
       );
     }
 
-    // Check if project already has an active advance request (not rejected)
-    const existingAdvance = await this.prisma.subsidyRequest.findFirst({
-      where: {
-        project_id: projectId,
-        is_for_advance: true,
-        is_deleted: false,
-        subsidy_status: {
-          name: {
-            not: 'REJECTED'
-          }
-        }
-      }
-    });
-
-    if (existingAdvance) {
+    // Validate advance amount (max 50% of subsidized budget)
+    const maxAdvance = Number(project.subsidized_budget || 0) * 0.5;
+    const subsidizedBudget = Number(project.subsidized_budget || 0);
+    if (advanceAmount > maxAdvance) {
       throw new CustomGraphQLError(
-        translate('errors.advance_already_exists', language, { ns: 'subsidy' }),
+        translate('errors.advance_exceeds_limit', language, {
+          ns: 'subsidy',
+          requested: advanceAmount,
+          max: maxAdvance,
+          subsidizedBudget,
+          existing: 0,
+        }),
         ErrorCode.BAD_REQUEST,
         400,
-        { additional: { errorCode: 'ADVANCE_ALREADY_EXISTS' } }
+        {
+          additional: {
+            errorCode: 'ADVANCE_EXCEEDS_LIMIT',
+            requested: advanceAmount,
+            max: maxAdvance,
+            subsidizedBudget,
+          },
+        }
       );
     }
 
@@ -728,6 +846,11 @@ export class SubsidyRequestService {
     let existingActivityIds: string[] = [];
     if (current.is_for_advance) {
       existingActivityIds = (current as any).items?.map((i: any) => i.project_activity_id) || [];
+    }
+
+    // Validate activity budget cap before persisting updated items
+    if (data.items && data.items.length > 0) {
+      await this.validateActivityBudgetCap(data.items, language, id);
     }
 
     const result = await this.subsidyRequestRepository.update(id, data, userId);

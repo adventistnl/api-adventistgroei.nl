@@ -12,6 +12,8 @@ import { ActivityDocumentsRepository } from '../repositories/activity-documents.
 import { GoogleDriveService } from './google-drive.service';
 import { PrismaService } from './prisma.service';
 import { ProjectStatus } from '../@generated/prisma/project-status.enum';
+import { ACTIVITY_EDIT_BLOCKED_STATUSES, assertStatusNotBlocked } from '../common/helpers/project-status-guard.helper';
+import { ActivityBudgetSummary } from '../models/activity-budget-summary.model';
 
 @Injectable()
 export class ProjectActivityService {
@@ -296,26 +298,40 @@ export class ProjectActivityService {
     if (!project) {
       throw new CustomGraphQLError('Project not found', ErrorCode.NOT_FOUND, 404);
     }
-    
-    if (project.status === ProjectStatus.CONCLUDED) {
-      throw new CustomGraphQLError(
-        'Cannot modify activities in a concluded project',
-        ErrorCode.BAD_REQUEST,
-        400,
-        { additional: { errorCode: 'PROJECT_IS_CONCLUDED' } }
-      );
-    }
 
     const isOwner = userId === project.owner_id;
     const isCoOwner = userId === project.co_owner_id;
 
-    if (isCoOwner && !isOwner && project.status !== ProjectStatus.DRAFT) {
-      throw new CustomGraphQLError(
-        'Members can only edit activities while the project is in DRAFT status',
-        ErrorCode.BAD_REQUEST,
-        400,
-        { additional: { errorCode: 'EDIT_LOCKED_NOT_DRAFT' } }
-      );
+    if (isCoOwner && !isOwner) {
+      assertStatusNotBlocked(project.status as ProjectStatus, {
+        blockedStatuses: ACTIVITY_EDIT_BLOCKED_STATUSES,
+        errorMessage: 'Members cannot edit activities while the project is in its current status',
+        errorCode: 'EDIT_LOCKED_STATUS',
+      });
     }
+  }
+
+  async getProjectActivityBudgetSummaries(projectId: string): Promise<ActivityBudgetSummary[]> {
+    const activities = await this.repository.findManyByFilters({
+      project_id: projectId,
+      is_deleted: false,
+    });
+
+    if (activities.length === 0) return [];
+
+    const activityIds = activities.map(a => a.id);
+    const allocatedMap = await this.subsidyRequestItemRepository.getAllocatedAmountsByActivityIds(activityIds);
+
+    return activities.map(activity => {
+      const budget = Number(activity.budget_amount);
+      const allocated = allocatedMap.get(activity.id) ?? 0;
+      return {
+        activity_id: activity.id,
+        activity_name: activity.name,
+        budget,
+        allocated,
+        available: Math.max(0, budget - allocated),
+      };
+    });
   }
 }
