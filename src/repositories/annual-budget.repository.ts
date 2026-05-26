@@ -1075,7 +1075,7 @@ export class AnnualBudgetRepository {
     }
   }
 
-  async getComputedFinancials(budgetIds: string[]): Promise<Record<string, { planned: number; allocated: number; expenses: number; balance: number }>> {
+  async getComputedFinancials(budgetIds: string[]): Promise<Record<string, { planned: number; allocated: number; expenses: number; childExpenses: number; balance: number }>> {
     if (budgetIds.length === 0) return {};
 
     const queryStr = `
@@ -1094,6 +1094,7 @@ export class AnnualBudgetRepository {
           FROM "BudgetTransaction" bxt 
           JOIN "AnnualBudget" child ON bxt.annual_budget_id = child.id
           WHERE child.institution_id = ab.institution_id AND child.entity_type::text = 'INSTITUTION_DEPARTMENT'
+            AND child.year = ab.year
         ) as sum_child_reserved,
         (
           SELECT COALESCE(SUM(bxt.delta_expenses), 0) FROM "BudgetTransaction" bxt WHERE bxt.annual_budget_id = ab.id
@@ -1103,32 +1104,38 @@ export class AnnualBudgetRepository {
           FROM "BudgetTransaction" bxt 
           JOIN "AnnualBudget" child ON bxt.annual_budget_id = child.id
           WHERE child.institution_id = ab.institution_id AND child.entity_type::text = 'INSTITUTION_DEPARTMENT'
+            AND child.year = ab.year
         ) as sum_child_expenses
       FROM "AnnualBudget" ab
       LEFT JOIN "BudgetTransfer" bt ON bt.to_budget_id = ab.id OR bt.from_budget_id = ab.id
       WHERE ab.id IN (${budgetIds.map(id => `'${id}'`).join(',')})
-      GROUP BY ab.id, ab.entity_type, ab.planned_budget, ab.institution_id
+      GROUP BY ab.id, ab.entity_type, ab.planned_budget, ab.institution_id, ab.year
     `;
 
     const transactionsData = await this.prisma.$queryRawUnsafe<any[]>(queryStr);
 
-    const result: Record<string, { planned: number; allocated: number; expenses: number; balance: number }> = {};
+    const result: Record<string, { planned: number; allocated: number; expenses: number; childExpenses: number; balance: number }> = {};
     for (const row of transactionsData) {
       const isInst = row.entity_type === 'INSTITUTION';
       const planned = isInst ? Number(row.planned_budget) : Number(row.derived_target);
       // Transfers (Institution → Department) are ALLOCATIONS, not spending.
       // allocated = project reservations within this budget + money distributed to departments (institution only)
-      // expenses  = only real project spending (delta_expenses from BudgetTransaction)
+      // expenses  = only real project spending (delta_expenses from BudgetTransaction) on this budget directly
+      // childExpenses = sum of all department spending under this institution (for INSTITUTION budgets)
       const allocated = isInst
         ? Number(row.total_reserved) + Number(row.distributed_out)
         : Number(row.total_reserved);
       const expenses = Number(row.total_expenses);
+      // For institution budgets, child expenses are already "inside" the distributed_out allocation,
+      // so balance must NOT deduct them again — balance = planned - allocated - direct_expenses only.
+      const childExpenses = isInst ? Number(row.sum_child_expenses) : 0;
       const balance = planned - allocated - expenses;
 
       result[row.budget_id] = {
         planned,
         allocated,
         expenses,
+        childExpenses,
         balance
       };
     }

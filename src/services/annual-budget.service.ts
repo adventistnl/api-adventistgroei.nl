@@ -62,7 +62,7 @@ export class AnnualBudgetService {
     return this.annualBudgetRepository.toggleLock(id, userId);
   }
 
-  async getComputedFinancials(budgetIds: string[]): Promise<Record<string, { planned: number, allocated: number, expenses: number, balance: number }>> {
+  async getComputedFinancials(budgetIds: string[]): Promise<Record<string, { planned: number, allocated: number, expenses: number, childExpenses: number, balance: number }>> {
     return this.annualBudgetRepository.getComputedFinancials(budgetIds);
   }
 
