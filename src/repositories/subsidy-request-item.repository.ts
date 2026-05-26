@@ -102,3 +102,4 @@ export class SubsidyRequestItemRepository {
     }
     return result;
   }
+}
