@@ -1633,6 +1633,14 @@ enum CollaboratorRole {
   requester
 }
 
+type ActivityBudgetSummary {
+  activity_id: ID!
+  activity_name: String!
+  budget: Float!
+  allocated: Float!
+  available: Float!
+}
+
 type AuthModel {
   accessToken: String!
   expiresIn: Float!
@@ -1955,6 +1963,7 @@ type Query {
   projectActivities(filters: String): [ProjectActivity!]!
   projectActivity(id: ID!): ProjectActivity!
   projectActivityLogs(activityId: ID!): [ProjectActivityLog!]!
+  projectActivityBudgetSummaries(projectId: ID!): [ActivityBudgetSummary!]!
   downloadActivityDocument(id: ID!): String!
   getActivityDocuments(activityId: ID!): [ActivityDocuments!]!
   downloadSubsidyReceipt(id: ID!): String!
