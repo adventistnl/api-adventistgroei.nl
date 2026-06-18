@@ -289,8 +289,10 @@ export class SubsidyRequestService {
           ...(excludeSubsidyId ? { subsidy_request_id: { not: excludeSubsidyId } } : {}),
           subsidy_request: {
             is_deleted: false,
+            // T5: Exclude CLOSED and ADVANCED_CLOSED — subsidies that are finished
+            // should not block new requests for the same activity.
             subsidy_status: {
-              name: { notIn: ['REJECTED'] },
+              name: { notIn: ['REJECTED', 'CLOSED', 'ADVANCED_CLOSED'] },
             },
           },
         },
@@ -380,11 +382,15 @@ export class SubsidyRequestService {
       });
       if (!project) throw new CustomGraphQLError('Project not found', ErrorCode.NOT_FOUND, 404);
 
+      // T1/T2: Exclude CLOSED and ADVANCED_CLOSED subsidies — they are no longer active
+      // and should not count against the available budget or the 50% advance cap.
+      const INACTIVE_STATUSES = ['REJECTED', 'CLOSED', 'ADVANCED_CLOSED'];
+
       const existingSubsidies = await this.prisma.subsidyRequest.findMany({
         where: {
           project_id: data.project_id,
           is_deleted: false,
-          subsidy_status: { name: { not: 'REJECTED' } }
+          subsidy_status: { name: { notIn: INACTIVE_STATUSES } },
         }
       });
 
@@ -417,9 +423,11 @@ export class SubsidyRequestService {
          );
       }
 
+      // T3: Use only advance_amount (not total_budget as fallback) to avoid inflating
+      // the sum with non-advance subsidies that have null advance_amount.
       const existingAdvancesSum = existingSubsidies
          .filter(s => s.is_for_advance || s.request_type === SubsidyRequestType.ADVANCE)
-         .reduce((sum, req) => sum + Number(req.advance_amount || req.total_budget || 0), 0);
+         .reduce((sum, req) => sum + Number(req.advance_amount || 0), 0);
          
       if (existingAdvancesSum + advanceRequested > maxAdvanceAllowed) {
          throw new CustomGraphQLError(
@@ -625,9 +633,30 @@ export class SubsidyRequestService {
       );
     }
 
-    // Validate advance amount (max 50% of subsidized budget)
+    // T4: Validate advance amount against both the 50% cap AND existing active advance requests.
+    // Inactive subsidies (CLOSED, ADVANCED_CLOSED, REJECTED) must not count.
+    const INACTIVE_STATUSES = ['REJECTED', 'CLOSED', 'ADVANCED_CLOSED'];
     const maxAdvance = Number(project.subsidized_budget || 0) * 0.5;
     const subsidizedBudget = Number(project.subsidized_budget || 0);
+
+    const existingAdvances = await this.prisma.subsidyRequest.findMany({
+      where: {
+        project_id: projectId,
+        is_deleted: false,
+        subsidy_status: { name: { notIn: INACTIVE_STATUSES } },
+        OR: [
+          { is_for_advance: true },
+          { request_type: SubsidyRequestType.ADVANCE },
+        ],
+      },
+      select: { advance_amount: true },
+    });
+
+    const existingAdvancesSum = existingAdvances.reduce(
+      (sum, req) => sum + Number(req.advance_amount || 0),
+      0,
+    );
+
     if (advanceAmount > maxAdvance) {
       throw new CustomGraphQLError(
         translate('errors.advance_exceeds_limit', language, {
@@ -645,6 +674,29 @@ export class SubsidyRequestService {
             requested: advanceAmount,
             max: maxAdvance,
             subsidizedBudget,
+          },
+        }
+      );
+    }
+
+    if (existingAdvancesSum + advanceAmount > maxAdvance) {
+      throw new CustomGraphQLError(
+        translate('errors.advance_exceeds_limit', language, {
+          ns: 'subsidy',
+          requested: advanceAmount,
+          max: maxAdvance,
+          subsidizedBudget,
+          existing: existingAdvancesSum,
+        }),
+        ErrorCode.BAD_REQUEST,
+        400,
+        {
+          additional: {
+            errorCode: 'ADVANCE_EXCEEDS_LIMIT',
+            requested: advanceAmount,
+            max: maxAdvance,
+            subsidizedBudget,
+            existing: existingAdvancesSum,
           },
         }
       );
