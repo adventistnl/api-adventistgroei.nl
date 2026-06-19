@@ -1,12 +1,8 @@
 import { Resolver, Query, Mutation, Args, Context } from '@nestjs/graphql';
-import { UseGuards } from '@nestjs/common';
-import { PermissionsGuard } from 'src/middlewares/permissions.guard';
-import { Permission } from 'src/middlewares';
 import { NotificationService } from '../services/notification.service';
 import { Notification } from '../@generated/notification/notification.model';
 import { NotificationCreateDto, NotificationUpdateDto } from '../dto/notification.dto';
-import { Int } from '@nestjs/graphql';
-import { ObjectType, Field } from '@nestjs/graphql';
+import { Int, ObjectType, Field } from '@nestjs/graphql';
 
 @ObjectType()
 class MarkAllReadResult {
@@ -20,14 +16,13 @@ export class NotificationResolver {
 
   /**
    * Returns the 50 most recent notifications for the authenticated user.
-   * Used by the frontend on mount to hydrate the notification sidebar (catch-up).
+   * No specific system permission required — only a valid auth token (context.userId).
    */
   @Query(() => [Notification], { name: 'myNotifications' })
-  @UseGuards(PermissionsGuard)
-  @Permission()
   async myNotifications(
     @Context() context: { userId: string },
   ): Promise<Notification[]> {
+    if (!context.userId) return [];
     return this.notificationService.findByUserId(context.userId);
   }
 
@@ -50,11 +45,10 @@ export class NotificationResolver {
   }
 
   /**
-   * Marks a single notification as read. Only succeeds if it belongs to the authenticated user.
+   * Marks a single notification as read.
+   * Security enforced by userId filter in repository (cannot mark others' notifications).
    */
   @Mutation(() => Notification, { name: 'markNotificationRead' })
-  @UseGuards(PermissionsGuard)
-  @Permission()
   async markNotificationRead(
     @Args('id') id: string,
     @Context() context: { userId: string },
@@ -64,11 +58,8 @@ export class NotificationResolver {
 
   /**
    * Marks ALL notifications of the authenticated user as read.
-   * Called when user clicks "Mark all as read" in the sidebar.
    */
   @Mutation(() => MarkAllReadResult, { name: 'markAllNotificationsRead' })
-  @UseGuards(PermissionsGuard)
-  @Permission()
   async markAllNotificationsRead(
     @Context() context: { userId: string },
   ): Promise<{ count: number }> {
