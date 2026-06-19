@@ -530,6 +530,17 @@ export class SubsidyRequestService {
     }
 
     console.log('🟢 [SubsidyRequestService.create] DONE — returning id:', subsidyRequest.id, 'request_type:', resolvedType);
+
+    // Notify project collaborators about the new subsidy request (non-blocking)
+    if (data.project_id) {
+      this.projectHistoryService.logEvent(
+        data.project_id,
+        userId,
+        ProjectHistoryType.UPDATED,
+        { metadata: { subsidyDescription: data.description ?? 'subsídio', action: 'created' } },
+      ).catch((e) => console.error('[SubsidyRequestService.create] logEvent failed:', e));
+    }
+
     return subsidyRequest;
   }
 
@@ -751,6 +762,14 @@ export class SubsidyRequestService {
       reason: translate('history.subsidy_created_advance', language, { ns: 'subsidy', amount: advanceAmount }),
       changed_by: userId,
     });
+
+    // Notify project collaborators about the new advance request (non-blocking)
+    this.projectHistoryService.logEvent(
+      projectId,
+      userId,
+      ProjectHistoryType.UPDATED,
+      { metadata: { subsidyDescription: `Advance request: €${advanceAmount}`, action: 'created' } },
+    ).catch((e) => console.error('[SubsidyRequestService.createAdvanceRequest] logEvent failed:', e));
 
     return subsidyRequest;
   }
@@ -1476,6 +1495,14 @@ export class SubsidyRequestService {
         stack: error.stack,
       });
     }
+
+    // Notify project collaborators about subsidy deletion (non-blocking)
+    this.projectHistoryService.logEvent(
+      subsidyRequest.project_id,
+      userId,
+      ProjectHistoryType.UPDATED,
+      { metadata: { subsidyDescription: subsidyRequest.description ?? 'subsídio', action: 'deleted' } },
+    ).catch((e) => console.error('[SubsidyRequestService.delete] logEvent failed:', e));
 
     return result;
   }

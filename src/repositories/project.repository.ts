@@ -789,7 +789,7 @@ export class ProjectRepository {
    * owner + co_owner (se existir) + voluntários ativos.
    * Usado para publicar notificações individuais via WebSocket.
    */
-  async getCollaboratorIds(projectId: string): Promise<string[]> {
+  async getCollaboratorIds(projectId: string): Promise<{ standardIds: string[]; financeIds: string[] }> {
     const project = await this.prisma.project.findUnique({
       where: { id: projectId, is_deleted: false },
       select: {
@@ -803,18 +803,26 @@ export class ProjectRepository {
       },
     });
 
-    if (!project) return [];
+    if (!project) return { standardIds: [], financeIds: [] };
 
-    const ids = new Set<string>();
-    ids.add(project.owner_id);
-    if (project.co_owner_id) ids.add(project.co_owner_id);
-    project.voluntary_users.forEach((v) => ids.add(v.user_id));
+    const standardIds = new Set<string>();
+    standardIds.add(project.owner_id);
+    if (project.co_owner_id) standardIds.add(project.co_owner_id);
+    project.voluntary_users.forEach((v) => standardIds.add(v.user_id));
 
+    const financeIds = new Set<string>();
     if (project.institution_id) {
       const financeUsers = await this.userRepository.findFinanceManagersByInstitution(project.institution_id);
-      (financeUsers as Array<{ id: string }>).forEach((u) => ids.add(u.id));
+      (financeUsers as Array<{ id: string }>).forEach((u) => {
+        if (!standardIds.has(u.id)) {
+          financeIds.add(u.id);
+        }
+      });
     }
 
-    return Array.from(ids);
+    return {
+      standardIds: Array.from(standardIds),
+      financeIds: Array.from(financeIds),
+    };
   }
 }

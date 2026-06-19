@@ -77,12 +77,22 @@ export class ProjectHistoryService {
     const institutionId = project.institution_id;
     if (!institutionId) return;
 
-    // Busca todos os colaboradores do projeto
-    const collaboratorIds = await this.projectRepository.getCollaboratorIds(entry.project_id);
+    // Busca colaboradores do projeto separados por tipo (padrão vs financeiro)
+    const { standardIds, financeIds } = await this.projectRepository.getCollaboratorIds(entry.project_id);
+
+    // Regra de Negócio: Usuário FINANCE só recebe notificações de mudança de status de subsídio para APPROVED
+    const meta = (entry as any).metadata;
+    const isSubsidyApproved = entry.type === ProjectHistoryType.STATUS_CHANGED && 
+      meta?.newStatus?.toUpperCase() === 'APPROVED';
+
+    const notifyIds = new Set<string>(standardIds);
+    if (isSubsidyApproved) {
+      financeIds.forEach(id => notifyIds.add(id));
+    }
 
     // 2. WebSocket + 3. Notification persistida — para cada colaborador (exceto o ator)
     await Promise.all(
-      collaboratorIds
+      Array.from(notifyIds)
         .filter((id) => id !== entry.user_id) // não notifica quem fez a ação
         .map(async (collaboratorId) => {
           // WebSocket em tempo real
@@ -163,6 +173,82 @@ export class ProjectHistoryService {
           title: `Adjustment needed in "${projectTitle}"`,
           message: `${actor} requested an adjustment`,
         };
+      case ProjectHistoryType.CREATED:
+        return {
+          title: `Project created`,
+          message: `${actor} created the project "${projectTitle}"`,
+        };
+      case ProjectHistoryType.DELETED:
+        return {
+          title: `Project deleted`,
+          message: `${actor} deleted the project "${projectTitle}"`,
+        };
+      case ProjectHistoryType.ACTIVITY_CREATED:
+        return {
+          title: `New activity in "${projectTitle}"`,
+          message: `${actor} created activity "${entry.new_value ?? ''}"`,
+        };
+      case ProjectHistoryType.ACTIVITY_UPDATED:
+        return {
+          title: `Activity updated in "${projectTitle}"`,
+          message: `${actor} updated an activity`,
+        };
+      case ProjectHistoryType.ACTIVITY_DELETED:
+        return {
+          title: `Activity removed in "${projectTitle}"`,
+          message: `${actor} deleted an activity`,
+        };
+      case ProjectHistoryType.SUBSIDY_CREATED:
+        return {
+          title: `New subsidy in "${projectTitle}"`,
+          message: `${actor} submitted a subsidy request`,
+        };
+      case ProjectHistoryType.SUBSIDY_UPDATED:
+        return {
+          title: `Subsidy updated in "${projectTitle}"`,
+          message: `${actor} updated a subsidy request`,
+        };
+      case ProjectHistoryType.SUBSIDY_APPROVED:
+        return {
+          title: `Subsidy approved in "${projectTitle}"`,
+          message: `A subsidy request was approved`,
+        };
+      case ProjectHistoryType.SUBSIDY_REJECTED:
+        return {
+          title: `Subsidy rejected in "${projectTitle}"`,
+          message: `A subsidy request was rejected`,
+        };
+      case ProjectHistoryType.SUBSIDY_DELETED:
+        return {
+          title: `Subsidy removed in "${projectTitle}"`,
+          message: `${actor} deleted a subsidy request`,
+        };
+      case ProjectHistoryType.UPDATED: {
+        // Used for subsidy creation/deletion and activity deletion events
+        const action = meta?.action;
+        if (subsidyDescription && action === 'created') {
+          return {
+            title: `New subsidy in "${projectTitle}"`,
+            message: `${actor} submitted a subsidy request: "${subsidyDescription}"`,
+          };
+        }
+        if (subsidyDescription && action === 'deleted') {
+          return {
+            title: `Subsidy removed in "${projectTitle}"`,
+            message: `${actor} deleted a subsidy request: "${subsidyDescription}"`,
+          };
+        }
+        if (meta?.activityName && action === 'activity_deleted') {
+          return {
+            title: `Activity removed in "${projectTitle}"`,
+            message: `${actor} deleted the activity: "${meta.activityName}"`,
+          };
+        }
+        return {
+          title: `Update in "${projectTitle}"`,
+          message: `${actor} made a change to the project`,
+        };
+      }
       default:
         return {
           title: `Update in "${projectTitle}"`,

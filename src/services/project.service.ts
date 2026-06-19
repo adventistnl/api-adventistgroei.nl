@@ -593,7 +593,14 @@ export class ProjectService {
       );
     }
 
-    // 8. Soft delete the project
+    // 8. Log deletion event before removing relationships
+    this.projectHistoryService.logEvent(
+      id,
+      userId,
+      ProjectHistoryType.DELETED,
+    ).catch(e => console.error('Failed to log project deletion history:', e));
+
+    // 9. Soft delete the project
     console.log(`🎯 Soft deleting project...`);
     const deletedProject = await this.projectRepository.softDelete(id, userId);
 

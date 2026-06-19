@@ -286,6 +286,16 @@ enum ProjectHistoryType {
   DELETED
   RESTORED
   ADJUSTMENT_NEEDED
+  // Activity-specific events
+  ACTIVITY_CREATED
+  ACTIVITY_UPDATED
+  ACTIVITY_DELETED
+  // Subsidy-specific events
+  SUBSIDY_CREATED
+  SUBSIDY_UPDATED
+  SUBSIDY_APPROVED
+  SUBSIDY_REJECTED
+  SUBSIDY_DELETED
 }
 
 enum AdjustmentStatus {
