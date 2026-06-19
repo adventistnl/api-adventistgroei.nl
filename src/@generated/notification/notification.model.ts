@@ -3,6 +3,7 @@ import { ObjectType } from '@nestjs/graphql';
 import { ID } from '@nestjs/graphql';
 import { Institution } from '../institution/institution.model';
 import { User } from '../user/user.model';
+import { Project } from '../project/project.model';
 
 @ObjectType()
 export class Notification {
@@ -19,11 +20,17 @@ export class Notification {
     @Field(() => String, {nullable:false})
     type!: string;
 
+    @Field(() => String, {nullable:true})
+    title!: string | null;
+
     @Field(() => String, {nullable:false})
     message!: string;
 
-    @Field(() => Boolean, {nullable:false})
+    @Field(() => Boolean, {defaultValue:false,nullable:false})
     read_status!: boolean;
+
+    @Field(() => String, {nullable:true})
+    project_id!: string | null;
 
     @Field(() => Date, {nullable:false})
     created_at!: Date;
@@ -51,4 +58,7 @@ export class Notification {
 
     @Field(() => User, {nullable:false})
     user?: User;
+
+    @Field(() => Project, {nullable:true})
+    project?: Project | null;
 }

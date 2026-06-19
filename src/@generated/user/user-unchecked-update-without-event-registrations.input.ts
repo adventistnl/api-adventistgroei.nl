@@ -11,8 +11,8 @@ import { UserRoleUncheckedUpdateManyWithoutUserNestedInput } from '../user-role/
 import { DirectMessageUncheckedUpdateManyWithoutSenderNestedInput } from '../direct-message/direct-message-unchecked-update-many-without-sender-nested.input';
 import { DirectMessageRecipientUncheckedUpdateManyWithoutRecipient_userNestedInput } from '../direct-message-recipient/direct-message-recipient-unchecked-update-many-without-recipient-user-nested.input';
 import { NotificationUncheckedUpdateManyWithoutUserNestedInput } from '../notification/notification-unchecked-update-many-without-user-nested.input';
-import { EventRecipientUncheckedUpdateManyWithoutUserNestedInput } from '../event-recipient/event-recipient-unchecked-update-many-without-user-nested.input';
 import { Type } from 'class-transformer';
+import { EventRecipientUncheckedUpdateManyWithoutUserNestedInput } from '../event-recipient/event-recipient-unchecked-update-many-without-user-nested.input';
 import { CommunicationUncheckedUpdateManyWithoutAuthorNestedInput } from '../communication/communication-unchecked-update-many-without-author-nested.input';
 import { SubsidyRequestUncheckedUpdateManyWithoutRequesterNestedInput } from '../subsidy-request/subsidy-request-unchecked-update-many-without-requester-nested.input';
 import { SubsidyStatusUncheckedUpdateManyWithoutAssigned_userNestedInput } from '../subsidy-status/subsidy-status-unchecked-update-many-without-assigned-user-nested.input';
@@ -95,6 +95,7 @@ export class UserUncheckedUpdateWithoutEvent_registrationsInput {
     direct_message_recipients?: DirectMessageRecipientUncheckedUpdateManyWithoutRecipient_userNestedInput;
 
     @Field(() => NotificationUncheckedUpdateManyWithoutUserNestedInput, {nullable:true})
+    @Type(() => NotificationUncheckedUpdateManyWithoutUserNestedInput)
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput;
 
     @Field(() => EventRecipientUncheckedUpdateManyWithoutUserNestedInput, {nullable:true})

@@ -14,6 +14,7 @@ import { SubsidyRequestOrderByRelationAggregateInput } from '../subsidy-request/
 import { SpecialProjectsOrderByRelationAggregateInput } from '../special-projects/special-projects-order-by-relation-aggregate.input';
 import { ProjectHistoryOrderByRelationAggregateInput } from '../project-history/project-history-order-by-relation-aggregate.input';
 import { BudgetTransactionOrderByRelationAggregateInput } from '../budget-transaction/budget-transaction-order-by-relation-aggregate.input';
+import { NotificationOrderByRelationAggregateInput } from '../notification/notification-order-by-relation-aggregate.input';
 
 @InputType()
 export class ProjectOrderByWithRelationInput {
@@ -153,4 +154,8 @@ export class ProjectOrderByWithRelationInput {
     @Field(() => BudgetTransactionOrderByRelationAggregateInput, {nullable:true})
     @Type(() => BudgetTransactionOrderByRelationAggregateInput)
     budget_transactions?: BudgetTransactionOrderByRelationAggregateInput;
+
+    @Field(() => NotificationOrderByRelationAggregateInput, {nullable:true})
+    @Type(() => NotificationOrderByRelationAggregateInput)
+    notifications?: NotificationOrderByRelationAggregateInput;
 }

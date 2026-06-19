@@ -18,10 +18,16 @@ export class NotificationCountAggregate {
     type!: number;
 
     @Field(() => Int, {nullable:false})
+    title!: number;
+
+    @Field(() => Int, {nullable:false})
     message!: number;
 
     @Field(() => Int, {nullable:false})
     read_status!: number;
+
+    @Field(() => Int, {nullable:false})
+    project_id!: number;
 
     @Field(() => Int, {nullable:false})
     created_at!: number;

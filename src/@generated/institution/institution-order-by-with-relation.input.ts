@@ -78,6 +78,7 @@ export class InstitutionOrderByWithRelationInput {
     communications?: CommunicationOrderByRelationAggregateInput;
 
     @Field(() => NotificationOrderByRelationAggregateInput, {nullable:true})
+    @Type(() => NotificationOrderByRelationAggregateInput)
     notifications?: NotificationOrderByRelationAggregateInput;
 
     @Field(() => SettingOrderByRelationAggregateInput, {nullable:true})

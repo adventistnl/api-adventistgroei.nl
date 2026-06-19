@@ -22,6 +22,7 @@ import { ProjectActivityUpdateManyWithoutProjectNestedInput } from '../project-a
 import { SubsidyRequestUpdateManyWithoutProjectNestedInput } from '../subsidy-request/subsidy-request-update-many-without-project-nested.input';
 import { SpecialProjectsUpdateManyWithoutProjectNestedInput } from '../special-projects/special-projects-update-many-without-project-nested.input';
 import { BudgetTransactionUpdateManyWithoutProjectNestedInput } from '../budget-transaction/budget-transaction-update-many-without-project-nested.input';
+import { NotificationUpdateManyWithoutProjectNestedInput } from '../notification/notification-update-many-without-project-nested.input';
 
 @InputType()
 export class ProjectUpdateWithoutHistoryInput {
@@ -139,4 +140,8 @@ export class ProjectUpdateWithoutHistoryInput {
     @Field(() => BudgetTransactionUpdateManyWithoutProjectNestedInput, {nullable:true})
     @Type(() => BudgetTransactionUpdateManyWithoutProjectNestedInput)
     budget_transactions?: BudgetTransactionUpdateManyWithoutProjectNestedInput;
+
+    @Field(() => NotificationUpdateManyWithoutProjectNestedInput, {nullable:true})
+    @Type(() => NotificationUpdateManyWithoutProjectNestedInput)
+    notifications?: NotificationUpdateManyWithoutProjectNestedInput;
 }

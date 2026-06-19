@@ -24,6 +24,7 @@ import { SubsidyRequestListRelationFilter } from '../subsidy-request/subsidy-req
 import { SpecialProjectsListRelationFilter } from '../special-projects/special-projects-list-relation-filter.input';
 import { ProjectHistoryListRelationFilter } from '../project-history/project-history-list-relation-filter.input';
 import { BudgetTransactionListRelationFilter } from '../budget-transaction/budget-transaction-list-relation-filter.input';
+import { NotificationListRelationFilter } from '../notification/notification-list-relation-filter.input';
 
 @InputType()
 export class ProjectWhereUniqueInput {
@@ -178,4 +179,8 @@ export class ProjectWhereUniqueInput {
     @Field(() => BudgetTransactionListRelationFilter, {nullable:true})
     @Type(() => BudgetTransactionListRelationFilter)
     budget_transactions?: BudgetTransactionListRelationFilter;
+
+    @Field(() => NotificationListRelationFilter, {nullable:true})
+    @Type(() => NotificationListRelationFilter)
+    notifications?: NotificationListRelationFilter;
 }

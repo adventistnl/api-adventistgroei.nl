@@ -18,10 +18,16 @@ export class NotificationMaxOrderByAggregateInput {
     type?: `${SortOrder}`;
 
     @Field(() => SortOrder, {nullable:true})
+    title?: `${SortOrder}`;
+
+    @Field(() => SortOrder, {nullable:true})
     message?: `${SortOrder}`;
 
     @Field(() => SortOrder, {nullable:true})
     read_status?: `${SortOrder}`;
+
+    @Field(() => SortOrder, {nullable:true})
+    project_id?: `${SortOrder}`;
 
     @Field(() => SortOrder, {nullable:true})
     created_at?: `${SortOrder}`;

@@ -13,11 +13,17 @@ export class NotificationUncheckedCreateWithoutUserInput {
     @Field(() => String, {nullable:false})
     type!: string;
 
+    @Field(() => String, {nullable:true})
+    title?: string;
+
     @Field(() => String, {nullable:false})
     message!: string;
 
-    @Field(() => Boolean, {nullable:false})
-    read_status!: boolean;
+    @Field(() => Boolean, {nullable:true})
+    read_status?: boolean;
+
+    @Field(() => String, {nullable:true})
+    project_id?: string;
 
     @Field(() => Date, {nullable:true})
     created_at?: Date | string;

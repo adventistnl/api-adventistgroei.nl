@@ -2,6 +2,7 @@ import { Field } from '@nestjs/graphql';
 import { InputType } from '@nestjs/graphql';
 import { UserCreateNestedOneWithoutNotificationsInput } from '../user/user-create-nested-one-without-notifications.input';
 import { Type } from 'class-transformer';
+import { ProjectCreateNestedOneWithoutNotificationsInput } from '../project/project-create-nested-one-without-notifications.input';
 
 @InputType()
 export class NotificationCreateWithoutInstitutionInput {
@@ -12,11 +13,14 @@ export class NotificationCreateWithoutInstitutionInput {
     @Field(() => String, {nullable:false})
     type!: string;
 
+    @Field(() => String, {nullable:true})
+    title?: string;
+
     @Field(() => String, {nullable:false})
     message!: string;
 
-    @Field(() => Boolean, {nullable:false})
-    read_status!: boolean;
+    @Field(() => Boolean, {nullable:true})
+    read_status?: boolean;
 
     @Field(() => Date, {nullable:true})
     created_at?: Date | string;
@@ -42,4 +46,8 @@ export class NotificationCreateWithoutInstitutionInput {
     @Field(() => UserCreateNestedOneWithoutNotificationsInput, {nullable:false})
     @Type(() => UserCreateNestedOneWithoutNotificationsInput)
     user!: UserCreateNestedOneWithoutNotificationsInput;
+
+    @Field(() => ProjectCreateNestedOneWithoutNotificationsInput, {nullable:true})
+    @Type(() => ProjectCreateNestedOneWithoutNotificationsInput)
+    project?: ProjectCreateNestedOneWithoutNotificationsInput;
 }

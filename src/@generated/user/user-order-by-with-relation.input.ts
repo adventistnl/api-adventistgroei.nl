@@ -109,6 +109,7 @@ export class UserOrderByWithRelationInput {
     direct_message_recipients?: DirectMessageRecipientOrderByRelationAggregateInput;
 
     @Field(() => NotificationOrderByRelationAggregateInput, {nullable:true})
+    @Type(() => NotificationOrderByRelationAggregateInput)
     notifications?: NotificationOrderByRelationAggregateInput;
 
     @Field(() => EventRegistrationOrderByRelationAggregateInput, {nullable:true})

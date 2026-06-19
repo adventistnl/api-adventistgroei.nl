@@ -22,6 +22,66 @@ export class NotificationRepository {
     });
   }
 
+  /**
+   * Creates a persisted notification for a specific user triggered by a project event.
+   * Called by ProjectHistoryService.publishAll() for each collaborator.
+   */
+  async createForUser(params: {
+    userId: string;
+    institutionId: string;
+    projectId?: string;
+    type: string;
+    title?: string;
+    message: string;
+    actorUserId: string;
+  }): Promise<Notification> {
+    return this.prisma.notification.create({
+      data: {
+        user: { connect: { id: params.userId } },
+        institution: { connect: { id: params.institutionId } },
+        project: params.projectId ? { connect: { id: params.projectId } } : undefined,
+        type: params.type,
+        title: params.title,
+        message: params.message,
+        read_status: false,
+        is_deleted: false,
+        created_by: params.actorUserId,
+        updated_by: params.actorUserId,
+      },
+    });
+  }
+
+  /**
+   * Returns the 50 most recent non-deleted notifications for a user, newest first.
+   */
+  async findByUserId(userId: string, limit = 50): Promise<Notification[]> {
+    return this.prisma.notification.findMany({
+      where: { user_id: userId, is_deleted: false },
+      orderBy: { created_at: 'desc' },
+      take: limit,
+    });
+  }
+
+  /**
+   * Marks a single notification as read (only if it belongs to the requesting user).
+   */
+  async markRead(id: string, userId: string): Promise<Notification> {
+    return this.prisma.notification.update({
+      where: { id, user_id: userId },
+      data: { read_status: true, updated_by: userId },
+    });
+  }
+
+  /**
+   * Marks ALL unread notifications for a user as read.
+   */
+  async markAllRead(userId: string): Promise<{ count: number }> {
+    return this.prisma.notification.updateMany({
+      where: { user_id: userId, read_status: false, is_deleted: false },
+      data: { read_status: true, updated_by: userId },
+    });
+  }
+
   async update(id: string, data: NotificationUpdateDto, userId: string): Promise<Notification> {
     return this.prisma.notification.update({
       where: { id },

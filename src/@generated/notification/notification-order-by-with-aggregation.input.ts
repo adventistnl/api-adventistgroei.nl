@@ -21,11 +21,17 @@ export class NotificationOrderByWithAggregationInput {
     @Field(() => SortOrder, {nullable:true})
     type?: `${SortOrder}`;
 
+    @Field(() => SortOrderInput, {nullable:true})
+    title?: SortOrderInput;
+
     @Field(() => SortOrder, {nullable:true})
     message?: `${SortOrder}`;
 
     @Field(() => SortOrder, {nullable:true})
     read_status?: `${SortOrder}`;
+
+    @Field(() => SortOrderInput, {nullable:true})
+    project_id?: SortOrderInput;
 
     @Field(() => SortOrder, {nullable:true})
     created_at?: `${SortOrder}`;

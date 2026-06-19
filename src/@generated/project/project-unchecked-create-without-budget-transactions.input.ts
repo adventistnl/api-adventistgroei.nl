@@ -13,6 +13,7 @@ import { ProjectActivityUncheckedCreateNestedManyWithoutProjectInput } from '../
 import { SubsidyRequestUncheckedCreateNestedManyWithoutProjectInput } from '../subsidy-request/subsidy-request-unchecked-create-nested-many-without-project.input';
 import { SpecialProjectsUncheckedCreateNestedManyWithoutProjectInput } from '../special-projects/special-projects-unchecked-create-nested-many-without-project.input';
 import { ProjectHistoryUncheckedCreateNestedManyWithoutProjectInput } from '../project-history/project-history-unchecked-create-nested-many-without-project.input';
+import { NotificationUncheckedCreateNestedManyWithoutProjectInput } from '../notification/notification-unchecked-create-nested-many-without-project.input';
 
 @InputType()
 export class ProjectUncheckedCreateWithoutBudget_transactionsInput {
@@ -126,4 +127,8 @@ export class ProjectUncheckedCreateWithoutBudget_transactionsInput {
     @Field(() => ProjectHistoryUncheckedCreateNestedManyWithoutProjectInput, {nullable:true})
     @Type(() => ProjectHistoryUncheckedCreateNestedManyWithoutProjectInput)
     history?: ProjectHistoryUncheckedCreateNestedManyWithoutProjectInput;
+
+    @Field(() => NotificationUncheckedCreateNestedManyWithoutProjectInput, {nullable:true})
+    @Type(() => NotificationUncheckedCreateNestedManyWithoutProjectInput)
+    notifications?: NotificationUncheckedCreateNestedManyWithoutProjectInput;
 }

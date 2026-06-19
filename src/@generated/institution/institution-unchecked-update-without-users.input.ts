@@ -72,6 +72,7 @@ export class InstitutionUncheckedUpdateWithoutUsersInput {
     communications?: CommunicationUncheckedUpdateManyWithoutInstitutionNestedInput;
 
     @Field(() => NotificationUncheckedUpdateManyWithoutInstitutionNestedInput, {nullable:true})
+    @Type(() => NotificationUncheckedUpdateManyWithoutInstitutionNestedInput)
     notifications?: NotificationUncheckedUpdateManyWithoutInstitutionNestedInput;
 
     @Field(() => SettingUncheckedUpdateManyWithoutInstitutionNestedInput, {nullable:true})

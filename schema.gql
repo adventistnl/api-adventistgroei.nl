@@ -477,6 +477,27 @@ enum BudgetTransactionType {
   MANUAL_ADJUSTMENT
 }
 
+type Notification {
+  id: ID!
+  institution_id: String!
+  user_id: String!
+  type: String!
+  title: String
+  message: String!
+  read_status: Boolean!
+  project_id: String
+  created_at: DateTime!
+  updated_at: DateTime!
+  created_by: String!
+  updated_by: String!
+  is_deleted: Boolean!
+  deleted_at: DateTime
+  deleted_by: String
+  institution: Institution!
+  user: User!
+  project: Project
+}
+
 type ProjectCount {
   voluntary_users: Int!
   activities: Int!
@@ -484,6 +505,7 @@ type ProjectCount {
   special_projects: Int!
   history: Int!
   budget_transactions: Int!
+  notifications: Int!
 }
 
 type Project {
@@ -528,6 +550,7 @@ type Project {
   special_projects: [SpecialProjects!]
   history: [ProjectHistory!]!
   budget_transactions: [BudgetTransaction!]
+  notifications: [Notification!]
   _count: ProjectCount!
   Church: Church
   churchDepartment: Department
@@ -1243,24 +1266,6 @@ type UserRole {
   role: Role!
 }
 
-type Notification {
-  id: ID!
-  institution_id: String!
-  user_id: String!
-  type: String!
-  message: String!
-  read_status: Boolean!
-  created_at: DateTime!
-  updated_at: DateTime!
-  created_by: String!
-  updated_by: String!
-  is_deleted: Boolean!
-  deleted_at: DateTime
-  deleted_by: String
-  institution: Institution!
-  user: User!
-}
-
 type CommunicationRecipient {
   id: ID!
   communication_id: String!
@@ -1897,6 +1902,10 @@ type SubsidyByStatus {
   fill: String!
 }
 
+type MarkAllReadResult {
+  count: Int!
+}
+
 type ForgotPasswordResponse {
   success: Boolean!
   message: String
@@ -1945,6 +1954,7 @@ type Query {
   projectsByDepartment(institutionId: String): [ProjectsByDepartment!]!
   subsidyStatusDistribution(institutionId: String): [SubsidyStatusDistribution!]!
   projectsTimeline(institutionId: String): [ProjectsTimeline!]!
+  myNotifications: [Notification!]!
   notifications: [Notification!]!
   notification(id: String!): Notification
   settings: [Setting!]!
@@ -2902,6 +2912,7 @@ input ProjectWhereInput {
   special_projects: SpecialProjectsListRelationFilter
   history: ProjectHistoryListRelationFilter
   budget_transactions: BudgetTransactionListRelationFilter
+  notifications: NotificationListRelationFilter
 }
 
 input EnumProjectTypeFilter {
@@ -3305,6 +3316,36 @@ input SubsidyRequestNullableScalarRelationFilter {
   isNot: SubsidyRequestWhereInput
 }
 
+input NotificationListRelationFilter {
+  every: NotificationWhereInput
+  some: NotificationWhereInput
+  none: NotificationWhereInput
+}
+
+input NotificationWhereInput {
+  AND: [NotificationWhereInput!]
+  OR: [NotificationWhereInput!]
+  NOT: [NotificationWhereInput!]
+  id: StringFilter
+  institution_id: StringFilter
+  user_id: StringFilter
+  type: StringFilter
+  title: StringNullableFilter
+  message: StringFilter
+  read_status: BoolFilter
+  project_id: StringNullableFilter
+  created_at: DateTimeFilter
+  updated_at: DateTimeFilter
+  created_by: StringFilter
+  updated_by: StringFilter
+  is_deleted: BoolFilter
+  deleted_at: DateTimeNullableFilter
+  deleted_by: StringNullableFilter
+  institution: InstitutionScalarRelationFilter
+  user: UserScalarRelationFilter
+  project: ProjectNullableScalarRelationFilter
+}
+
 input SubsidyReceiptListRelationFilter {
   every: SubsidyReceiptWhereInput
   some: SubsidyReceiptWhereInput
@@ -3641,33 +3682,6 @@ input CommunicationRecipientWhereInput {
 input CommunicationScalarRelationFilter {
   is: CommunicationWhereInput
   isNot: CommunicationWhereInput
-}
-
-input NotificationListRelationFilter {
-  every: NotificationWhereInput
-  some: NotificationWhereInput
-  none: NotificationWhereInput
-}
-
-input NotificationWhereInput {
-  AND: [NotificationWhereInput!]
-  OR: [NotificationWhereInput!]
-  NOT: [NotificationWhereInput!]
-  id: StringFilter
-  institution_id: StringFilter
-  user_id: StringFilter
-  type: StringFilter
-  message: StringFilter
-  read_status: BoolFilter
-  created_at: DateTimeFilter
-  updated_at: DateTimeFilter
-  created_by: StringFilter
-  updated_by: StringFilter
-  is_deleted: BoolFilter
-  deleted_at: DateTimeNullableFilter
-  deleted_by: StringNullableFilter
-  institution: InstitutionScalarRelationFilter
-  user: UserScalarRelationFilter
 }
 
 input SettingListRelationFilter {
@@ -4427,6 +4441,8 @@ type Mutation {
   updateProjectCoOwner(id: String!, data: ProjectUpdateCoOwnerDto!): Project!
   deleteProject(id: String!): Project!
   createNotification(data: NotificationCreateDto!): Notification!
+  markNotificationRead(id: String!): Notification!
+  markAllNotificationsRead: MarkAllReadResult!
   updateNotification(id: String!, data: NotificationUpdateDto!): Notification!
   deleteNotification(id: String!): Notification!
   createSetting(data: SettingCreateDto!): Setting!

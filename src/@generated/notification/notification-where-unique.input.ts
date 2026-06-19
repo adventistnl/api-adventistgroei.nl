@@ -2,13 +2,14 @@ import { Field } from '@nestjs/graphql';
 import { InputType } from '@nestjs/graphql';
 import { NotificationWhereInput } from './notification-where.input';
 import { StringFilter } from '../prisma/string-filter.input';
+import { StringNullableFilter } from '../prisma/string-nullable-filter.input';
 import { BoolFilter } from '../prisma/bool-filter.input';
 import { DateTimeFilter } from '../prisma/date-time-filter.input';
 import { DateTimeNullableFilter } from '../prisma/date-time-nullable-filter.input';
-import { StringNullableFilter } from '../prisma/string-nullable-filter.input';
 import { InstitutionScalarRelationFilter } from '../institution/institution-scalar-relation-filter.input';
 import { Type } from 'class-transformer';
 import { UserScalarRelationFilter } from '../user/user-scalar-relation-filter.input';
+import { ProjectNullableScalarRelationFilter } from '../project/project-nullable-scalar-relation-filter.input';
 
 @InputType()
 export class NotificationWhereUniqueInput {
@@ -34,11 +35,17 @@ export class NotificationWhereUniqueInput {
     @Field(() => StringFilter, {nullable:true})
     type?: StringFilter;
 
+    @Field(() => StringNullableFilter, {nullable:true})
+    title?: StringNullableFilter;
+
     @Field(() => StringFilter, {nullable:true})
     message?: StringFilter;
 
     @Field(() => BoolFilter, {nullable:true})
     read_status?: BoolFilter;
+
+    @Field(() => StringNullableFilter, {nullable:true})
+    project_id?: StringNullableFilter;
 
     @Field(() => DateTimeFilter, {nullable:true})
     created_at?: DateTimeFilter;
@@ -68,4 +75,8 @@ export class NotificationWhereUniqueInput {
     @Field(() => UserScalarRelationFilter, {nullable:true})
     @Type(() => UserScalarRelationFilter)
     user?: UserScalarRelationFilter;
+
+    @Field(() => ProjectNullableScalarRelationFilter, {nullable:true})
+    @Type(() => ProjectNullableScalarRelationFilter)
+    project?: ProjectNullableScalarRelationFilter;
 }

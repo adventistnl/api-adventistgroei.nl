@@ -22,4 +22,7 @@ export class ProjectCount {
 
     @Field(() => Int, {nullable:false})
     budget_transactions?: number;
+
+    @Field(() => Int, {nullable:false})
+    notifications?: number;
 }

@@ -688,6 +688,7 @@ model Project {
   special_projects     SpecialProjects[]
   history              ProjectHistory[]
   budget_transactions  BudgetTransaction[]
+  notifications        Notification[]
 }
 
 model VoluntariesOnProjects {
@@ -1179,8 +1180,11 @@ model Notification {
   user_id        String
   user           User        @relation(fields: [user_id], references: [id])
   type           String
+  title          String?
   message        String
-  read_status    Boolean
+  read_status    Boolean     @default(false)
+  project_id     String?
+  project        Project?    @relation(fields: [project_id], references: [id])
   created_at     DateTime    @default(now())
   updated_at     DateTime    @updatedAt
   created_by     String
@@ -1188,6 +1192,10 @@ model Notification {
   is_deleted     Boolean     @default(false)
   deleted_at     DateTime?
   deleted_by     String?
+
+  @@index([user_id])
+  @@index([user_id, read_status])
+  @@index([created_at])
 }
 
 model Setting {
