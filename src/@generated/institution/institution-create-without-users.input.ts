@@ -69,6 +69,7 @@ export class InstitutionCreateWithoutUsersInput {
     communications?: CommunicationCreateNestedManyWithoutInstitutionInput;
 
     @Field(() => NotificationCreateNestedManyWithoutInstitutionInput, {nullable:true})
+    @Type(() => NotificationCreateNestedManyWithoutInstitutionInput)
     notifications?: NotificationCreateNestedManyWithoutInstitutionInput;
 
     @Field(() => SettingCreateNestedManyWithoutInstitutionInput, {nullable:true})

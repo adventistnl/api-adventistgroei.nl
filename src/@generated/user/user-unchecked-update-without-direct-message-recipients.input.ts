@@ -10,8 +10,8 @@ import { NullableStringFieldUpdateOperationsInput } from '../prisma/nullable-str
 import { UserRoleUncheckedUpdateManyWithoutUserNestedInput } from '../user-role/user-role-unchecked-update-many-without-user-nested.input';
 import { DirectMessageUncheckedUpdateManyWithoutSenderNestedInput } from '../direct-message/direct-message-unchecked-update-many-without-sender-nested.input';
 import { NotificationUncheckedUpdateManyWithoutUserNestedInput } from '../notification/notification-unchecked-update-many-without-user-nested.input';
-import { EventRegistrationUncheckedUpdateManyWithoutUserNestedInput } from '../event-registration/event-registration-unchecked-update-many-without-user-nested.input';
 import { Type } from 'class-transformer';
+import { EventRegistrationUncheckedUpdateManyWithoutUserNestedInput } from '../event-registration/event-registration-unchecked-update-many-without-user-nested.input';
 import { EventRecipientUncheckedUpdateManyWithoutUserNestedInput } from '../event-recipient/event-recipient-unchecked-update-many-without-user-nested.input';
 import { CommunicationUncheckedUpdateManyWithoutAuthorNestedInput } from '../communication/communication-unchecked-update-many-without-author-nested.input';
 import { SubsidyRequestUncheckedUpdateManyWithoutRequesterNestedInput } from '../subsidy-request/subsidy-request-unchecked-update-many-without-requester-nested.input';
@@ -92,6 +92,7 @@ export class UserUncheckedUpdateWithoutDirect_message_recipientsInput {
     direct_messages?: DirectMessageUncheckedUpdateManyWithoutSenderNestedInput;
 
     @Field(() => NotificationUncheckedUpdateManyWithoutUserNestedInput, {nullable:true})
+    @Type(() => NotificationUncheckedUpdateManyWithoutUserNestedInput)
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput;
 
     @Field(() => EventRegistrationUncheckedUpdateManyWithoutUserNestedInput, {nullable:true})

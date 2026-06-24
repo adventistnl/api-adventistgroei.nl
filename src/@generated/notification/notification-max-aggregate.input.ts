@@ -17,10 +17,16 @@ export class NotificationMaxAggregateInput {
     type?: true;
 
     @Field(() => Boolean, {nullable:true})
+    title?: true;
+
+    @Field(() => Boolean, {nullable:true})
     message?: true;
 
     @Field(() => Boolean, {nullable:true})
     read_status?: true;
+
+    @Field(() => Boolean, {nullable:true})
+    project_id?: true;
 
     @Field(() => Boolean, {nullable:true})
     created_at?: true;

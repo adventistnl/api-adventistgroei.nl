@@ -99,6 +99,7 @@ export class UserUpdateWithoutInstitutionInput {
     direct_message_recipients?: DirectMessageRecipientUpdateManyWithoutRecipient_userNestedInput;
 
     @Field(() => NotificationUpdateManyWithoutUserNestedInput, {nullable:true})
+    @Type(() => NotificationUpdateManyWithoutUserNestedInput)
     notifications?: NotificationUpdateManyWithoutUserNestedInput;
 
     @Field(() => EventRegistrationUpdateManyWithoutUserNestedInput, {nullable:true})

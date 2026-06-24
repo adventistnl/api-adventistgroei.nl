@@ -1,10 +1,11 @@
 import { Field } from '@nestjs/graphql';
 import { InputType } from '@nestjs/graphql';
 import { StringFilter } from '../prisma/string-filter.input';
+import { StringNullableFilter } from '../prisma/string-nullable-filter.input';
 import { BoolFilter } from '../prisma/bool-filter.input';
+import { JsonNullableFilter } from '../prisma/json-nullable-filter.input';
 import { DateTimeFilter } from '../prisma/date-time-filter.input';
 import { DateTimeNullableFilter } from '../prisma/date-time-nullable-filter.input';
-import { StringNullableFilter } from '../prisma/string-nullable-filter.input';
 
 @InputType()
 export class NotificationScalarWhereInput {
@@ -30,11 +31,20 @@ export class NotificationScalarWhereInput {
     @Field(() => StringFilter, {nullable:true})
     type?: StringFilter;
 
+    @Field(() => StringNullableFilter, {nullable:true})
+    title?: StringNullableFilter;
+
     @Field(() => StringFilter, {nullable:true})
     message?: StringFilter;
 
     @Field(() => BoolFilter, {nullable:true})
     read_status?: BoolFilter;
+
+    @Field(() => JsonNullableFilter, {nullable:true})
+    metadata?: JsonNullableFilter;
+
+    @Field(() => StringNullableFilter, {nullable:true})
+    project_id?: StringNullableFilter;
 
     @Field(() => DateTimeFilter, {nullable:true})
     created_at?: DateTimeFilter;

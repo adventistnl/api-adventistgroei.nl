@@ -1,5 +1,6 @@
 import { InputType, Field } from '@nestjs/graphql';
 import { IsOptional, IsString, IsBoolean } from 'class-validator';
+import { GraphQLJSON } from 'graphql-type-json';
 
 @InputType()
 export class NotificationCreateDto {
@@ -15,6 +16,11 @@ export class NotificationCreateDto {
   @IsString()
   type: string;
 
+  @Field({ nullable: true })
+  @IsOptional()
+  @IsString()
+  title?: string;
+
   @Field()
   @IsString()
   message: string;
@@ -22,6 +28,10 @@ export class NotificationCreateDto {
   @Field()
   @IsBoolean()
   read_status: boolean;
+
+  @Field(() => GraphQLJSON, { nullable: true })
+  @IsOptional()
+  metadata?: any;
 }
 
 @InputType()
@@ -44,10 +54,19 @@ export class NotificationUpdateDto {
   @Field({ nullable: true })
   @IsOptional()
   @IsString()
+  title?: string;
+
+  @Field({ nullable: true })
+  @IsOptional()
+  @IsString()
   message?: string;
 
   @Field({ nullable: true })
   @IsOptional()
   @IsBoolean()
   read_status?: boolean;
+
+  @Field(() => GraphQLJSON, { nullable: true })
+  @IsOptional()
+  metadata?: any;
 }

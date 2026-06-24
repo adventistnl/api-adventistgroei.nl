@@ -74,6 +74,7 @@ export class InstitutionUpdateWithoutChurchesInput {
     communications?: CommunicationUpdateManyWithoutInstitutionNestedInput;
 
     @Field(() => NotificationUpdateManyWithoutInstitutionNestedInput, {nullable:true})
+    @Type(() => NotificationUpdateManyWithoutInstitutionNestedInput)
     notifications?: NotificationUpdateManyWithoutInstitutionNestedInput;
 
     @Field(() => SettingUpdateManyWithoutInstitutionNestedInput, {nullable:true})

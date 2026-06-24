@@ -1,5 +1,6 @@
 import { Field } from '@nestjs/graphql';
 import { ObjectType } from '@nestjs/graphql';
+import { GraphQLJSON } from 'graphql-type-json';
 import { NotificationCountAggregate } from './notification-count-aggregate.output';
 import { NotificationMinAggregate } from './notification-min-aggregate.output';
 import { NotificationMaxAggregate } from './notification-max-aggregate.output';
@@ -19,11 +20,20 @@ export class NotificationGroupBy {
     @Field(() => String, {nullable:false})
     type!: string;
 
+    @Field(() => String, {nullable:true})
+    title?: string;
+
     @Field(() => String, {nullable:false})
     message!: string;
 
     @Field(() => Boolean, {nullable:false})
     read_status!: boolean;
+
+    @Field(() => GraphQLJSON, {nullable:true})
+    metadata?: any;
+
+    @Field(() => String, {nullable:true})
+    project_id?: string;
 
     @Field(() => Date, {nullable:false})
     created_at!: Date | string;

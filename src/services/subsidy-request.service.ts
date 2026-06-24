@@ -289,8 +289,10 @@ export class SubsidyRequestService {
           ...(excludeSubsidyId ? { subsidy_request_id: { not: excludeSubsidyId } } : {}),
           subsidy_request: {
             is_deleted: false,
+            // T5: Exclude CLOSED and ADVANCED_CLOSED — subsidies that are finished
+            // should not block new requests for the same activity.
             subsidy_status: {
-              name: { notIn: ['REJECTED'] },
+              name: { notIn: ['REJECTED', 'CLOSED', 'ADVANCED_CLOSED'] },
             },
           },
         },
@@ -380,11 +382,15 @@ export class SubsidyRequestService {
       });
       if (!project) throw new CustomGraphQLError('Project not found', ErrorCode.NOT_FOUND, 404);
 
+      // T1/T2: Exclude CLOSED and ADVANCED_CLOSED subsidies — they are no longer active
+      // and should not count against the available budget or the 50% advance cap.
+      const INACTIVE_STATUSES = ['REJECTED', 'CLOSED', 'ADVANCED_CLOSED'];
+
       const existingSubsidies = await this.prisma.subsidyRequest.findMany({
         where: {
           project_id: data.project_id,
           is_deleted: false,
-          subsidy_status: { name: { not: 'REJECTED' } }
+          subsidy_status: { name: { notIn: INACTIVE_STATUSES } },
         }
       });
 
@@ -417,9 +423,11 @@ export class SubsidyRequestService {
          );
       }
 
+      // T3: Use only advance_amount (not total_budget as fallback) to avoid inflating
+      // the sum with non-advance subsidies that have null advance_amount.
       const existingAdvancesSum = existingSubsidies
          .filter(s => s.is_for_advance || s.request_type === SubsidyRequestType.ADVANCE)
-         .reduce((sum, req) => sum + Number(req.advance_amount || req.total_budget || 0), 0);
+         .reduce((sum, req) => sum + Number(req.advance_amount || 0), 0);
          
       if (existingAdvancesSum + advanceRequested > maxAdvanceAllowed) {
          throw new CustomGraphQLError(
@@ -522,6 +530,17 @@ export class SubsidyRequestService {
     }
 
     console.log('🟢 [SubsidyRequestService.create] DONE — returning id:', subsidyRequest.id, 'request_type:', resolvedType);
+
+    // Notify project collaborators about the new subsidy request (non-blocking)
+    if (data.project_id) {
+      this.projectHistoryService.logEvent(
+        data.project_id,
+        userId,
+        ProjectHistoryType.UPDATED,
+        { metadata: { subsidyDescription: data.description ?? 'subsídio', action: 'created' } },
+      ).catch((e) => console.error('[SubsidyRequestService.create] logEvent failed:', e));
+    }
+
     return subsidyRequest;
   }
 
@@ -625,9 +644,30 @@ export class SubsidyRequestService {
       );
     }
 
-    // Validate advance amount (max 50% of subsidized budget)
+    // T4: Validate advance amount against both the 50% cap AND existing active advance requests.
+    // Inactive subsidies (CLOSED, ADVANCED_CLOSED, REJECTED) must not count.
+    const INACTIVE_STATUSES = ['REJECTED', 'CLOSED', 'ADVANCED_CLOSED'];
     const maxAdvance = Number(project.subsidized_budget || 0) * 0.5;
     const subsidizedBudget = Number(project.subsidized_budget || 0);
+
+    const existingAdvances = await this.prisma.subsidyRequest.findMany({
+      where: {
+        project_id: projectId,
+        is_deleted: false,
+        subsidy_status: { name: { notIn: INACTIVE_STATUSES } },
+        OR: [
+          { is_for_advance: true },
+          { request_type: SubsidyRequestType.ADVANCE },
+        ],
+      },
+      select: { advance_amount: true },
+    });
+
+    const existingAdvancesSum = existingAdvances.reduce(
+      (sum, req) => sum + Number(req.advance_amount || 0),
+      0,
+    );
+
     if (advanceAmount > maxAdvance) {
       throw new CustomGraphQLError(
         translate('errors.advance_exceeds_limit', language, {
@@ -645,6 +685,29 @@ export class SubsidyRequestService {
             requested: advanceAmount,
             max: maxAdvance,
             subsidizedBudget,
+          },
+        }
+      );
+    }
+
+    if (existingAdvancesSum + advanceAmount > maxAdvance) {
+      throw new CustomGraphQLError(
+        translate('errors.advance_exceeds_limit', language, {
+          ns: 'subsidy',
+          requested: advanceAmount,
+          max: maxAdvance,
+          subsidizedBudget,
+          existing: existingAdvancesSum,
+        }),
+        ErrorCode.BAD_REQUEST,
+        400,
+        {
+          additional: {
+            errorCode: 'ADVANCE_EXCEEDS_LIMIT',
+            requested: advanceAmount,
+            max: maxAdvance,
+            subsidizedBudget,
+            existing: existingAdvancesSum,
           },
         }
       );
@@ -699,6 +762,14 @@ export class SubsidyRequestService {
       reason: translate('history.subsidy_created_advance', language, { ns: 'subsidy', amount: advanceAmount }),
       changed_by: userId,
     });
+
+    // Notify project collaborators about the new advance request (non-blocking)
+    this.projectHistoryService.logEvent(
+      projectId,
+      userId,
+      ProjectHistoryType.UPDATED,
+      { metadata: { subsidyDescription: `Advance request: €${advanceAmount}`, action: 'created' } },
+    ).catch((e) => console.error('[SubsidyRequestService.createAdvanceRequest] logEvent failed:', e));
 
     return subsidyRequest;
   }
@@ -1214,13 +1285,17 @@ export class SubsidyRequestService {
     // PENDING: member submitted the request — notify them of confirmation
     const notifyMembers = true;
 
+    const emailedUserIds = new Set<string>();
+
     // ── Send member emails ─────────────────────────────────────────────────
     if (notifyMembers) {
       if (project.co_owner) {
         await sendMemberEmail(project.co_owner);
+        emailedUserIds.add(project.co_owner.id);
       }
       if (project.owner && project.owner.id !== project.co_owner?.id) {
         await sendMemberEmail(project.owner);
+        emailedUserIds.add(project.owner.id);
       }
     }
 
@@ -1241,7 +1316,10 @@ export class SubsidyRequestService {
       });
 
       for (const financeUser of financeUsers) {
-        await sendFinanceEmail(financeUser);
+        if (!emailedUserIds.has(financeUser.id)) {
+          await sendFinanceEmail(financeUser);
+          emailedUserIds.add(financeUser.id);
+        }
       }
     }
 
@@ -1424,6 +1502,14 @@ export class SubsidyRequestService {
         stack: error.stack,
       });
     }
+
+    // Notify project collaborators about subsidy deletion (non-blocking)
+    this.projectHistoryService.logEvent(
+      subsidyRequest.project_id,
+      userId,
+      ProjectHistoryType.UPDATED,
+      { metadata: { subsidyDescription: subsidyRequest.description ?? 'subsídio', action: 'deleted' } },
+    ).catch((e) => console.error('[SubsidyRequestService.delete] logEvent failed:', e));
 
     return result;
   }

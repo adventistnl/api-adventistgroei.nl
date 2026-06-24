@@ -1,5 +1,6 @@
 import { Field } from '@nestjs/graphql';
 import { InputType } from '@nestjs/graphql';
+import { GraphQLJSON } from 'graphql-type-json';
 
 @InputType()
 export class NotificationCreateManyInstitutionInput {
@@ -13,11 +14,20 @@ export class NotificationCreateManyInstitutionInput {
     @Field(() => String, {nullable:false})
     type!: string;
 
+    @Field(() => String, {nullable:true})
+    title?: string;
+
     @Field(() => String, {nullable:false})
     message!: string;
 
-    @Field(() => Boolean, {nullable:false})
-    read_status!: boolean;
+    @Field(() => Boolean, {nullable:true})
+    read_status?: boolean;
+
+    @Field(() => GraphQLJSON, {nullable:true})
+    metadata?: any;
+
+    @Field(() => String, {nullable:true})
+    project_id?: string;
 
     @Field(() => Date, {nullable:true})
     created_at?: Date | string;

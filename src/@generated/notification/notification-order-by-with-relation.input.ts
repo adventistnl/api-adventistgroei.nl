@@ -5,6 +5,7 @@ import { SortOrderInput } from '../prisma/sort-order.input';
 import { InstitutionOrderByWithRelationInput } from '../institution/institution-order-by-with-relation.input';
 import { Type } from 'class-transformer';
 import { UserOrderByWithRelationInput } from '../user/user-order-by-with-relation.input';
+import { ProjectOrderByWithRelationInput } from '../project/project-order-by-with-relation.input';
 
 @InputType()
 export class NotificationOrderByWithRelationInput {
@@ -21,11 +22,20 @@ export class NotificationOrderByWithRelationInput {
     @Field(() => SortOrder, {nullable:true})
     type?: `${SortOrder}`;
 
+    @Field(() => SortOrderInput, {nullable:true})
+    title?: SortOrderInput;
+
     @Field(() => SortOrder, {nullable:true})
     message?: `${SortOrder}`;
 
     @Field(() => SortOrder, {nullable:true})
     read_status?: `${SortOrder}`;
+
+    @Field(() => SortOrderInput, {nullable:true})
+    metadata?: SortOrderInput;
+
+    @Field(() => SortOrderInput, {nullable:true})
+    project_id?: SortOrderInput;
 
     @Field(() => SortOrder, {nullable:true})
     created_at?: `${SortOrder}`;
@@ -55,4 +65,8 @@ export class NotificationOrderByWithRelationInput {
     @Field(() => UserOrderByWithRelationInput, {nullable:true})
     @Type(() => UserOrderByWithRelationInput)
     user?: UserOrderByWithRelationInput;
+
+    @Field(() => ProjectOrderByWithRelationInput, {nullable:true})
+    @Type(() => ProjectOrderByWithRelationInput)
+    project?: ProjectOrderByWithRelationInput;
 }

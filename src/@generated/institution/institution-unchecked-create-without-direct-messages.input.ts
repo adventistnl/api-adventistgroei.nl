@@ -71,6 +71,7 @@ export class InstitutionUncheckedCreateWithoutDirect_messagesInput {
     communications?: CommunicationUncheckedCreateNestedManyWithoutInstitutionInput;
 
     @Field(() => NotificationUncheckedCreateNestedManyWithoutInstitutionInput, {nullable:true})
+    @Type(() => NotificationUncheckedCreateNestedManyWithoutInstitutionInput)
     notifications?: NotificationUncheckedCreateNestedManyWithoutInstitutionInput;
 
     @Field(() => SettingUncheckedCreateNestedManyWithoutInstitutionInput, {nullable:true})

@@ -20,6 +20,7 @@ import { ProjectActivityCreateNestedManyWithoutProjectInput } from '../project-a
 import { SubsidyRequestCreateNestedManyWithoutProjectInput } from '../subsidy-request/subsidy-request-create-nested-many-without-project.input';
 import { SpecialProjectsCreateNestedManyWithoutProjectInput } from '../special-projects/special-projects-create-nested-many-without-project.input';
 import { ProjectHistoryCreateNestedManyWithoutProjectInput } from '../project-history/project-history-create-nested-many-without-project.input';
+import { NotificationCreateNestedManyWithoutProjectInput } from '../notification/notification-create-nested-many-without-project.input';
 
 @InputType()
 export class ProjectCreateWithoutBudget_transactionsInput {
@@ -140,4 +141,8 @@ export class ProjectCreateWithoutBudget_transactionsInput {
     @Field(() => ProjectHistoryCreateNestedManyWithoutProjectInput, {nullable:true})
     @Type(() => ProjectHistoryCreateNestedManyWithoutProjectInput)
     history?: ProjectHistoryCreateNestedManyWithoutProjectInput;
+
+    @Field(() => NotificationCreateNestedManyWithoutProjectInput, {nullable:true})
+    @Type(() => NotificationCreateNestedManyWithoutProjectInput)
+    notifications?: NotificationCreateNestedManyWithoutProjectInput;
 }

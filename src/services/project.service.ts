@@ -334,29 +334,14 @@ export class ProjectService {
       }
     };
 
-    // Helper to send in-app notification
-    const sendAppNotification = async (user: any) => {
-       if (user?.id && project.institution_id) {
-         await this.notificationService.create({
-            user_id: user.id,
-            institution_id: project.institution_id,
-            type: 'PROJECT_STATUS_CHANGED',
-            message: notificationMessage,
-            read_status: false,
-         }, 'system');
-       }
-    };
-
     // Notify Co-Owner (Member)
     if (coOwner) {
        await sendEmail(coOwner);
-       await sendAppNotification(coOwner);
     }
 
     // Notify Owner (Ministerial)
     if (owner && owner.id !== coOwner?.id) {
        await sendEmail(owner);
-       await sendAppNotification(owner);
     }
   }
 
@@ -593,7 +578,14 @@ export class ProjectService {
       );
     }
 
-    // 8. Soft delete the project
+    // 8. Log deletion event before removing relationships
+    this.projectHistoryService.logEvent(
+      id,
+      userId,
+      ProjectHistoryType.DELETED,
+    ).catch(e => console.error('Failed to log project deletion history:', e));
+
+    // 9. Soft delete the project
     console.log(`🎯 Soft deleting project...`);
     const deletedProject = await this.projectRepository.softDelete(id, userId);
 

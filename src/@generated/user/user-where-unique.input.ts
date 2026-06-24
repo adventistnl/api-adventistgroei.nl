@@ -124,6 +124,7 @@ export class UserWhereUniqueInput {
     direct_message_recipients?: DirectMessageRecipientListRelationFilter;
 
     @Field(() => NotificationListRelationFilter, {nullable:true})
+    @Type(() => NotificationListRelationFilter)
     notifications?: NotificationListRelationFilter;
 
     @Field(() => EventRegistrationListRelationFilter, {nullable:true})

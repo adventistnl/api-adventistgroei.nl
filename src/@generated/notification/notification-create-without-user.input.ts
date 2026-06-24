@@ -1,7 +1,9 @@
 import { Field } from '@nestjs/graphql';
 import { InputType } from '@nestjs/graphql';
+import { GraphQLJSON } from 'graphql-type-json';
 import { InstitutionCreateNestedOneWithoutNotificationsInput } from '../institution/institution-create-nested-one-without-notifications.input';
 import { Type } from 'class-transformer';
+import { ProjectCreateNestedOneWithoutNotificationsInput } from '../project/project-create-nested-one-without-notifications.input';
 
 @InputType()
 export class NotificationCreateWithoutUserInput {
@@ -12,11 +14,17 @@ export class NotificationCreateWithoutUserInput {
     @Field(() => String, {nullable:false})
     type!: string;
 
+    @Field(() => String, {nullable:true})
+    title?: string;
+
     @Field(() => String, {nullable:false})
     message!: string;
 
-    @Field(() => Boolean, {nullable:false})
-    read_status!: boolean;
+    @Field(() => Boolean, {nullable:true})
+    read_status?: boolean;
+
+    @Field(() => GraphQLJSON, {nullable:true})
+    metadata?: any;
 
     @Field(() => Date, {nullable:true})
     created_at?: Date | string;
@@ -42,4 +50,8 @@ export class NotificationCreateWithoutUserInput {
     @Field(() => InstitutionCreateNestedOneWithoutNotificationsInput, {nullable:false})
     @Type(() => InstitutionCreateNestedOneWithoutNotificationsInput)
     institution!: InstitutionCreateNestedOneWithoutNotificationsInput;
+
+    @Field(() => ProjectCreateNestedOneWithoutNotificationsInput, {nullable:true})
+    @Type(() => ProjectCreateNestedOneWithoutNotificationsInput)
+    project?: ProjectCreateNestedOneWithoutNotificationsInput;
 }

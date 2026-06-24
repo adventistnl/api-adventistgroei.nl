@@ -94,6 +94,7 @@ export class UserCreateWithoutInstitutionInput {
     direct_message_recipients?: DirectMessageRecipientCreateNestedManyWithoutRecipient_userInput;
 
     @Field(() => NotificationCreateNestedManyWithoutUserInput, {nullable:true})
+    @Type(() => NotificationCreateNestedManyWithoutUserInput)
     notifications?: NotificationCreateNestedManyWithoutUserInput;
 
     @Field(() => EventRegistrationCreateNestedManyWithoutUserInput, {nullable:true})

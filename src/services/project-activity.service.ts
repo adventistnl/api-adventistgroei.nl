@@ -14,6 +14,8 @@ import { PrismaService } from './prisma.service';
 import { ProjectStatus } from '../@generated/prisma/project-status.enum';
 import { ACTIVITY_EDIT_BLOCKED_STATUSES, assertStatusNotBlocked } from '../common/helpers/project-status-guard.helper';
 import { ActivityBudgetSummary } from '../models/activity-budget-summary.model';
+import { ProjectHistoryService } from './project-history.service';
+import { ProjectHistoryType } from '../@generated/prisma/project-history-type.enum';
 
 @Injectable()
 export class ProjectActivityService {
@@ -26,6 +28,7 @@ export class ProjectActivityService {
     private readonly activityDocumentsRepository: ActivityDocumentsRepository,
     private readonly driveService: GoogleDriveService,
     private readonly prisma: PrismaService,
+    private readonly projectHistoryService: ProjectHistoryService,
   ) {}
 
   private async recalculateProjectBudget(projectId: string, userId: string): Promise<void> {
@@ -221,8 +224,16 @@ export class ProjectActivityService {
       console.error(`❌ Error renaming Google Drive folder for activity ${id}:`, error);
     }
 
-    // Log deletion
+    // Log deletion and notify collaborators
     await this.logService.logDeletion(id, userId);
+
+    // Notify project collaborators about activity deletion (non-blocking)
+    this.projectHistoryService.logEvent(
+      activity.project_id,
+      userId,
+      ProjectHistoryType.UPDATED,
+      { metadata: { action: 'activity_deleted', activityName: activity.name } },
+    ).catch((e) => console.error('[ProjectActivityService.softDelete] logEvent failed:', e));
 
     // Recalculate project budget
     await this.recalculateProjectBudget(activity.project_id, userId);

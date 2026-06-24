@@ -8,6 +8,8 @@ import { FileUpload, DownloadResult } from './activity-documents.service';
 import { Readable } from 'stream';
 import { SubsidyRequestService } from './subsidy-request.service';
 import { SubsidyStatusHistoryRepository } from 'src/repositories/subsidy-status-history.repository';
+import { ProjectHistoryService } from './project-history.service';
+import { ProjectHistoryType } from 'src/@generated/prisma/project-history-type.enum';
 import { SubsidyHistoryType } from 'src/@generated/prisma/subsidy-history-type.enum';
 
 export interface UploadSubsidyReceiptInput {
@@ -29,6 +31,8 @@ export class SubsidyReceiptService {
     @Inject(forwardRef(() => SubsidyRequestService))
     private readonly subsidyRequestService: SubsidyRequestService,
     private readonly historyRepository: SubsidyStatusHistoryRepository,
+    @Inject(forwardRef(() => ProjectHistoryService))
+    private readonly projectHistoryService: ProjectHistoryService,
   ) {}
 
   private ensureNotClosed(statusName: string | undefined) {
@@ -175,6 +179,16 @@ export class SubsidyReceiptService {
         reason: `Document "${filename}" uploaded`,
         changed_by: userId,
       });
+
+      // 10. Log no histórico global do projeto para notificar a equipe
+      await this.projectHistoryService.logEvent(
+        subsidyRequest.project_id,
+        userId,
+        ProjectHistoryType.SUBSIDY_DOCUMENT_UPDATED,
+        {
+          metadata: { targetId: subsidyRequest.id },
+        }
+      );
 
       return receipt;
     } catch (error) {
@@ -342,6 +356,16 @@ export class SubsidyReceiptService {
         changed_by: userId,
       });
 
+      // Log no histórico global do projeto para notificar a equipe
+      await this.projectHistoryService.logEvent(
+        subsidyRequest.project_id,
+        userId,
+        ProjectHistoryType.SUBSIDY_DOCUMENT_VALIDATED,
+        {
+          metadata: { targetId: subsidyRequest.id },
+        }
+      );
+
       await this.subsidyRequestService.recalculateStatus(subsidyRequest.id, userId);
     }
 
@@ -391,6 +415,16 @@ export class SubsidyReceiptService {
         reason: `Document "${receipt.filename}" rejected. Reason: ${reason || 'No reason specified'}`,
         changed_by: userId,
       });
+
+      // Log no histórico global do projeto para notificar a equipe
+      await this.projectHistoryService.logEvent(
+        subsidyRequest.project_id,
+        userId,
+        ProjectHistoryType.SUBSIDY_DOCUMENT_REJECTED,
+        {
+          metadata: { targetId: subsidyRequest.id },
+        }
+      );
 
       await this.subsidyRequestService.recalculateStatus(subsidyRequest.id, userId);
     }

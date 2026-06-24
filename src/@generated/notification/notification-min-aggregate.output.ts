@@ -17,10 +17,16 @@ export class NotificationMinAggregate {
     type?: string;
 
     @Field(() => String, {nullable:true})
+    title?: string;
+
+    @Field(() => String, {nullable:true})
     message?: string;
 
     @Field(() => Boolean, {nullable:true})
     read_status?: boolean;
+
+    @Field(() => String, {nullable:true})
+    project_id?: string;
 
     @Field(() => Date, {nullable:true})
     created_at?: Date | string;

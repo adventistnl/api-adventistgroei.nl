@@ -5,8 +5,8 @@ import { LanguagePreference } from '../prisma/language-preference.enum';
 import { DirectMessageUncheckedCreateNestedManyWithoutSenderInput } from '../direct-message/direct-message-unchecked-create-nested-many-without-sender.input';
 import { DirectMessageRecipientUncheckedCreateNestedManyWithoutRecipient_userInput } from '../direct-message-recipient/direct-message-recipient-unchecked-create-nested-many-without-recipient-user.input';
 import { NotificationUncheckedCreateNestedManyWithoutUserInput } from '../notification/notification-unchecked-create-nested-many-without-user.input';
-import { EventRegistrationUncheckedCreateNestedManyWithoutUserInput } from '../event-registration/event-registration-unchecked-create-nested-many-without-user.input';
 import { Type } from 'class-transformer';
+import { EventRegistrationUncheckedCreateNestedManyWithoutUserInput } from '../event-registration/event-registration-unchecked-create-nested-many-without-user.input';
 import { EventRecipientUncheckedCreateNestedManyWithoutUserInput } from '../event-recipient/event-recipient-unchecked-create-nested-many-without-user.input';
 import { CommunicationUncheckedCreateNestedManyWithoutAuthorInput } from '../communication/communication-unchecked-create-nested-many-without-author.input';
 import { SubsidyRequestUncheckedCreateNestedManyWithoutRequesterInput } from '../subsidy-request/subsidy-request-unchecked-create-nested-many-without-requester.input';
@@ -87,6 +87,7 @@ export class UserUncheckedCreateWithoutUser_rolesInput {
     direct_message_recipients?: DirectMessageRecipientUncheckedCreateNestedManyWithoutRecipient_userInput;
 
     @Field(() => NotificationUncheckedCreateNestedManyWithoutUserInput, {nullable:true})
+    @Type(() => NotificationUncheckedCreateNestedManyWithoutUserInput)
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput;
 
     @Field(() => EventRegistrationUncheckedCreateNestedManyWithoutUserInput, {nullable:true})

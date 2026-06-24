@@ -91,6 +91,7 @@ export class InstitutionWhereInput {
     communications?: CommunicationListRelationFilter;
 
     @Field(() => NotificationListRelationFilter, {nullable:true})
+    @Type(() => NotificationListRelationFilter)
     notifications?: NotificationListRelationFilter;
 
     @Field(() => SettingListRelationFilter, {nullable:true})
