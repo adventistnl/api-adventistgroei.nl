@@ -102,14 +102,15 @@ export class ProjectHistoryService {
           }).catch(() => {/* ignore pubsub errors */});
 
           // Notificação persistida no banco
-          const { title, message } = this.buildNotificationText(entry, project.title);
+          const payload = this.buildNotificationPayload(entry, project.title);
           this.notificationService.createForUser({
             userId: collaboratorId,
             institutionId,
             projectId: entry.project_id,
-            type: entry.type === ProjectHistoryType.COMMENT ? 'project_message' : 'status_change',
-            title,
-            message,
+            type: payload.type,
+            title: payload.title,
+            message: payload.message,
+            metadata: payload.metadata,
             actorUserId: entry.user_id,
           }).catch((e) =>
             console.error('[ProjectHistoryService] Failed to persist notification:', e),
@@ -119,140 +120,199 @@ export class ProjectHistoryService {
   }
 
   /**
-   * Builds human-readable title and message for a notification based on history entry type.
-   * Intentionally language-neutral (English) — frontend handles i18n display.
+   * Builds the translation keys and metadata payload for a notification based on history entry type.
+   * The frontend will translate these keys using i18next and the provided metadata.
    */
-  private buildNotificationText(
+  private buildNotificationPayload(
     entry: ProjectHistory,
     projectTitle: string,
-  ): { title: string; message: string } {
+  ): { type: string; title: string; message: string; metadata: any } {
     const actor = (entry as any).user?.name ?? 'Someone';
     const meta = (entry as any).metadata as any;
     const subsidyDescription: string | undefined = meta?.subsidyDescription;
-    const newStatus: string | undefined = meta?.newStatus;
+    const rawStatus: string = meta?.newStatus ?? entry.new_value ?? '';
+    
+    const formattedStatus = rawStatus
+      .split('_')
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+      .join(' ');
+
+    const metadata = {
+      projectTitle,
+      actor,
+      status: formattedStatus,
+      subsidy: subsidyDescription,
+      comment: entry.comment ?? '',
+      activityName: meta?.activityName ?? entry.new_value ?? '',
+    };
 
     switch (entry.type) {
       case ProjectHistoryType.COMMENT:
         return {
-          title: `New message in "${projectTitle}"`,
-          message: `${actor}: ${entry.comment ?? ''}`,
+          type: 'PROJECT_MESSAGE',
+          title: 'notifications.new_message_title',
+          message: 'notifications.new_message',
+          metadata,
         };
       case ProjectHistoryType.STATUS_CHANGED:
         if (subsidyDescription) {
           return {
-            title: `Subsidy update in "${projectTitle}"`,
-            message: `Subsidy "${subsidyDescription}" changed to "${newStatus ?? entry.new_value ?? ''}"`,
+            type: 'SUBSIDY_STATUS_CHANGED',
+            title: 'notifications.subsidy_status_change_title',
+            message: 'notifications.subsidy_status_change_message',
+            metadata,
           };
         }
         return {
-          title: `Status updated in "${projectTitle}"`,
-          message: `${actor} changed the status to "${newStatus ?? entry.new_value ?? ''}"`,
+          type: 'PROJECT_STATUS_CHANGED',
+          title: 'notifications.status_change_title',
+          message: 'notifications.status_change_message',
+          metadata,
         };
       case ProjectHistoryType.BUDGET_UPDATED:
         return {
-          title: `Budget updated in "${projectTitle}"`,
-          message: `${actor} updated the project budget`,
+          type: 'PROJECT_STATUS_CHANGED',
+          title: 'notifications.budget_updated_title',
+          message: 'notifications.budget_updated_message',
+          metadata,
         };
       case ProjectHistoryType.DEADLINE_UPDATED:
         return {
-          title: `Deadline updated in "${projectTitle}"`,
-          message: `${actor} updated the project deadline`,
+          type: 'PROJECT_STATUS_CHANGED',
+          title: 'notifications.deadline_updated_title',
+          message: 'notifications.deadline_updated_message',
+          metadata,
         };
       case ProjectHistoryType.OWNER_CHANGED:
         return {
-          title: `Owner changed in "${projectTitle}"`,
-          message: `${actor} updated the project owner`,
+          type: 'PROJECT_MEMBER_ADDED',
+          title: 'notifications.owner_changed_title',
+          message: 'notifications.owner_changed_message',
+          metadata,
         };
       case ProjectHistoryType.CO_OWNER_UPDATED:
         return {
-          title: `Co-owner updated in "${projectTitle}"`,
-          message: `${actor} updated the project co-owner`,
+          type: 'PROJECT_MEMBER_ADDED',
+          title: 'notifications.co_owner_updated_title',
+          message: 'notifications.co_owner_updated_message',
+          metadata,
         };
       case ProjectHistoryType.ADJUSTMENT_NEEDED:
         return {
-          title: `Adjustment needed in "${projectTitle}"`,
-          message: `${actor} requested an adjustment`,
+          type: 'SYSTEM_ALERT',
+          title: 'notifications.adjustment_needed_title',
+          message: 'notifications.adjustment_needed_message',
+          metadata,
         };
       case ProjectHistoryType.CREATED:
         return {
-          title: `Project created`,
-          message: `${actor} created the project "${projectTitle}"`,
+          type: 'INFO',
+          title: 'notifications.project_created_title',
+          message: 'notifications.project_created_message',
+          metadata,
         };
       case ProjectHistoryType.DELETED:
         return {
-          title: `Project deleted`,
-          message: `${actor} deleted the project "${projectTitle}"`,
+          type: 'SYSTEM_ALERT',
+          title: 'notifications.project_deleted_title',
+          message: 'notifications.project_deleted_message',
+          metadata,
         };
       case ProjectHistoryType.ACTIVITY_CREATED:
         return {
-          title: `New activity in "${projectTitle}"`,
-          message: `${actor} created activity "${entry.new_value ?? ''}"`,
+          type: 'INFO',
+          title: 'notifications.activity_created_title',
+          message: 'notifications.activity_created_message',
+          metadata,
         };
       case ProjectHistoryType.ACTIVITY_UPDATED:
         return {
-          title: `Activity updated in "${projectTitle}"`,
-          message: `${actor} updated an activity`,
+          type: 'INFO',
+          title: 'notifications.activity_updated_title',
+          message: 'notifications.activity_updated_message',
+          metadata,
         };
       case ProjectHistoryType.ACTIVITY_DELETED:
         return {
-          title: `Activity removed in "${projectTitle}"`,
-          message: `${actor} deleted an activity`,
+          type: 'SYSTEM_ALERT',
+          title: 'notifications.activity_deleted_title',
+          message: 'notifications.activity_deleted_message',
+          metadata,
         };
       case ProjectHistoryType.SUBSIDY_CREATED:
         return {
-          title: `New subsidy in "${projectTitle}"`,
-          message: `${actor} submitted a subsidy request`,
+          type: 'SUBSIDY_STATUS_CHANGED',
+          title: 'notifications.subsidy_created_title',
+          message: 'notifications.subsidy_created_message',
+          metadata,
         };
       case ProjectHistoryType.SUBSIDY_UPDATED:
         return {
-          title: `Subsidy updated in "${projectTitle}"`,
-          message: `${actor} updated a subsidy request`,
+          type: 'SUBSIDY_STATUS_CHANGED',
+          title: 'notifications.subsidy_updated_title',
+          message: 'notifications.subsidy_updated_message',
+          metadata,
         };
       case ProjectHistoryType.SUBSIDY_APPROVED:
         return {
-          title: `Subsidy approved in "${projectTitle}"`,
-          message: `A subsidy request was approved`,
+          type: 'SUBSIDY_STATUS_CHANGED',
+          title: 'notifications.subsidy_approved_title',
+          message: 'notifications.subsidy_approved_message',
+          metadata,
         };
       case ProjectHistoryType.SUBSIDY_REJECTED:
         return {
-          title: `Subsidy rejected in "${projectTitle}"`,
-          message: `A subsidy request was rejected`,
+          type: 'SYSTEM_ALERT',
+          title: 'notifications.subsidy_rejected_title',
+          message: 'notifications.subsidy_rejected_message',
+          metadata,
         };
       case ProjectHistoryType.SUBSIDY_DELETED:
         return {
-          title: `Subsidy removed in "${projectTitle}"`,
-          message: `${actor} deleted a subsidy request`,
+          type: 'SYSTEM_ALERT',
+          title: 'notifications.subsidy_deleted_title',
+          message: 'notifications.subsidy_deleted_message',
+          metadata,
         };
       case ProjectHistoryType.UPDATED: {
-        // Used for subsidy creation/deletion and activity deletion events
         const action = meta?.action;
         if (subsidyDescription && action === 'created') {
           return {
-            title: `New subsidy in "${projectTitle}"`,
-            message: `${actor} submitted a subsidy request: "${subsidyDescription}"`,
+            type: 'SUBSIDY_STATUS_CHANGED',
+            title: 'notifications.subsidy_created_title',
+            message: 'notifications.subsidy_created_named_message',
+            metadata,
           };
         }
         if (subsidyDescription && action === 'deleted') {
           return {
-            title: `Subsidy removed in "${projectTitle}"`,
-            message: `${actor} deleted a subsidy request: "${subsidyDescription}"`,
+            type: 'SYSTEM_ALERT',
+            title: 'notifications.subsidy_deleted_title',
+            message: 'notifications.subsidy_deleted_named_message',
+            metadata,
           };
         }
         if (meta?.activityName && action === 'activity_deleted') {
           return {
-            title: `Activity removed in "${projectTitle}"`,
-            message: `${actor} deleted the activity: "${meta.activityName}"`,
+            type: 'SYSTEM_ALERT',
+            title: 'notifications.activity_deleted_title',
+            message: 'notifications.activity_deleted_named_message',
+            metadata,
           };
         }
         return {
-          title: `Update in "${projectTitle}"`,
-          message: `${actor} made a change to the project`,
+          type: 'INFO',
+          title: 'notifications.update_title',
+          message: 'notifications.update_message',
+          metadata,
         };
       }
       default:
         return {
-          title: `Update in "${projectTitle}"`,
-          message: `${actor} made a change to the project`,
+          type: 'INFO',
+          title: 'notifications.update_title',
+          message: 'notifications.update_message',
+          metadata,
         };
     }
   }

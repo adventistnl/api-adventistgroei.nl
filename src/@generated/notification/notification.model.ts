@@ -1,6 +1,7 @@
 import { Field } from '@nestjs/graphql';
 import { ObjectType } from '@nestjs/graphql';
 import { ID } from '@nestjs/graphql';
+import { GraphQLJSON } from 'graphql-type-json';
 import { Institution } from '../institution/institution.model';
 import { User } from '../user/user.model';
 import { Project } from '../project/project.model';
@@ -28,6 +29,9 @@ export class Notification {
 
     @Field(() => Boolean, {defaultValue:false,nullable:false})
     read_status!: boolean;
+
+    @Field(() => GraphQLJSON, {nullable:true})
+    metadata!: any | null;
 
     @Field(() => String, {nullable:true})
     project_id!: string | null;

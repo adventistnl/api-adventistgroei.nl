@@ -22,6 +22,7 @@ export class NotificationService {
     type: string;
     title?: string;
     message: string;
+    metadata?: any;
     actorUserId: string;
   }): Promise<Notification> {
     return this.notificationRepository.createForUser(params);

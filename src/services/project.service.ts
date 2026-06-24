@@ -334,29 +334,14 @@ export class ProjectService {
       }
     };
 
-    // Helper to send in-app notification
-    const sendAppNotification = async (user: any) => {
-       if (user?.id && project.institution_id) {
-         await this.notificationService.create({
-            user_id: user.id,
-            institution_id: project.institution_id,
-            type: 'PROJECT_STATUS_CHANGED',
-            message: notificationMessage,
-            read_status: false,
-         }, 'system');
-       }
-    };
-
     // Notify Co-Owner (Member)
     if (coOwner) {
        await sendEmail(coOwner);
-       await sendAppNotification(coOwner);
     }
 
     // Notify Owner (Ministerial)
     if (owner && owner.id !== coOwner?.id) {
        await sendEmail(owner);
-       await sendAppNotification(owner);
     }
   }
 

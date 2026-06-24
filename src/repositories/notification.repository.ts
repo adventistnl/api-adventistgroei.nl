@@ -33,6 +33,7 @@ export class NotificationRepository {
     type: string;
     title?: string;
     message: string;
+    metadata?: any;
     actorUserId: string;
   }): Promise<Notification> {
     return this.prisma.notification.create({
@@ -43,6 +44,7 @@ export class NotificationRepository {
         type: params.type,
         title: params.title,
         message: params.message,
+        metadata: params.metadata,
         read_status: false,
         is_deleted: false,
         created_by: params.actorUserId,

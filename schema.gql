@@ -493,6 +493,7 @@ type Notification {
   title: String
   message: String!
   read_status: Boolean!
+  metadata: JSON
   project_id: String
   created_at: DateTime!
   updated_at: DateTime!
@@ -3341,6 +3342,7 @@ input NotificationWhereInput {
   title: StringNullableFilter
   message: StringFilter
   read_status: BoolFilter
+  metadata: JsonNullableFilter
   project_id: StringNullableFilter
   created_at: DateTimeFilter
   updated_at: DateTimeFilter
@@ -4829,16 +4831,20 @@ input NotificationCreateDto {
   institution_id: String!
   user_id: String!
   type: String!
+  title: String
   message: String!
   read_status: Boolean!
+  metadata: JSON
 }
 
 input NotificationUpdateDto {
   institution_id: String
   user_id: String
   type: String
+  title: String
   message: String
   read_status: Boolean
+  metadata: JSON
 }
 
 input SettingCreateDto {

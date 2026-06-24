@@ -4,6 +4,7 @@ import { NotificationWhereInput } from './notification-where.input';
 import { StringFilter } from '../prisma/string-filter.input';
 import { StringNullableFilter } from '../prisma/string-nullable-filter.input';
 import { BoolFilter } from '../prisma/bool-filter.input';
+import { JsonNullableFilter } from '../prisma/json-nullable-filter.input';
 import { DateTimeFilter } from '../prisma/date-time-filter.input';
 import { DateTimeNullableFilter } from '../prisma/date-time-nullable-filter.input';
 import { InstitutionScalarRelationFilter } from '../institution/institution-scalar-relation-filter.input';
@@ -43,6 +44,9 @@ export class NotificationWhereUniqueInput {
 
     @Field(() => BoolFilter, {nullable:true})
     read_status?: BoolFilter;
+
+    @Field(() => JsonNullableFilter, {nullable:true})
+    metadata?: JsonNullableFilter;
 
     @Field(() => StringNullableFilter, {nullable:true})
     project_id?: StringNullableFilter;

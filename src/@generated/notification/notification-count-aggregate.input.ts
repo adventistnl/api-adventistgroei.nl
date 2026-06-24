@@ -26,6 +26,9 @@ export class NotificationCountAggregateInput {
     read_status?: true;
 
     @Field(() => Boolean, {nullable:true})
+    metadata?: true;
+
+    @Field(() => Boolean, {nullable:true})
     project_id?: true;
 
     @Field(() => Boolean, {nullable:true})

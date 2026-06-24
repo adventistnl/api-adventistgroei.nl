@@ -31,6 +31,9 @@ export class NotificationOrderByWithAggregationInput {
     read_status?: `${SortOrder}`;
 
     @Field(() => SortOrderInput, {nullable:true})
+    metadata?: SortOrderInput;
+
+    @Field(() => SortOrderInput, {nullable:true})
     project_id?: SortOrderInput;
 
     @Field(() => SortOrder, {nullable:true})

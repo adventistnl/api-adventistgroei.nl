@@ -1,5 +1,6 @@
 import { Field } from '@nestjs/graphql';
 import { InputType } from '@nestjs/graphql';
+import { GraphQLJSON } from 'graphql-type-json';
 
 @InputType()
 export class NotificationUncheckedCreateWithoutProjectInput {
@@ -24,6 +25,9 @@ export class NotificationUncheckedCreateWithoutProjectInput {
 
     @Field(() => Boolean, {nullable:true})
     read_status?: boolean;
+
+    @Field(() => GraphQLJSON, {nullable:true})
+    metadata?: any;
 
     @Field(() => Date, {nullable:true})
     created_at?: Date | string;

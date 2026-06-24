@@ -27,6 +27,9 @@ export class NotificationCountAggregate {
     read_status!: number;
 
     @Field(() => Int, {nullable:false})
+    metadata!: number;
+
+    @Field(() => Int, {nullable:false})
     project_id!: number;
 
     @Field(() => Int, {nullable:false})

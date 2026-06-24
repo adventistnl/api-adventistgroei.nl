@@ -1285,13 +1285,17 @@ export class SubsidyRequestService {
     // PENDING: member submitted the request — notify them of confirmation
     const notifyMembers = true;
 
+    const emailedUserIds = new Set<string>();
+
     // ── Send member emails ─────────────────────────────────────────────────
     if (notifyMembers) {
       if (project.co_owner) {
         await sendMemberEmail(project.co_owner);
+        emailedUserIds.add(project.co_owner.id);
       }
       if (project.owner && project.owner.id !== project.co_owner?.id) {
         await sendMemberEmail(project.owner);
+        emailedUserIds.add(project.owner.id);
       }
     }
 
@@ -1312,7 +1316,10 @@ export class SubsidyRequestService {
       });
 
       for (const financeUser of financeUsers) {
-        await sendFinanceEmail(financeUser);
+        if (!emailedUserIds.has(financeUser.id)) {
+          await sendFinanceEmail(financeUser);
+          emailedUserIds.add(financeUser.id);
+        }
       }
     }
 

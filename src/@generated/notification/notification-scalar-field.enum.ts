@@ -8,6 +8,7 @@ export enum NotificationScalarFieldEnum {
     title = "title",
     message = "message",
     read_status = "read_status",
+    metadata = "metadata",
     project_id = "project_id",
     created_at = "created_at",
     updated_at = "updated_at",
