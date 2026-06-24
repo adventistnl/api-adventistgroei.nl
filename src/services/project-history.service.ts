@@ -80,13 +80,17 @@ export class ProjectHistoryService {
     // Busca colaboradores do projeto separados por tipo (padrão vs financeiro)
     const { standardIds, financeIds } = await this.projectRepository.getCollaboratorIds(entry.project_id);
 
-    // Regra de Negócio: Usuário FINANCE só recebe notificações de mudança de status de subsídio para APPROVED
+    // Regra de Negócio: Usuário FINANCE só recebe notificações de mudança de status de subsídio para APPROVED, 
+    // ou quando ocorre alguma validação/rejeição/upload de documentos de subsídio.
     const meta = (entry as any).metadata;
     const isSubsidyApproved = entry.type === ProjectHistoryType.STATUS_CHANGED && 
       meta?.newStatus?.toUpperCase() === 'APPROVED';
+    const isDocumentAction = entry.type === ProjectHistoryType.SUBSIDY_DOCUMENT_UPDATED ||
+                             entry.type === ProjectHistoryType.SUBSIDY_DOCUMENT_VALIDATED ||
+                             entry.type === ProjectHistoryType.SUBSIDY_DOCUMENT_REJECTED;
 
     const notifyIds = new Set<string>(standardIds);
-    if (isSubsidyApproved) {
+    if (isSubsidyApproved || isDocumentAction) {
       financeIds.forEach(id => notifyIds.add(id));
     }
 
@@ -272,6 +276,27 @@ export class ProjectHistoryService {
           type: 'SYSTEM_ALERT',
           title: 'notifications.subsidy_deleted_title',
           message: 'notifications.subsidy_deleted_message',
+          metadata,
+        };
+      case ProjectHistoryType.SUBSIDY_DOCUMENT_UPDATED:
+        return {
+          type: 'SUBSIDY_DOCUMENT_UPDATED',
+          title: 'notifications.subsidy_document_updated_title',
+          message: 'notifications.subsidy_document_updated_message',
+          metadata,
+        };
+      case ProjectHistoryType.SUBSIDY_DOCUMENT_VALIDATED:
+        return {
+          type: 'SUBSIDY_DOCUMENT_VALIDATED',
+          title: 'notifications.subsidy_document_validated_title',
+          message: 'notifications.subsidy_document_validated_message',
+          metadata,
+        };
+      case ProjectHistoryType.SUBSIDY_DOCUMENT_REJECTED:
+        return {
+          type: 'SUBSIDY_DOCUMENT_REJECTED',
+          title: 'notifications.subsidy_document_rejected_title',
+          message: 'notifications.subsidy_document_rejected_message',
           metadata,
         };
       case ProjectHistoryType.UPDATED: {

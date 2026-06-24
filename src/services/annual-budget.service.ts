@@ -9,11 +9,17 @@ import { DecimalHelper } from 'src/common/helpers/decimal.helper'; // New import
 import { Decimal } from '@prisma/client/runtime/library'; // New import
 
 
+import { PrismaService } from 'src/services/prisma.service';
+import { NotificationService } from 'src/services/notification.service';
+import { InstitutionPositionType } from '@prisma/client';
+
 @Injectable()
 export class AnnualBudgetService {
   constructor(
     private readonly annualBudgetRepository: AnnualBudgetRepository,
-    private readonly departmentRepository: DepartmentRepository
+    private readonly departmentRepository: DepartmentRepository,
+    private readonly prisma: PrismaService,
+    private readonly notificationService: NotificationService,
   ) {}
 
   async delete(id: string, userId: string): Promise<{ success: boolean; message: string }> {
@@ -59,7 +65,16 @@ export class AnnualBudgetService {
     is_locked: boolean;
     updated_at: Date;
   }> {
-    return this.annualBudgetRepository.toggleLock(id, userId);
+    const result = await this.annualBudgetRepository.toggleLock(id, userId);
+
+    if (result.is_locked) {
+      const budget = await this.annualBudgetRepository.findById(id);
+      if (budget) {
+        await this.notifyBudgetLeaders(budget, 'CLOSED', userId);
+      }
+    }
+
+    return result;
   }
 
   async getComputedFinancials(budgetIds: string[]): Promise<Record<string, { planned: number, allocated: number, expenses: number, childExpenses: number, balance: number }>> {
@@ -370,15 +385,69 @@ export class AnnualBudgetService {
   }
 
   // ============================================
+  // BUDGET NOTIFICATION HELPERS
+  // ============================================
+
+  private async notifyBudgetLeaders(budget: AnnualBudget, eventType: 'CREATED' | 'CLOSED', actorUserId: string): Promise<void> {
+    const notifyIds = new Set<string>();
+
+    if (budget.entity_type === 'INSTITUTION' && budget.institution_id) {
+      // For institution budgets, fetch president, secretary, finance manager
+      const positions = await this.prisma.institutionPosition.findMany({
+        where: {
+          institution_id: budget.institution_id,
+          position_type: {
+            in: [InstitutionPositionType.PRESIDENT, InstitutionPositionType.SECRETARY, InstitutionPositionType.FINANCE_MANAGER]
+          }
+        }
+      });
+      positions.forEach(p => notifyIds.add(p.user_id));
+    } else if (budget.entity_type === 'INSTITUTION_DEPARTMENT' && budget.department_id) {
+      // For department budgets, fetch department leader
+      const dept = await this.departmentRepository.findById(budget.department_id);
+      if (dept && dept.leader_id) {
+        notifyIds.add(dept.leader_id);
+      }
+    }
+
+    notifyIds.delete(actorUserId);
+
+    const type = eventType === 'CREATED' ? 'ANNUAL_BUDGET_CREATED' : 'ANNUAL_BUDGET_CLOSED';
+
+    await Promise.all(
+      Array.from(notifyIds).map(userId =>
+        this.notificationService.createForUser({
+          userId,
+          institutionId: budget.institution_id || '',
+          type,
+          title: `notifications.annual_budget_${eventType.toLowerCase()}_title`,
+          message: `notifications.annual_budget_${eventType.toLowerCase()}_message`,
+          metadata: { targetId: budget.id, year: budget.year },
+          actorUserId,
+        })
+      )
+    );
+  }
+
+  // ============================================
   // INSTITUTION BUDGET SPECIFIC METHODS
   // ============================================
 
   async createInstitutionBudget(data: any, userId: string): Promise<AnnualBudget> {
-    return this.annualBudgetRepository.createInstitutionBudget(data, userId);
+    const budget = await this.annualBudgetRepository.createInstitutionBudget(data, userId);
+    await this.notifyBudgetLeaders(budget, 'CREATED', userId);
+    return budget;
   }
 
   async updateInstitutionBudget(id: string, data: any, userId: string): Promise<AnnualBudget> {
-    return this.annualBudgetRepository.updateInstitutionBudget(id, data, userId);
+    const originalBudget = await this.annualBudgetRepository.findById(id);
+    const budget = await this.annualBudgetRepository.updateInstitutionBudget(id, data, userId);
+    
+    if (originalBudget && originalBudget.status !== 'CLOSED' && budget.status === 'CLOSED') {
+      await this.notifyBudgetLeaders(budget, 'CLOSED', userId);
+    }
+    
+    return budget;
   }
 
   // ============================================
@@ -386,11 +455,20 @@ export class AnnualBudgetService {
   // ============================================
 
   async createDepartmentBudget(data: any, userId: string): Promise<AnnualBudget> {
-    return this.annualBudgetRepository.createDepartmentBudget(data, userId);
+    const budget = await this.annualBudgetRepository.createDepartmentBudget(data, userId);
+    await this.notifyBudgetLeaders(budget, 'CREATED', userId);
+    return budget;
   }
 
   async updateDepartmentBudget(id: string, data: any, userId: string): Promise<AnnualBudget> {
-    return this.annualBudgetRepository.updateDepartmentBudget(id, data, userId);
+    const originalBudget = await this.annualBudgetRepository.findById(id);
+    const budget = await this.annualBudgetRepository.updateDepartmentBudget(id, data, userId);
+
+    if (originalBudget && originalBudget.status !== 'CLOSED' && budget.status === 'CLOSED') {
+      await this.notifyBudgetLeaders(budget, 'CLOSED', userId);
+    }
+
+    return budget;
   }
 
   async updateBudgetFinancials(
