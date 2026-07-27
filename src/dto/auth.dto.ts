@@ -7,4 +7,7 @@ export class LoginInput {
 
   @Field()
   password: string;
+
+  @Field({ nullable: true, description: 'Language for error messages (en | nl). Defaults to en.' })
+  lang?: string;
 }
