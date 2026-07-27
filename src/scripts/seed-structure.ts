@@ -85,9 +85,12 @@ async function main() {
 
   // ─── 4. CHURCH ─────────────────────────────────────────────────────────────
   const churchName = process.env.SEED_CHURCH_NAME ?? 'dev Church';
-  let church = await prisma.church.findFirst({
-    where: { name: churchName, institution_id: institution.id, is_deleted: false },
-  });
+
+  // Busca por nome+institution primeiro, depois por leader_id (sem filtro de institution)
+  let church =
+    (await prisma.church.findFirst({
+      where: { name: churchName, institution_id: institution.id },
+    })) ?? (await prisma.church.findFirst({ where: { leader_id: systemUser.id } }));
 
   if (!church) {
     church = await prisma.church.create({

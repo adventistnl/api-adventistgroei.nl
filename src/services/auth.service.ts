@@ -5,6 +5,8 @@ import { LoginInput } from '../dto/auth.dto';
 import { AuthModel } from '../models/auth.model';
 import { UserWithRoles } from 'src/models';
 import { CustomGraphQLError, ErrorCode } from 'src/common/errors/custom-graphql-error';
+import { translate } from '../../i18n.config';
+import { LanguagePreference } from 'src/@generated/prisma/language-preference.enum';
 
 @Injectable()
 export class AuthService {
@@ -30,15 +32,43 @@ export class AuthService {
   }
 
   async login(input: LoginInput): Promise<AuthModel> {
+    const lang = (Object.values(LanguagePreference).includes(input.lang as LanguagePreference)
+      ? input.lang
+      : LanguagePreference.en) as LanguagePreference;
+
     const user = await this.userService.findByEmail(input.email.toLowerCase());
-    if (!user) throw new CustomGraphQLError('Invalid credentials', ErrorCode.UNAUTHORIZED, 401);
-    if (!user.password) throw new CustomGraphQLError('Invalid credentials', ErrorCode.UNAUTHORIZED, 401);
+
+    if (!user) {
+      throw new CustomGraphQLError(
+        translate('login.email_not_found', lang, { ns: 'auth' }),
+        ErrorCode.AUTHENTICATION_ERROR,
+        401,
+        { additional: { field: 'email' } },
+      );
+    }
+
+    if (!user.password) {
+      throw new CustomGraphQLError(
+        translate('login.account_no_password', lang, { ns: 'auth' }),
+        ErrorCode.AUTHENTICATION_ERROR,
+        401,
+        { additional: { field: 'email' } },
+      );
+    }
+
     const bcrypt = await import('bcryptjs');
     const isValid = await bcrypt.compare(input.password, user.password);
-    if (!isValid) throw new CustomGraphQLError('Invalid credentials', ErrorCode.UNAUTHORIZED, 401);
+
+    if (!isValid) {
+      throw new CustomGraphQLError(
+        translate('login.invalid_password', lang, { ns: 'auth' }),
+        ErrorCode.AUTHENTICATION_ERROR,
+        401,
+        { additional: { field: 'password' } },
+      );
+    }
 
     const { password, ...userWithoutPassword } = user;
-    // Extrair os key_codes das roles do usuário
     const userRoles = user.user_roles.map(ur => ur.key_code);
     const payload = { sub: user.id, email: user.email, userRoles };
     return {

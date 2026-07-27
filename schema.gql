@@ -4530,6 +4530,9 @@ type Mutation {
 input LoginInput {
   email: String!
   password: String!
+
+  """Language for error messages (en | nl). Defaults to en."""
+  lang: String
 }
 
 input ChurchCreateDto {
