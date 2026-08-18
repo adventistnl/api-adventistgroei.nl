@@ -22,4 +22,7 @@ export class ChurchCount {
 
     @Field(() => Int, {nullable:false})
     service_calendar?: number;
+
+    @Field(() => Int, {nullable:false})
+    assignments?: number;
 }

@@ -20,6 +20,8 @@ import { AnnualBudgetUncheckedUpdateManyWithoutInstitutionNestedInput } from '..
 import { InstitutionPositionUncheckedUpdateManyWithoutInstitutionNestedInput } from '../institution-position/institution-position-unchecked-update-many-without-institution-nested.input';
 import { AvailabilityUncheckedUpdateManyWithoutInstitutionNestedInput } from '../availability/availability-unchecked-update-many-without-institution-nested.input';
 import { AvailabilityRecurrenceRuleUncheckedUpdateManyWithoutInstitutionNestedInput } from '../availability-recurrence-rule/availability-recurrence-rule-unchecked-update-many-without-institution-nested.input';
+import { AssignmentUncheckedUpdateManyWithoutInstitutionNestedInput } from '../assignment/assignment-unchecked-update-many-without-institution-nested.input';
+import { GapReportSnapshotUncheckedUpdateManyWithoutInstitutionNestedInput } from '../gap-report-snapshot/gap-report-snapshot-unchecked-update-many-without-institution-nested.input';
 
 @InputType()
 export class InstitutionUncheckedUpdateWithoutChurch_service_calendar_entriesInput {
@@ -108,4 +110,10 @@ export class InstitutionUncheckedUpdateWithoutChurch_service_calendar_entriesInp
 
     @Field(() => AvailabilityRecurrenceRuleUncheckedUpdateManyWithoutInstitutionNestedInput, {nullable:true})
     availability_recurrence_rules?: AvailabilityRecurrenceRuleUncheckedUpdateManyWithoutInstitutionNestedInput;
+
+    @Field(() => AssignmentUncheckedUpdateManyWithoutInstitutionNestedInput, {nullable:true})
+    assignments?: AssignmentUncheckedUpdateManyWithoutInstitutionNestedInput;
+
+    @Field(() => GapReportSnapshotUncheckedUpdateManyWithoutInstitutionNestedInput, {nullable:true})
+    gap_report_snapshots?: GapReportSnapshotUncheckedUpdateManyWithoutInstitutionNestedInput;
 }

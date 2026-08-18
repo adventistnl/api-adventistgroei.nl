@@ -12,6 +12,7 @@ import { UserCreateNestedManyWithoutChurchInput } from '../user/user-create-nest
 import { SubsidyRequestCreateNestedManyWithoutChurchInput } from '../subsidy-request/subsidy-request-create-nested-many-without-church.input';
 import { AnnualBudgetCreateNestedManyWithoutChurchInput } from '../annual-budget/annual-budget-create-nested-many-without-church.input';
 import { ChurchServiceCalendarCreateNestedManyWithoutChurchInput } from '../church-service-calendar/church-service-calendar-create-nested-many-without-church.input';
+import { AssignmentCreateNestedManyWithoutChurchInput } from '../assignment/assignment-create-nested-many-without-church.input';
 
 @InputType()
 export class ChurchCreateWithoutProjectsInput {
@@ -85,4 +86,7 @@ export class ChurchCreateWithoutProjectsInput {
 
     @Field(() => ChurchServiceCalendarCreateNestedManyWithoutChurchInput, {nullable:true})
     service_calendar?: ChurchServiceCalendarCreateNestedManyWithoutChurchInput;
+
+    @Field(() => AssignmentCreateNestedManyWithoutChurchInput, {nullable:true})
+    assignments?: AssignmentCreateNestedManyWithoutChurchInput;
 }

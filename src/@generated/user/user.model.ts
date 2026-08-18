@@ -26,6 +26,7 @@ import { ProjectHistory } from '../project-history/project-history.model';
 import { InstitutionPosition } from '../institution-position/institution-position.model';
 import { Availability } from '../availability/availability.model';
 import { AvailabilityRecurrenceRule } from '../availability-recurrence-rule/availability-recurrence-rule.model';
+import { Assignment } from '../assignment/assignment.model';
 import { UserCount } from './user-count.output';
 
 @ObjectType()
@@ -162,6 +163,9 @@ export class User {
 
     @Field(() => [AvailabilityRecurrenceRule], {nullable:true})
     availability_recurrence_rules?: Array<AvailabilityRecurrenceRule>;
+
+    @Field(() => [Assignment], {nullable:true})
+    assignments?: Array<Assignment>;
 
     @Field(() => UserCount, {nullable:false})
     _count?: UserCount;

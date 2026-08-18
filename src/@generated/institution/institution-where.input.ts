@@ -22,6 +22,8 @@ import { InstitutionPositionListRelationFilter } from '../institution-position/i
 import { AvailabilityListRelationFilter } from '../availability/availability-list-relation-filter.input';
 import { AvailabilityRecurrenceRuleListRelationFilter } from '../availability-recurrence-rule/availability-recurrence-rule-list-relation-filter.input';
 import { ChurchServiceCalendarListRelationFilter } from '../church-service-calendar/church-service-calendar-list-relation-filter.input';
+import { AssignmentListRelationFilter } from '../assignment/assignment-list-relation-filter.input';
+import { GapReportSnapshotListRelationFilter } from '../gap-report-snapshot/gap-report-snapshot-list-relation-filter.input';
 
 @InputType()
 export class InstitutionWhereInput {
@@ -126,4 +128,10 @@ export class InstitutionWhereInput {
 
     @Field(() => ChurchServiceCalendarListRelationFilter, {nullable:true})
     church_service_calendar_entries?: ChurchServiceCalendarListRelationFilter;
+
+    @Field(() => AssignmentListRelationFilter, {nullable:true})
+    assignments?: AssignmentListRelationFilter;
+
+    @Field(() => GapReportSnapshotListRelationFilter, {nullable:true})
+    gap_report_snapshots?: GapReportSnapshotListRelationFilter;
 }

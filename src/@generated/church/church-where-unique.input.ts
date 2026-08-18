@@ -19,6 +19,7 @@ import { SubsidyRequestListRelationFilter } from '../subsidy-request/subsidy-req
 import { AnnualBudgetListRelationFilter } from '../annual-budget/annual-budget-list-relation-filter.input';
 import { ProjectListRelationFilter } from '../project/project-list-relation-filter.input';
 import { ChurchServiceCalendarListRelationFilter } from '../church-service-calendar/church-service-calendar-list-relation-filter.input';
+import { AssignmentListRelationFilter } from '../assignment/assignment-list-relation-filter.input';
 
 @InputType()
 export class ChurchWhereUniqueInput {
@@ -117,4 +118,7 @@ export class ChurchWhereUniqueInput {
 
     @Field(() => ChurchServiceCalendarListRelationFilter, {nullable:true})
     service_calendar?: ChurchServiceCalendarListRelationFilter;
+
+    @Field(() => AssignmentListRelationFilter, {nullable:true})
+    assignments?: AssignmentListRelationFilter;
 }

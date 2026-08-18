@@ -173,6 +173,11 @@ const permissionsEnabledToClient = [
   { name: 'read church service calendar', description: 'Access to a church\'s service calendar', resolver_name: 'churchServiceCalendar' as PermissionResolverName, group: 'SCHEDULE' as PermissionGroup, key_code: 'CHURCH_SERVICE_CALENDAR_ACCESS', disabled_to_client: false },
   { name: 'set church service calendar', description: 'Set the service calendar for a church you lead', resolver_name: 'setChurchServiceCalendar' as PermissionResolverName, group: 'SCHEDULE' as PermissionGroup, key_code: 'CHURCH_SERVICE_CALENDAR_SET', disabled_to_client: false },
   { name: 'set church service calendar in bulk', description: 'Apply a weekly service pattern to many churches at once', resolver_name: 'setChurchServiceCalendarBulk' as PermissionResolverName, group: 'SCHEDULE' as PermissionGroup, key_code: 'CHURCH_SERVICE_CALENDAR_BULK_SET', disabled_to_client: false },
+  // Preacher scheduling module — Phase 3 (Overview grid + gap report)
+  { name: 'read schedule overview', description: 'Access to the institution-wide preacher scheduling overview grid', resolver_name: 'scheduleOverview' as PermissionResolverName, group: 'SCHEDULE' as PermissionGroup, key_code: 'SCHEDULE_OVERVIEW_ACCESS', disabled_to_client: false },
+  { name: 'read gap report', description: 'Access to the preacher scheduling gap report', resolver_name: 'gapReport' as PermissionResolverName, group: 'SCHEDULE' as PermissionGroup, key_code: 'GAP_REPORT_ACCESS', disabled_to_client: false },
+  { name: 'set assignment', description: 'Directly assign a preacher to a slot in a church you lead', resolver_name: 'setAssignment' as PermissionResolverName, group: 'SCHEDULE' as PermissionGroup, key_code: 'ASSIGNMENT_SET', disabled_to_client: false },
+  { name: 'set assignment for any church', description: 'Directly assign a preacher to a slot in any church in your institution', resolver_name: 'setAssignmentAny' as PermissionResolverName, group: 'SCHEDULE' as PermissionGroup, key_code: 'ASSIGNMENT_SET_ANY', disabled_to_client: false },
 ];
 
 async function main() {

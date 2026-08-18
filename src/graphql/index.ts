@@ -30,3 +30,5 @@ export * from './institution-position.resolver';
 export * from './availability.resolver';
 export * from './availability-recurrence-rule.resolver';
 export * from './church-service-calendar.resolver';
+export * from './assignment.resolver';
+export * from './gap-report.resolver';

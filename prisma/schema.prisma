@@ -210,6 +210,11 @@ enum PermissionResolverName {
   churchServiceCalendar
   setChurchServiceCalendar
   setChurchServiceCalendarBulk
+  // Preacher scheduling module — Phase 3 (Overview grid + gap report)
+  scheduleOverview
+  gapReport
+  setAssignment
+  setAssignmentAny
 }
 
 enum InstitutionPositionType {
@@ -429,6 +434,8 @@ model Institution {
   availabilities                  Availability[]
   availability_recurrence_rules   AvailabilityRecurrenceRule[]
   church_service_calendar_entries ChurchServiceCalendar[]
+  assignments                     Assignment[]
+  gap_report_snapshots            GapReportSnapshot[]
 }
 
 model Region {
@@ -474,6 +481,7 @@ model Church {
   annual_budgets   AnnualBudget[]
   projects         Project[]
   service_calendar ChurchServiceCalendar[]
+  assignments      Assignment[]
 }
 
 model Department {
@@ -675,6 +683,7 @@ model User {
   institution_positions         InstitutionPosition[]
   availabilities                Availability[]
   availability_recurrence_rules AvailabilityRecurrenceRule[]
+  assignments                   Assignment[]
 }
 
 model Project {
@@ -1524,4 +1533,77 @@ model ChurchServiceCalendar {
 enum ServiceCalendarSource {
   BULK_DEFAULT
   CHURCH_CONFIRMED
+}
+
+// ---------------------------------------------------------------------------
+// Preacher scheduling module — Phase 3 (Overview grid + gap report)
+// See preacher-scheduling-blueprint/docs/01-corrected-blueprint.md for the full spec.
+// ---------------------------------------------------------------------------
+
+/// A church + date slot. Created directly (R8 — "self-filled"/admin-assigned, via
+/// setAssignment/setAssignmentAny) in Phase 3; Phase 4 adds the request/invite flow that also
+/// produces confirmed rows here.
+model Assignment {
+  id             String           @id @default(uuid())
+  institution_id String
+  institution    Institution      @relation(fields: [institution_id], references: [id])
+  church_id      String
+  church         Church           @relation(fields: [church_id], references: [id])
+  date           DateTime         @db.Date
+  user_id        String?
+  user           User?            @relation(fields: [user_id], references: [id])
+  origin         AssignmentOrigin
+  status         AssignmentStatus @default(DRAFT)
+  locked_at      DateTime?
+  created_at     DateTime         @default(now())
+  updated_at     DateTime         @updatedAt
+  created_by     String
+  updated_by     String
+  is_deleted     Boolean          @default(false)
+  deleted_at     DateTime?
+  deleted_by     String?
+
+  @@unique([church_id, date])
+  @@index([institution_id, date, status])
+}
+
+enum AssignmentOrigin {
+  ADMIN_ASSIGNED
+  PREACHER_REQUESTED
+  CHURCH_INVITED
+  SELF_FILLED
+}
+
+enum AssignmentStatus {
+  DRAFT
+  PENDING_CONFIRMATION
+  CONFIRMED
+  DECLINED
+  LOCKED
+}
+
+model AssignmentHistory {
+  id            String   @id @default(uuid())
+  assignment_id String
+  field_name    String
+  old_value     String?
+  new_value     String?
+  changed_by    String
+  changed_at    DateTime @default(now())
+
+  @@index([assignment_id])
+}
+
+/// R9 — computed by a daily cron job (never at request time), one row per institution+month.
+/// Query.gapReport only ever reads the latest snapshot.
+model GapReportSnapshot {
+  id                           String      @id @default(uuid())
+  institution_id               String
+  institution                  Institution @relation(fields: [institution_id], references: [id])
+  month                        String // "YYYY-MM"
+  churches_without_preacher    Json // [{ church_id, church_name, date }]
+  preachers_without_assignment Json // [{ user_id, user_name, date }]
+  computed_at                  DateTime    @default(now())
+
+  @@unique([institution_id, month])
 }

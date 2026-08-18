@@ -162,7 +162,11 @@ export enum PermissionResolverName {
     deleteAvailabilityRecurrenceRule = "deleteAvailabilityRecurrenceRule",
     churchServiceCalendar = "churchServiceCalendar",
     setChurchServiceCalendar = "setChurchServiceCalendar",
-    setChurchServiceCalendarBulk = "setChurchServiceCalendarBulk"
+    setChurchServiceCalendarBulk = "setChurchServiceCalendarBulk",
+    scheduleOverview = "scheduleOverview",
+    gapReport = "gapReport",
+    setAssignment = "setAssignment",
+    setAssignmentAny = "setAssignmentAny"
 }
 
 

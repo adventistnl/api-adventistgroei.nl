@@ -18,6 +18,8 @@ import { InstitutionPositionOrderByRelationAggregateInput } from '../institution
 import { AvailabilityOrderByRelationAggregateInput } from '../availability/availability-order-by-relation-aggregate.input';
 import { AvailabilityRecurrenceRuleOrderByRelationAggregateInput } from '../availability-recurrence-rule/availability-recurrence-rule-order-by-relation-aggregate.input';
 import { ChurchServiceCalendarOrderByRelationAggregateInput } from '../church-service-calendar/church-service-calendar-order-by-relation-aggregate.input';
+import { AssignmentOrderByRelationAggregateInput } from '../assignment/assignment-order-by-relation-aggregate.input';
+import { GapReportSnapshotOrderByRelationAggregateInput } from '../gap-report-snapshot/gap-report-snapshot-order-by-relation-aggregate.input';
 
 @InputType()
 export class InstitutionOrderByWithRelationInput {
@@ -113,4 +115,10 @@ export class InstitutionOrderByWithRelationInput {
 
     @Field(() => ChurchServiceCalendarOrderByRelationAggregateInput, {nullable:true})
     church_service_calendar_entries?: ChurchServiceCalendarOrderByRelationAggregateInput;
+
+    @Field(() => AssignmentOrderByRelationAggregateInput, {nullable:true})
+    assignments?: AssignmentOrderByRelationAggregateInput;
+
+    @Field(() => GapReportSnapshotOrderByRelationAggregateInput, {nullable:true})
+    gap_report_snapshots?: GapReportSnapshotOrderByRelationAggregateInput;
 }

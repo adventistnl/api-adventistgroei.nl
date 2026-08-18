@@ -67,4 +67,7 @@ export class UserCount {
 
     @Field(() => Int, {nullable:false})
     availability_recurrence_rules?: number;
+
+    @Field(() => Int, {nullable:false})
+    assignments?: number;
 }

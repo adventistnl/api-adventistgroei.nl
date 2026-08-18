@@ -30,3 +30,5 @@ export * from './institution-position.repository';
 export * from './availability.repository';
 export * from './availability-recurrence-rule.repository';
 export * from './church-service-calendar.repository';
+export * from './assignment.repository';
+export * from './gap-report.repository';

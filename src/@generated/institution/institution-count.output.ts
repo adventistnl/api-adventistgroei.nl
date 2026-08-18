@@ -46,4 +46,10 @@ export class InstitutionCount {
 
     @Field(() => Int, {nullable:false})
     church_service_calendar_entries?: number;
+
+    @Field(() => Int, {nullable:false})
+    assignments?: number;
+
+    @Field(() => Int, {nullable:false})
+    gap_report_snapshots?: number;
 }

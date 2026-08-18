@@ -33,6 +33,7 @@ import { ProjectHistoryUpdateManyWithoutUserNestedInput } from '../project-histo
 import { InstitutionPositionUpdateManyWithoutUserNestedInput } from '../institution-position/institution-position-update-many-without-user-nested.input';
 import { AvailabilityUpdateManyWithoutUserNestedInput } from '../availability/availability-update-many-without-user-nested.input';
 import { AvailabilityRecurrenceRuleUpdateManyWithoutUserNestedInput } from '../availability-recurrence-rule/availability-recurrence-rule-update-many-without-user-nested.input';
+import { AssignmentUpdateManyWithoutUserNestedInput } from '../assignment/assignment-update-many-without-user-nested.input';
 
 @InputType()
 export class UserUpdateWithoutSubsidy_status_historyInput {
@@ -171,4 +172,7 @@ export class UserUpdateWithoutSubsidy_status_historyInput {
 
     @Field(() => AvailabilityRecurrenceRuleUpdateManyWithoutUserNestedInput, {nullable:true})
     availability_recurrence_rules?: AvailabilityRecurrenceRuleUpdateManyWithoutUserNestedInput;
+
+    @Field(() => AssignmentUpdateManyWithoutUserNestedInput, {nullable:true})
+    assignments?: AssignmentUpdateManyWithoutUserNestedInput;
 }

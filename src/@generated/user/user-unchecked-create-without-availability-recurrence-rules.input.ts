@@ -24,6 +24,7 @@ import { ChurchUncheckedCreateNestedOneWithoutLeaderInput } from '../church/chur
 import { ProjectHistoryUncheckedCreateNestedManyWithoutUserInput } from '../project-history/project-history-unchecked-create-nested-many-without-user.input';
 import { InstitutionPositionUncheckedCreateNestedManyWithoutUserInput } from '../institution-position/institution-position-unchecked-create-nested-many-without-user.input';
 import { AvailabilityUncheckedCreateNestedManyWithoutUserInput } from '../availability/availability-unchecked-create-nested-many-without-user.input';
+import { AssignmentUncheckedCreateNestedManyWithoutUserInput } from '../assignment/assignment-unchecked-create-nested-many-without-user.input';
 
 @InputType()
 export class UserUncheckedCreateWithoutAvailability_recurrence_rulesInput {
@@ -159,4 +160,7 @@ export class UserUncheckedCreateWithoutAvailability_recurrence_rulesInput {
 
     @Field(() => AvailabilityUncheckedCreateNestedManyWithoutUserInput, {nullable:true})
     availabilities?: AvailabilityUncheckedCreateNestedManyWithoutUserInput;
+
+    @Field(() => AssignmentUncheckedCreateNestedManyWithoutUserInput, {nullable:true})
+    assignments?: AssignmentUncheckedCreateNestedManyWithoutUserInput;
 }
