@@ -153,7 +153,13 @@ export enum PermissionResolverName {
     institutionPosition = "institutionPosition",
     createInstitutionPosition = "createInstitutionPosition",
     updateInstitutionPosition = "updateInstitutionPosition",
-    deleteInstitutionPosition = "deleteInstitutionPosition"
+    deleteInstitutionPosition = "deleteInstitutionPosition",
+    myAvailability = "myAvailability",
+    setAvailability = "setAvailability",
+    setAvailabilityBulk = "setAvailabilityBulk",
+    myAvailabilityRecurrenceRules = "myAvailabilityRecurrenceRules",
+    setAvailabilityRecurrenceRule = "setAvailabilityRecurrenceRule",
+    deleteAvailabilityRecurrenceRule = "deleteAvailabilityRecurrenceRule"
 }
 
 

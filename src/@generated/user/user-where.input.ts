@@ -30,6 +30,8 @@ import { SubsidyStatusHistoryListRelationFilter } from '../subsidy-status-histor
 import { DepartmentListRelationFilter } from '../department/department-list-relation-filter.input';
 import { ProjectHistoryListRelationFilter } from '../project-history/project-history-list-relation-filter.input';
 import { InstitutionPositionListRelationFilter } from '../institution-position/institution-position-list-relation-filter.input';
+import { AvailabilityListRelationFilter } from '../availability/availability-list-relation-filter.input';
+import { AvailabilityRecurrenceRuleListRelationFilter } from '../availability-recurrence-rule/availability-recurrence-rule-list-relation-filter.input';
 
 @InputType()
 export class UserWhereInput {
@@ -187,4 +189,10 @@ export class UserWhereInput {
 
     @Field(() => InstitutionPositionListRelationFilter, {nullable:true})
     institution_positions?: InstitutionPositionListRelationFilter;
+
+    @Field(() => AvailabilityListRelationFilter, {nullable:true})
+    availabilities?: AvailabilityListRelationFilter;
+
+    @Field(() => AvailabilityRecurrenceRuleListRelationFilter, {nullable:true})
+    availability_recurrence_rules?: AvailabilityRecurrenceRuleListRelationFilter;
 }

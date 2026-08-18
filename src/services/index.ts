@@ -34,3 +34,5 @@ export * from './project-history.service';
 export * from './project-adjustment.service';
 export * from './pubsub.service';
 export { LoggerService } from './logger.service';
+export * from './availability.service';
+export * from './availability-recurrence-rule.service';

@@ -12,6 +12,8 @@ import { DirectMessageUncheckedCreateNestedManyWithoutInstitutionInput } from '.
 import { SubsidyRequestUncheckedCreateNestedManyWithoutInstitutionInput } from '../subsidy-request/subsidy-request-unchecked-create-nested-many-without-institution.input';
 import { AnnualBudgetUncheckedCreateNestedManyWithoutInstitutionInput } from '../annual-budget/annual-budget-unchecked-create-nested-many-without-institution.input';
 import { InstitutionPositionUncheckedCreateNestedManyWithoutInstitutionInput } from '../institution-position/institution-position-unchecked-create-nested-many-without-institution.input';
+import { AvailabilityUncheckedCreateNestedManyWithoutInstitutionInput } from '../availability/availability-unchecked-create-nested-many-without-institution.input';
+import { AvailabilityRecurrenceRuleUncheckedCreateNestedManyWithoutInstitutionInput } from '../availability-recurrence-rule/availability-recurrence-rule-unchecked-create-nested-many-without-institution.input';
 
 @InputType()
 export class InstitutionUncheckedCreateWithoutCommunicationsInput {
@@ -91,4 +93,10 @@ export class InstitutionUncheckedCreateWithoutCommunicationsInput {
 
     @Field(() => InstitutionPositionUncheckedCreateNestedManyWithoutInstitutionInput, {nullable:true})
     positions?: InstitutionPositionUncheckedCreateNestedManyWithoutInstitutionInput;
+
+    @Field(() => AvailabilityUncheckedCreateNestedManyWithoutInstitutionInput, {nullable:true})
+    availabilities?: AvailabilityUncheckedCreateNestedManyWithoutInstitutionInput;
+
+    @Field(() => AvailabilityRecurrenceRuleUncheckedCreateNestedManyWithoutInstitutionInput, {nullable:true})
+    availability_recurrence_rules?: AvailabilityRecurrenceRuleUncheckedCreateNestedManyWithoutInstitutionInput;
 }

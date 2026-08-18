@@ -27,6 +27,8 @@ import { DepartmentUncheckedUpdateManyWithoutLeaderNestedInput } from '../depart
 import { ChurchUncheckedUpdateOneWithoutLeaderNestedInput } from '../church/church-unchecked-update-one-without-leader-nested.input';
 import { ProjectHistoryUncheckedUpdateManyWithoutUserNestedInput } from '../project-history/project-history-unchecked-update-many-without-user-nested.input';
 import { InstitutionPositionUncheckedUpdateManyWithoutUserNestedInput } from '../institution-position/institution-position-unchecked-update-many-without-user-nested.input';
+import { AvailabilityUncheckedUpdateManyWithoutUserNestedInput } from '../availability/availability-unchecked-update-many-without-user-nested.input';
+import { AvailabilityRecurrenceRuleUncheckedUpdateManyWithoutUserNestedInput } from '../availability-recurrence-rule/availability-recurrence-rule-unchecked-update-many-without-user-nested.input';
 
 @InputType()
 export class UserUncheckedUpdateWithoutActivity_assignmentsInput {
@@ -155,4 +157,10 @@ export class UserUncheckedUpdateWithoutActivity_assignmentsInput {
 
     @Field(() => InstitutionPositionUncheckedUpdateManyWithoutUserNestedInput, {nullable:true})
     institution_positions?: InstitutionPositionUncheckedUpdateManyWithoutUserNestedInput;
+
+    @Field(() => AvailabilityUncheckedUpdateManyWithoutUserNestedInput, {nullable:true})
+    availabilities?: AvailabilityUncheckedUpdateManyWithoutUserNestedInput;
+
+    @Field(() => AvailabilityRecurrenceRuleUncheckedUpdateManyWithoutUserNestedInput, {nullable:true})
+    availability_recurrence_rules?: AvailabilityRecurrenceRuleUncheckedUpdateManyWithoutUserNestedInput;
 }

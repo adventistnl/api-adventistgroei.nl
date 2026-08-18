@@ -27,3 +27,5 @@ export * from './verification-code.repository';
 export * from './project-history.repository';
 export * from './project-adjustment.repository';
 export * from './institution-position.repository';
+export * from './availability.repository';
+export * from './availability-recurrence-rule.repository';

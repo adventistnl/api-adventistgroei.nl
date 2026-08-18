@@ -31,6 +31,8 @@ import { SubsidyStatusHistoryUpdateManyWithoutUserNestedInput } from '../subsidy
 import { DepartmentUpdateManyWithoutLeaderNestedInput } from '../department/department-update-many-without-leader-nested.input';
 import { ProjectHistoryUpdateManyWithoutUserNestedInput } from '../project-history/project-history-update-many-without-user-nested.input';
 import { InstitutionPositionUpdateManyWithoutUserNestedInput } from '../institution-position/institution-position-update-many-without-user-nested.input';
+import { AvailabilityUpdateManyWithoutUserNestedInput } from '../availability/availability-update-many-without-user-nested.input';
+import { AvailabilityRecurrenceRuleUpdateManyWithoutUserNestedInput } from '../availability-recurrence-rule/availability-recurrence-rule-update-many-without-user-nested.input';
 
 @InputType()
 export class UserUpdateWithoutLed_churchInput {
@@ -163,4 +165,10 @@ export class UserUpdateWithoutLed_churchInput {
 
     @Field(() => InstitutionPositionUpdateManyWithoutUserNestedInput, {nullable:true})
     institution_positions?: InstitutionPositionUpdateManyWithoutUserNestedInput;
+
+    @Field(() => AvailabilityUpdateManyWithoutUserNestedInput, {nullable:true})
+    availabilities?: AvailabilityUpdateManyWithoutUserNestedInput;
+
+    @Field(() => AvailabilityRecurrenceRuleUpdateManyWithoutUserNestedInput, {nullable:true})
+    availability_recurrence_rules?: AvailabilityRecurrenceRuleUpdateManyWithoutUserNestedInput;
 }

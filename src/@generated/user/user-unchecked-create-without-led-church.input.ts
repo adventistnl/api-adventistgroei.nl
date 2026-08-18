@@ -22,6 +22,8 @@ import { SubsidyStatusHistoryUncheckedCreateNestedManyWithoutUserInput } from '.
 import { DepartmentUncheckedCreateNestedManyWithoutLeaderInput } from '../department/department-unchecked-create-nested-many-without-leader.input';
 import { ProjectHistoryUncheckedCreateNestedManyWithoutUserInput } from '../project-history/project-history-unchecked-create-nested-many-without-user.input';
 import { InstitutionPositionUncheckedCreateNestedManyWithoutUserInput } from '../institution-position/institution-position-unchecked-create-nested-many-without-user.input';
+import { AvailabilityUncheckedCreateNestedManyWithoutUserInput } from '../availability/availability-unchecked-create-nested-many-without-user.input';
+import { AvailabilityRecurrenceRuleUncheckedCreateNestedManyWithoutUserInput } from '../availability-recurrence-rule/availability-recurrence-rule-unchecked-create-nested-many-without-user.input';
 
 @InputType()
 export class UserUncheckedCreateWithoutLed_churchInput {
@@ -150,4 +152,10 @@ export class UserUncheckedCreateWithoutLed_churchInput {
 
     @Field(() => InstitutionPositionUncheckedCreateNestedManyWithoutUserInput, {nullable:true})
     institution_positions?: InstitutionPositionUncheckedCreateNestedManyWithoutUserInput;
+
+    @Field(() => AvailabilityUncheckedCreateNestedManyWithoutUserInput, {nullable:true})
+    availabilities?: AvailabilityUncheckedCreateNestedManyWithoutUserInput;
+
+    @Field(() => AvailabilityRecurrenceRuleUncheckedCreateNestedManyWithoutUserInput, {nullable:true})
+    availability_recurrence_rules?: AvailabilityRecurrenceRuleUncheckedCreateNestedManyWithoutUserInput;
 }

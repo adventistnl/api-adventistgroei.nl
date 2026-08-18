@@ -14,6 +14,8 @@ import { DirectMessage } from '../direct-message/direct-message.model';
 import { SubsidyRequest } from '../subsidy-request/subsidy-request.model';
 import { AnnualBudget } from '../annual-budget/annual-budget.model';
 import { InstitutionPosition } from '../institution-position/institution-position.model';
+import { Availability } from '../availability/availability.model';
+import { AvailabilityRecurrenceRule } from '../availability-recurrence-rule/availability-recurrence-rule.model';
 import { InstitutionCount } from './institution-count.output';
 
 @ObjectType()
@@ -93,6 +95,12 @@ export class Institution {
 
     @Field(() => [InstitutionPosition], {nullable:true})
     positions?: Array<InstitutionPosition>;
+
+    @Field(() => [Availability], {nullable:true})
+    availabilities?: Array<Availability>;
+
+    @Field(() => [AvailabilityRecurrenceRule], {nullable:true})
+    availability_recurrence_rules?: Array<AvailabilityRecurrenceRule>;
 
     @Field(() => InstitutionCount, {nullable:false})
     _count?: InstitutionCount;

@@ -37,4 +37,10 @@ export class InstitutionCount {
 
     @Field(() => Int, {nullable:false})
     positions?: number;
+
+    @Field(() => Int, {nullable:false})
+    availabilities?: number;
+
+    @Field(() => Int, {nullable:false})
+    availability_recurrence_rules?: number;
 }
