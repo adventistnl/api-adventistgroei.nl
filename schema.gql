@@ -1158,6 +1158,10 @@ enum PermissionResolverName {
   churchServiceCalendar
   setChurchServiceCalendar
   setChurchServiceCalendarBulk
+  scheduleOverview
+  gapReport
+  setAssignment
+  setAssignmentAny
 }
 
 enum PermissionGroup {
@@ -1435,6 +1439,47 @@ enum AvailabilitySource {
   RECURRENCE_RULE
 }
 
+"""
+A church + date slot. Created directly (R8 — "self-filled"/admin-assigned, via
+setAssignment/setAssignmentAny) in Phase 3; Phase 4 adds the request/invite flow that also
+produces confirmed rows here.
+"""
+type Assignment {
+  id: ID!
+  institution_id: String!
+  church_id: String!
+  date: DateTime!
+  user_id: String
+  origin: AssignmentOrigin!
+  status: AssignmentStatus!
+  locked_at: DateTime
+  created_at: DateTime!
+  updated_at: DateTime!
+  created_by: String!
+  updated_by: String!
+  is_deleted: Boolean!
+  deleted_at: DateTime
+  deleted_by: String
+  institution: Institution!
+  church: Church!
+  user: User
+}
+
+enum AssignmentOrigin {
+  ADMIN_ASSIGNED
+  PREACHER_REQUESTED
+  CHURCH_INVITED
+  SELF_FILLED
+}
+
+enum AssignmentStatus {
+  DRAFT
+  PENDING_CONFIRMATION
+  CONFIRMED
+  DECLINED
+  LOCKED
+}
+
 type UserCount {
   user_roles: Int!
   direct_messages: Int!
@@ -1457,6 +1502,7 @@ type UserCount {
   institution_positions: Int!
   availabilities: Int!
   availability_recurrence_rules: Int!
+  assignments: Int!
 }
 
 type User {
@@ -1504,6 +1550,7 @@ type User {
   institution_positions: [InstitutionPosition!]
   availabilities: [Availability!]
   availability_recurrence_rules: [AvailabilityRecurrenceRule!]
+  assignments: [Assignment!]
   _count: UserCount!
 }
 
@@ -1544,6 +1591,7 @@ type ChurchCount {
   annual_budgets: Int!
   projects: Int!
   service_calendar: Int!
+  assignments: Int!
 }
 
 type Church {
@@ -1573,6 +1621,7 @@ type Church {
   annual_budgets: [AnnualBudget!]
   projects: [Project!]
   service_calendar: [ChurchServiceCalendar!]
+  assignments: [Assignment!]
   _count: ChurchCount!
 }
 
@@ -1598,6 +1647,20 @@ type Setting {
   institution: Institution!
 }
 
+"""
+R9 — computed by a daily cron job (never at request time), one row per institution+month.
+Query.gapReport only ever reads the latest snapshot.
+"""
+type GapReportSnapshot {
+  id: ID!
+  institution_id: String!
+  month: String!
+  churches_without_preacher: JSON!
+  preachers_without_assignment: JSON!
+  computed_at: DateTime!
+  institution: Institution!
+}
+
 type InstitutionCount {
   churches: Int!
   departments: Int!
@@ -1613,6 +1676,8 @@ type InstitutionCount {
   availabilities: Int!
   availability_recurrence_rules: Int!
   church_service_calendar_entries: Int!
+  assignments: Int!
+  gap_report_snapshots: Int!
 }
 
 type Institution {
@@ -1644,6 +1709,8 @@ type Institution {
   availabilities: [Availability!]
   availability_recurrence_rules: [AvailabilityRecurrenceRule!]
   church_service_calendar_entries: [ChurchServiceCalendar!]
+  assignments: [Assignment!]
+  gap_report_snapshots: [GapReportSnapshot!]
   _count: InstitutionCount!
   churches_count: Int!
   departments_count: Int!
@@ -2042,6 +2109,25 @@ type SubsidyByStatus {
   fill: String!
 }
 
+type ChurchGapEntry {
+  churchId: String!
+  churchName: String!
+  date: DateTime!
+}
+
+type PreacherGapEntry {
+  userId: String!
+  userName: String!
+  date: DateTime!
+}
+
+type GapReport {
+  month: String!
+  churchesWithoutPreacher: [ChurchGapEntry!]!
+  preachersWithoutAssignment: [PreacherGapEntry!]!
+  computedAt: DateTime!
+}
+
 type MarkAllReadResult {
   count: Int!
 }
@@ -2139,6 +2225,8 @@ type Query {
   myAvailability(month: String!): [Availability!]!
   myAvailabilityRecurrenceRules: [AvailabilityRecurrenceRule!]!
   churchServiceCalendar(church_id: String!, month: String!): [ChurchServiceCalendar!]!
+  scheduleOverview(month: String!): [Assignment!]!
+  gapReport(month: String!): GapReport!
 
   """
   Get city and province information for a Dutch postal code (ZIP code) and house number
@@ -2510,6 +2598,7 @@ input UserWhereInput {
   institution_positions: InstitutionPositionListRelationFilter
   availabilities: AvailabilityListRelationFilter
   availability_recurrence_rules: AvailabilityRecurrenceRuleListRelationFilter
+  assignments: AssignmentListRelationFilter
 }
 
 input EnumGenderTypeNullableFilter {
@@ -2614,6 +2703,8 @@ input InstitutionWhereInput {
   availabilities: AvailabilityListRelationFilter
   availability_recurrence_rules: AvailabilityRecurrenceRuleListRelationFilter
   church_service_calendar_entries: ChurchServiceCalendarListRelationFilter
+  assignments: AssignmentListRelationFilter
+  gap_report_snapshots: GapReportSnapshotListRelationFilter
 }
 
 input ChurchListRelationFilter {
@@ -2652,6 +2743,7 @@ input ChurchWhereInput {
   annual_budgets: AnnualBudgetListRelationFilter
   projects: ProjectListRelationFilter
   service_calendar: ChurchServiceCalendarListRelationFilter
+  assignments: AssignmentListRelationFilter
 }
 
 input EnumChurchTypeFilter {
@@ -3815,6 +3907,64 @@ input ChurchScalarRelationFilter {
   isNot: ChurchWhereInput
 }
 
+input AssignmentListRelationFilter {
+  every: AssignmentWhereInput
+  some: AssignmentWhereInput
+  none: AssignmentWhereInput
+}
+
+input AssignmentWhereInput {
+  AND: [AssignmentWhereInput!]
+  OR: [AssignmentWhereInput!]
+  NOT: [AssignmentWhereInput!]
+  id: StringFilter
+  institution_id: StringFilter
+  church_id: StringFilter
+  date: DateTimeFilter
+  user_id: StringNullableFilter
+  origin: EnumAssignmentOriginFilter
+  status: EnumAssignmentStatusFilter
+  locked_at: DateTimeNullableFilter
+  created_at: DateTimeFilter
+  updated_at: DateTimeFilter
+  created_by: StringFilter
+  updated_by: StringFilter
+  is_deleted: BoolFilter
+  deleted_at: DateTimeNullableFilter
+  deleted_by: StringNullableFilter
+  institution: InstitutionScalarRelationFilter
+  church: ChurchScalarRelationFilter
+  user: UserNullableScalarRelationFilter
+}
+
+input EnumAssignmentOriginFilter {
+  equals: AssignmentOrigin
+  in: [AssignmentOrigin!]
+  notIn: [AssignmentOrigin!]
+  not: NestedEnumAssignmentOriginFilter
+}
+
+input NestedEnumAssignmentOriginFilter {
+  equals: AssignmentOrigin
+  in: [AssignmentOrigin!]
+  notIn: [AssignmentOrigin!]
+  not: NestedEnumAssignmentOriginFilter
+}
+
+input EnumAssignmentStatusFilter {
+  equals: AssignmentStatus
+  in: [AssignmentStatus!]
+  notIn: [AssignmentStatus!]
+  not: NestedEnumAssignmentStatusFilter
+}
+
+input NestedEnumAssignmentStatusFilter {
+  equals: AssignmentStatus
+  in: [AssignmentStatus!]
+  notIn: [AssignmentStatus!]
+  not: NestedEnumAssignmentStatusFilter
+}
+
 input CommunicationListRelationFilter {
   every: CommunicationWhereInput
   some: CommunicationWhereInput
@@ -4243,6 +4393,42 @@ input AvailabilityRecurrenceRuleListRelationFilter {
   none: AvailabilityRecurrenceRuleWhereInput
 }
 
+input GapReportSnapshotListRelationFilter {
+  every: GapReportSnapshotWhereInput
+  some: GapReportSnapshotWhereInput
+  none: GapReportSnapshotWhereInput
+}
+
+input GapReportSnapshotWhereInput {
+  AND: [GapReportSnapshotWhereInput!]
+  OR: [GapReportSnapshotWhereInput!]
+  NOT: [GapReportSnapshotWhereInput!]
+  id: StringFilter
+  institution_id: StringFilter
+  month: StringFilter
+  churches_without_preacher: JsonFilter
+  preachers_without_assignment: JsonFilter
+  computed_at: DateTimeFilter
+  institution: InstitutionScalarRelationFilter
+}
+
+input JsonFilter {
+  equals: JSON
+  path: [String!]
+  mode: QueryMode
+  string_contains: String
+  string_starts_with: String
+  string_ends_with: String
+  array_starts_with: JSON
+  array_ends_with: JSON
+  array_contains: JSON
+  lt: JSON
+  lte: JSON
+  gt: JSON
+  gte: JSON
+  not: JSON
+}
+
 input EventListRelationFilter {
   every: EventWhereInput
   some: EventWhereInput
@@ -4390,6 +4576,7 @@ input UserOrderByWithRelationInput {
   institution_positions: InstitutionPositionOrderByRelationAggregateInput
   availabilities: AvailabilityOrderByRelationAggregateInput
   availability_recurrence_rules: AvailabilityRecurrenceRuleOrderByRelationAggregateInput
+  assignments: AssignmentOrderByRelationAggregateInput
 }
 
 input ContactOrderByWithRelationInput {
@@ -4450,6 +4637,8 @@ input InstitutionOrderByWithRelationInput {
   availabilities: AvailabilityOrderByRelationAggregateInput
   availability_recurrence_rules: AvailabilityRecurrenceRuleOrderByRelationAggregateInput
   church_service_calendar_entries: ChurchServiceCalendarOrderByRelationAggregateInput
+  assignments: AssignmentOrderByRelationAggregateInput
+  gap_report_snapshots: GapReportSnapshotOrderByRelationAggregateInput
 }
 
 input ChurchOrderByRelationAggregateInput {
@@ -4508,6 +4697,14 @@ input ChurchServiceCalendarOrderByRelationAggregateInput {
   _count: SortOrder
 }
 
+input AssignmentOrderByRelationAggregateInput {
+  _count: SortOrder
+}
+
+input GapReportSnapshotOrderByRelationAggregateInput {
+  _count: SortOrder
+}
+
 input EventOrderByRelationAggregateInput {
   _count: SortOrder
 }
@@ -4539,6 +4736,7 @@ input ChurchOrderByWithRelationInput {
   annual_budgets: AnnualBudgetOrderByRelationAggregateInput
   projects: ProjectOrderByRelationAggregateInput
   service_calendar: ChurchServiceCalendarOrderByRelationAggregateInput
+  assignments: AssignmentOrderByRelationAggregateInput
 }
 
 input RegionOrderByWithRelationInput {
@@ -4839,6 +5037,8 @@ type Mutation {
   deleteAvailabilityRecurrenceRule(id: String!): Boolean!
   setChurchServiceCalendar(input: SetServiceCalendarInput!): [ChurchServiceCalendar!]!
   setChurchServiceCalendarBulk(input: SetServiceCalendarBulkInput!): [ChurchServiceCalendar!]!
+  setAssignment(input: SetAssignmentInput!): Assignment!
+  setAssignmentAny(input: SetAssignmentInput!): Assignment!
 }
 
 input LoginInput {
@@ -5505,6 +5705,13 @@ input SetServiceCalendarBulkInput {
   has_service: Boolean!
   effective_from: DateTime!
   effective_until: DateTime
+}
+
+input SetAssignmentInput {
+  church_id: String!
+  date: DateTime!
+  user_id: String
+  status: AssignmentStatus
 }
 
 type Subscription {

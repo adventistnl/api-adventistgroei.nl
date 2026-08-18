@@ -28,6 +28,7 @@ import { ProjectHistoryCreateNestedManyWithoutUserInput } from '../project-histo
 import { InstitutionPositionCreateNestedManyWithoutUserInput } from '../institution-position/institution-position-create-nested-many-without-user.input';
 import { AvailabilityCreateNestedManyWithoutUserInput } from '../availability/availability-create-nested-many-without-user.input';
 import { AvailabilityRecurrenceRuleCreateNestedManyWithoutUserInput } from '../availability-recurrence-rule/availability-recurrence-rule-create-nested-many-without-user.input';
+import { AssignmentCreateNestedManyWithoutUserInput } from '../assignment/assignment-create-nested-many-without-user.input';
 
 @InputType()
 export class UserCreateWithoutProjectInput {
@@ -166,4 +167,7 @@ export class UserCreateWithoutProjectInput {
 
     @Field(() => AvailabilityRecurrenceRuleCreateNestedManyWithoutUserInput, {nullable:true})
     availability_recurrence_rules?: AvailabilityRecurrenceRuleCreateNestedManyWithoutUserInput;
+
+    @Field(() => AssignmentCreateNestedManyWithoutUserInput, {nullable:true})
+    assignments?: AssignmentCreateNestedManyWithoutUserInput;
 }

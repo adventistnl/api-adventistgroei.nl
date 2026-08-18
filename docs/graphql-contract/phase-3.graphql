@@ -1,0 +1,95 @@
+# Preacher scheduling module — Phase 3 (Overview grid + gap report)
+# Extracted from the real, auto-generated schema.gql after implementing this phase.
+# See preacher-scheduling-blueprint/docs/01-corrected-blueprint.md for the full spec.
+#
+# New PermissionResolverName values gated by @Permission() on every operation below:
+#   scheduleOverview, gapReport (Admin + Institutional/Church Department Leader roles)
+#   setAssignment (own church — Church Leader role)
+#   setAssignmentAny (any church in your institution — Admin + department-leader roles)
+#
+# Correction vs. the original blueprint: Phase 3 as originally scoped had no mutation to ever
+# populate Assignment (R8 "self-filled"/admin-assigned was only implied, not scheduled to any
+# phase) — scheduleOverview/gapReport would have had nothing to read. Added setAssignment /
+# setAssignmentAny here so R8 has a home and the overview grid is testable from Phase 3 on.
+
+type Query {
+  scheduleOverview(month: String!): [Assignment!]!
+  gapReport(month: String!): GapReport!
+}
+
+type Mutation {
+  setAssignment(input: SetAssignmentInput!): Assignment!
+  setAssignmentAny(input: SetAssignmentInput!): Assignment!
+}
+
+"""
+A church + date slot. Created directly (R8 — "self-filled"/admin-assigned, via
+setAssignment/setAssignmentAny) in Phase 3; Phase 4 adds the request/invite flow that also
+produces confirmed rows here.
+"""
+type Assignment {
+  id: ID!
+  institution_id: String!
+  church_id: String!
+  date: DateTime!
+  user_id: String
+  origin: AssignmentOrigin!
+  status: AssignmentStatus!
+  locked_at: DateTime
+  created_at: DateTime!
+  updated_at: DateTime!
+  created_by: String!
+  updated_by: String!
+  is_deleted: Boolean!
+  deleted_at: DateTime
+  deleted_by: String
+  institution: Institution!
+  church: Church!
+  user: User
+}
+
+enum AssignmentOrigin {
+  ADMIN_ASSIGNED
+  PREACHER_REQUESTED
+  CHURCH_INVITED
+  SELF_FILLED
+}
+
+enum AssignmentStatus {
+  DRAFT
+  PENDING_CONFIRMATION
+  CONFIRMED
+  DECLINED
+  LOCKED
+}
+
+"""
+Omit user_id (or pass null) to clear an assignment back to an open slot. status defaults to
+CONFIRMED when user_id is set, DRAFT otherwise.
+"""
+input SetAssignmentInput {
+  church_id: String!
+  date: DateTime!
+  user_id: String
+  status: AssignmentStatus
+}
+
+type ChurchGapEntry {
+  churchId: String!
+  churchName: String!
+  date: DateTime!
+}
+
+type PreacherGapEntry {
+  userId: String!
+  userName: String!
+  date: DateTime!
+}
+
+"""R9 — read-only view of the latest daily-computed snapshot for a month. Never computed at request time."""
+type GapReport {
+  month: String!
+  churchesWithoutPreacher: [ChurchGapEntry!]!
+  preachersWithoutAssignment: [PreacherGapEntry!]!
+  computedAt: DateTime!
+}

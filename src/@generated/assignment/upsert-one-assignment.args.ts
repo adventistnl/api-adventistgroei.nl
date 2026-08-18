@@ -1,0 +1,23 @@
+import { Field } from '@nestjs/graphql';
+import { ArgsType } from '@nestjs/graphql';
+import { Prisma } from '@prisma/client';
+import { AssignmentWhereUniqueInput } from './assignment-where-unique.input';
+import { Type } from 'class-transformer';
+import { AssignmentCreateInput } from './assignment-create.input';
+import { AssignmentUpdateInput } from './assignment-update.input';
+
+@ArgsType()
+export class UpsertOneAssignmentArgs {
+
+    @Field(() => AssignmentWhereUniqueInput, {nullable:false})
+    @Type(() => AssignmentWhereUniqueInput)
+    where!: Prisma.AtLeast<AssignmentWhereUniqueInput, 'id' | 'church_id_date'>;
+
+    @Field(() => AssignmentCreateInput, {nullable:false})
+    @Type(() => AssignmentCreateInput)
+    create!: AssignmentCreateInput;
+
+    @Field(() => AssignmentUpdateInput, {nullable:false})
+    @Type(() => AssignmentUpdateInput)
+    update!: AssignmentUpdateInput;
+}

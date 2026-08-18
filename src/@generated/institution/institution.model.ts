@@ -17,6 +17,8 @@ import { InstitutionPosition } from '../institution-position/institution-positio
 import { Availability } from '../availability/availability.model';
 import { AvailabilityRecurrenceRule } from '../availability-recurrence-rule/availability-recurrence-rule.model';
 import { ChurchServiceCalendar } from '../church-service-calendar/church-service-calendar.model';
+import { Assignment } from '../assignment/assignment.model';
+import { GapReportSnapshot } from '../gap-report-snapshot/gap-report-snapshot.model';
 import { InstitutionCount } from './institution-count.output';
 
 @ObjectType()
@@ -105,6 +107,12 @@ export class Institution {
 
     @Field(() => [ChurchServiceCalendar], {nullable:true})
     church_service_calendar_entries?: Array<ChurchServiceCalendar>;
+
+    @Field(() => [Assignment], {nullable:true})
+    assignments?: Array<Assignment>;
+
+    @Field(() => [GapReportSnapshot], {nullable:true})
+    gap_report_snapshots?: Array<GapReportSnapshot>;
 
     @Field(() => InstitutionCount, {nullable:false})
     _count?: InstitutionCount;

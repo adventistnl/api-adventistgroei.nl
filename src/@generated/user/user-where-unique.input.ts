@@ -33,6 +33,7 @@ import { ProjectHistoryListRelationFilter } from '../project-history/project-his
 import { InstitutionPositionListRelationFilter } from '../institution-position/institution-position-list-relation-filter.input';
 import { AvailabilityListRelationFilter } from '../availability/availability-list-relation-filter.input';
 import { AvailabilityRecurrenceRuleListRelationFilter } from '../availability-recurrence-rule/availability-recurrence-rule-list-relation-filter.input';
+import { AssignmentListRelationFilter } from '../assignment/assignment-list-relation-filter.input';
 
 @InputType()
 export class UserWhereUniqueInput {
@@ -196,4 +197,7 @@ export class UserWhereUniqueInput {
 
     @Field(() => AvailabilityRecurrenceRuleListRelationFilter, {nullable:true})
     availability_recurrence_rules?: AvailabilityRecurrenceRuleListRelationFilter;
+
+    @Field(() => AssignmentListRelationFilter, {nullable:true})
+    assignments?: AssignmentListRelationFilter;
 }

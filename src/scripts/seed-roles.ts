@@ -133,6 +133,11 @@ const roles = [
       { key_code: 'CHURCH_SERVICE_CALENDAR_ACCESS', is_essential: true },
       { key_code: 'CHURCH_SERVICE_CALENDAR_SET', is_essential: true },
       { key_code: 'CHURCH_SERVICE_CALENDAR_BULK_SET', is_essential: true },
+      // Preacher scheduling module — Phase 3 (Overview grid + gap report)
+      { key_code: 'SCHEDULE_OVERVIEW_ACCESS', is_essential: true },
+      { key_code: 'GAP_REPORT_ACCESS', is_essential: true },
+      { key_code: 'ASSIGNMENT_SET', is_essential: true },
+      { key_code: 'ASSIGNMENT_SET_ANY', is_essential: true },
     ],
   },
   {
@@ -223,6 +228,8 @@ const roles = [
       // Preacher scheduling module — Phase 2 (own church's service calendar)
       { key_code: 'CHURCH_SERVICE_CALENDAR_ACCESS', is_essential: true },
       { key_code: 'CHURCH_SERVICE_CALENDAR_SET', is_essential: true },
+      // Preacher scheduling module — Phase 3 (own church's assignments)
+      { key_code: 'ASSIGNMENT_SET', is_essential: true },
     ],
   },
   {
@@ -494,6 +501,9 @@ const roles = [
       { key_code: 'PROJECT_ADJUSTMENT_TASK_REMOVE', is_essential: true },
       // Preacher scheduling module — Phase 2 (any church, R11 item E: any department leader gets broad scheduling access)
       { key_code: 'CHURCH_SERVICE_CALENDAR_BULK_SET', is_essential: true },
+      { key_code: 'SCHEDULE_OVERVIEW_ACCESS', is_essential: true },
+      { key_code: 'GAP_REPORT_ACCESS', is_essential: true },
+      { key_code: 'ASSIGNMENT_SET_ANY', is_essential: true },
     ],
   },
   {
@@ -566,6 +576,9 @@ const roles = [
       { key_code: 'PROJECT_ADJUSTMENT_TASK_REMOVE', is_essential: true },
       // Preacher scheduling module — Phase 2 (any church, R11 item E: any department leader gets broad scheduling access)
       { key_code: 'CHURCH_SERVICE_CALENDAR_BULK_SET', is_essential: true },
+      { key_code: 'SCHEDULE_OVERVIEW_ACCESS', is_essential: true },
+      { key_code: 'GAP_REPORT_ACCESS', is_essential: true },
+      { key_code: 'ASSIGNMENT_SET_ANY', is_essential: true },
     ],
   },
   {

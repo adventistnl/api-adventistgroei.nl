@@ -27,6 +27,7 @@ import { ProjectHistoryOrderByRelationAggregateInput } from '../project-history/
 import { InstitutionPositionOrderByRelationAggregateInput } from '../institution-position/institution-position-order-by-relation-aggregate.input';
 import { AvailabilityOrderByRelationAggregateInput } from '../availability/availability-order-by-relation-aggregate.input';
 import { AvailabilityRecurrenceRuleOrderByRelationAggregateInput } from '../availability-recurrence-rule/availability-recurrence-rule-order-by-relation-aggregate.input';
+import { AssignmentOrderByRelationAggregateInput } from '../assignment/assignment-order-by-relation-aggregate.input';
 
 @InputType()
 export class UserOrderByWithRelationInput {
@@ -181,4 +182,7 @@ export class UserOrderByWithRelationInput {
 
     @Field(() => AvailabilityRecurrenceRuleOrderByRelationAggregateInput, {nullable:true})
     availability_recurrence_rules?: AvailabilityRecurrenceRuleOrderByRelationAggregateInput;
+
+    @Field(() => AssignmentOrderByRelationAggregateInput, {nullable:true})
+    assignments?: AssignmentOrderByRelationAggregateInput;
 }

@@ -17,6 +17,7 @@ import { UserUpdateManyWithoutChurchNestedInput } from '../user/user-update-many
 import { SubsidyRequestUpdateManyWithoutChurchNestedInput } from '../subsidy-request/subsidy-request-update-many-without-church-nested.input';
 import { AnnualBudgetUpdateManyWithoutChurchNestedInput } from '../annual-budget/annual-budget-update-many-without-church-nested.input';
 import { ProjectUpdateManyWithoutChurchNestedInput } from '../project/project-update-many-without-church-nested.input';
+import { AssignmentUpdateManyWithoutChurchNestedInput } from '../assignment/assignment-update-many-without-church-nested.input';
 
 @InputType()
 export class ChurchUpdateWithoutService_calendarInput {
@@ -91,4 +92,7 @@ export class ChurchUpdateWithoutService_calendarInput {
     @Field(() => ProjectUpdateManyWithoutChurchNestedInput, {nullable:true})
     @Type(() => ProjectUpdateManyWithoutChurchNestedInput)
     projects?: ProjectUpdateManyWithoutChurchNestedInput;
+
+    @Field(() => AssignmentUpdateManyWithoutChurchNestedInput, {nullable:true})
+    assignments?: AssignmentUpdateManyWithoutChurchNestedInput;
 }
