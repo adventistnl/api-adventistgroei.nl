@@ -1149,6 +1149,12 @@ enum PermissionResolverName {
   createInstitutionPosition
   updateInstitutionPosition
   deleteInstitutionPosition
+  myAvailability
+  setAvailability
+  setAvailabilityBulk
+  myAvailabilityRecurrenceRules
+  setAvailabilityRecurrenceRule
+  deleteAvailabilityRecurrenceRule
 }
 
 enum PermissionGroup {
@@ -1175,6 +1181,7 @@ enum PermissionGroup {
   ANNUAL_BUDGET
   PROJECT_HISTORY
   INSTITUTION_POSITION
+  SCHEDULE
 }
 
 type RolePermission {
@@ -1344,6 +1351,87 @@ enum InstitutionPositionType {
   FINANCE_MANAGER
 }
 
+type AvailabilityRecurrenceRuleCount {
+  materialized_availabilities: Int!
+}
+
+"""
+A preacher's weekly/date-range availability pattern, set from their Profile screen.
+Never read directly by gap-report/overview/invite logic — those only ever read
+materialized Availability rows (see Availability.source above).
+"""
+type AvailabilityRecurrenceRule {
+  id: ID!
+  institution_id: String!
+  user_id: String!
+  type: RecurrenceType!
+  status: AvailabilityStatus!
+  day_of_week: Int
+  start_date: DateTime
+  end_date: DateTime
+  effective_from: DateTime!
+  effective_until: DateTime
+  note: String
+  created_at: DateTime!
+  updated_at: DateTime!
+  created_by: String!
+  updated_by: String!
+  is_deleted: Boolean!
+  deleted_at: DateTime
+  deleted_by: String
+  institution: Institution!
+  user: User!
+  materialized_availabilities: [Availability!]
+  _count: AvailabilityRecurrenceRuleCount!
+}
+
+"""
+WEEKLY covers "every Saturday available" / "never on Mondays".
+DATE_RANGE covers everything from a single day off to a full month or year of vacation —
+one flexible range instead of separate MONTHLY/YEARLY branches (simpler, same coverage).
+"""
+enum RecurrenceType {
+  WEEKLY
+  DATE_RANGE
+}
+
+enum AvailabilityStatus {
+  AVAILABLE
+  UNAVAILABLE
+  VACATION
+}
+
+type Availability {
+  id: ID!
+  institution_id: String!
+  user_id: String!
+  date: DateTime!
+  status: AvailabilityStatus!
+  source: AvailabilitySource!
+  recurrence_rule_id: String
+  note: String
+  created_at: DateTime!
+  updated_at: DateTime!
+  created_by: String!
+  updated_by: String!
+  is_deleted: Boolean!
+  deleted_at: DateTime
+  deleted_by: String
+  institution: Institution!
+  user: User!
+  recurrence_rule: AvailabilityRecurrenceRule
+}
+
+"""
+MANUAL = the preacher (or an admin) set this exact date directly, always wins.
+RECURRENCE_RULE = materialized from an AvailabilityRecurrenceRule; overwritten when the
+rule regenerates, unless a later MANUAL edit on the same date takes precedence.
+"""
+enum AvailabilitySource {
+  MANUAL
+  RECURRENCE_RULE
+}
+
 type UserCount {
   user_roles: Int!
   direct_messages: Int!
@@ -1364,6 +1452,8 @@ type UserCount {
   led_departments: Int!
   project_history: Int!
   institution_positions: Int!
+  availabilities: Int!
+  availability_recurrence_rules: Int!
 }
 
 type User {
@@ -1409,6 +1499,8 @@ type User {
   led_church: Church
   project_history: [ProjectHistory!]
   institution_positions: [InstitutionPosition!]
+  availabilities: [Availability!]
+  availability_recurrence_rules: [AvailabilityRecurrenceRule!]
   _count: UserCount!
 }
 
@@ -1488,6 +1580,8 @@ type InstitutionCount {
   subsidy_requests: Int!
   annual_budgets: Int!
   positions: Int!
+  availabilities: Int!
+  availability_recurrence_rules: Int!
 }
 
 type Institution {
@@ -1516,6 +1610,8 @@ type Institution {
   subsidy_requests: [SubsidyRequest!]!
   annual_budgets: [AnnualBudget!]!
   positions: [InstitutionPosition!]
+  availabilities: [Availability!]
+  availability_recurrence_rules: [AvailabilityRecurrenceRule!]
   _count: InstitutionCount!
   churches_count: Int!
   departments_count: Int!
@@ -2008,6 +2104,8 @@ type Query {
   projectAdjustment(id: ID!): ProjectAdjustment!
   institutionPositions(institution_id: String!): [InstitutionPosition!]!
   institutionPosition(id: String!): InstitutionPosition
+  myAvailability(month: String!): [Availability!]!
+  myAvailabilityRecurrenceRules: [AvailabilityRecurrenceRule!]!
 
   """
   Get city and province information for a Dutch postal code (ZIP code) and house number
@@ -2377,6 +2475,8 @@ input UserWhereInput {
   led_church: ChurchNullableScalarRelationFilter
   project_history: ProjectHistoryListRelationFilter
   institution_positions: InstitutionPositionListRelationFilter
+  availabilities: AvailabilityListRelationFilter
+  availability_recurrence_rules: AvailabilityRecurrenceRuleListRelationFilter
 }
 
 input EnumGenderTypeNullableFilter {
@@ -2478,6 +2578,8 @@ input InstitutionWhereInput {
   subsidy_requests: SubsidyRequestListRelationFilter
   annual_budgets: AnnualBudgetListRelationFilter
   positions: InstitutionPositionListRelationFilter
+  availabilities: AvailabilityListRelationFilter
+  availability_recurrence_rules: AvailabilityRecurrenceRuleListRelationFilter
 }
 
 input ChurchListRelationFilter {
@@ -3953,6 +4055,116 @@ input NestedEnumInstitutionPositionTypeFilter {
   not: NestedEnumInstitutionPositionTypeFilter
 }
 
+input AvailabilityListRelationFilter {
+  every: AvailabilityWhereInput
+  some: AvailabilityWhereInput
+  none: AvailabilityWhereInput
+}
+
+input AvailabilityWhereInput {
+  AND: [AvailabilityWhereInput!]
+  OR: [AvailabilityWhereInput!]
+  NOT: [AvailabilityWhereInput!]
+  id: StringFilter
+  institution_id: StringFilter
+  user_id: StringFilter
+  date: DateTimeFilter
+  status: EnumAvailabilityStatusFilter
+  source: EnumAvailabilitySourceFilter
+  recurrence_rule_id: StringNullableFilter
+  note: StringNullableFilter
+  created_at: DateTimeFilter
+  updated_at: DateTimeFilter
+  created_by: StringFilter
+  updated_by: StringFilter
+  is_deleted: BoolFilter
+  deleted_at: DateTimeNullableFilter
+  deleted_by: StringNullableFilter
+  institution: InstitutionScalarRelationFilter
+  user: UserScalarRelationFilter
+  recurrence_rule: AvailabilityRecurrenceRuleNullableScalarRelationFilter
+}
+
+input EnumAvailabilityStatusFilter {
+  equals: AvailabilityStatus
+  in: [AvailabilityStatus!]
+  notIn: [AvailabilityStatus!]
+  not: NestedEnumAvailabilityStatusFilter
+}
+
+input NestedEnumAvailabilityStatusFilter {
+  equals: AvailabilityStatus
+  in: [AvailabilityStatus!]
+  notIn: [AvailabilityStatus!]
+  not: NestedEnumAvailabilityStatusFilter
+}
+
+input EnumAvailabilitySourceFilter {
+  equals: AvailabilitySource
+  in: [AvailabilitySource!]
+  notIn: [AvailabilitySource!]
+  not: NestedEnumAvailabilitySourceFilter
+}
+
+input NestedEnumAvailabilitySourceFilter {
+  equals: AvailabilitySource
+  in: [AvailabilitySource!]
+  notIn: [AvailabilitySource!]
+  not: NestedEnumAvailabilitySourceFilter
+}
+
+input AvailabilityRecurrenceRuleNullableScalarRelationFilter {
+  is: AvailabilityRecurrenceRuleWhereInput
+  isNot: AvailabilityRecurrenceRuleWhereInput
+}
+
+input AvailabilityRecurrenceRuleWhereInput {
+  AND: [AvailabilityRecurrenceRuleWhereInput!]
+  OR: [AvailabilityRecurrenceRuleWhereInput!]
+  NOT: [AvailabilityRecurrenceRuleWhereInput!]
+  id: StringFilter
+  institution_id: StringFilter
+  user_id: StringFilter
+  type: EnumRecurrenceTypeFilter
+  status: EnumAvailabilityStatusFilter
+  day_of_week: IntNullableFilter
+  start_date: DateTimeNullableFilter
+  end_date: DateTimeNullableFilter
+  effective_from: DateTimeFilter
+  effective_until: DateTimeNullableFilter
+  note: StringNullableFilter
+  created_at: DateTimeFilter
+  updated_at: DateTimeFilter
+  created_by: StringFilter
+  updated_by: StringFilter
+  is_deleted: BoolFilter
+  deleted_at: DateTimeNullableFilter
+  deleted_by: StringNullableFilter
+  institution: InstitutionScalarRelationFilter
+  user: UserScalarRelationFilter
+  materialized_availabilities: AvailabilityListRelationFilter
+}
+
+input EnumRecurrenceTypeFilter {
+  equals: RecurrenceType
+  in: [RecurrenceType!]
+  notIn: [RecurrenceType!]
+  not: NestedEnumRecurrenceTypeFilter
+}
+
+input NestedEnumRecurrenceTypeFilter {
+  equals: RecurrenceType
+  in: [RecurrenceType!]
+  notIn: [RecurrenceType!]
+  not: NestedEnumRecurrenceTypeFilter
+}
+
+input AvailabilityRecurrenceRuleListRelationFilter {
+  every: AvailabilityRecurrenceRuleWhereInput
+  some: AvailabilityRecurrenceRuleWhereInput
+  none: AvailabilityRecurrenceRuleWhereInput
+}
+
 input EventListRelationFilter {
   every: EventWhereInput
   some: EventWhereInput
@@ -4098,6 +4310,8 @@ input UserOrderByWithRelationInput {
   led_church: ChurchOrderByWithRelationInput
   project_history: ProjectHistoryOrderByRelationAggregateInput
   institution_positions: InstitutionPositionOrderByRelationAggregateInput
+  availabilities: AvailabilityOrderByRelationAggregateInput
+  availability_recurrence_rules: AvailabilityRecurrenceRuleOrderByRelationAggregateInput
 }
 
 input ContactOrderByWithRelationInput {
@@ -4155,6 +4369,8 @@ input InstitutionOrderByWithRelationInput {
   subsidy_requests: SubsidyRequestOrderByRelationAggregateInput
   annual_budgets: AnnualBudgetOrderByRelationAggregateInput
   positions: InstitutionPositionOrderByRelationAggregateInput
+  availabilities: AvailabilityOrderByRelationAggregateInput
+  availability_recurrence_rules: AvailabilityRecurrenceRuleOrderByRelationAggregateInput
 }
 
 input ChurchOrderByRelationAggregateInput {
@@ -4198,6 +4414,14 @@ input AnnualBudgetOrderByRelationAggregateInput {
 }
 
 input InstitutionPositionOrderByRelationAggregateInput {
+  _count: SortOrder
+}
+
+input AvailabilityOrderByRelationAggregateInput {
+  _count: SortOrder
+}
+
+input AvailabilityRecurrenceRuleOrderByRelationAggregateInput {
   _count: SortOrder
 }
 
@@ -4525,6 +4749,10 @@ type Mutation {
   createInstitutionPosition(data: InstitutionPositionCreateDto!): InstitutionPosition!
   updateInstitutionPosition(id: String!, data: InstitutionPositionUpdateDto!): InstitutionPosition!
   deleteInstitutionPosition(id: String!): InstitutionPosition!
+  setAvailability(input: SetAvailabilityInput!): Availability!
+  setAvailabilityBulk(input: SetAvailabilityBulkInput!): [Availability!]!
+  setAvailabilityRecurrenceRule(input: SetAvailabilityRecurrenceRuleInput!): AvailabilityRecurrenceRule!
+  deleteAvailabilityRecurrenceRule(id: String!): Boolean!
 }
 
 input LoginInput {
@@ -5149,6 +5377,31 @@ input InstitutionPositionCreateDto {
 input InstitutionPositionUpdateDto {
   position_type: InstitutionPositionType
   user_id: String
+}
+
+input SetAvailabilityInput {
+  date: DateTime!
+  status: AvailabilityStatus!
+  note: String
+}
+
+input SetAvailabilityBulkInput {
+  start_date: DateTime!
+  end_date: DateTime!
+  status: AvailabilityStatus!
+  note: String
+}
+
+input SetAvailabilityRecurrenceRuleInput {
+  id: String
+  type: RecurrenceType!
+  status: AvailabilityStatus!
+  day_of_week: Int
+  start_date: DateTime
+  end_date: DateTime
+  effective_from: DateTime
+  effective_until: DateTime
+  note: String
 }
 
 type Subscription {

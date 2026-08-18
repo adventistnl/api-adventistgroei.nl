@@ -18,6 +18,8 @@ import { ProjectUpdateManyWithoutInstitutionNestedInput } from '../project/proje
 import { DirectMessageUpdateManyWithoutInstitutionNestedInput } from '../direct-message/direct-message-update-many-without-institution-nested.input';
 import { SubsidyRequestUpdateManyWithoutInstitutionNestedInput } from '../subsidy-request/subsidy-request-update-many-without-institution-nested.input';
 import { AnnualBudgetUpdateManyWithoutInstitutionNestedInput } from '../annual-budget/annual-budget-update-many-without-institution-nested.input';
+import { AvailabilityUpdateManyWithoutInstitutionNestedInput } from '../availability/availability-update-many-without-institution-nested.input';
+import { AvailabilityRecurrenceRuleUpdateManyWithoutInstitutionNestedInput } from '../availability-recurrence-rule/availability-recurrence-rule-update-many-without-institution-nested.input';
 
 @InputType()
 export class InstitutionUpdateWithoutPositionsInput {
@@ -98,4 +100,10 @@ export class InstitutionUpdateWithoutPositionsInput {
     @Field(() => AnnualBudgetUpdateManyWithoutInstitutionNestedInput, {nullable:true})
     @Type(() => AnnualBudgetUpdateManyWithoutInstitutionNestedInput)
     annual_budgets?: AnnualBudgetUpdateManyWithoutInstitutionNestedInput;
+
+    @Field(() => AvailabilityUpdateManyWithoutInstitutionNestedInput, {nullable:true})
+    availabilities?: AvailabilityUpdateManyWithoutInstitutionNestedInput;
+
+    @Field(() => AvailabilityRecurrenceRuleUpdateManyWithoutInstitutionNestedInput, {nullable:true})
+    availability_recurrence_rules?: AvailabilityRecurrenceRuleUpdateManyWithoutInstitutionNestedInput;
 }

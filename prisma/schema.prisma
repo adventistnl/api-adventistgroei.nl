@@ -199,6 +199,13 @@ enum PermissionResolverName {
   createInstitutionPosition
   updateInstitutionPosition
   deleteInstitutionPosition
+  // Preacher scheduling module — Phase 1 (Availability)
+  myAvailability
+  setAvailability
+  setAvailabilityBulk
+  myAvailabilityRecurrenceRules
+  setAvailabilityRecurrenceRule
+  deleteAvailabilityRecurrenceRule
 }
 
 enum InstitutionPositionType {
@@ -231,6 +238,7 @@ enum PermissionGroup {
   ANNUAL_BUDGET
   PROJECT_HISTORY
   INSTITUTION_POSITION
+  SCHEDULE
 }
 
 enum CommunicationType {
@@ -389,31 +397,33 @@ enum GenderType {
 
 // Models
 model Institution {
-  id                  String             @id @default(uuid())
-  name                String
-  denomination        String
-  description         String?
-  language_preference LanguagePreference
-  contact_id          String?            @unique
-  contact             Contact?           @relation(fields: [contact_id], references: [id])
-  created_at          DateTime           @default(now())
-  updated_at          DateTime           @updatedAt
-  created_by          String
-  updated_by          String
-  is_deleted          Boolean            @default(false)
-  deleted_at          DateTime?
-  deleted_by          String?
-  churches            Church[]
-  departments         Department[]
-  users               User[]
-  communications      Communication[]
-  notifications       Notification[]
-  settings            Setting[]
-  projects            Project[]
-  direct_messages     DirectMessage[]
-  subsidy_requests    SubsidyRequest[]
-  annual_budgets      AnnualBudget[]
-  positions           InstitutionPosition[]
+  id                            String                       @id @default(uuid())
+  name                          String
+  denomination                  String
+  description                   String?
+  language_preference           LanguagePreference
+  contact_id                    String?                      @unique
+  contact                       Contact?                     @relation(fields: [contact_id], references: [id])
+  created_at                    DateTime                     @default(now())
+  updated_at                    DateTime                     @updatedAt
+  created_by                    String
+  updated_by                    String
+  is_deleted                    Boolean                      @default(false)
+  deleted_at                    DateTime?
+  deleted_by                    String?
+  churches                      Church[]
+  departments                   Department[]
+  users                         User[]
+  communications                Communication[]
+  notifications                 Notification[]
+  settings                      Setting[]
+  projects                      Project[]
+  direct_messages               DirectMessage[]
+  subsidy_requests              SubsidyRequest[]
+  annual_budgets                AnnualBudget[]
+  positions                     InstitutionPosition[]
+  availabilities                Availability[]
+  availability_recurrence_rules AvailabilityRecurrenceRule[]
 }
 
 model Region {
@@ -527,8 +537,8 @@ model AnnualBudget {
   has_budget_record Boolean                @default(true)
   entity_type       AnnualBudgetEntityType
   transactions      BudgetTransaction[]
-  transfers_out     BudgetTransfer[]  @relation("TransfersOut")
-  transfers_in      BudgetTransfer[]  @relation("TransfersIn")
+  transfers_out     BudgetTransfer[]       @relation("TransfersOut")
+  transfers_in      BudgetTransfer[]       @relation("TransfersIn")
 }
 
 enum BudgetTransactionType {
@@ -563,23 +573,23 @@ model BudgetTransaction {
 
 enum TransferType {
   INITIAL_FUNDING // External injection into Institution
-  DISTRIBUTION    // Institution -> Department
-  REALLOCATION    // Dept -> Dept (or future Inst -> Inst)
-  REDUCTION       // Taking money back
+  DISTRIBUTION // Institution -> Department
+  REALLOCATION // Dept -> Dept (or future Inst -> Inst)
+  REDUCTION // Taking money back
 }
 
 model BudgetTransfer {
-  id              String       @id @default(uuid())
-  from_budget_id  String?      // Null for external influx
-  to_budget_id    String?      // Null if money is burnt/withdrawn from system
-  amount          Decimal      // Absolute value (positive)
-  type            TransferType
-  description     String
-  created_at      DateTime     @default(now())
-  created_by      String
+  id             String       @id @default(uuid())
+  from_budget_id String? // Null for external influx
+  to_budget_id   String? // Null if money is burnt/withdrawn from system
+  amount         Decimal // Absolute value (positive)
+  type           TransferType
+  description    String
+  created_at     DateTime     @default(now())
+  created_by     String
 
-  from_budget     AnnualBudget? @relation("TransfersOut", fields: [from_budget_id], references: [id])
-  to_budget       AnnualBudget? @relation("TransfersIn", fields: [to_budget_id], references: [id])
+  from_budget AnnualBudget? @relation("TransfersOut", fields: [from_budget_id], references: [id])
+  to_budget   AnnualBudget? @relation("TransfersIn", fields: [to_budget_id], references: [id])
 
   @@index([from_budget_id])
   @@index([to_budget_id])
@@ -615,48 +625,50 @@ model Contact {
 }
 
 model User {
-  id                        String                    @id @default(uuid())
-  name                      String
-  email                     String                    @unique
-  password                  String
-  gender                    GenderType?               @default(MALE)
-  language_preference       LanguagePreference
-  created_at                DateTime                  @default(now())
-  updated_at                DateTime                  @updatedAt
-  created_by                String
-  updated_by                String
-  is_deleted                Boolean                   @default(false)
-  deleted_at                DateTime?
-  deleted_by                String?
-  recieve_emails            Boolean                   @default(true)
-  contact_id                String?
-  contact                   Contact?                  @relation(fields: [contact_id], references: [id])
-  institution_id            String
-  institution               Institution               @relation(fields: [institution_id], references: [id])
-  church_id                 String?
-  church                    Church?                   @relation(fields: [church_id], references: [id])
-  department_id             String?
-  department                Department?               @relation(fields: [department_id], references: [id])
-  user_roles                UserRole[]
-  direct_messages           DirectMessage[]           @relation("SenderMessages")
-  direct_message_recipients DirectMessageRecipient[]  @relation("RecipientMessages")
-  notifications             Notification[]
-  event_registrations       EventRegistration[]
-  event_recipients          EventRecipient[]
-  communications            Communication[]           @relation("AuthorCommunications")
-  SubsidyRequest            SubsidyRequest[]
-  SubsidyStatus             SubsidyStatus[]
-  voluntary_projects        VoluntariesOnProjects[]
-  Project                   Project[]                 @relation("ProjectOwner")
-  co_owned_projects         Project[]                 @relation("ProjectCoOwner")
-  approved_annual_budgets   AnnualBudget[]            @relation("ApprovedAnnualBudgets")
-  project_activity_logs     ProjectActivityLog[]
-  activity_assignments      ProjectActivityAssignee[] @relation("ActivityAssignees")
-  subsidy_status_history    SubsidyStatusHistory[]
-  led_departments           Department[]              @relation("DepartmentLeader")
-  led_church                Church?                   @relation("ChurchLeader")
-  project_history           ProjectHistory[]
-  institution_positions     InstitutionPosition[]
+  id                            String                       @id @default(uuid())
+  name                          String
+  email                         String                       @unique
+  password                      String
+  gender                        GenderType?                  @default(MALE)
+  language_preference           LanguagePreference
+  created_at                    DateTime                     @default(now())
+  updated_at                    DateTime                     @updatedAt
+  created_by                    String
+  updated_by                    String
+  is_deleted                    Boolean                      @default(false)
+  deleted_at                    DateTime?
+  deleted_by                    String?
+  recieve_emails                Boolean                      @default(true)
+  contact_id                    String?
+  contact                       Contact?                     @relation(fields: [contact_id], references: [id])
+  institution_id                String
+  institution                   Institution                  @relation(fields: [institution_id], references: [id])
+  church_id                     String?
+  church                        Church?                      @relation(fields: [church_id], references: [id])
+  department_id                 String?
+  department                    Department?                  @relation(fields: [department_id], references: [id])
+  user_roles                    UserRole[]
+  direct_messages               DirectMessage[]              @relation("SenderMessages")
+  direct_message_recipients     DirectMessageRecipient[]     @relation("RecipientMessages")
+  notifications                 Notification[]
+  event_registrations           EventRegistration[]
+  event_recipients              EventRecipient[]
+  communications                Communication[]              @relation("AuthorCommunications")
+  SubsidyRequest                SubsidyRequest[]
+  SubsidyStatus                 SubsidyStatus[]
+  voluntary_projects            VoluntariesOnProjects[]
+  Project                       Project[]                    @relation("ProjectOwner")
+  co_owned_projects             Project[]                    @relation("ProjectCoOwner")
+  approved_annual_budgets       AnnualBudget[]               @relation("ApprovedAnnualBudgets")
+  project_activity_logs         ProjectActivityLog[]
+  activity_assignments          ProjectActivityAssignee[]    @relation("ActivityAssignees")
+  subsidy_status_history        SubsidyStatusHistory[]
+  led_departments               Department[]                 @relation("DepartmentLeader")
+  led_church                    Church?                      @relation("ChurchLeader")
+  project_history               ProjectHistory[]
+  institution_positions         InstitutionPosition[]
+  availabilities                Availability[]
+  availability_recurrence_rules AvailabilityRecurrenceRule[]
 }
 
 model Project {
@@ -1383,4 +1395,96 @@ model InstitutionPosition {
   @@unique([institution_id, position_type])
   @@index([institution_id])
   @@index([user_id])
+}
+
+// ---------------------------------------------------------------------------
+// Preacher scheduling module — Phase 1 (Availability)
+// See preacher-scheduling-blueprint/docs/01-corrected-blueprint.md for the full spec.
+// ---------------------------------------------------------------------------
+
+model Availability {
+  id                 String                      @id @default(uuid())
+  institution_id     String
+  institution        Institution                 @relation(fields: [institution_id], references: [id])
+  user_id            String
+  user               User                        @relation(fields: [user_id], references: [id])
+  date               DateTime                    @db.Date
+  status             AvailabilityStatus
+  source             AvailabilitySource          @default(MANUAL)
+  recurrence_rule_id String?
+  recurrence_rule    AvailabilityRecurrenceRule? @relation(fields: [recurrence_rule_id], references: [id])
+  note               String?
+  created_at         DateTime                    @default(now())
+  updated_at         DateTime                    @updatedAt
+  created_by         String
+  updated_by         String
+  is_deleted         Boolean                     @default(false)
+  deleted_at         DateTime?
+  deleted_by         String?
+
+  @@unique([user_id, date])
+  @@index([institution_id, user_id, date])
+}
+
+enum AvailabilityStatus {
+  AVAILABLE
+  UNAVAILABLE
+  VACATION
+}
+
+/// MANUAL = the preacher (or an admin) set this exact date directly, always wins.
+/// RECURRENCE_RULE = materialized from an AvailabilityRecurrenceRule; overwritten when the
+/// rule regenerates, unless a later MANUAL edit on the same date takes precedence.
+enum AvailabilitySource {
+  MANUAL
+  RECURRENCE_RULE
+}
+
+model AvailabilityHistory {
+  id              String   @id @default(uuid())
+  availability_id String
+  field_name      String
+  old_value       String?
+  new_value       String?
+  changed_by      String
+  changed_at      DateTime @default(now())
+
+  @@index([availability_id])
+}
+
+/// A preacher's weekly/date-range availability pattern, set from their Profile screen.
+/// Never read directly by gap-report/overview/invite logic — those only ever read
+/// materialized Availability rows (see Availability.source above).
+model AvailabilityRecurrenceRule {
+  id                          String             @id @default(uuid())
+  institution_id              String
+  institution                 Institution        @relation(fields: [institution_id], references: [id])
+  user_id                     String
+  user                        User               @relation(fields: [user_id], references: [id])
+  type                        RecurrenceType
+  status                      AvailabilityStatus
+  day_of_week                 Int? // 0 (Sunday)–6 (Saturday); required when type = WEEKLY
+  start_date                  DateTime?          @db.Date // required when type = DATE_RANGE
+  end_date                    DateTime?          @db.Date // required when type = DATE_RANGE
+  effective_from              DateTime           @db.Date // when a WEEKLY rule starts applying
+  effective_until             DateTime?          @db.Date // optional end date for a WEEKLY rule
+  note                        String?
+  materialized_availabilities Availability[]
+  created_at                  DateTime           @default(now())
+  updated_at                  DateTime           @updatedAt
+  created_by                  String
+  updated_by                  String
+  is_deleted                  Boolean            @default(false)
+  deleted_at                  DateTime?
+  deleted_by                  String?
+
+  @@index([institution_id, user_id])
+}
+
+/// WEEKLY covers "every Saturday available" / "never on Mondays".
+/// DATE_RANGE covers everything from a single day off to a full month or year of vacation —
+/// one flexible range instead of separate MONTHLY/YEARLY branches (simpler, same coverage).
+enum RecurrenceType {
+  WEEKLY
+  DATE_RANGE
 }

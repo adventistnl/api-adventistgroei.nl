@@ -15,6 +15,8 @@ import { DirectMessageOrderByRelationAggregateInput } from '../direct-message/di
 import { SubsidyRequestOrderByRelationAggregateInput } from '../subsidy-request/subsidy-request-order-by-relation-aggregate.input';
 import { AnnualBudgetOrderByRelationAggregateInput } from '../annual-budget/annual-budget-order-by-relation-aggregate.input';
 import { InstitutionPositionOrderByRelationAggregateInput } from '../institution-position/institution-position-order-by-relation-aggregate.input';
+import { AvailabilityOrderByRelationAggregateInput } from '../availability/availability-order-by-relation-aggregate.input';
+import { AvailabilityRecurrenceRuleOrderByRelationAggregateInput } from '../availability-recurrence-rule/availability-recurrence-rule-order-by-relation-aggregate.input';
 
 @InputType()
 export class InstitutionOrderByWithRelationInput {
@@ -101,4 +103,10 @@ export class InstitutionOrderByWithRelationInput {
 
     @Field(() => InstitutionPositionOrderByRelationAggregateInput, {nullable:true})
     positions?: InstitutionPositionOrderByRelationAggregateInput;
+
+    @Field(() => AvailabilityOrderByRelationAggregateInput, {nullable:true})
+    availabilities?: AvailabilityOrderByRelationAggregateInput;
+
+    @Field(() => AvailabilityRecurrenceRuleOrderByRelationAggregateInput, {nullable:true})
+    availability_recurrence_rules?: AvailabilityRecurrenceRuleOrderByRelationAggregateInput;
 }

@@ -13,6 +13,8 @@ import { ProjectCreateNestedManyWithoutInstitutionInput } from '../project/proje
 import { DirectMessageCreateNestedManyWithoutInstitutionInput } from '../direct-message/direct-message-create-nested-many-without-institution.input';
 import { AnnualBudgetCreateNestedManyWithoutInstitutionInput } from '../annual-budget/annual-budget-create-nested-many-without-institution.input';
 import { InstitutionPositionCreateNestedManyWithoutInstitutionInput } from '../institution-position/institution-position-create-nested-many-without-institution.input';
+import { AvailabilityCreateNestedManyWithoutInstitutionInput } from '../availability/availability-create-nested-many-without-institution.input';
+import { AvailabilityRecurrenceRuleCreateNestedManyWithoutInstitutionInput } from '../availability-recurrence-rule/availability-recurrence-rule-create-nested-many-without-institution.input';
 
 @InputType()
 export class InstitutionCreateWithoutSubsidy_requestsInput {
@@ -92,4 +94,10 @@ export class InstitutionCreateWithoutSubsidy_requestsInput {
 
     @Field(() => InstitutionPositionCreateNestedManyWithoutInstitutionInput, {nullable:true})
     positions?: InstitutionPositionCreateNestedManyWithoutInstitutionInput;
+
+    @Field(() => AvailabilityCreateNestedManyWithoutInstitutionInput, {nullable:true})
+    availabilities?: AvailabilityCreateNestedManyWithoutInstitutionInput;
+
+    @Field(() => AvailabilityRecurrenceRuleCreateNestedManyWithoutInstitutionInput, {nullable:true})
+    availability_recurrence_rules?: AvailabilityRecurrenceRuleCreateNestedManyWithoutInstitutionInput;
 }

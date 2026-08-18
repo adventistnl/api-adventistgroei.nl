@@ -30,3 +30,5 @@ export * from './subsidy-request-item.dto';
 export * from './subsidy-request.dto';
 export * from './subsidy-status.dto';
 export * from './user.dto';
+export * from './availability.dto';
+export * from './availability-recurrence-rule.dto';

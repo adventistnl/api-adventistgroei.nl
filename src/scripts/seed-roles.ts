@@ -122,6 +122,13 @@ const roles = [
       { key_code: 'PROJECT_ADJUSTMENT_TASK_ADD', is_essential: true },
       { key_code: 'PROJECT_ADJUSTMENT_TASK_TOGGLE', is_essential: true },
       { key_code: 'PROJECT_ADJUSTMENT_TASK_REMOVE', is_essential: true },
+      // Preacher scheduling module — Phase 1 (Availability)
+      { key_code: 'AVAILABILITY_MINE_ACCESS', is_essential: true },
+      { key_code: 'AVAILABILITY_SET', is_essential: true },
+      { key_code: 'AVAILABILITY_BULK_SET', is_essential: true },
+      { key_code: 'AVAILABILITY_RECURRENCE_RULES_ACCESS', is_essential: true },
+      { key_code: 'AVAILABILITY_RECURRENCE_RULE_SET', is_essential: true },
+      { key_code: 'AVAILABILITY_RECURRENCE_RULE_DELETE', is_essential: true },
     ],
   },
   {

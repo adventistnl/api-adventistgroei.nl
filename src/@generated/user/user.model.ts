@@ -24,6 +24,8 @@ import { ProjectActivityAssignee } from '../project-activity-assignee/project-ac
 import { SubsidyStatusHistory } from '../subsidy-status-history/subsidy-status-history.model';
 import { ProjectHistory } from '../project-history/project-history.model';
 import { InstitutionPosition } from '../institution-position/institution-position.model';
+import { Availability } from '../availability/availability.model';
+import { AvailabilityRecurrenceRule } from '../availability-recurrence-rule/availability-recurrence-rule.model';
 import { UserCount } from './user-count.output';
 
 @ObjectType()
@@ -154,6 +156,12 @@ export class User {
 
     @Field(() => [InstitutionPosition], {nullable:true})
     institution_positions?: Array<InstitutionPosition>;
+
+    @Field(() => [Availability], {nullable:true})
+    availabilities?: Array<Availability>;
+
+    @Field(() => [AvailabilityRecurrenceRule], {nullable:true})
+    availability_recurrence_rules?: Array<AvailabilityRecurrenceRule>;
 
     @Field(() => UserCount, {nullable:false})
     _count?: UserCount;

@@ -20,6 +20,8 @@ import { DirectMessageListRelationFilter } from '../direct-message/direct-messag
 import { SubsidyRequestListRelationFilter } from '../subsidy-request/subsidy-request-list-relation-filter.input';
 import { AnnualBudgetListRelationFilter } from '../annual-budget/annual-budget-list-relation-filter.input';
 import { InstitutionPositionListRelationFilter } from '../institution-position/institution-position-list-relation-filter.input';
+import { AvailabilityListRelationFilter } from '../availability/availability-list-relation-filter.input';
+import { AvailabilityRecurrenceRuleListRelationFilter } from '../availability-recurrence-rule/availability-recurrence-rule-list-relation-filter.input';
 
 @InputType()
 export class InstitutionWhereUniqueInput {
@@ -115,4 +117,10 @@ export class InstitutionWhereUniqueInput {
 
     @Field(() => InstitutionPositionListRelationFilter, {nullable:true})
     positions?: InstitutionPositionListRelationFilter;
+
+    @Field(() => AvailabilityListRelationFilter, {nullable:true})
+    availabilities?: AvailabilityListRelationFilter;
+
+    @Field(() => AvailabilityRecurrenceRuleListRelationFilter, {nullable:true})
+    availability_recurrence_rules?: AvailabilityRecurrenceRuleListRelationFilter;
 }

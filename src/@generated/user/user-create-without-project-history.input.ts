@@ -26,6 +26,8 @@ import { SubsidyStatusHistoryCreateNestedManyWithoutUserInput } from '../subsidy
 import { DepartmentCreateNestedManyWithoutLeaderInput } from '../department/department-create-nested-many-without-leader.input';
 import { ChurchCreateNestedOneWithoutLeaderInput } from '../church/church-create-nested-one-without-leader.input';
 import { InstitutionPositionCreateNestedManyWithoutUserInput } from '../institution-position/institution-position-create-nested-many-without-user.input';
+import { AvailabilityCreateNestedManyWithoutUserInput } from '../availability/availability-create-nested-many-without-user.input';
+import { AvailabilityRecurrenceRuleCreateNestedManyWithoutUserInput } from '../availability-recurrence-rule/availability-recurrence-rule-create-nested-many-without-user.input';
 
 @InputType()
 export class UserCreateWithoutProject_historyInput {
@@ -158,4 +160,10 @@ export class UserCreateWithoutProject_historyInput {
 
     @Field(() => InstitutionPositionCreateNestedManyWithoutUserInput, {nullable:true})
     institution_positions?: InstitutionPositionCreateNestedManyWithoutUserInput;
+
+    @Field(() => AvailabilityCreateNestedManyWithoutUserInput, {nullable:true})
+    availabilities?: AvailabilityCreateNestedManyWithoutUserInput;
+
+    @Field(() => AvailabilityRecurrenceRuleCreateNestedManyWithoutUserInput, {nullable:true})
+    availability_recurrence_rules?: AvailabilityRecurrenceRuleCreateNestedManyWithoutUserInput;
 }

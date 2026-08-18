@@ -162,6 +162,13 @@ const permissionsEnabledToClient = [
   { name: 'toggle adjustment task', description: 'Mark or unmark an adjustment task as completed', resolver_name: 'toggleAdjustmentTask' as PermissionResolverName, group: 'PROJECT_HISTORY' as PermissionGroup, key_code: 'PROJECT_ADJUSTMENT_TASK_TOGGLE', disabled_to_client: false },
   { name: 'remove adjustment task', description: 'Remove a task from an adjustment', resolver_name: 'removeAdjustmentTask' as PermissionResolverName, group: 'PROJECT_HISTORY' as PermissionGroup, key_code: 'PROJECT_ADJUSTMENT_TASK_REMOVE', disabled_to_client: false },
   { name: 'read ledger history', description: 'Access to financial ledger history (statement)', resolver_name: 'ledgerHistory' as PermissionResolverName, group: 'ANNUAL_BUDGET' as PermissionGroup, key_code: 'LEDGER_HISTORY_ACCESS', disabled_to_client: false },
+  // Preacher scheduling module — Phase 1 (Availability)
+  { name: 'read my availability', description: 'Access to the caller\'s own preacher availability calendar', resolver_name: 'myAvailability' as PermissionResolverName, group: 'SCHEDULE' as PermissionGroup, key_code: 'AVAILABILITY_MINE_ACCESS', disabled_to_client: false },
+  { name: 'set availability', description: 'Set the caller\'s own availability for a single date', resolver_name: 'setAvailability' as PermissionResolverName, group: 'SCHEDULE' as PermissionGroup, key_code: 'AVAILABILITY_SET', disabled_to_client: false },
+  { name: 'set availability in bulk', description: 'Set the caller\'s own availability across a date range in one action', resolver_name: 'setAvailabilityBulk' as PermissionResolverName, group: 'SCHEDULE' as PermissionGroup, key_code: 'AVAILABILITY_BULK_SET', disabled_to_client: false },
+  { name: 'read my availability recurrence rules', description: 'Access to the caller\'s own weekly/date-range availability patterns', resolver_name: 'myAvailabilityRecurrenceRules' as PermissionResolverName, group: 'SCHEDULE' as PermissionGroup, key_code: 'AVAILABILITY_RECURRENCE_RULES_ACCESS', disabled_to_client: false },
+  { name: 'set availability recurrence rule', description: 'Create or update one of the caller\'s own weekly/date-range availability patterns', resolver_name: 'setAvailabilityRecurrenceRule' as PermissionResolverName, group: 'SCHEDULE' as PermissionGroup, key_code: 'AVAILABILITY_RECURRENCE_RULE_SET', disabled_to_client: false },
+  { name: 'delete availability recurrence rule', description: 'Delete one of the caller\'s own weekly/date-range availability patterns', resolver_name: 'deleteAvailabilityRecurrenceRule' as PermissionResolverName, group: 'SCHEDULE' as PermissionGroup, key_code: 'AVAILABILITY_RECURRENCE_RULE_DELETE', disabled_to_client: false },
 ];
 
 async function main() {

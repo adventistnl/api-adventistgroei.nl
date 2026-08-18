@@ -25,6 +25,8 @@ import { SubsidyStatusHistoryOrderByRelationAggregateInput } from '../subsidy-st
 import { DepartmentOrderByRelationAggregateInput } from '../department/department-order-by-relation-aggregate.input';
 import { ProjectHistoryOrderByRelationAggregateInput } from '../project-history/project-history-order-by-relation-aggregate.input';
 import { InstitutionPositionOrderByRelationAggregateInput } from '../institution-position/institution-position-order-by-relation-aggregate.input';
+import { AvailabilityOrderByRelationAggregateInput } from '../availability/availability-order-by-relation-aggregate.input';
+import { AvailabilityRecurrenceRuleOrderByRelationAggregateInput } from '../availability-recurrence-rule/availability-recurrence-rule-order-by-relation-aggregate.input';
 
 @InputType()
 export class UserOrderByWithRelationInput {
@@ -173,4 +175,10 @@ export class UserOrderByWithRelationInput {
 
     @Field(() => InstitutionPositionOrderByRelationAggregateInput, {nullable:true})
     institution_positions?: InstitutionPositionOrderByRelationAggregateInput;
+
+    @Field(() => AvailabilityOrderByRelationAggregateInput, {nullable:true})
+    availabilities?: AvailabilityOrderByRelationAggregateInput;
+
+    @Field(() => AvailabilityRecurrenceRuleOrderByRelationAggregateInput, {nullable:true})
+    availability_recurrence_rules?: AvailabilityRecurrenceRuleOrderByRelationAggregateInput;
 }
