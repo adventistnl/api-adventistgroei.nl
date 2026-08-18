@@ -231,6 +231,8 @@ enum PermissionResolverName {
   myPreacherRegionAccess
   grantPreacherRegionAccess
   revokePreacherRegionAccess
+  // Preacher scheduling module — Phase 5 (Monthly close)
+  triggerMonthlyClose
 }
 
 enum InstitutionPositionType {

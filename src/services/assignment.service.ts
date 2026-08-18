@@ -42,6 +42,7 @@ export class AssignmentService {
     if (church.leader_id !== userId) {
       throw new ForbiddenException('You can only assign a preacher to a church you lead');
     }
+    await this.assertSlotNotLocked(input.church_id, input.date);
     return this.applyAssignment(input, church.institution_id, AssignmentOrigin.SELF_FILLED, userId);
   }
 
@@ -97,6 +98,15 @@ export class AssignmentService {
     });
     if (!serviceEntry?.has_service) {
       throw new BadRequestException('This church has no scheduled service on this date');
+    }
+  }
+
+  /** R10 — own-scope edits can't touch a slot already locked by monthly close; setAssignmentAny
+   * (admin/department-leader) is the "explicit admin flow" that may still override it. */
+  private async assertSlotNotLocked(churchId: string, date: Date): Promise<void> {
+    const existing = await this.assignmentRepository.findOne(churchId, date);
+    if (existing?.locked_at) {
+      throw new BadRequestException('This month has been closed and can no longer be edited directly — contact an administrator');
     }
   }
 }

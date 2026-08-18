@@ -154,6 +154,8 @@ const roles = [
       { key_code: 'PREACHER_REGION_ACCESS_MINE_ACCESS', is_essential: true },
       { key_code: 'PREACHER_REGION_ACCESS_GRANT', is_essential: true },
       { key_code: 'PREACHER_REGION_ACCESS_REVOKE', is_essential: true },
+      // Preacher scheduling module — Phase 5 (Monthly close)
+      { key_code: 'MONTHLY_CLOSE_TRIGGER', is_essential: true },
     ],
   },
   {
@@ -558,6 +560,8 @@ const roles = [
       { key_code: 'ASSIGNMENT_INVITE_TEMPLATE_DELETE', is_essential: true },
       { key_code: 'PREACHER_REGION_ACCESS_GRANT', is_essential: true },
       { key_code: 'PREACHER_REGION_ACCESS_REVOKE', is_essential: true },
+      // Preacher scheduling module — Phase 5 (any church, R11 item E)
+      { key_code: 'MONTHLY_CLOSE_TRIGGER', is_essential: true },
     ],
   },
   {
@@ -643,6 +647,8 @@ const roles = [
       { key_code: 'ASSIGNMENT_INVITE_TEMPLATE_DELETE', is_essential: true },
       { key_code: 'PREACHER_REGION_ACCESS_GRANT', is_essential: true },
       { key_code: 'PREACHER_REGION_ACCESS_REVOKE', is_essential: true },
+      // Preacher scheduling module — Phase 5 (any church, R11 item E)
+      { key_code: 'MONTHLY_CLOSE_TRIGGER', is_essential: true },
     ],
   },
   {

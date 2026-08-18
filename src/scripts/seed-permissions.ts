@@ -194,6 +194,8 @@ const permissionsEnabledToClient = [
   { name: 'read my preacher region access', description: 'Access to the caller\'s own granted preacher regions', resolver_name: 'myPreacherRegionAccess' as PermissionResolverName, group: 'SCHEDULE' as PermissionGroup, key_code: 'PREACHER_REGION_ACCESS_MINE_ACCESS', disabled_to_client: false },
   { name: 'grant preacher region access', description: 'Grant a preacher extended reach into another region', resolver_name: 'grantPreacherRegionAccess' as PermissionResolverName, group: 'SCHEDULE' as PermissionGroup, key_code: 'PREACHER_REGION_ACCESS_GRANT', disabled_to_client: false },
   { name: 'revoke preacher region access', description: 'Revoke a preacher\'s extended reach into a region', resolver_name: 'revokePreacherRegionAccess' as PermissionResolverName, group: 'SCHEDULE' as PermissionGroup, key_code: 'PREACHER_REGION_ACCESS_REVOKE', disabled_to_client: false },
+  // Preacher scheduling module — Phase 5 (Monthly close)
+  { name: 'trigger monthly close', description: 'Manually close a month for your institution: auto-accept pending requests and lock the schedule', resolver_name: 'triggerMonthlyClose' as PermissionResolverName, group: 'SCHEDULE' as PermissionGroup, key_code: 'MONTHLY_CLOSE_TRIGGER', disabled_to_client: false },
 ];
 
 async function main() {

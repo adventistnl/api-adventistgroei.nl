@@ -31,6 +31,22 @@ export class AssignmentRepository {
     return this.prisma.assignment.findUnique({ where: { church_id_date: { church_id: churchId, date } } });
   }
 
+  /** R10 — every not-yet-locked assignment within the month being closed. */
+  async findUnlockedByInstitutionAndMonth(institutionId: string, monthStart: Date, monthEnd: Date): Promise<Assignment[]> {
+    return this.prisma.assignment.findMany({
+      where: { institution_id: institutionId, is_deleted: false, locked_at: null, date: { gte: monthStart, lt: monthEnd } },
+    });
+  }
+
+  /** R10 — locks an assignment against further own-scope edits; DRAFT (never filled) becomes
+   * LOCKED, CONFIRMED keeps its status (locked_at alone marks it as closed). */
+  async lock(id: string, newStatus: AssignmentStatus, actorId: string): Promise<Assignment> {
+    return this.prisma.assignment.update({
+      where: { id },
+      data: { status: newStatus, locked_at: new Date(), updated_by: actorId },
+    });
+  }
+
   async upsert(params: {
     institutionId: string;
     churchId: string;

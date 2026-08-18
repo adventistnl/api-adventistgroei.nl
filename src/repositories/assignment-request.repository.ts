@@ -23,6 +23,14 @@ export class AssignmentRequestRepository {
     });
   }
 
+  /** R10 — every still-pending request within the month being closed, for auto-acceptance. */
+  async findPendingForMonth(institutionId: string, monthStart: Date, monthEnd: Date): Promise<AssignmentRequest[]> {
+    return this.prisma.assignmentRequest.findMany({
+      where: { institution_id: institutionId, status: RequestStatus.PENDING, is_deleted: false, date: { gte: monthStart, lt: monthEnd } },
+      include: { church: true, user: true, template: true, institution: true },
+    });
+  }
+
   async findById(id: string): Promise<AssignmentRequest | null> {
     return this.prisma.assignmentRequest.findUnique({ where: { id } });
   }

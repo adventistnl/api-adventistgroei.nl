@@ -41,3 +41,4 @@ export * from './assignment.service';
 export * from './gap-report.service';
 export * from './assignment-invite-template.service';
 export * from './assignment-request.service';
+export * from './monthly-close.service';
