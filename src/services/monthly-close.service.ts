@@ -5,8 +5,10 @@ import { AssignmentRequestRepository } from '../repositories/assignment-request.
 import { SettingRepository } from '../repositories/setting.repository';
 import { UserRepository } from '../repositories/user.repository';
 import { NotificationService } from './notification.service';
+import { EmailService } from './email.service';
 import { AssignmentRequestService } from './assignment-request.service';
 import { AssignmentStatus } from '../@generated/prisma/assignment-status.enum';
+import { LanguagePreference } from '../@generated/prisma/language-preference.enum';
 import { MonthlyCloseResult } from '../dto/monthly-close.dto';
 
 const DEFAULT_CLOSE_DAY = 10;
@@ -37,6 +39,7 @@ export class MonthlyCloseService {
     private readonly settingRepository: SettingRepository,
     private readonly userRepository: UserRepository,
     private readonly notificationService: NotificationService,
+    private readonly emailService: EmailService,
     private readonly assignmentRequestService: AssignmentRequestService,
   ) {}
 
@@ -124,6 +127,7 @@ export class MonthlyCloseService {
     let sent = 0;
     for (const info of openByChurch.values()) {
       if (!info.leaderId) continue;
+      const metadata = { churchName: info.name, count: info.count, month: targetMonth };
       await this.notificationService
         .createForUser({
           userId: info.leaderId,
@@ -131,10 +135,11 @@ export class MonthlyCloseService {
           type: 'MONTHLY_CLOSE_OPEN_SLOTS',
           title: 'notifications.monthly_close_reminder_open_slots_title',
           message: 'notifications.monthly_close_reminder_open_slots_message',
-          metadata: { churchName: info.name, count: info.count, month: targetMonth },
+          metadata,
           actorUserId: actorId,
         })
         .catch(() => {});
+      await this.sendReminderEmail(info.leaderId, 'MONTHLY_CLOSE_OPEN_SLOTS', metadata);
       sent++;
     }
     return sent;
@@ -160,6 +165,7 @@ export class MonthlyCloseService {
 
     let sent = 0;
     for (const userId of missing) {
+      const metadata = { month: targetMonth };
       await this.notificationService
         .createForUser({
           userId,
@@ -167,12 +173,35 @@ export class MonthlyCloseService {
           type: 'MONTHLY_CLOSE_INCOMPLETE_AVAILABILITY',
           title: 'notifications.monthly_close_reminder_incomplete_availability_title',
           message: 'notifications.monthly_close_reminder_incomplete_availability_message',
-          metadata: { month: targetMonth },
+          metadata,
           actorUserId: actorId,
         })
         .catch(() => {});
+      await this.sendReminderEmail(userId, 'MONTHLY_CLOSE_INCOMPLETE_AVAILABILITY', metadata);
       sent++;
     }
     return sent;
+  }
+
+  /** R6.1 item 7 — email counterpart to the two pre-close reminder notifications above. */
+  private async sendReminderEmail(
+    userId: string,
+    eventType: 'MONTHLY_CLOSE_OPEN_SLOTS' | 'MONTHLY_CLOSE_INCOMPLETE_AVAILABILITY',
+    vars: Record<string, string | number>,
+  ): Promise<void> {
+    try {
+      const user = await this.userRepository.findById(userId);
+      if (!user?.email) return;
+      await this.emailService.sendScheduleNotificationEmail({
+        to: user.email,
+        recipientName: user.name,
+        language: user.language_preference as LanguagePreference,
+        eventType,
+        vars,
+        ctaUrl: `${process.env.FRONTEND_URL}/schedule`,
+      });
+    } catch {
+      /* email failures never block the reminder pass */
+    }
   }
 }
