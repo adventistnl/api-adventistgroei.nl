@@ -66,7 +66,15 @@ export class AssignmentRequestService {
     });
 
     if (church!.leader_id) {
-      await this.notify(church!.leader_id, church!.institution_id, 'ASSIGNMENT_REQUEST_RECEIVED', `${user!.name} requested to preach at ${church!.name}.`, userId);
+      await this.notify(
+        church!.leader_id,
+        church!.institution_id,
+        'ASSIGNMENT_REQUEST_RECEIVED',
+        'notifications.assignment_request_received_title',
+        'notifications.assignment_request_received_message',
+        { preacherName: user!.name, churchName: church!.name },
+        userId,
+      );
     }
 
     return request;
@@ -126,8 +134,32 @@ export class AssignmentRequestService {
 
     const caller = await this.userRepository.findById(callerId);
     const vars = { churchName, date: date.toISOString().slice(0, 10), preacherName: invitedUser!.name, inviterName: caller!.name };
-    const message = template ? render(template.body, vars) : `You've been invited to preach at ${churchName} on ${vars.date}.`;
-    await this.notify(invitedUserId, institutionId, 'ASSIGNMENT_INVITE_RECEIVED', message, callerId);
+
+    if (template) {
+      // Admin-authored, Mustache-rendered free text — already in whatever language the admin
+      // wrote it in, so it's stored and shown as-is via the 'custom_text' passthrough key
+      // instead of a fixed translation key (see notifications.custom_text: "{{text}}").
+      const customText = render(template.body, vars);
+      await this.notify(
+        invitedUserId,
+        institutionId,
+        'ASSIGNMENT_INVITE_RECEIVED',
+        'notifications.assignment_invite_custom_title',
+        'notifications.custom_text',
+        { text: customText, churchName, date: vars.date },
+        callerId,
+      );
+    } else {
+      await this.notify(
+        invitedUserId,
+        institutionId,
+        'ASSIGNMENT_INVITE_RECEIVED',
+        'notifications.assignment_invite_received_title',
+        'notifications.assignment_invite_received_message',
+        { churchName, date: vars.date },
+        callerId,
+      );
+    }
 
     return request;
   }
@@ -159,14 +191,40 @@ export class AssignmentRequestService {
       }
     } else {
       this.assertCanRespond(request, church!, callerId);
+      // R10 — once the month is locked, own-scope responses can no longer change the outcome;
+      // only the *Any (admin/department-leader) path may still override a locked slot.
+      await this.assertSlotNotLocked(request.church_id, request.date);
     }
 
     if (!accept) {
       const declined = await this.requestRepository.updateStatus(id, RequestStatus.DECLINED, callerId);
-      await this.notifyOtherParty(request, church!, 'ASSIGNMENT_REQUEST_DECLINED', 'Your assignment request was declined.');
+      await this.notifyOtherParty(
+        request,
+        church!,
+        'ASSIGNMENT_REQUEST_DECLINED',
+        'notifications.assignment_request_declined_title',
+        'notifications.assignment_request_declined_message',
+        { churchName: church!.name, date: request.date.toISOString().slice(0, 10) },
+      );
       return declined;
     }
 
+    const accepted = await this.acceptRequest(request, callerId);
+    await this.notifyOtherParty(
+      request,
+      church!,
+      'ASSIGNMENT_REQUEST_ACCEPTED',
+      'notifications.assignment_request_accepted_title',
+      'notifications.assignment_request_accepted_message',
+      { churchName: church!.name, date: request.date.toISOString().slice(0, 10) },
+    );
+
+    return accepted;
+  }
+
+  /** Confirms the underlying Assignment for an accepted request and marks the request ACCEPTED,
+   * shared by the interactive respond() path and R10's automated monthly-close auto-acceptance. */
+  private async acceptRequest(request: AssignmentRequest, actorId: string): Promise<AssignmentRequest> {
     const origin = request.type === RequestType.PREACHER_REQUESTED ? AssignmentOrigin.PREACHER_REQUESTED : AssignmentOrigin.CHURCH_INVITED;
     const before = await this.assignmentRepository.findOne(request.church_id, request.date);
     const assignment = await this.assignmentRepository.upsert({
@@ -176,21 +234,46 @@ export class AssignmentRequestService {
       userId: request.user_id,
       status: AssignmentStatus.CONFIRMED,
       origin,
-      actorId: callerId,
+      actorId,
     });
     await this.assignmentRepository.recordHistory({
       assignmentId: assignment.id,
       fieldName: 'status',
       oldValue: before?.status ?? null,
       newValue: AssignmentStatus.CONFIRMED,
-      changedBy: callerId,
+      changedBy: actorId,
     });
 
-    const accepted = await this.requestRepository.updateStatus(id, RequestStatus.ACCEPTED, callerId);
-    await this.requestRepository.supersedeOthers(request.church_id, request.date, id, callerId);
-    await this.notifyOtherParty(request, church!, 'ASSIGNMENT_REQUEST_ACCEPTED', 'Your assignment request was accepted.');
-
+    const accepted = await this.requestRepository.updateStatus(request.id, RequestStatus.ACCEPTED, actorId);
+    await this.requestRepository.supersedeOthers(request.church_id, request.date, request.id, actorId);
     return accepted;
+  }
+
+  /** R10 — called by MonthlyCloseService for each still-pending request in the month being
+   * closed; behaves like an accepted response but notifies the preacher that it happened
+   * automatically rather than that "the other party accepted it". */
+  async autoAcceptForMonthlyClose(request: AssignmentRequest, actorId: string): Promise<AssignmentRequest> {
+    const church = await this.churchRepository.findById(request.church_id);
+    const accepted = await this.acceptRequest(request, actorId);
+    await this.notify(
+      request.user_id,
+      request.institution_id,
+      'MONTHLY_CLOSE_AUTO_CONFIRMED',
+      'notifications.monthly_close_auto_confirmed_title',
+      'notifications.monthly_close_auto_confirmed_message',
+      { churchName: church?.name ?? '', date: request.date.toISOString().slice(0, 10) },
+      actorId,
+    );
+    return accepted;
+  }
+
+  /** R10 — an own-scope response can't change a slot whose Assignment was already locked by
+   * monthly close; the *Any admin/department-leader path is the "explicit admin flow" override. */
+  private async assertSlotNotLocked(churchId: string, date: Date): Promise<void> {
+    const existing = await this.assignmentRepository.findOne(churchId, date);
+    if (existing?.locked_at) {
+      throw new ConflictException('This month has been closed and can no longer be edited directly — contact an administrator');
+    }
   }
 
   /** R6 — churches with an open slot within the caller's own reach. */
@@ -312,14 +395,34 @@ export class AssignmentRequestService {
     }
   }
 
-  private async notifyOtherParty(request: AssignmentRequest, church: { leader_id: string | null }, type: string, message: string): Promise<void> {
+  private async notifyOtherParty(
+    request: AssignmentRequest,
+    church: { leader_id: string | null },
+    type: string,
+    title: string,
+    message: string,
+    metadata: Record<string, unknown>,
+  ): Promise<void> {
     const recipientId = request.type === RequestType.CHURCH_INVITED ? request.user_id : church.leader_id;
     if (!recipientId) return;
-    await this.notify(recipientId, request.institution_id, type, message, request.user_id);
+    await this.notify(recipientId, request.institution_id, type, title, message, metadata, request.user_id);
   }
 
-  private async notify(userId: string, institutionId: string, type: string, message: string, actorId: string): Promise<void> {
-    await this.notificationService.createForUser({ userId, institutionId, type, message, actorUserId: actorId }).catch(() => {
+  /**
+   * `title`/`message` must be i18next translation keys (e.g. 'notifications.foo_title'), not
+   * rendered text — the frontend resolves them via t(key, metadata) in the recipient's own
+   * language, matching the convention established by ProjectHistoryService.buildNotificationPayload().
+   */
+  private async notify(
+    userId: string,
+    institutionId: string,
+    type: string,
+    title: string,
+    message: string,
+    metadata: Record<string, unknown>,
+    actorId: string,
+  ): Promise<void> {
+    await this.notificationService.createForUser({ userId, institutionId, type, title, message, metadata, actorUserId: actorId }).catch(() => {
       /* notification failures never block the underlying scheduling action */
     });
   }

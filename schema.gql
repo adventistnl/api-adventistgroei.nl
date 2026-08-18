@@ -1155,6 +1155,7 @@ enum PermissionResolverName {
   myPreacherRegionAccess
   grantPreacherRegionAccess
   revokePreacherRegionAccess
+  triggerMonthlyClose
 }
 
 enum PermissionGroup {
@@ -2245,6 +2246,11 @@ type OpenSlotForPreacher {
   churchId: String!
   churchName: String!
   date: DateTime!
+}
+
+type MonthlyCloseResult {
+  autoAccepted: Float!
+  locked: Float!
 }
 
 type MarkAllReadResult {
@@ -5315,6 +5321,7 @@ type Mutation {
   respondToAssignmentRequestAny(id: String!, accept: Boolean!): AssignmentRequest!
   grantPreacherRegionAccess(user_id: String!, region_id: String!): PreacherRegionAccess!
   revokePreacherRegionAccess(id: String!): Boolean!
+  triggerMonthlyClose(month: String!): MonthlyCloseResult!
 }
 
 input LoginInput {

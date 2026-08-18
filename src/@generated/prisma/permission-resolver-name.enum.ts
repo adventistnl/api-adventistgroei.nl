@@ -181,7 +181,8 @@ export enum PermissionResolverName {
     deleteAssignmentInviteTemplate = "deleteAssignmentInviteTemplate",
     myPreacherRegionAccess = "myPreacherRegionAccess",
     grantPreacherRegionAccess = "grantPreacherRegionAccess",
-    revokePreacherRegionAccess = "revokePreacherRegionAccess"
+    revokePreacherRegionAccess = "revokePreacherRegionAccess",
+    triggerMonthlyClose = "triggerMonthlyClose"
 }
 
 

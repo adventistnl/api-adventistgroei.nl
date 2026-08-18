@@ -34,3 +34,4 @@ export * from './assignment.resolver';
 export * from './gap-report.resolver';
 export * from './assignment-invite-template.resolver';
 export * from './assignment-request.resolver';
+export * from './monthly-close.resolver';
