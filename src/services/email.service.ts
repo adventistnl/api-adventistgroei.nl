@@ -7,6 +7,7 @@ import { RefundRequestedEmailDto } from '../dto/refund-requested-email.dto';
 import { ProjectStatusChangedEmailDto } from '../dto/project-status-changed-email.dto';
 import { SubsidyStatusChangedEmailDto } from '../dto/subsidy-status-changed-email.dto';
 import { EmailVerificationDto } from '../dto/email-verification.dto';
+import { ScheduleNotificationEmailDto } from '../dto/schedule-notification-email.dto';
 import { PrismaService } from './prisma.service';
 
 @Injectable()
@@ -78,5 +79,13 @@ export class EmailService {
   async sendSubsidyStatusChangedFinanceEmail(data: SubsidyStatusChangedEmailDto): Promise<void> {
     if (!(await this.canReceiveOptionalEmails(data.to))) return;
     await this.nodemailerRepository.sendSubsidyStatusChangedFinanceEmail(data);
+  }
+
+  /** R6.1 item 7 — email for every scheduling event requiring action (invite, request,
+   * accept/decline, monthly-close reminders). The repository itself also checks the
+   * preference; this call additionally guards against sending when the address isn't set. */
+  async sendScheduleNotificationEmail(data: ScheduleNotificationEmailDto): Promise<void> {
+    if (!(await this.canReceiveOptionalEmails(data.to))) return;
+    await this.nodemailerRepository.sendScheduleNotificationEmail(data);
   }
 }

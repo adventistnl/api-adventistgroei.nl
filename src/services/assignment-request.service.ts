@@ -8,6 +8,9 @@ import { ChurchRepository } from '../repositories/church.repository';
 import { UserRepository } from '../repositories/user.repository';
 import { PrismaService } from './prisma.service';
 import { NotificationService } from './notification.service';
+import { EmailService } from './email.service';
+import { ScheduleNotificationEventType } from '../dto/schedule-notification-email.dto';
+import { LanguagePreference } from '../@generated/prisma/language-preference.enum';
 import { AssignmentRequest } from '../@generated/assignment-request/assignment-request.model';
 import { PreacherRegionAccess } from '../@generated/preacher-region-access/preacher-region-access.model';
 import { RequestType } from '../@generated/prisma/request-type.enum';
@@ -17,6 +20,14 @@ import { AssignmentStatus } from '../@generated/prisma/assignment-status.enum';
 import { AvailabilityStatus } from '../@generated/prisma/availability-status.enum';
 import { OpenSlotForPreacher } from '../dto/assignment-request.dto';
 import type { User } from '../@generated/user/user.model';
+
+const SCHEDULE_EMAIL_EVENT_TYPES = new Set<ScheduleNotificationEventType>([
+  'ASSIGNMENT_REQUEST_RECEIVED',
+  'ASSIGNMENT_INVITE_RECEIVED',
+  'ASSIGNMENT_REQUEST_ACCEPTED',
+  'ASSIGNMENT_REQUEST_DECLINED',
+  'MONTHLY_CLOSE_AUTO_CONFIRMED',
+]);
 
 function parseMonth(month: string): { start: Date; end: Date } {
   const match = /^(\d{4})-(\d{2})$/.exec(month);
@@ -39,6 +50,7 @@ export class AssignmentRequestService {
     private readonly userRepository: UserRepository,
     private readonly prisma: PrismaService,
     private readonly notificationService: NotificationService,
+    private readonly emailService: EmailService,
   ) {}
 
   async myAssignmentRequests(userId: string): Promise<AssignmentRequest[]> {
@@ -412,6 +424,10 @@ export class AssignmentRequestService {
    * `title`/`message` must be i18next translation keys (e.g. 'notifications.foo_title'), not
    * rendered text — the frontend resolves them via t(key, metadata) in the recipient's own
    * language, matching the convention established by ProjectHistoryService.buildNotificationPayload().
+   *
+   * Also dispatches an email for the same event (R6.1 item 7 — this audience doesn't check the
+   * dashboard on their own) whenever `type` is a recognized scheduling event; failures on either
+   * side never block the underlying scheduling action.
    */
   private async notify(
     userId: string,
@@ -422,8 +438,27 @@ export class AssignmentRequestService {
     metadata: Record<string, unknown>,
     actorId: string,
   ): Promise<void> {
-    await this.notificationService.createForUser({ userId, institutionId, type, title, message, metadata, actorUserId: actorId }).catch(() => {
-      /* notification failures never block the underlying scheduling action */
-    });
+    await Promise.all([
+      this.notificationService.createForUser({ userId, institutionId, type, title, message, metadata, actorUserId: actorId }).catch(() => {}),
+      this.sendScheduleEmail(userId, type, metadata),
+    ]);
+  }
+
+  private async sendScheduleEmail(userId: string, type: string, metadata: Record<string, unknown>): Promise<void> {
+    if (!SCHEDULE_EMAIL_EVENT_TYPES.has(type as ScheduleNotificationEventType)) return;
+    try {
+      const user = await this.userRepository.findById(userId);
+      if (!user?.email) return;
+      await this.emailService.sendScheduleNotificationEmail({
+        to: user.email,
+        recipientName: user.name,
+        language: user.language_preference as LanguagePreference,
+        eventType: type as ScheduleNotificationEventType,
+        vars: metadata as Record<string, string | number>,
+        ctaUrl: `${process.env.FRONTEND_URL}/schedule/invitations`,
+      });
+    } catch {
+      /* email failures never block the underlying scheduling action */
+    }
   }
 }

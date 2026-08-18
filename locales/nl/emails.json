@@ -52,5 +52,22 @@
   "subsidyStatusChanged.finance.waiting_refund.subject": "Terugbetaling Aangevraagd — Actie Vereist: {{subsidyDescription}}",
   "subsidyStatusChanged.finance.waiting_refund.body": "Er is een terugbetalingsverzoek ingediend voor subsidie \"{{subsidyDescription}}\" (project \"{{projectName}}\"). Verwerk de terugbetaling.",
   "subsidyStatusChanged.finance.waiting_documents.subject": "Documenten Ingediend — Validatie Vereist: {{subsidyDescription}}",
-  "subsidyStatusChanged.finance.waiting_documents.body": "Het lid heeft ontvangstbewijzen ingediend voor subsidie \"{{subsidyDescription}}\" (project \"{{projectName}}\"). Controleer en valideer de documenten."
+  "subsidyStatusChanged.finance.waiting_documents.body": "Het lid heeft ontvangstbewijzen ingediend voor subsidie \"{{subsidyDescription}}\" (project \"{{projectName}}\"). Controleer en valideer de documenten.",
+  "scheduleGreeting": "Hallo {{name}},",
+  "scheduleFooter": "Met vriendelijke groet,\nHet Adventist Groei Team",
+  "scheduleCta": "Rooster openen",
+  "scheduleAssignmentRequestReceived.subject": "Nieuw preekverzoek bij {{churchName}}",
+  "scheduleAssignmentRequestReceived.body": "{{preacherName}} heeft gevraagd om te preken bij {{churchName}}.",
+  "scheduleAssignmentInviteReceived.subject": "Je bent uitgenodigd om te preken",
+  "scheduleAssignmentInviteReceived.body": "Je bent uitgenodigd om te preken bij {{churchName}} op {{date}}. Open de app voor alle details en om te reageren.",
+  "scheduleAssignmentRequestAccepted.subject": "Verzoek geaccepteerd",
+  "scheduleAssignmentRequestAccepted.body": "Je preekverzoek voor {{churchName}} op {{date}} is geaccepteerd.",
+  "scheduleAssignmentRequestDeclined.subject": "Verzoek afgewezen",
+  "scheduleAssignmentRequestDeclined.body": "Je preekverzoek voor {{churchName}} op {{date}} is afgewezen.",
+  "scheduleMonthlyCloseOpenSlots.subject": "Openstaande plekken vóór maandelijkse afsluiting",
+  "scheduleMonthlyCloseOpenSlots.body": "{{churchName}} heeft nog {{count}} openstaande plek(ken) voor {{month}} voordat het schema wordt vergrendeld.",
+  "scheduleMonthlyCloseIncompleteAvailability.subject": "Beschikbaarheid niet ingesteld voor {{month}}",
+  "scheduleMonthlyCloseIncompleteAvailability.body": "Stel je beschikbaarheid in voor {{month}} voordat het schema wordt vergrendeld.",
+  "scheduleMonthlyCloseAutoConfirmed.subject": "Toewijzing automatisch bevestigd",
+  "scheduleMonthlyCloseAutoConfirmed.body": "Je openstaande toewijzing bij {{churchName}} op {{date}} is automatisch bevestigd bij de maandelijkse afsluiting."
 }

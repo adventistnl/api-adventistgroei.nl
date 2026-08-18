@@ -52,5 +52,22 @@
   "subsidyStatusChanged.finance.waiting_refund.subject": "Refund Requested — Action Required: {{subsidyDescription}}",
   "subsidyStatusChanged.finance.waiting_refund.body": "A refund has been requested for subsidy \"{{subsidyDescription}}\" (project \"{{projectName}}\"). Please process the refund payment.",
   "subsidyStatusChanged.finance.waiting_documents.subject": "Documents Submitted — Awaiting Validation: {{subsidyDescription}}",
-  "subsidyStatusChanged.finance.waiting_documents.body": "The member has submitted receipt documents for subsidy \"{{subsidyDescription}}\" (project \"{{projectName}}\"). Please review and validate the documents."
+  "subsidyStatusChanged.finance.waiting_documents.body": "The member has submitted receipt documents for subsidy \"{{subsidyDescription}}\" (project \"{{projectName}}\"). Please review and validate the documents.",
+  "scheduleGreeting": "Hello {{name}},",
+  "scheduleFooter": "Best regards,\nThe Adventist Groei Team",
+  "scheduleCta": "Open Schedule",
+  "scheduleAssignmentRequestReceived.subject": "New preaching request at {{churchName}}",
+  "scheduleAssignmentRequestReceived.body": "{{preacherName}} requested to preach at {{churchName}}.",
+  "scheduleAssignmentInviteReceived.subject": "You've been invited to preach",
+  "scheduleAssignmentInviteReceived.body": "You've been invited to preach at {{churchName}} on {{date}}. Open the app to see the full details and respond.",
+  "scheduleAssignmentRequestAccepted.subject": "Request accepted",
+  "scheduleAssignmentRequestAccepted.body": "Your assignment request for {{churchName}} on {{date}} was accepted.",
+  "scheduleAssignmentRequestDeclined.subject": "Request declined",
+  "scheduleAssignmentRequestDeclined.body": "Your assignment request for {{churchName}} on {{date}} was declined.",
+  "scheduleMonthlyCloseOpenSlots.subject": "Open slots before monthly close",
+  "scheduleMonthlyCloseOpenSlots.body": "{{churchName}} still has {{count}} open slot(s) for {{month}} before the schedule locks.",
+  "scheduleMonthlyCloseIncompleteAvailability.subject": "Availability not set for {{month}}",
+  "scheduleMonthlyCloseIncompleteAvailability.body": "Please set your availability for {{month}} before the schedule locks.",
+  "scheduleMonthlyCloseAutoConfirmed.subject": "Assignment auto-confirmed",
+  "scheduleMonthlyCloseAutoConfirmed.body": "Your pending assignment at {{churchName}} on {{date}} was automatically confirmed at monthly close."
 }
