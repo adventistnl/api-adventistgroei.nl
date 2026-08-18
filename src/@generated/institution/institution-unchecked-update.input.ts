@@ -20,6 +20,7 @@ import { AnnualBudgetUncheckedUpdateManyWithoutInstitutionNestedInput } from '..
 import { InstitutionPositionUncheckedUpdateManyWithoutInstitutionNestedInput } from '../institution-position/institution-position-unchecked-update-many-without-institution-nested.input';
 import { AvailabilityUncheckedUpdateManyWithoutInstitutionNestedInput } from '../availability/availability-unchecked-update-many-without-institution-nested.input';
 import { AvailabilityRecurrenceRuleUncheckedUpdateManyWithoutInstitutionNestedInput } from '../availability-recurrence-rule/availability-recurrence-rule-unchecked-update-many-without-institution-nested.input';
+import { ChurchServiceCalendarUncheckedUpdateManyWithoutInstitutionNestedInput } from '../church-service-calendar/church-service-calendar-unchecked-update-many-without-institution-nested.input';
 
 @InputType()
 export class InstitutionUncheckedUpdateInput {
@@ -108,4 +109,7 @@ export class InstitutionUncheckedUpdateInput {
 
     @Field(() => AvailabilityRecurrenceRuleUncheckedUpdateManyWithoutInstitutionNestedInput, {nullable:true})
     availability_recurrence_rules?: AvailabilityRecurrenceRuleUncheckedUpdateManyWithoutInstitutionNestedInput;
+
+    @Field(() => ChurchServiceCalendarUncheckedUpdateManyWithoutInstitutionNestedInput, {nullable:true})
+    church_service_calendar_entries?: ChurchServiceCalendarUncheckedUpdateManyWithoutInstitutionNestedInput;
 }

@@ -206,6 +206,10 @@ enum PermissionResolverName {
   myAvailabilityRecurrenceRules
   setAvailabilityRecurrenceRule
   deleteAvailabilityRecurrenceRule
+  // Preacher scheduling module — Phase 2 (Church service calendar)
+  churchServiceCalendar
+  setChurchServiceCalendar
+  setChurchServiceCalendarBulk
 }
 
 enum InstitutionPositionType {
@@ -397,33 +401,34 @@ enum GenderType {
 
 // Models
 model Institution {
-  id                            String                       @id @default(uuid())
-  name                          String
-  denomination                  String
-  description                   String?
-  language_preference           LanguagePreference
-  contact_id                    String?                      @unique
-  contact                       Contact?                     @relation(fields: [contact_id], references: [id])
-  created_at                    DateTime                     @default(now())
-  updated_at                    DateTime                     @updatedAt
-  created_by                    String
-  updated_by                    String
-  is_deleted                    Boolean                      @default(false)
-  deleted_at                    DateTime?
-  deleted_by                    String?
-  churches                      Church[]
-  departments                   Department[]
-  users                         User[]
-  communications                Communication[]
-  notifications                 Notification[]
-  settings                      Setting[]
-  projects                      Project[]
-  direct_messages               DirectMessage[]
-  subsidy_requests              SubsidyRequest[]
-  annual_budgets                AnnualBudget[]
-  positions                     InstitutionPosition[]
-  availabilities                Availability[]
-  availability_recurrence_rules AvailabilityRecurrenceRule[]
+  id                              String                       @id @default(uuid())
+  name                            String
+  denomination                    String
+  description                     String?
+  language_preference             LanguagePreference
+  contact_id                      String?                      @unique
+  contact                         Contact?                     @relation(fields: [contact_id], references: [id])
+  created_at                      DateTime                     @default(now())
+  updated_at                      DateTime                     @updatedAt
+  created_by                      String
+  updated_by                      String
+  is_deleted                      Boolean                      @default(false)
+  deleted_at                      DateTime?
+  deleted_by                      String?
+  churches                        Church[]
+  departments                     Department[]
+  users                           User[]
+  communications                  Communication[]
+  notifications                   Notification[]
+  settings                        Setting[]
+  projects                        Project[]
+  direct_messages                 DirectMessage[]
+  subsidy_requests                SubsidyRequest[]
+  annual_budgets                  AnnualBudget[]
+  positions                       InstitutionPosition[]
+  availabilities                  Availability[]
+  availability_recurrence_rules   AvailabilityRecurrenceRule[]
+  church_service_calendar_entries ChurchServiceCalendar[]
 }
 
 model Region {
@@ -443,24 +448,24 @@ model Region {
 }
 
 model Church {
-  id               String           @id @default(uuid())
-  type             ChurchType       @default(STANDARD)
+  id               String                  @id @default(uuid())
+  type             ChurchType              @default(STANDARD)
   institution_id   String
-  institution      Institution      @relation(fields: [institution_id], references: [id])
+  institution      Institution             @relation(fields: [institution_id], references: [id])
   name             String
   region_id        String?
-  region           Region?          @relation(fields: [region_id], references: [id])
+  region           Region?                 @relation(fields: [region_id], references: [id])
   contact_id       String?
-  contact          Contact?         @relation(fields: [contact_id], references: [id])
-  leader_id        String?          @unique
-  leader           User?            @relation("ChurchLeader", fields: [leader_id], references: [id])
+  contact          Contact?                @relation(fields: [contact_id], references: [id])
+  leader_id        String?                 @unique
+  leader           User?                   @relation("ChurchLeader", fields: [leader_id], references: [id])
   zip_code         String?
   house_number     Int?
-  created_at       DateTime         @default(now())
-  updated_at       DateTime         @updatedAt
+  created_at       DateTime                @default(now())
+  updated_at       DateTime                @updatedAt
   created_by       String
   updated_by       String
-  is_deleted       Boolean          @default(false)
+  is_deleted       Boolean                 @default(false)
   deleted_at       DateTime?
   deleted_by       String?
   departments      Department[]
@@ -468,6 +473,7 @@ model Church {
   subsidy_requests SubsidyRequest[]
   annual_budgets   AnnualBudget[]
   projects         Project[]
+  service_calendar ChurchServiceCalendar[]
 }
 
 model Department {
@@ -1487,4 +1493,35 @@ model AvailabilityRecurrenceRule {
 enum RecurrenceType {
   WEEKLY
   DATE_RANGE
+}
+
+// ---------------------------------------------------------------------------
+// Preacher scheduling module — Phase 2 (Church service calendar)
+// See preacher-scheduling-blueprint/docs/01-corrected-blueprint.md for the full spec.
+// ---------------------------------------------------------------------------
+
+model ChurchServiceCalendar {
+  id             String                @id @default(uuid())
+  institution_id String
+  institution    Institution           @relation(fields: [institution_id], references: [id])
+  church_id      String
+  church         Church                @relation(fields: [church_id], references: [id])
+  date           DateTime              @db.Date
+  has_service    Boolean
+  source         ServiceCalendarSource @default(CHURCH_CONFIRMED)
+  created_at     DateTime              @default(now())
+  updated_at     DateTime              @updatedAt
+  created_by     String
+  updated_by     String
+
+  @@unique([church_id, date])
+  @@index([institution_id, church_id, date])
+}
+
+/// BULK_DEFAULT = generated by an admin/department-leader bulk pattern (R8.1), shown to the
+/// church leader as a suggestion pending confirmation. CHURCH_CONFIRMED = the leader explicitly
+/// set or accepted it for their own church — a bulk re-apply must never silently overwrite this.
+enum ServiceCalendarSource {
+  BULK_DEFAULT
+  CHURCH_CONFIRMED
 }

@@ -17,6 +17,7 @@ import { AnnualBudgetOrderByRelationAggregateInput } from '../annual-budget/annu
 import { InstitutionPositionOrderByRelationAggregateInput } from '../institution-position/institution-position-order-by-relation-aggregate.input';
 import { AvailabilityOrderByRelationAggregateInput } from '../availability/availability-order-by-relation-aggregate.input';
 import { AvailabilityRecurrenceRuleOrderByRelationAggregateInput } from '../availability-recurrence-rule/availability-recurrence-rule-order-by-relation-aggregate.input';
+import { ChurchServiceCalendarOrderByRelationAggregateInput } from '../church-service-calendar/church-service-calendar-order-by-relation-aggregate.input';
 
 @InputType()
 export class InstitutionOrderByWithRelationInput {
@@ -109,4 +110,7 @@ export class InstitutionOrderByWithRelationInput {
 
     @Field(() => AvailabilityRecurrenceRuleOrderByRelationAggregateInput, {nullable:true})
     availability_recurrence_rules?: AvailabilityRecurrenceRuleOrderByRelationAggregateInput;
+
+    @Field(() => ChurchServiceCalendarOrderByRelationAggregateInput, {nullable:true})
+    church_service_calendar_entries?: ChurchServiceCalendarOrderByRelationAggregateInput;
 }

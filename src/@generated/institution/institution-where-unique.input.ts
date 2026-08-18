@@ -22,6 +22,7 @@ import { AnnualBudgetListRelationFilter } from '../annual-budget/annual-budget-l
 import { InstitutionPositionListRelationFilter } from '../institution-position/institution-position-list-relation-filter.input';
 import { AvailabilityListRelationFilter } from '../availability/availability-list-relation-filter.input';
 import { AvailabilityRecurrenceRuleListRelationFilter } from '../availability-recurrence-rule/availability-recurrence-rule-list-relation-filter.input';
+import { ChurchServiceCalendarListRelationFilter } from '../church-service-calendar/church-service-calendar-list-relation-filter.input';
 
 @InputType()
 export class InstitutionWhereUniqueInput {
@@ -123,4 +124,7 @@ export class InstitutionWhereUniqueInput {
 
     @Field(() => AvailabilityRecurrenceRuleListRelationFilter, {nullable:true})
     availability_recurrence_rules?: AvailabilityRecurrenceRuleListRelationFilter;
+
+    @Field(() => ChurchServiceCalendarListRelationFilter, {nullable:true})
+    church_service_calendar_entries?: ChurchServiceCalendarListRelationFilter;
 }

@@ -12,6 +12,7 @@ import { Type } from 'class-transformer';
 import { UserUncheckedUpdateManyWithoutChurchNestedInput } from '../user/user-unchecked-update-many-without-church-nested.input';
 import { SubsidyRequestUncheckedUpdateManyWithoutChurchNestedInput } from '../subsidy-request/subsidy-request-unchecked-update-many-without-church-nested.input';
 import { ProjectUncheckedUpdateManyWithoutChurchNestedInput } from '../project/project-unchecked-update-many-without-church-nested.input';
+import { ChurchServiceCalendarUncheckedUpdateManyWithoutChurchNestedInput } from '../church-service-calendar/church-service-calendar-unchecked-update-many-without-church-nested.input';
 
 @InputType()
 export class ChurchUncheckedUpdateWithoutAnnual_budgetsInput {
@@ -79,4 +80,7 @@ export class ChurchUncheckedUpdateWithoutAnnual_budgetsInput {
     @Field(() => ProjectUncheckedUpdateManyWithoutChurchNestedInput, {nullable:true})
     @Type(() => ProjectUncheckedUpdateManyWithoutChurchNestedInput)
     projects?: ProjectUncheckedUpdateManyWithoutChurchNestedInput;
+
+    @Field(() => ChurchServiceCalendarUncheckedUpdateManyWithoutChurchNestedInput, {nullable:true})
+    service_calendar?: ChurchServiceCalendarUncheckedUpdateManyWithoutChurchNestedInput;
 }

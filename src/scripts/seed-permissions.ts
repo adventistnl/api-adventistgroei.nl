@@ -169,6 +169,10 @@ const permissionsEnabledToClient = [
   { name: 'read my availability recurrence rules', description: 'Access to the caller\'s own weekly/date-range availability patterns', resolver_name: 'myAvailabilityRecurrenceRules' as PermissionResolverName, group: 'SCHEDULE' as PermissionGroup, key_code: 'AVAILABILITY_RECURRENCE_RULES_ACCESS', disabled_to_client: false },
   { name: 'set availability recurrence rule', description: 'Create or update one of the caller\'s own weekly/date-range availability patterns', resolver_name: 'setAvailabilityRecurrenceRule' as PermissionResolverName, group: 'SCHEDULE' as PermissionGroup, key_code: 'AVAILABILITY_RECURRENCE_RULE_SET', disabled_to_client: false },
   { name: 'delete availability recurrence rule', description: 'Delete one of the caller\'s own weekly/date-range availability patterns', resolver_name: 'deleteAvailabilityRecurrenceRule' as PermissionResolverName, group: 'SCHEDULE' as PermissionGroup, key_code: 'AVAILABILITY_RECURRENCE_RULE_DELETE', disabled_to_client: false },
+  // Preacher scheduling module — Phase 2 (Church service calendar)
+  { name: 'read church service calendar', description: 'Access to a church\'s service calendar', resolver_name: 'churchServiceCalendar' as PermissionResolverName, group: 'SCHEDULE' as PermissionGroup, key_code: 'CHURCH_SERVICE_CALENDAR_ACCESS', disabled_to_client: false },
+  { name: 'set church service calendar', description: 'Set the service calendar for a church you lead', resolver_name: 'setChurchServiceCalendar' as PermissionResolverName, group: 'SCHEDULE' as PermissionGroup, key_code: 'CHURCH_SERVICE_CALENDAR_SET', disabled_to_client: false },
+  { name: 'set church service calendar in bulk', description: 'Apply a weekly service pattern to many churches at once', resolver_name: 'setChurchServiceCalendarBulk' as PermissionResolverName, group: 'SCHEDULE' as PermissionGroup, key_code: 'CHURCH_SERVICE_CALENDAR_BULK_SET', disabled_to_client: false },
 ];
 
 async function main() {

@@ -11,6 +11,7 @@ import { Department } from '../department/department.model';
 import { SubsidyRequest } from '../subsidy-request/subsidy-request.model';
 import { AnnualBudget } from '../annual-budget/annual-budget.model';
 import { Project } from '../project/project.model';
+import { ChurchServiceCalendar } from '../church-service-calendar/church-service-calendar.model';
 import { ChurchCount } from './church-count.output';
 
 @ObjectType()
@@ -90,6 +91,9 @@ export class Church {
 
     @Field(() => [Project], {nullable:true})
     projects?: Array<Project>;
+
+    @Field(() => [ChurchServiceCalendar], {nullable:true})
+    service_calendar?: Array<ChurchServiceCalendar>;
 
     @Field(() => ChurchCount, {nullable:false})
     _count?: ChurchCount;

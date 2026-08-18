@@ -159,7 +159,10 @@ export enum PermissionResolverName {
     setAvailabilityBulk = "setAvailabilityBulk",
     myAvailabilityRecurrenceRules = "myAvailabilityRecurrenceRules",
     setAvailabilityRecurrenceRule = "setAvailabilityRecurrenceRule",
-    deleteAvailabilityRecurrenceRule = "deleteAvailabilityRecurrenceRule"
+    deleteAvailabilityRecurrenceRule = "deleteAvailabilityRecurrenceRule",
+    churchServiceCalendar = "churchServiceCalendar",
+    setChurchServiceCalendar = "setChurchServiceCalendar",
+    setChurchServiceCalendarBulk = "setChurchServiceCalendarBulk"
 }
 
 

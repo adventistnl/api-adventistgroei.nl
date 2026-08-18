@@ -16,6 +16,7 @@ import { AnnualBudget } from '../annual-budget/annual-budget.model';
 import { InstitutionPosition } from '../institution-position/institution-position.model';
 import { Availability } from '../availability/availability.model';
 import { AvailabilityRecurrenceRule } from '../availability-recurrence-rule/availability-recurrence-rule.model';
+import { ChurchServiceCalendar } from '../church-service-calendar/church-service-calendar.model';
 import { InstitutionCount } from './institution-count.output';
 
 @ObjectType()
@@ -101,6 +102,9 @@ export class Institution {
 
     @Field(() => [AvailabilityRecurrenceRule], {nullable:true})
     availability_recurrence_rules?: Array<AvailabilityRecurrenceRule>;
+
+    @Field(() => [ChurchServiceCalendar], {nullable:true})
+    church_service_calendar_entries?: Array<ChurchServiceCalendar>;
 
     @Field(() => InstitutionCount, {nullable:false})
     _count?: InstitutionCount;

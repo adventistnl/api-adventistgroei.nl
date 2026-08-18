@@ -36,3 +36,4 @@ export * from './pubsub.service';
 export { LoggerService } from './logger.service';
 export * from './availability.service';
 export * from './availability-recurrence-rule.service';
+export * from './church-service-calendar.service';
