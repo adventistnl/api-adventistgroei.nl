@@ -33,6 +33,9 @@ import { ChurchUpdateOneWithoutLeaderNestedInput } from '../church/church-update
 import { ProjectHistoryUpdateManyWithoutUserNestedInput } from '../project-history/project-history-update-many-without-user-nested.input';
 import { InstitutionPositionUpdateManyWithoutUserNestedInput } from '../institution-position/institution-position-update-many-without-user-nested.input';
 import { AvailabilityUpdateManyWithoutUserNestedInput } from '../availability/availability-update-many-without-user-nested.input';
+import { AssignmentUpdateManyWithoutUserNestedInput } from '../assignment/assignment-update-many-without-user-nested.input';
+import { AssignmentRequestUpdateManyWithoutUserNestedInput } from '../assignment-request/assignment-request-update-many-without-user-nested.input';
+import { PreacherRegionAccessUpdateManyWithoutUserNestedInput } from '../preacher-region-access/preacher-region-access-update-many-without-user-nested.input';
 
 @InputType()
 export class UserUpdateWithoutAvailability_recurrence_rulesInput {
@@ -172,4 +175,13 @@ export class UserUpdateWithoutAvailability_recurrence_rulesInput {
 
     @Field(() => AvailabilityUpdateManyWithoutUserNestedInput, {nullable:true})
     availabilities?: AvailabilityUpdateManyWithoutUserNestedInput;
+
+    @Field(() => AssignmentUpdateManyWithoutUserNestedInput, {nullable:true})
+    assignments?: AssignmentUpdateManyWithoutUserNestedInput;
+
+    @Field(() => AssignmentRequestUpdateManyWithoutUserNestedInput, {nullable:true})
+    assignment_requests?: AssignmentRequestUpdateManyWithoutUserNestedInput;
+
+    @Field(() => PreacherRegionAccessUpdateManyWithoutUserNestedInput, {nullable:true})
+    preacher_region_access?: PreacherRegionAccessUpdateManyWithoutUserNestedInput;
 }

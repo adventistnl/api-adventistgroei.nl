@@ -7,10 +7,13 @@ import { Type } from 'class-transformer';
 import { RegionCreateNestedOneWithoutChurchesInput } from '../region/region-create-nested-one-without-churches.input';
 import { ContactCreateNestedOneWithoutChurchInput } from '../contact/contact-create-nested-one-without-church.input';
 import { UserCreateNestedOneWithoutLed_churchInput } from '../user/user-create-nested-one-without-led-church.input';
+import { AssignmentRequestCreateNestedManyWithoutChurchInput } from '../assignment-request/assignment-request-create-nested-many-without-church.input';
 import { UserCreateNestedManyWithoutChurchInput } from '../user/user-create-nested-many-without-church.input';
 import { SubsidyRequestCreateNestedManyWithoutChurchInput } from '../subsidy-request/subsidy-request-create-nested-many-without-church.input';
 import { AnnualBudgetCreateNestedManyWithoutChurchInput } from '../annual-budget/annual-budget-create-nested-many-without-church.input';
 import { ProjectCreateNestedManyWithoutChurchInput } from '../project/project-create-nested-many-without-church.input';
+import { ChurchServiceCalendarCreateNestedManyWithoutChurchInput } from '../church-service-calendar/church-service-calendar-create-nested-many-without-church.input';
+import { AssignmentCreateNestedManyWithoutChurchInput } from '../assignment/assignment-create-nested-many-without-church.input';
 
 @InputType()
 export class ChurchCreateWithoutDepartmentsInput {
@@ -66,6 +69,9 @@ export class ChurchCreateWithoutDepartmentsInput {
     @Type(() => UserCreateNestedOneWithoutLed_churchInput)
     leader?: UserCreateNestedOneWithoutLed_churchInput;
 
+    @Field(() => AssignmentRequestCreateNestedManyWithoutChurchInput, {nullable:true})
+    assignment_requests?: AssignmentRequestCreateNestedManyWithoutChurchInput;
+
     @Field(() => UserCreateNestedManyWithoutChurchInput, {nullable:true})
     @Type(() => UserCreateNestedManyWithoutChurchInput)
     users?: UserCreateNestedManyWithoutChurchInput;
@@ -81,4 +87,10 @@ export class ChurchCreateWithoutDepartmentsInput {
     @Field(() => ProjectCreateNestedManyWithoutChurchInput, {nullable:true})
     @Type(() => ProjectCreateNestedManyWithoutChurchInput)
     projects?: ProjectCreateNestedManyWithoutChurchInput;
+
+    @Field(() => ChurchServiceCalendarCreateNestedManyWithoutChurchInput, {nullable:true})
+    service_calendar?: ChurchServiceCalendarCreateNestedManyWithoutChurchInput;
+
+    @Field(() => AssignmentCreateNestedManyWithoutChurchInput, {nullable:true})
+    assignments?: AssignmentCreateNestedManyWithoutChurchInput;
 }

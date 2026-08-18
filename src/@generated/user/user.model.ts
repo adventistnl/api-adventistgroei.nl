@@ -26,6 +26,9 @@ import { ProjectHistory } from '../project-history/project-history.model';
 import { InstitutionPosition } from '../institution-position/institution-position.model';
 import { Availability } from '../availability/availability.model';
 import { AvailabilityRecurrenceRule } from '../availability-recurrence-rule/availability-recurrence-rule.model';
+import { Assignment } from '../assignment/assignment.model';
+import { AssignmentRequest } from '../assignment-request/assignment-request.model';
+import { PreacherRegionAccess } from '../preacher-region-access/preacher-region-access.model';
 import { UserCount } from './user-count.output';
 
 @ObjectType()
@@ -162,6 +165,15 @@ export class User {
 
     @Field(() => [AvailabilityRecurrenceRule], {nullable:true})
     availability_recurrence_rules?: Array<AvailabilityRecurrenceRule>;
+
+    @Field(() => [Assignment], {nullable:true})
+    assignments?: Array<Assignment>;
+
+    @Field(() => [AssignmentRequest], {nullable:true})
+    assignment_requests?: Array<AssignmentRequest>;
+
+    @Field(() => [PreacherRegionAccess], {nullable:true})
+    preacher_region_access?: Array<PreacherRegionAccess>;
 
     @Field(() => UserCount, {nullable:false})
     _count?: UserCount;

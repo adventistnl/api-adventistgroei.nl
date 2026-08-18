@@ -32,3 +32,8 @@ export * from './subsidy-status.dto';
 export * from './user.dto';
 export * from './availability.dto';
 export * from './availability-recurrence-rule.dto';
+export * from './church-service-calendar.dto';
+export * from './assignment.dto';
+export * from './gap-report.dto';
+export * from './assignment-request.dto';
+export * from './monthly-close.dto';

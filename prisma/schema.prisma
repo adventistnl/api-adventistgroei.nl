@@ -206,6 +206,33 @@ enum PermissionResolverName {
   myAvailabilityRecurrenceRules
   setAvailabilityRecurrenceRule
   deleteAvailabilityRecurrenceRule
+  // Preacher scheduling module — Phase 2 (Church service calendar)
+  churchServiceCalendar
+  setChurchServiceCalendar
+  setChurchServiceCalendarBulk
+  // Preacher scheduling module — Phase 3 (Overview grid + gap report)
+  scheduleOverview
+  gapReport
+  setAssignment
+  setAssignmentAny
+  // Preacher scheduling module — Phase 4 (Invite and request)
+  myAssignmentRequests
+  requestAssignment
+  inviteToAssignment
+  inviteToAssignmentAny
+  respondToAssignmentRequest
+  respondToAssignmentRequestAny
+  openSlotsForPreacher
+  eligiblePreachersForSlot
+  assignmentInviteTemplates
+  createAssignmentInviteTemplate
+  updateAssignmentInviteTemplate
+  deleteAssignmentInviteTemplate
+  myPreacherRegionAccess
+  grantPreacherRegionAccess
+  revokePreacherRegionAccess
+  // Preacher scheduling module — Phase 5 (Monthly close)
+  triggerMonthlyClose
 }
 
 enum InstitutionPositionType {
@@ -397,77 +424,87 @@ enum GenderType {
 
 // Models
 model Institution {
-  id                            String                       @id @default(uuid())
-  name                          String
-  denomination                  String
-  description                   String?
-  language_preference           LanguagePreference
-  contact_id                    String?                      @unique
-  contact                       Contact?                     @relation(fields: [contact_id], references: [id])
-  created_at                    DateTime                     @default(now())
-  updated_at                    DateTime                     @updatedAt
-  created_by                    String
-  updated_by                    String
-  is_deleted                    Boolean                      @default(false)
-  deleted_at                    DateTime?
-  deleted_by                    String?
-  churches                      Church[]
-  departments                   Department[]
-  users                         User[]
-  communications                Communication[]
-  notifications                 Notification[]
-  settings                      Setting[]
-  projects                      Project[]
-  direct_messages               DirectMessage[]
-  subsidy_requests              SubsidyRequest[]
-  annual_budgets                AnnualBudget[]
-  positions                     InstitutionPosition[]
-  availabilities                Availability[]
-  availability_recurrence_rules AvailabilityRecurrenceRule[]
+  id                              String                       @id @default(uuid())
+  name                            String
+  denomination                    String
+  description                     String?
+  language_preference             LanguagePreference
+  contact_id                      String?                      @unique
+  contact                         Contact?                     @relation(fields: [contact_id], references: [id])
+  created_at                      DateTime                     @default(now())
+  updated_at                      DateTime                     @updatedAt
+  created_by                      String
+  updated_by                      String
+  is_deleted                      Boolean                      @default(false)
+  deleted_at                      DateTime?
+  deleted_by                      String?
+  churches                        Church[]
+  departments                     Department[]
+  users                           User[]
+  communications                  Communication[]
+  notifications                   Notification[]
+  settings                        Setting[]
+  projects                        Project[]
+  direct_messages                 DirectMessage[]
+  subsidy_requests                SubsidyRequest[]
+  annual_budgets                  AnnualBudget[]
+  positions                       InstitutionPosition[]
+  availabilities                  Availability[]
+  availability_recurrence_rules   AvailabilityRecurrenceRule[]
+  church_service_calendar_entries ChurchServiceCalendar[]
+  assignments                     Assignment[]
+  gap_report_snapshots            GapReportSnapshot[]
+  assignment_requests             AssignmentRequest[]
+  preacher_region_access          PreacherRegionAccess[]
+  assignment_invite_templates     AssignmentInviteTemplate[]
 }
 
 model Region {
-  id          String    @id @default(uuid())
-  description String?
-  name        String
-  territory   Json?
-  color       String?   @default("#9810fa")
-  created_at  DateTime  @default(now())
-  updated_at  DateTime  @updatedAt
-  created_by  String
-  updated_by  String
-  is_deleted  Boolean   @default(false)
-  deleted_at  DateTime?
-  deleted_by  String?
-  churches    Church[]
+  id                     String                 @id @default(uuid())
+  description            String?
+  name                   String
+  territory              Json?
+  color                  String?                @default("#9810fa")
+  created_at             DateTime               @default(now())
+  updated_at             DateTime               @updatedAt
+  created_by             String
+  updated_by             String
+  is_deleted             Boolean                @default(false)
+  deleted_at             DateTime?
+  deleted_by             String?
+  churches               Church[]
+  preacher_region_access PreacherRegionAccess[]
 }
 
 model Church {
-  id               String           @id @default(uuid())
-  type             ChurchType       @default(STANDARD)
-  institution_id   String
-  institution      Institution      @relation(fields: [institution_id], references: [id])
-  name             String
-  region_id        String?
-  region           Region?          @relation(fields: [region_id], references: [id])
-  contact_id       String?
-  contact          Contact?         @relation(fields: [contact_id], references: [id])
-  leader_id        String?          @unique
-  leader           User?            @relation("ChurchLeader", fields: [leader_id], references: [id])
-  zip_code         String?
-  house_number     Int?
-  created_at       DateTime         @default(now())
-  updated_at       DateTime         @updatedAt
-  created_by       String
-  updated_by       String
-  is_deleted       Boolean          @default(false)
-  deleted_at       DateTime?
-  deleted_by       String?
-  departments      Department[]
-  users            User[]
-  subsidy_requests SubsidyRequest[]
-  annual_budgets   AnnualBudget[]
-  projects         Project[]
+  id                  String                  @id @default(uuid())
+  type                ChurchType              @default(STANDARD)
+  institution_id      String
+  institution         Institution             @relation(fields: [institution_id], references: [id])
+  name                String
+  region_id           String?
+  region              Region?                 @relation(fields: [region_id], references: [id])
+  contact_id          String?
+  contact             Contact?                @relation(fields: [contact_id], references: [id])
+  leader_id           String?                 @unique
+  leader              User?                   @relation("ChurchLeader", fields: [leader_id], references: [id])
+  zip_code            String?
+  house_number        Int?
+  created_at          DateTime                @default(now())
+  updated_at          DateTime                @updatedAt
+  created_by          String
+  updated_by          String
+  is_deleted          Boolean                 @default(false)
+  deleted_at          DateTime?
+  deleted_by          String?
+  assignment_requests AssignmentRequest[]
+  departments         Department[]
+  users               User[]
+  subsidy_requests    SubsidyRequest[]
+  annual_budgets      AnnualBudget[]
+  projects            Project[]
+  service_calendar    ChurchServiceCalendar[]
+  assignments         Assignment[]
 }
 
 model Department {
@@ -669,6 +706,9 @@ model User {
   institution_positions         InstitutionPosition[]
   availabilities                Availability[]
   availability_recurrence_rules AvailabilityRecurrenceRule[]
+  assignments                   Assignment[]
+  assignment_requests           AssignmentRequest[]
+  preacher_region_access        PreacherRegionAccess[]
 }
 
 model Project {
@@ -1487,4 +1527,193 @@ model AvailabilityRecurrenceRule {
 enum RecurrenceType {
   WEEKLY
   DATE_RANGE
+}
+
+// ---------------------------------------------------------------------------
+// Preacher scheduling module — Phase 2 (Church service calendar)
+// See preacher-scheduling-blueprint/docs/01-corrected-blueprint.md for the full spec.
+// ---------------------------------------------------------------------------
+
+model ChurchServiceCalendar {
+  id             String                @id @default(uuid())
+  institution_id String
+  institution    Institution           @relation(fields: [institution_id], references: [id])
+  church_id      String
+  church         Church                @relation(fields: [church_id], references: [id])
+  date           DateTime              @db.Date
+  has_service    Boolean
+  source         ServiceCalendarSource @default(CHURCH_CONFIRMED)
+  created_at     DateTime              @default(now())
+  updated_at     DateTime              @updatedAt
+  created_by     String
+  updated_by     String
+
+  @@unique([church_id, date])
+  @@index([institution_id, church_id, date])
+}
+
+/// BULK_DEFAULT = generated by an admin/department-leader bulk pattern (R8.1), shown to the
+/// church leader as a suggestion pending confirmation. CHURCH_CONFIRMED = the leader explicitly
+/// set or accepted it for their own church — a bulk re-apply must never silently overwrite this.
+enum ServiceCalendarSource {
+  BULK_DEFAULT
+  CHURCH_CONFIRMED
+}
+
+// ---------------------------------------------------------------------------
+// Preacher scheduling module — Phase 3 (Overview grid + gap report)
+// See preacher-scheduling-blueprint/docs/01-corrected-blueprint.md for the full spec.
+// ---------------------------------------------------------------------------
+
+/// A church + date slot. Created directly (R8 — "self-filled"/admin-assigned, via
+/// setAssignment/setAssignmentAny) in Phase 3; Phase 4 adds the request/invite flow that also
+/// produces confirmed rows here.
+model Assignment {
+  id             String           @id @default(uuid())
+  institution_id String
+  institution    Institution      @relation(fields: [institution_id], references: [id])
+  church_id      String
+  church         Church           @relation(fields: [church_id], references: [id])
+  date           DateTime         @db.Date
+  user_id        String?
+  user           User?            @relation(fields: [user_id], references: [id])
+  origin         AssignmentOrigin
+  status         AssignmentStatus @default(DRAFT)
+  locked_at      DateTime?
+  created_at     DateTime         @default(now())
+  updated_at     DateTime         @updatedAt
+  created_by     String
+  updated_by     String
+  is_deleted     Boolean          @default(false)
+  deleted_at     DateTime?
+  deleted_by     String?
+
+  @@unique([church_id, date])
+  @@index([institution_id, date, status])
+}
+
+enum AssignmentOrigin {
+  ADMIN_ASSIGNED
+  PREACHER_REQUESTED
+  CHURCH_INVITED
+  SELF_FILLED
+}
+
+enum AssignmentStatus {
+  DRAFT
+  PENDING_CONFIRMATION
+  CONFIRMED
+  DECLINED
+  LOCKED
+}
+
+model AssignmentHistory {
+  id            String   @id @default(uuid())
+  assignment_id String
+  field_name    String
+  old_value     String?
+  new_value     String?
+  changed_by    String
+  changed_at    DateTime @default(now())
+
+  @@index([assignment_id])
+}
+
+/// R9 — computed by a daily cron job (never at request time), one row per institution+month.
+/// Query.gapReport only ever reads the latest snapshot.
+model GapReportSnapshot {
+  id                           String      @id @default(uuid())
+  institution_id               String
+  institution                  Institution @relation(fields: [institution_id], references: [id])
+  month                        String // "YYYY-MM"
+  churches_without_preacher    Json // [{ church_id, church_name, date }]
+  preachers_without_assignment Json // [{ user_id, user_name, date }]
+  computed_at                  DateTime    @default(now())
+
+  @@unique([institution_id, month])
+}
+
+// ---------------------------------------------------------------------------
+// Preacher scheduling module — Phase 4 (Invite and request)
+// See preacher-scheduling-blueprint/docs/01-corrected-blueprint.md for the full spec.
+// ---------------------------------------------------------------------------
+
+/// R5 — a pending candidature (preacher applied) or invite (church/admin invited), converging
+/// on the same accept/decline flow (respondToAssignmentRequest). R7 — accepting one supersedes
+/// every other pending request for the same church+date.
+model AssignmentRequest {
+  id             String                    @id @default(uuid())
+  institution_id String
+  institution    Institution               @relation(fields: [institution_id], references: [id])
+  church_id      String
+  church         Church                    @relation(fields: [church_id], references: [id])
+  date           DateTime                  @db.Date
+  user_id        String
+  user           User                      @relation(fields: [user_id], references: [id])
+  type           RequestType
+  status         RequestStatus             @default(PENDING)
+  template_id    String?
+  template       AssignmentInviteTemplate? @relation(fields: [template_id], references: [id])
+  created_at     DateTime                  @default(now())
+  decided_at     DateTime?
+  created_by     String
+  updated_by     String
+  is_deleted     Boolean                   @default(false)
+  deleted_at     DateTime?
+  deleted_by     String?
+
+  @@index([institution_id, church_id, date, status])
+  @@index([user_id, status])
+}
+
+enum RequestType {
+  PREACHER_REQUESTED
+  CHURCH_INVITED
+}
+
+enum RequestStatus {
+  PENDING
+  ACCEPTED
+  DECLINED
+  WITHDRAWN
+  SUPERSEDED
+}
+
+/// R6 — reach: LOCAL = home Region only (no row needed here), REGIONAL = every Region with a
+/// row here, NATIONAL = every Region in the Institution (no row needed here either — see
+/// PreacherRegionAccessScope on the resolver layer for how the three levels are told apart).
+model PreacherRegionAccess {
+  id             String      @id @default(uuid())
+  institution_id String
+  institution    Institution @relation(fields: [institution_id], references: [id])
+  user_id        String
+  user           User        @relation(fields: [user_id], references: [id])
+  region_id      String
+  region         Region      @relation(fields: [region_id], references: [id])
+  created_at     DateTime    @default(now())
+  created_by     String
+
+  @@unique([user_id, region_id])
+}
+
+/// R8.2 — reusable invite message templates, rendered through the existing MustacheService
+/// (same mechanism as system emails) at send time. Distinct from the locale email JSON files,
+/// which are fixed platform copy — this is per-institution, admin-authored content.
+model AssignmentInviteTemplate {
+  id             String              @id @default(uuid())
+  institution_id String
+  institution    Institution         @relation(fields: [institution_id], references: [id])
+  name           String
+  subject        String
+  body           String // Mustache placeholders: {{churchName}}, {{date}}, {{preacherName}}, {{inviterName}}
+  requests       AssignmentRequest[]
+  created_at     DateTime            @default(now())
+  updated_at     DateTime            @updatedAt
+  created_by     String
+  updated_by     String
+  is_deleted     Boolean             @default(false)
+  deleted_at     DateTime?
+  deleted_by     String?
+
+  @@index([institution_id])
 }

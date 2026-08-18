@@ -3,6 +3,7 @@ import { ObjectType } from '@nestjs/graphql';
 import { ID } from '@nestjs/graphql';
 import { GraphQLJSON } from 'graphql-type-json';
 import { Church } from '../church/church.model';
+import { PreacherRegionAccess } from '../preacher-region-access/preacher-region-access.model';
 import { RegionCount } from './region-count.output';
 
 @ObjectType()
@@ -46,6 +47,9 @@ export class Region {
 
     @Field(() => [Church], {nullable:true})
     churches?: Array<Church>;
+
+    @Field(() => [PreacherRegionAccess], {nullable:true})
+    preacher_region_access?: Array<PreacherRegionAccess>;
 
     @Field(() => RegionCount, {nullable:false})
     _count?: RegionCount;

@@ -20,6 +20,12 @@ import { SubsidyRequestUpdateManyWithoutInstitutionNestedInput } from '../subsid
 import { AnnualBudgetUpdateManyWithoutInstitutionNestedInput } from '../annual-budget/annual-budget-update-many-without-institution-nested.input';
 import { InstitutionPositionUpdateManyWithoutInstitutionNestedInput } from '../institution-position/institution-position-update-many-without-institution-nested.input';
 import { AvailabilityRecurrenceRuleUpdateManyWithoutInstitutionNestedInput } from '../availability-recurrence-rule/availability-recurrence-rule-update-many-without-institution-nested.input';
+import { ChurchServiceCalendarUpdateManyWithoutInstitutionNestedInput } from '../church-service-calendar/church-service-calendar-update-many-without-institution-nested.input';
+import { AssignmentUpdateManyWithoutInstitutionNestedInput } from '../assignment/assignment-update-many-without-institution-nested.input';
+import { GapReportSnapshotUpdateManyWithoutInstitutionNestedInput } from '../gap-report-snapshot/gap-report-snapshot-update-many-without-institution-nested.input';
+import { AssignmentRequestUpdateManyWithoutInstitutionNestedInput } from '../assignment-request/assignment-request-update-many-without-institution-nested.input';
+import { PreacherRegionAccessUpdateManyWithoutInstitutionNestedInput } from '../preacher-region-access/preacher-region-access-update-many-without-institution-nested.input';
+import { AssignmentInviteTemplateUpdateManyWithoutInstitutionNestedInput } from '../assignment-invite-template/assignment-invite-template-update-many-without-institution-nested.input';
 
 @InputType()
 export class InstitutionUpdateWithoutAvailabilitiesInput {
@@ -106,4 +112,22 @@ export class InstitutionUpdateWithoutAvailabilitiesInput {
 
     @Field(() => AvailabilityRecurrenceRuleUpdateManyWithoutInstitutionNestedInput, {nullable:true})
     availability_recurrence_rules?: AvailabilityRecurrenceRuleUpdateManyWithoutInstitutionNestedInput;
+
+    @Field(() => ChurchServiceCalendarUpdateManyWithoutInstitutionNestedInput, {nullable:true})
+    church_service_calendar_entries?: ChurchServiceCalendarUpdateManyWithoutInstitutionNestedInput;
+
+    @Field(() => AssignmentUpdateManyWithoutInstitutionNestedInput, {nullable:true})
+    assignments?: AssignmentUpdateManyWithoutInstitutionNestedInput;
+
+    @Field(() => GapReportSnapshotUpdateManyWithoutInstitutionNestedInput, {nullable:true})
+    gap_report_snapshots?: GapReportSnapshotUpdateManyWithoutInstitutionNestedInput;
+
+    @Field(() => AssignmentRequestUpdateManyWithoutInstitutionNestedInput, {nullable:true})
+    assignment_requests?: AssignmentRequestUpdateManyWithoutInstitutionNestedInput;
+
+    @Field(() => PreacherRegionAccessUpdateManyWithoutInstitutionNestedInput, {nullable:true})
+    preacher_region_access?: PreacherRegionAccessUpdateManyWithoutInstitutionNestedInput;
+
+    @Field(() => AssignmentInviteTemplateUpdateManyWithoutInstitutionNestedInput, {nullable:true})
+    assignment_invite_templates?: AssignmentInviteTemplateUpdateManyWithoutInstitutionNestedInput;
 }

@@ -7,12 +7,15 @@ import { NullableIntFieldUpdateOperationsInput } from '../prisma/nullable-int-fi
 import { DateTimeFieldUpdateOperationsInput } from '../prisma/date-time-field-update-operations.input';
 import { BoolFieldUpdateOperationsInput } from '../prisma/bool-field-update-operations.input';
 import { NullableDateTimeFieldUpdateOperationsInput } from '../prisma/nullable-date-time-field-update-operations.input';
+import { AssignmentRequestUncheckedUpdateManyWithoutChurchNestedInput } from '../assignment-request/assignment-request-unchecked-update-many-without-church-nested.input';
 import { DepartmentUncheckedUpdateManyWithoutChurchNestedInput } from '../department/department-unchecked-update-many-without-church-nested.input';
 import { Type } from 'class-transformer';
 import { UserUncheckedUpdateManyWithoutChurchNestedInput } from '../user/user-unchecked-update-many-without-church-nested.input';
 import { SubsidyRequestUncheckedUpdateManyWithoutChurchNestedInput } from '../subsidy-request/subsidy-request-unchecked-update-many-without-church-nested.input';
 import { AnnualBudgetUncheckedUpdateManyWithoutChurchNestedInput } from '../annual-budget/annual-budget-unchecked-update-many-without-church-nested.input';
 import { ProjectUncheckedUpdateManyWithoutChurchNestedInput } from '../project/project-unchecked-update-many-without-church-nested.input';
+import { ChurchServiceCalendarUncheckedUpdateManyWithoutChurchNestedInput } from '../church-service-calendar/church-service-calendar-unchecked-update-many-without-church-nested.input';
+import { AssignmentUncheckedUpdateManyWithoutChurchNestedInput } from '../assignment/assignment-unchecked-update-many-without-church-nested.input';
 
 @InputType()
 export class ChurchUncheckedUpdateWithoutContactInput {
@@ -62,6 +65,9 @@ export class ChurchUncheckedUpdateWithoutContactInput {
     @Field(() => NullableStringFieldUpdateOperationsInput, {nullable:true})
     deleted_by?: NullableStringFieldUpdateOperationsInput;
 
+    @Field(() => AssignmentRequestUncheckedUpdateManyWithoutChurchNestedInput, {nullable:true})
+    assignment_requests?: AssignmentRequestUncheckedUpdateManyWithoutChurchNestedInput;
+
     @Field(() => DepartmentUncheckedUpdateManyWithoutChurchNestedInput, {nullable:true})
     @Type(() => DepartmentUncheckedUpdateManyWithoutChurchNestedInput)
     departments?: DepartmentUncheckedUpdateManyWithoutChurchNestedInput;
@@ -81,4 +87,10 @@ export class ChurchUncheckedUpdateWithoutContactInput {
     @Field(() => ProjectUncheckedUpdateManyWithoutChurchNestedInput, {nullable:true})
     @Type(() => ProjectUncheckedUpdateManyWithoutChurchNestedInput)
     projects?: ProjectUncheckedUpdateManyWithoutChurchNestedInput;
+
+    @Field(() => ChurchServiceCalendarUncheckedUpdateManyWithoutChurchNestedInput, {nullable:true})
+    service_calendar?: ChurchServiceCalendarUncheckedUpdateManyWithoutChurchNestedInput;
+
+    @Field(() => AssignmentUncheckedUpdateManyWithoutChurchNestedInput, {nullable:true})
+    assignments?: AssignmentUncheckedUpdateManyWithoutChurchNestedInput;
 }

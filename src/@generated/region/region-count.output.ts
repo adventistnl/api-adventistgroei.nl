@@ -7,4 +7,7 @@ export class RegionCount {
 
     @Field(() => Int, {nullable:false})
     churches?: number;
+
+    @Field(() => Int, {nullable:false})
+    preacher_region_access?: number;
 }

@@ -17,6 +17,12 @@ import { AnnualBudgetOrderByRelationAggregateInput } from '../annual-budget/annu
 import { InstitutionPositionOrderByRelationAggregateInput } from '../institution-position/institution-position-order-by-relation-aggregate.input';
 import { AvailabilityOrderByRelationAggregateInput } from '../availability/availability-order-by-relation-aggregate.input';
 import { AvailabilityRecurrenceRuleOrderByRelationAggregateInput } from '../availability-recurrence-rule/availability-recurrence-rule-order-by-relation-aggregate.input';
+import { ChurchServiceCalendarOrderByRelationAggregateInput } from '../church-service-calendar/church-service-calendar-order-by-relation-aggregate.input';
+import { AssignmentOrderByRelationAggregateInput } from '../assignment/assignment-order-by-relation-aggregate.input';
+import { GapReportSnapshotOrderByRelationAggregateInput } from '../gap-report-snapshot/gap-report-snapshot-order-by-relation-aggregate.input';
+import { AssignmentRequestOrderByRelationAggregateInput } from '../assignment-request/assignment-request-order-by-relation-aggregate.input';
+import { PreacherRegionAccessOrderByRelationAggregateInput } from '../preacher-region-access/preacher-region-access-order-by-relation-aggregate.input';
+import { AssignmentInviteTemplateOrderByRelationAggregateInput } from '../assignment-invite-template/assignment-invite-template-order-by-relation-aggregate.input';
 
 @InputType()
 export class InstitutionOrderByWithRelationInput {
@@ -109,4 +115,22 @@ export class InstitutionOrderByWithRelationInput {
 
     @Field(() => AvailabilityRecurrenceRuleOrderByRelationAggregateInput, {nullable:true})
     availability_recurrence_rules?: AvailabilityRecurrenceRuleOrderByRelationAggregateInput;
+
+    @Field(() => ChurchServiceCalendarOrderByRelationAggregateInput, {nullable:true})
+    church_service_calendar_entries?: ChurchServiceCalendarOrderByRelationAggregateInput;
+
+    @Field(() => AssignmentOrderByRelationAggregateInput, {nullable:true})
+    assignments?: AssignmentOrderByRelationAggregateInput;
+
+    @Field(() => GapReportSnapshotOrderByRelationAggregateInput, {nullable:true})
+    gap_report_snapshots?: GapReportSnapshotOrderByRelationAggregateInput;
+
+    @Field(() => AssignmentRequestOrderByRelationAggregateInput, {nullable:true})
+    assignment_requests?: AssignmentRequestOrderByRelationAggregateInput;
+
+    @Field(() => PreacherRegionAccessOrderByRelationAggregateInput, {nullable:true})
+    preacher_region_access?: PreacherRegionAccessOrderByRelationAggregateInput;
+
+    @Field(() => AssignmentInviteTemplateOrderByRelationAggregateInput, {nullable:true})
+    assignment_invite_templates?: AssignmentInviteTemplateOrderByRelationAggregateInput;
 }

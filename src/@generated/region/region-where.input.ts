@@ -8,6 +8,7 @@ import { BoolFilter } from '../prisma/bool-filter.input';
 import { DateTimeNullableFilter } from '../prisma/date-time-nullable-filter.input';
 import { ChurchListRelationFilter } from '../church/church-list-relation-filter.input';
 import { Type } from 'class-transformer';
+import { PreacherRegionAccessListRelationFilter } from '../preacher-region-access/preacher-region-access-list-relation-filter.input';
 
 @InputType()
 export class RegionWhereInput {
@@ -60,4 +61,7 @@ export class RegionWhereInput {
     @Field(() => ChurchListRelationFilter, {nullable:true})
     @Type(() => ChurchListRelationFilter)
     churches?: ChurchListRelationFilter;
+
+    @Field(() => PreacherRegionAccessListRelationFilter, {nullable:true})
+    preacher_region_access?: PreacherRegionAccessListRelationFilter;
 }

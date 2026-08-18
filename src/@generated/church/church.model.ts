@@ -7,10 +7,13 @@ import { Institution } from '../institution/institution.model';
 import { Region } from '../region/region.model';
 import { Contact } from '../contact/contact.model';
 import { User } from '../user/user.model';
+import { AssignmentRequest } from '../assignment-request/assignment-request.model';
 import { Department } from '../department/department.model';
 import { SubsidyRequest } from '../subsidy-request/subsidy-request.model';
 import { AnnualBudget } from '../annual-budget/annual-budget.model';
 import { Project } from '../project/project.model';
+import { ChurchServiceCalendar } from '../church-service-calendar/church-service-calendar.model';
+import { Assignment } from '../assignment/assignment.model';
 import { ChurchCount } from './church-count.output';
 
 @ObjectType()
@@ -76,6 +79,9 @@ export class Church {
     @Field(() => User, {nullable:true})
     leader?: User | null;
 
+    @Field(() => [AssignmentRequest], {nullable:true})
+    assignment_requests?: Array<AssignmentRequest>;
+
     @Field(() => [Department], {nullable:true})
     departments?: Array<Department>;
 
@@ -90,6 +96,12 @@ export class Church {
 
     @Field(() => [Project], {nullable:true})
     projects?: Array<Project>;
+
+    @Field(() => [ChurchServiceCalendar], {nullable:true})
+    service_calendar?: Array<ChurchServiceCalendar>;
+
+    @Field(() => [Assignment], {nullable:true})
+    assignments?: Array<Assignment>;
 
     @Field(() => ChurchCount, {nullable:false})
     _count?: ChurchCount;

@@ -129,6 +129,33 @@ const roles = [
       { key_code: 'AVAILABILITY_RECURRENCE_RULES_ACCESS', is_essential: true },
       { key_code: 'AVAILABILITY_RECURRENCE_RULE_SET', is_essential: true },
       { key_code: 'AVAILABILITY_RECURRENCE_RULE_DELETE', is_essential: true },
+      // Preacher scheduling module — Phase 2 (Church service calendar)
+      { key_code: 'CHURCH_SERVICE_CALENDAR_ACCESS', is_essential: true },
+      { key_code: 'CHURCH_SERVICE_CALENDAR_SET', is_essential: true },
+      { key_code: 'CHURCH_SERVICE_CALENDAR_BULK_SET', is_essential: true },
+      // Preacher scheduling module — Phase 3 (Overview grid + gap report)
+      { key_code: 'SCHEDULE_OVERVIEW_ACCESS', is_essential: true },
+      { key_code: 'GAP_REPORT_ACCESS', is_essential: true },
+      { key_code: 'ASSIGNMENT_SET', is_essential: true },
+      { key_code: 'ASSIGNMENT_SET_ANY', is_essential: true },
+      // Preacher scheduling module — Phase 4 (Invite and request)
+      { key_code: 'ASSIGNMENT_REQUEST_MINE_ACCESS', is_essential: true },
+      { key_code: 'ASSIGNMENT_REQUEST_CREATE', is_essential: true },
+      { key_code: 'ASSIGNMENT_INVITE_CREATE', is_essential: true },
+      { key_code: 'ASSIGNMENT_INVITE_CREATE_ANY', is_essential: true },
+      { key_code: 'ASSIGNMENT_REQUEST_RESPOND', is_essential: true },
+      { key_code: 'ASSIGNMENT_REQUEST_RESPOND_ANY', is_essential: true },
+      { key_code: 'OPEN_SLOTS_FOR_PREACHER_ACCESS', is_essential: true },
+      { key_code: 'ELIGIBLE_PREACHERS_FOR_SLOT_ACCESS', is_essential: true },
+      { key_code: 'ASSIGNMENT_INVITE_TEMPLATES_ACCESS', is_essential: true },
+      { key_code: 'ASSIGNMENT_INVITE_TEMPLATE_CREATE', is_essential: true },
+      { key_code: 'ASSIGNMENT_INVITE_TEMPLATE_UPDATE', is_essential: true },
+      { key_code: 'ASSIGNMENT_INVITE_TEMPLATE_DELETE', is_essential: true },
+      { key_code: 'PREACHER_REGION_ACCESS_MINE_ACCESS', is_essential: true },
+      { key_code: 'PREACHER_REGION_ACCESS_GRANT', is_essential: true },
+      { key_code: 'PREACHER_REGION_ACCESS_REVOKE', is_essential: true },
+      // Preacher scheduling module — Phase 5 (Monthly close)
+      { key_code: 'MONTHLY_CLOSE_TRIGGER', is_essential: true },
     ],
   },
   {
@@ -149,6 +176,19 @@ const roles = [
       { key_code: 'PROJECT_CREATE', is_essential: true },
       // My Projects
       { key_code: 'MY_PROJECTS_ACCESS', is_essential: true },
+      // Preacher scheduling module — Phase 1 (own availability)
+      { key_code: 'AVAILABILITY_MINE_ACCESS', is_essential: true },
+      { key_code: 'AVAILABILITY_SET', is_essential: true },
+      { key_code: 'AVAILABILITY_BULK_SET', is_essential: true },
+      { key_code: 'AVAILABILITY_RECURRENCE_RULES_ACCESS', is_essential: true },
+      { key_code: 'AVAILABILITY_RECURRENCE_RULE_SET', is_essential: true },
+      { key_code: 'AVAILABILITY_RECURRENCE_RULE_DELETE', is_essential: true },
+      // Preacher scheduling module — Phase 4 (own requests/invites, reach)
+      { key_code: 'ASSIGNMENT_REQUEST_MINE_ACCESS', is_essential: true },
+      { key_code: 'ASSIGNMENT_REQUEST_CREATE', is_essential: true },
+      { key_code: 'ASSIGNMENT_REQUEST_RESPOND', is_essential: true },
+      { key_code: 'OPEN_SLOTS_FOR_PREACHER_ACCESS', is_essential: true },
+      { key_code: 'PREACHER_REGION_ACCESS_MINE_ACCESS', is_essential: true },
     ],
   },
   {
@@ -216,6 +256,26 @@ const roles = [
       { key_code: 'GET_SUBSIDY_RECEIPTS', is_essential: true },
       // My Projects
       { key_code: 'MY_PROJECTS_ACCESS', is_essential: true },
+      // Preacher scheduling module — Phase 2 (own church's service calendar)
+      { key_code: 'CHURCH_SERVICE_CALENDAR_ACCESS', is_essential: true },
+      { key_code: 'CHURCH_SERVICE_CALENDAR_SET', is_essential: true },
+      // Preacher scheduling module — Phase 3 (own church's assignments)
+      { key_code: 'ASSIGNMENT_SET', is_essential: true },
+      // Preacher scheduling module — Phase 4 (inviting for own church + own requests/invites as a preacher, reach)
+      { key_code: 'ASSIGNMENT_INVITE_CREATE', is_essential: true },
+      { key_code: 'ASSIGNMENT_REQUEST_MINE_ACCESS', is_essential: true },
+      { key_code: 'ASSIGNMENT_REQUEST_CREATE', is_essential: true },
+      { key_code: 'ASSIGNMENT_REQUEST_RESPOND', is_essential: true },
+      { key_code: 'OPEN_SLOTS_FOR_PREACHER_ACCESS', is_essential: true },
+      { key_code: 'ELIGIBLE_PREACHERS_FOR_SLOT_ACCESS', is_essential: true },
+      { key_code: 'PREACHER_REGION_ACCESS_MINE_ACCESS', is_essential: true },
+      // Preacher scheduling module — Phase 1 (own availability, a church leader may also preach)
+      { key_code: 'AVAILABILITY_MINE_ACCESS', is_essential: true },
+      { key_code: 'AVAILABILITY_SET', is_essential: true },
+      { key_code: 'AVAILABILITY_BULK_SET', is_essential: true },
+      { key_code: 'AVAILABILITY_RECURRENCE_RULES_ACCESS', is_essential: true },
+      { key_code: 'AVAILABILITY_RECURRENCE_RULE_SET', is_essential: true },
+      { key_code: 'AVAILABILITY_RECURRENCE_RULE_DELETE', is_essential: true },
     ],
   },
   {
@@ -485,6 +545,23 @@ const roles = [
       { key_code: 'PROJECT_ADJUSTMENT_TASK_ADD', is_essential: true },
       { key_code: 'PROJECT_ADJUSTMENT_TASK_TOGGLE', is_essential: true },
       { key_code: 'PROJECT_ADJUSTMENT_TASK_REMOVE', is_essential: true },
+      // Preacher scheduling module — Phase 2 (any church, R11 item E: any department leader gets broad scheduling access)
+      { key_code: 'CHURCH_SERVICE_CALENDAR_BULK_SET', is_essential: true },
+      { key_code: 'SCHEDULE_OVERVIEW_ACCESS', is_essential: true },
+      { key_code: 'GAP_REPORT_ACCESS', is_essential: true },
+      { key_code: 'ASSIGNMENT_SET_ANY', is_essential: true },
+      // Preacher scheduling module — Phase 4 (any church, R11 item E)
+      { key_code: 'ASSIGNMENT_INVITE_CREATE_ANY', is_essential: true },
+      { key_code: 'ASSIGNMENT_REQUEST_RESPOND_ANY', is_essential: true },
+      { key_code: 'ELIGIBLE_PREACHERS_FOR_SLOT_ACCESS', is_essential: true },
+      { key_code: 'ASSIGNMENT_INVITE_TEMPLATES_ACCESS', is_essential: true },
+      { key_code: 'ASSIGNMENT_INVITE_TEMPLATE_CREATE', is_essential: true },
+      { key_code: 'ASSIGNMENT_INVITE_TEMPLATE_UPDATE', is_essential: true },
+      { key_code: 'ASSIGNMENT_INVITE_TEMPLATE_DELETE', is_essential: true },
+      { key_code: 'PREACHER_REGION_ACCESS_GRANT', is_essential: true },
+      { key_code: 'PREACHER_REGION_ACCESS_REVOKE', is_essential: true },
+      // Preacher scheduling module — Phase 5 (any church, R11 item E)
+      { key_code: 'MONTHLY_CLOSE_TRIGGER', is_essential: true },
     ],
   },
   {
@@ -555,6 +632,23 @@ const roles = [
       { key_code: 'PROJECT_ADJUSTMENT_TASK_ADD', is_essential: true },
       { key_code: 'PROJECT_ADJUSTMENT_TASK_TOGGLE', is_essential: true },
       { key_code: 'PROJECT_ADJUSTMENT_TASK_REMOVE', is_essential: true },
+      // Preacher scheduling module — Phase 2 (any church, R11 item E: any department leader gets broad scheduling access)
+      { key_code: 'CHURCH_SERVICE_CALENDAR_BULK_SET', is_essential: true },
+      { key_code: 'SCHEDULE_OVERVIEW_ACCESS', is_essential: true },
+      { key_code: 'GAP_REPORT_ACCESS', is_essential: true },
+      { key_code: 'ASSIGNMENT_SET_ANY', is_essential: true },
+      // Preacher scheduling module — Phase 4 (any church, R11 item E)
+      { key_code: 'ASSIGNMENT_INVITE_CREATE_ANY', is_essential: true },
+      { key_code: 'ASSIGNMENT_REQUEST_RESPOND_ANY', is_essential: true },
+      { key_code: 'ELIGIBLE_PREACHERS_FOR_SLOT_ACCESS', is_essential: true },
+      { key_code: 'ASSIGNMENT_INVITE_TEMPLATES_ACCESS', is_essential: true },
+      { key_code: 'ASSIGNMENT_INVITE_TEMPLATE_CREATE', is_essential: true },
+      { key_code: 'ASSIGNMENT_INVITE_TEMPLATE_UPDATE', is_essential: true },
+      { key_code: 'ASSIGNMENT_INVITE_TEMPLATE_DELETE', is_essential: true },
+      { key_code: 'PREACHER_REGION_ACCESS_GRANT', is_essential: true },
+      { key_code: 'PREACHER_REGION_ACCESS_REVOKE', is_essential: true },
+      // Preacher scheduling module — Phase 5 (any church, R11 item E)
+      { key_code: 'MONTHLY_CLOSE_TRIGGER', is_essential: true },
     ],
   },
   {

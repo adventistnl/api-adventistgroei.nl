@@ -159,7 +159,30 @@ export enum PermissionResolverName {
     setAvailabilityBulk = "setAvailabilityBulk",
     myAvailabilityRecurrenceRules = "myAvailabilityRecurrenceRules",
     setAvailabilityRecurrenceRule = "setAvailabilityRecurrenceRule",
-    deleteAvailabilityRecurrenceRule = "deleteAvailabilityRecurrenceRule"
+    deleteAvailabilityRecurrenceRule = "deleteAvailabilityRecurrenceRule",
+    churchServiceCalendar = "churchServiceCalendar",
+    setChurchServiceCalendar = "setChurchServiceCalendar",
+    setChurchServiceCalendarBulk = "setChurchServiceCalendarBulk",
+    scheduleOverview = "scheduleOverview",
+    gapReport = "gapReport",
+    setAssignment = "setAssignment",
+    setAssignmentAny = "setAssignmentAny",
+    myAssignmentRequests = "myAssignmentRequests",
+    requestAssignment = "requestAssignment",
+    inviteToAssignment = "inviteToAssignment",
+    inviteToAssignmentAny = "inviteToAssignmentAny",
+    respondToAssignmentRequest = "respondToAssignmentRequest",
+    respondToAssignmentRequestAny = "respondToAssignmentRequestAny",
+    openSlotsForPreacher = "openSlotsForPreacher",
+    eligiblePreachersForSlot = "eligiblePreachersForSlot",
+    assignmentInviteTemplates = "assignmentInviteTemplates",
+    createAssignmentInviteTemplate = "createAssignmentInviteTemplate",
+    updateAssignmentInviteTemplate = "updateAssignmentInviteTemplate",
+    deleteAssignmentInviteTemplate = "deleteAssignmentInviteTemplate",
+    myPreacherRegionAccess = "myPreacherRegionAccess",
+    grantPreacherRegionAccess = "grantPreacherRegionAccess",
+    revokePreacherRegionAccess = "revokePreacherRegionAccess",
+    triggerMonthlyClose = "triggerMonthlyClose"
 }
 
 

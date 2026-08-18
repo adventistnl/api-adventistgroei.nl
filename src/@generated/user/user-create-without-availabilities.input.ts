@@ -28,6 +28,9 @@ import { ChurchCreateNestedOneWithoutLeaderInput } from '../church/church-create
 import { ProjectHistoryCreateNestedManyWithoutUserInput } from '../project-history/project-history-create-nested-many-without-user.input';
 import { InstitutionPositionCreateNestedManyWithoutUserInput } from '../institution-position/institution-position-create-nested-many-without-user.input';
 import { AvailabilityRecurrenceRuleCreateNestedManyWithoutUserInput } from '../availability-recurrence-rule/availability-recurrence-rule-create-nested-many-without-user.input';
+import { AssignmentCreateNestedManyWithoutUserInput } from '../assignment/assignment-create-nested-many-without-user.input';
+import { AssignmentRequestCreateNestedManyWithoutUserInput } from '../assignment-request/assignment-request-create-nested-many-without-user.input';
+import { PreacherRegionAccessCreateNestedManyWithoutUserInput } from '../preacher-region-access/preacher-region-access-create-nested-many-without-user.input';
 
 @InputType()
 export class UserCreateWithoutAvailabilitiesInput {
@@ -167,4 +170,13 @@ export class UserCreateWithoutAvailabilitiesInput {
 
     @Field(() => AvailabilityRecurrenceRuleCreateNestedManyWithoutUserInput, {nullable:true})
     availability_recurrence_rules?: AvailabilityRecurrenceRuleCreateNestedManyWithoutUserInput;
+
+    @Field(() => AssignmentCreateNestedManyWithoutUserInput, {nullable:true})
+    assignments?: AssignmentCreateNestedManyWithoutUserInput;
+
+    @Field(() => AssignmentRequestCreateNestedManyWithoutUserInput, {nullable:true})
+    assignment_requests?: AssignmentRequestCreateNestedManyWithoutUserInput;
+
+    @Field(() => PreacherRegionAccessCreateNestedManyWithoutUserInput, {nullable:true})
+    preacher_region_access?: PreacherRegionAccessCreateNestedManyWithoutUserInput;
 }
