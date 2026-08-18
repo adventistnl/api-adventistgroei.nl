@@ -29,3 +29,4 @@ export * from './project-adjustment.resolver';
 export * from './institution-position.resolver';
 export * from './availability.resolver';
 export * from './availability-recurrence-rule.resolver';
+export * from './church-service-calendar.resolver';

@@ -43,4 +43,7 @@ export class InstitutionCount {
 
     @Field(() => Int, {nullable:false})
     availability_recurrence_rules?: number;
+
+    @Field(() => Int, {nullable:false})
+    church_service_calendar_entries?: number;
 }

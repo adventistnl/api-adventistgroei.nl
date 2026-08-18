@@ -12,6 +12,7 @@ import { UserOrderByRelationAggregateInput } from '../user/user-order-by-relatio
 import { SubsidyRequestOrderByRelationAggregateInput } from '../subsidy-request/subsidy-request-order-by-relation-aggregate.input';
 import { AnnualBudgetOrderByRelationAggregateInput } from '../annual-budget/annual-budget-order-by-relation-aggregate.input';
 import { ProjectOrderByRelationAggregateInput } from '../project/project-order-by-relation-aggregate.input';
+import { ChurchServiceCalendarOrderByRelationAggregateInput } from '../church-service-calendar/church-service-calendar-order-by-relation-aggregate.input';
 
 @InputType()
 export class ChurchOrderByWithRelationInput {
@@ -98,4 +99,7 @@ export class ChurchOrderByWithRelationInput {
     @Field(() => ProjectOrderByRelationAggregateInput, {nullable:true})
     @Type(() => ProjectOrderByRelationAggregateInput)
     projects?: ProjectOrderByRelationAggregateInput;
+
+    @Field(() => ChurchServiceCalendarOrderByRelationAggregateInput, {nullable:true})
+    service_calendar?: ChurchServiceCalendarOrderByRelationAggregateInput;
 }
