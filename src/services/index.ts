@@ -39,3 +39,5 @@ export * from './availability-recurrence-rule.service';
 export * from './church-service-calendar.service';
 export * from './assignment.service';
 export * from './gap-report.service';
+export * from './assignment-invite-template.service';
+export * from './assignment-request.service';

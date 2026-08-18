@@ -1,0 +1,134 @@
+# Preacher scheduling module — Phase 4 (Invite and request)
+# Extracted from the real, auto-generated schema.gql after implementing this phase.
+# See preacher-scheduling-blueprint/docs/01-corrected-blueprint.md for the full spec.
+#
+# Own-scope vs any-scope pairs (R11), mirroring the setAssignment/setAssignmentAny pattern
+# established in Phase 3:
+#   requestAssignment            — own action, every preacher role
+#   inviteToAssignment           — own church only (Church Leader role)
+#   inviteToAssignmentAny        — any church in your institution (Admin + department-leader roles)
+#   respondToAssignmentRequest   — own scope: invited preacher (CHURCH_INVITED) or the church's
+#                                  own leader (PREACHER_REQUESTED)
+#   respondToAssignmentRequestAny — admin/department-leader path, PREACHER_REQUESTED only
+#     (an admin can't accept/decline an invite on a preacher's behalf — that's the preacher's
+#     own commitment)
+#
+# R6 reach is enforced server-side inside requestAssignment / inviteToAssignment(Any) /
+# openSlotsForPreacher / eligiblePreachersForSlot — never left to the client to filter.
+
+type Query {
+  myAssignmentRequests: [AssignmentRequest!]!
+  openSlotsForPreacher(month: String!): [OpenSlotForPreacher!]!
+  eligiblePreachersForSlot(church_id: String!, date: DateTime!): [User!]!
+  assignmentInviteTemplates: [AssignmentInviteTemplate!]!
+  myPreacherRegionAccess: [PreacherRegionAccess!]!
+}
+
+type Mutation {
+  requestAssignment(church_id: String!, date: DateTime!): AssignmentRequest!
+  inviteToAssignment(church_id: String!, date: DateTime!, user_id: String!, template_id: String): AssignmentRequest!
+  inviteToAssignmentAny(church_id: String!, date: DateTime!, user_id: String!, template_id: String): AssignmentRequest!
+  respondToAssignmentRequest(id: String!, accept: Boolean!): AssignmentRequest!
+  respondToAssignmentRequestAny(id: String!, accept: Boolean!): AssignmentRequest!
+  createAssignmentInviteTemplate(input: CreateAssignmentInviteTemplateInput!): AssignmentInviteTemplate!
+  updateAssignmentInviteTemplate(id: String!, input: UpdateAssignmentInviteTemplateInput!): AssignmentInviteTemplate!
+  deleteAssignmentInviteTemplate(id: String!): Boolean!
+  grantPreacherRegionAccess(user_id: String!, region_id: String!): PreacherRegionAccess!
+  revokePreacherRegionAccess(id: String!): Boolean!
+}
+
+"""
+R5 — a pending candidature (preacher applied) or invite (church/admin invited), converging
+on the same accept/decline flow (respondToAssignmentRequest). R7 — accepting one supersedes
+every other pending request for the same church+date.
+"""
+type AssignmentRequest {
+  id: ID!
+  institution_id: String!
+  church_id: String!
+  date: DateTime!
+  user_id: String!
+  type: RequestType!
+  status: RequestStatus!
+  template_id: String
+  created_at: DateTime!
+  decided_at: DateTime
+  created_by: String!
+  updated_by: String!
+  is_deleted: Boolean!
+  deleted_at: DateTime
+  deleted_by: String
+  institution: Institution!
+  church: Church!
+  user: User!
+  template: AssignmentInviteTemplate
+}
+
+enum RequestType {
+  PREACHER_REQUESTED
+  CHURCH_INVITED
+}
+
+enum RequestStatus {
+  PENDING
+  ACCEPTED
+  DECLINED
+  WITHDRAWN
+  SUPERSEDED
+}
+
+"""
+R6 reach — a preacher's eligible regions = their home church's region ∪ every region with a row
+here. Granting one row per institution region is how "national" reach is expressed — there is
+no separate scope_level flag.
+"""
+type PreacherRegionAccess {
+  id: ID!
+  institution_id: String!
+  user_id: String!
+  region_id: String!
+  created_at: DateTime!
+  created_by: String!
+  institution: Institution!
+  user: User!
+  region: Region!
+}
+
+"""
+R8.2 — reusable invite message templates, rendered through Mustache at send time (same
+mechanism as the platform's system emails, but per-institution admin-authored content).
+"""
+type AssignmentInviteTemplate {
+  id: ID!
+  institution_id: String!
+  name: String!
+  subject: String!
+  body: String!
+  created_at: DateTime!
+  updated_at: DateTime!
+  created_by: String!
+  updated_by: String!
+  is_deleted: Boolean!
+  deleted_at: DateTime
+  deleted_by: String
+  institution: Institution!
+  requests: [AssignmentRequest!]
+}
+
+input CreateAssignmentInviteTemplateInput {
+  name: String!
+  subject: String!
+  body: String!
+}
+
+input UpdateAssignmentInviteTemplateInput {
+  name: String
+  subject: String
+  body: String
+}
+
+type OpenSlotForPreacher {
+  churchId: String!
+  churchName: String!
+  date: DateTime!
+}

@@ -1,6 +1,7 @@
 import { Field } from '@nestjs/graphql';
 import { InputType } from '@nestjs/graphql';
 import { GraphQLJSON } from 'graphql-type-json';
+import { PreacherRegionAccessUncheckedCreateNestedManyWithoutRegionInput } from '../preacher-region-access/preacher-region-access-unchecked-create-nested-many-without-region.input';
 
 @InputType()
 export class RegionUncheckedCreateWithoutChurchesInput {
@@ -40,4 +41,7 @@ export class RegionUncheckedCreateWithoutChurchesInput {
 
     @Field(() => String, {nullable:true})
     deleted_by?: string;
+
+    @Field(() => PreacherRegionAccessUncheckedCreateNestedManyWithoutRegionInput, {nullable:true})
+    preacher_region_access?: PreacherRegionAccessUncheckedCreateNestedManyWithoutRegionInput;
 }

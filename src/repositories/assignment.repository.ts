@@ -12,6 +12,7 @@ export class AssignmentRepository {
     return this.prisma.assignment.findMany({
       where: { institution_id: institutionId, is_deleted: false, date: { gte: monthStart, lt: monthEnd } },
       orderBy: [{ date: 'asc' }],
+      include: { church: true, user: true, institution: true },
     });
   }
 

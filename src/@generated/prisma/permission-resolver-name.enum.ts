@@ -166,7 +166,22 @@ export enum PermissionResolverName {
     scheduleOverview = "scheduleOverview",
     gapReport = "gapReport",
     setAssignment = "setAssignment",
-    setAssignmentAny = "setAssignmentAny"
+    setAssignmentAny = "setAssignmentAny",
+    myAssignmentRequests = "myAssignmentRequests",
+    requestAssignment = "requestAssignment",
+    inviteToAssignment = "inviteToAssignment",
+    inviteToAssignmentAny = "inviteToAssignmentAny",
+    respondToAssignmentRequest = "respondToAssignmentRequest",
+    respondToAssignmentRequestAny = "respondToAssignmentRequestAny",
+    openSlotsForPreacher = "openSlotsForPreacher",
+    eligiblePreachersForSlot = "eligiblePreachersForSlot",
+    assignmentInviteTemplates = "assignmentInviteTemplates",
+    createAssignmentInviteTemplate = "createAssignmentInviteTemplate",
+    updateAssignmentInviteTemplate = "updateAssignmentInviteTemplate",
+    deleteAssignmentInviteTemplate = "deleteAssignmentInviteTemplate",
+    myPreacherRegionAccess = "myPreacherRegionAccess",
+    grantPreacherRegionAccess = "grantPreacherRegionAccess",
+    revokePreacherRegionAccess = "revokePreacherRegionAccess"
 }
 
 

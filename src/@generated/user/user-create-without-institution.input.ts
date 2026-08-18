@@ -29,6 +29,8 @@ import { InstitutionPositionCreateNestedManyWithoutUserInput } from '../institut
 import { AvailabilityCreateNestedManyWithoutUserInput } from '../availability/availability-create-nested-many-without-user.input';
 import { AvailabilityRecurrenceRuleCreateNestedManyWithoutUserInput } from '../availability-recurrence-rule/availability-recurrence-rule-create-nested-many-without-user.input';
 import { AssignmentCreateNestedManyWithoutUserInput } from '../assignment/assignment-create-nested-many-without-user.input';
+import { AssignmentRequestCreateNestedManyWithoutUserInput } from '../assignment-request/assignment-request-create-nested-many-without-user.input';
+import { PreacherRegionAccessCreateNestedManyWithoutUserInput } from '../preacher-region-access/preacher-region-access-create-nested-many-without-user.input';
 
 @InputType()
 export class UserCreateWithoutInstitutionInput {
@@ -170,4 +172,10 @@ export class UserCreateWithoutInstitutionInput {
 
     @Field(() => AssignmentCreateNestedManyWithoutUserInput, {nullable:true})
     assignments?: AssignmentCreateNestedManyWithoutUserInput;
+
+    @Field(() => AssignmentRequestCreateNestedManyWithoutUserInput, {nullable:true})
+    assignment_requests?: AssignmentRequestCreateNestedManyWithoutUserInput;
+
+    @Field(() => PreacherRegionAccessCreateNestedManyWithoutUserInput, {nullable:true})
+    preacher_region_access?: PreacherRegionAccessCreateNestedManyWithoutUserInput;
 }

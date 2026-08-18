@@ -32,3 +32,5 @@ export * from './availability-recurrence-rule.resolver';
 export * from './church-service-calendar.resolver';
 export * from './assignment.resolver';
 export * from './gap-report.resolver';
+export * from './assignment-invite-template.resolver';
+export * from './assignment-request.resolver';

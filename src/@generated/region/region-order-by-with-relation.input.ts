@@ -4,6 +4,7 @@ import { SortOrder } from '../prisma/sort-order.enum';
 import { SortOrderInput } from '../prisma/sort-order.input';
 import { ChurchOrderByRelationAggregateInput } from '../church/church-order-by-relation-aggregate.input';
 import { Type } from 'class-transformer';
+import { PreacherRegionAccessOrderByRelationAggregateInput } from '../preacher-region-access/preacher-region-access-order-by-relation-aggregate.input';
 
 @InputType()
 export class RegionOrderByWithRelationInput {
@@ -47,4 +48,7 @@ export class RegionOrderByWithRelationInput {
     @Field(() => ChurchOrderByRelationAggregateInput, {nullable:true})
     @Type(() => ChurchOrderByRelationAggregateInput)
     churches?: ChurchOrderByRelationAggregateInput;
+
+    @Field(() => PreacherRegionAccessOrderByRelationAggregateInput, {nullable:true})
+    preacher_region_access?: PreacherRegionAccessOrderByRelationAggregateInput;
 }

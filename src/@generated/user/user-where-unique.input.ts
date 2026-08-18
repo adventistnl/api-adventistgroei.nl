@@ -34,6 +34,8 @@ import { InstitutionPositionListRelationFilter } from '../institution-position/i
 import { AvailabilityListRelationFilter } from '../availability/availability-list-relation-filter.input';
 import { AvailabilityRecurrenceRuleListRelationFilter } from '../availability-recurrence-rule/availability-recurrence-rule-list-relation-filter.input';
 import { AssignmentListRelationFilter } from '../assignment/assignment-list-relation-filter.input';
+import { AssignmentRequestListRelationFilter } from '../assignment-request/assignment-request-list-relation-filter.input';
+import { PreacherRegionAccessListRelationFilter } from '../preacher-region-access/preacher-region-access-list-relation-filter.input';
 
 @InputType()
 export class UserWhereUniqueInput {
@@ -200,4 +202,10 @@ export class UserWhereUniqueInput {
 
     @Field(() => AssignmentListRelationFilter, {nullable:true})
     assignments?: AssignmentListRelationFilter;
+
+    @Field(() => AssignmentRequestListRelationFilter, {nullable:true})
+    assignment_requests?: AssignmentRequestListRelationFilter;
+
+    @Field(() => PreacherRegionAccessListRelationFilter, {nullable:true})
+    preacher_region_access?: PreacherRegionAccessListRelationFilter;
 }

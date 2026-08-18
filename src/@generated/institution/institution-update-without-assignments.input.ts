@@ -23,6 +23,9 @@ import { AvailabilityUpdateManyWithoutInstitutionNestedInput } from '../availabi
 import { AvailabilityRecurrenceRuleUpdateManyWithoutInstitutionNestedInput } from '../availability-recurrence-rule/availability-recurrence-rule-update-many-without-institution-nested.input';
 import { ChurchServiceCalendarUpdateManyWithoutInstitutionNestedInput } from '../church-service-calendar/church-service-calendar-update-many-without-institution-nested.input';
 import { GapReportSnapshotUpdateManyWithoutInstitutionNestedInput } from '../gap-report-snapshot/gap-report-snapshot-update-many-without-institution-nested.input';
+import { AssignmentRequestUpdateManyWithoutInstitutionNestedInput } from '../assignment-request/assignment-request-update-many-without-institution-nested.input';
+import { PreacherRegionAccessUpdateManyWithoutInstitutionNestedInput } from '../preacher-region-access/preacher-region-access-update-many-without-institution-nested.input';
+import { AssignmentInviteTemplateUpdateManyWithoutInstitutionNestedInput } from '../assignment-invite-template/assignment-invite-template-update-many-without-institution-nested.input';
 
 @InputType()
 export class InstitutionUpdateWithoutAssignmentsInput {
@@ -118,4 +121,13 @@ export class InstitutionUpdateWithoutAssignmentsInput {
 
     @Field(() => GapReportSnapshotUpdateManyWithoutInstitutionNestedInput, {nullable:true})
     gap_report_snapshots?: GapReportSnapshotUpdateManyWithoutInstitutionNestedInput;
+
+    @Field(() => AssignmentRequestUpdateManyWithoutInstitutionNestedInput, {nullable:true})
+    assignment_requests?: AssignmentRequestUpdateManyWithoutInstitutionNestedInput;
+
+    @Field(() => PreacherRegionAccessUpdateManyWithoutInstitutionNestedInput, {nullable:true})
+    preacher_region_access?: PreacherRegionAccessUpdateManyWithoutInstitutionNestedInput;
+
+    @Field(() => AssignmentInviteTemplateUpdateManyWithoutInstitutionNestedInput, {nullable:true})
+    assignment_invite_templates?: AssignmentInviteTemplateUpdateManyWithoutInstitutionNestedInput;
 }

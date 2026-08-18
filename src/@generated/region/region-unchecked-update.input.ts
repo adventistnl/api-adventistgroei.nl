@@ -8,6 +8,7 @@ import { BoolFieldUpdateOperationsInput } from '../prisma/bool-field-update-oper
 import { NullableDateTimeFieldUpdateOperationsInput } from '../prisma/nullable-date-time-field-update-operations.input';
 import { ChurchUncheckedUpdateManyWithoutRegionNestedInput } from '../church/church-unchecked-update-many-without-region-nested.input';
 import { Type } from 'class-transformer';
+import { PreacherRegionAccessUncheckedUpdateManyWithoutRegionNestedInput } from '../preacher-region-access/preacher-region-access-unchecked-update-many-without-region-nested.input';
 
 @InputType()
 export class RegionUncheckedUpdateInput {
@@ -51,4 +52,7 @@ export class RegionUncheckedUpdateInput {
     @Field(() => ChurchUncheckedUpdateManyWithoutRegionNestedInput, {nullable:true})
     @Type(() => ChurchUncheckedUpdateManyWithoutRegionNestedInput)
     churches?: ChurchUncheckedUpdateManyWithoutRegionNestedInput;
+
+    @Field(() => PreacherRegionAccessUncheckedUpdateManyWithoutRegionNestedInput, {nullable:true})
+    preacher_region_access?: PreacherRegionAccessUncheckedUpdateManyWithoutRegionNestedInput;
 }

@@ -30,6 +30,8 @@ import { InstitutionPositionUncheckedUpdateManyWithoutUserNestedInput } from '..
 import { AvailabilityUncheckedUpdateManyWithoutUserNestedInput } from '../availability/availability-unchecked-update-many-without-user-nested.input';
 import { AvailabilityRecurrenceRuleUncheckedUpdateManyWithoutUserNestedInput } from '../availability-recurrence-rule/availability-recurrence-rule-unchecked-update-many-without-user-nested.input';
 import { AssignmentUncheckedUpdateManyWithoutUserNestedInput } from '../assignment/assignment-unchecked-update-many-without-user-nested.input';
+import { AssignmentRequestUncheckedUpdateManyWithoutUserNestedInput } from '../assignment-request/assignment-request-unchecked-update-many-without-user-nested.input';
+import { PreacherRegionAccessUncheckedUpdateManyWithoutUserNestedInput } from '../preacher-region-access/preacher-region-access-unchecked-update-many-without-user-nested.input';
 
 @InputType()
 export class UserUncheckedUpdateWithoutLed_departmentsInput {
@@ -167,4 +169,10 @@ export class UserUncheckedUpdateWithoutLed_departmentsInput {
 
     @Field(() => AssignmentUncheckedUpdateManyWithoutUserNestedInput, {nullable:true})
     assignments?: AssignmentUncheckedUpdateManyWithoutUserNestedInput;
+
+    @Field(() => AssignmentRequestUncheckedUpdateManyWithoutUserNestedInput, {nullable:true})
+    assignment_requests?: AssignmentRequestUncheckedUpdateManyWithoutUserNestedInput;
+
+    @Field(() => PreacherRegionAccessUncheckedUpdateManyWithoutUserNestedInput, {nullable:true})
+    preacher_region_access?: PreacherRegionAccessUncheckedUpdateManyWithoutUserNestedInput;
 }
