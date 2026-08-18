@@ -7,6 +7,7 @@ import { Institution } from '../institution/institution.model';
 import { Region } from '../region/region.model';
 import { Contact } from '../contact/contact.model';
 import { User } from '../user/user.model';
+import { AssignmentRequest } from '../assignment-request/assignment-request.model';
 import { Department } from '../department/department.model';
 import { SubsidyRequest } from '../subsidy-request/subsidy-request.model';
 import { AnnualBudget } from '../annual-budget/annual-budget.model';
@@ -77,6 +78,9 @@ export class Church {
 
     @Field(() => User, {nullable:true})
     leader?: User | null;
+
+    @Field(() => [AssignmentRequest], {nullable:true})
+    assignment_requests?: Array<AssignmentRequest>;
 
     @Field(() => [Department], {nullable:true})
     departments?: Array<Department>;

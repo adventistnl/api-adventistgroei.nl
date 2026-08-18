@@ -13,6 +13,7 @@ import { Type } from 'class-transformer';
 import { RegionNullableScalarRelationFilter } from '../region/region-nullable-scalar-relation-filter.input';
 import { ContactNullableScalarRelationFilter } from '../contact/contact-nullable-scalar-relation-filter.input';
 import { UserNullableScalarRelationFilter } from '../user/user-nullable-scalar-relation-filter.input';
+import { AssignmentRequestListRelationFilter } from '../assignment-request/assignment-request-list-relation-filter.input';
 import { DepartmentListRelationFilter } from '../department/department-list-relation-filter.input';
 import { UserListRelationFilter } from '../user/user-list-relation-filter.input';
 import { SubsidyRequestListRelationFilter } from '../subsidy-request/subsidy-request-list-relation-filter.input';
@@ -95,6 +96,9 @@ export class ChurchWhereUniqueInput {
     @Field(() => UserNullableScalarRelationFilter, {nullable:true})
     @Type(() => UserNullableScalarRelationFilter)
     leader?: UserNullableScalarRelationFilter;
+
+    @Field(() => AssignmentRequestListRelationFilter, {nullable:true})
+    assignment_requests?: AssignmentRequestListRelationFilter;
 
     @Field(() => DepartmentListRelationFilter, {nullable:true})
     @Type(() => DepartmentListRelationFilter)

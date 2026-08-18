@@ -25,6 +25,8 @@ import { ProjectHistoryUncheckedCreateNestedManyWithoutUserInput } from '../proj
 import { InstitutionPositionUncheckedCreateNestedManyWithoutUserInput } from '../institution-position/institution-position-unchecked-create-nested-many-without-user.input';
 import { AvailabilityUncheckedCreateNestedManyWithoutUserInput } from '../availability/availability-unchecked-create-nested-many-without-user.input';
 import { AssignmentUncheckedCreateNestedManyWithoutUserInput } from '../assignment/assignment-unchecked-create-nested-many-without-user.input';
+import { AssignmentRequestUncheckedCreateNestedManyWithoutUserInput } from '../assignment-request/assignment-request-unchecked-create-nested-many-without-user.input';
+import { PreacherRegionAccessUncheckedCreateNestedManyWithoutUserInput } from '../preacher-region-access/preacher-region-access-unchecked-create-nested-many-without-user.input';
 
 @InputType()
 export class UserUncheckedCreateWithoutAvailability_recurrence_rulesInput {
@@ -163,4 +165,10 @@ export class UserUncheckedCreateWithoutAvailability_recurrence_rulesInput {
 
     @Field(() => AssignmentUncheckedCreateNestedManyWithoutUserInput, {nullable:true})
     assignments?: AssignmentUncheckedCreateNestedManyWithoutUserInput;
+
+    @Field(() => AssignmentRequestUncheckedCreateNestedManyWithoutUserInput, {nullable:true})
+    assignment_requests?: AssignmentRequestUncheckedCreateNestedManyWithoutUserInput;
+
+    @Field(() => PreacherRegionAccessUncheckedCreateNestedManyWithoutUserInput, {nullable:true})
+    preacher_region_access?: PreacherRegionAccessUncheckedCreateNestedManyWithoutUserInput;
 }

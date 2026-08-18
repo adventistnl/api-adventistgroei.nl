@@ -11,6 +11,7 @@ import { InstitutionUpdateOneRequiredWithoutChurchesNestedInput } from '../insti
 import { Type } from 'class-transformer';
 import { ContactUpdateOneWithoutChurchNestedInput } from '../contact/contact-update-one-without-church-nested.input';
 import { UserUpdateOneWithoutLed_churchNestedInput } from '../user/user-update-one-without-led-church-nested.input';
+import { AssignmentRequestUpdateManyWithoutChurchNestedInput } from '../assignment-request/assignment-request-update-many-without-church-nested.input';
 import { DepartmentUpdateManyWithoutChurchNestedInput } from '../department/department-update-many-without-church-nested.input';
 import { UserUpdateManyWithoutChurchNestedInput } from '../user/user-update-many-without-church-nested.input';
 import { SubsidyRequestUpdateManyWithoutChurchNestedInput } from '../subsidy-request/subsidy-request-update-many-without-church-nested.input';
@@ -69,6 +70,9 @@ export class ChurchUpdateWithoutRegionInput {
     @Field(() => UserUpdateOneWithoutLed_churchNestedInput, {nullable:true})
     @Type(() => UserUpdateOneWithoutLed_churchNestedInput)
     leader?: UserUpdateOneWithoutLed_churchNestedInput;
+
+    @Field(() => AssignmentRequestUpdateManyWithoutChurchNestedInput, {nullable:true})
+    assignment_requests?: AssignmentRequestUpdateManyWithoutChurchNestedInput;
 
     @Field(() => DepartmentUpdateManyWithoutChurchNestedInput, {nullable:true})
     @Type(() => DepartmentUpdateManyWithoutChurchNestedInput)

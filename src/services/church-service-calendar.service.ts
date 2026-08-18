@@ -91,20 +91,15 @@ export class ChurchServiceCalendarService {
       if (!church) continue;
 
       for (const date of dates) {
-        await this.repository.upsertBulkDefault({
+        const applied = await this.repository.upsertBulkDefault({
           institutionId: church.institution_id,
           churchId: church.id,
           date,
           hasService: input.has_service,
           userId,
         });
+        if (applied) results.push(applied);
       }
-      const applied = await this.repository.findByChurchAndMonth(
-        churchId,
-        utcMidnight(input.effective_from),
-        addMonthsUTC(utcMidnight(input.effective_from), MAX_HORIZON_MONTHS),
-      );
-      results.push(...applied);
     }
 
     return results;

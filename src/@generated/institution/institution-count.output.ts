@@ -52,4 +52,13 @@ export class InstitutionCount {
 
     @Field(() => Int, {nullable:false})
     gap_report_snapshots?: number;
+
+    @Field(() => Int, {nullable:false})
+    assignment_requests?: number;
+
+    @Field(() => Int, {nullable:false})
+    preacher_region_access?: number;
+
+    @Field(() => Int, {nullable:false})
+    assignment_invite_templates?: number;
 }

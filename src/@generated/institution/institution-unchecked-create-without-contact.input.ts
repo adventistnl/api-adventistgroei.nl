@@ -18,6 +18,9 @@ import { AvailabilityRecurrenceRuleUncheckedCreateNestedManyWithoutInstitutionIn
 import { ChurchServiceCalendarUncheckedCreateNestedManyWithoutInstitutionInput } from '../church-service-calendar/church-service-calendar-unchecked-create-nested-many-without-institution.input';
 import { AssignmentUncheckedCreateNestedManyWithoutInstitutionInput } from '../assignment/assignment-unchecked-create-nested-many-without-institution.input';
 import { GapReportSnapshotUncheckedCreateNestedManyWithoutInstitutionInput } from '../gap-report-snapshot/gap-report-snapshot-unchecked-create-nested-many-without-institution.input';
+import { AssignmentRequestUncheckedCreateNestedManyWithoutInstitutionInput } from '../assignment-request/assignment-request-unchecked-create-nested-many-without-institution.input';
+import { PreacherRegionAccessUncheckedCreateNestedManyWithoutInstitutionInput } from '../preacher-region-access/preacher-region-access-unchecked-create-nested-many-without-institution.input';
+import { AssignmentInviteTemplateUncheckedCreateNestedManyWithoutInstitutionInput } from '../assignment-invite-template/assignment-invite-template-unchecked-create-nested-many-without-institution.input';
 
 @InputType()
 export class InstitutionUncheckedCreateWithoutContactInput {
@@ -112,4 +115,13 @@ export class InstitutionUncheckedCreateWithoutContactInput {
 
     @Field(() => GapReportSnapshotUncheckedCreateNestedManyWithoutInstitutionInput, {nullable:true})
     gap_report_snapshots?: GapReportSnapshotUncheckedCreateNestedManyWithoutInstitutionInput;
+
+    @Field(() => AssignmentRequestUncheckedCreateNestedManyWithoutInstitutionInput, {nullable:true})
+    assignment_requests?: AssignmentRequestUncheckedCreateNestedManyWithoutInstitutionInput;
+
+    @Field(() => PreacherRegionAccessUncheckedCreateNestedManyWithoutInstitutionInput, {nullable:true})
+    preacher_region_access?: PreacherRegionAccessUncheckedCreateNestedManyWithoutInstitutionInput;
+
+    @Field(() => AssignmentInviteTemplateUncheckedCreateNestedManyWithoutInstitutionInput, {nullable:true})
+    assignment_invite_templates?: AssignmentInviteTemplateUncheckedCreateNestedManyWithoutInstitutionInput;
 }

@@ -19,6 +19,9 @@ import { AvailabilityRecurrenceRule } from '../availability-recurrence-rule/avai
 import { ChurchServiceCalendar } from '../church-service-calendar/church-service-calendar.model';
 import { Assignment } from '../assignment/assignment.model';
 import { GapReportSnapshot } from '../gap-report-snapshot/gap-report-snapshot.model';
+import { AssignmentRequest } from '../assignment-request/assignment-request.model';
+import { PreacherRegionAccess } from '../preacher-region-access/preacher-region-access.model';
+import { AssignmentInviteTemplate } from '../assignment-invite-template/assignment-invite-template.model';
 import { InstitutionCount } from './institution-count.output';
 
 @ObjectType()
@@ -113,6 +116,15 @@ export class Institution {
 
     @Field(() => [GapReportSnapshot], {nullable:true})
     gap_report_snapshots?: Array<GapReportSnapshot>;
+
+    @Field(() => [AssignmentRequest], {nullable:true})
+    assignment_requests?: Array<AssignmentRequest>;
+
+    @Field(() => [PreacherRegionAccess], {nullable:true})
+    preacher_region_access?: Array<PreacherRegionAccess>;
+
+    @Field(() => [AssignmentInviteTemplate], {nullable:true})
+    assignment_invite_templates?: Array<AssignmentInviteTemplate>;
 
     @Field(() => InstitutionCount, {nullable:false})
     _count?: InstitutionCount;

@@ -123,28 +123,6 @@ type ChurchChartData {
   fill: String!
 }
 
-type RegionCount {
-  churches: Int!
-}
-
-type Region {
-  id: ID!
-  description: String
-  name: String!
-  territory: JSON
-  color: String
-  created_at: DateTime!
-  updated_at: DateTime!
-  created_by: String!
-  updated_by: String!
-  is_deleted: Boolean!
-  deleted_at: DateTime
-  deleted_by: String
-  churches: [Church!]
-  _count: RegionCount!
-  kpiData: RegionKPIData!
-}
-
 type EventRecipient {
   id: ID!
   event_id: String!
@@ -1162,6 +1140,21 @@ enum PermissionResolverName {
   gapReport
   setAssignment
   setAssignmentAny
+  myAssignmentRequests
+  requestAssignment
+  inviteToAssignment
+  inviteToAssignmentAny
+  respondToAssignmentRequest
+  respondToAssignmentRequestAny
+  openSlotsForPreacher
+  eligiblePreachersForSlot
+  assignmentInviteTemplates
+  createAssignmentInviteTemplate
+  updateAssignmentInviteTemplate
+  deleteAssignmentInviteTemplate
+  myPreacherRegionAccess
+  grantPreacherRegionAccess
+  revokePreacherRegionAccess
 }
 
 enum PermissionGroup {
@@ -1480,6 +1473,73 @@ enum AssignmentStatus {
   LOCKED
 }
 
+type AssignmentInviteTemplateCount {
+  requests: Int!
+}
+
+"""
+R8.2 — reusable invite message templates, rendered through the existing MustacheService
+(same mechanism as system emails) at send time. Distinct from the locale email JSON files,
+which are fixed platform copy — this is per-institution, admin-authored content.
+"""
+type AssignmentInviteTemplate {
+  id: ID!
+  institution_id: String!
+  name: String!
+  subject: String!
+  body: String!
+  created_at: DateTime!
+  updated_at: DateTime!
+  created_by: String!
+  updated_by: String!
+  is_deleted: Boolean!
+  deleted_at: DateTime
+  deleted_by: String
+  institution: Institution!
+  requests: [AssignmentRequest!]
+  _count: AssignmentInviteTemplateCount!
+}
+
+"""
+R5 — a pending candidature (preacher applied) or invite (church/admin invited), converging
+on the same accept/decline flow (respondToAssignmentRequest). R7 — accepting one supersedes
+every other pending request for the same church+date.
+"""
+type AssignmentRequest {
+  id: ID!
+  institution_id: String!
+  church_id: String!
+  date: DateTime!
+  user_id: String!
+  type: RequestType!
+  status: RequestStatus!
+  template_id: String
+  created_at: DateTime!
+  decided_at: DateTime
+  created_by: String!
+  updated_by: String!
+  is_deleted: Boolean!
+  deleted_at: DateTime
+  deleted_by: String
+  institution: Institution!
+  church: Church!
+  user: User!
+  template: AssignmentInviteTemplate
+}
+
+enum RequestType {
+  PREACHER_REQUESTED
+  CHURCH_INVITED
+}
+
+enum RequestStatus {
+  PENDING
+  ACCEPTED
+  DECLINED
+  WITHDRAWN
+  SUPERSEDED
+}
+
 type UserCount {
   user_roles: Int!
   direct_messages: Int!
@@ -1503,6 +1563,8 @@ type UserCount {
   availabilities: Int!
   availability_recurrence_rules: Int!
   assignments: Int!
+  assignment_requests: Int!
+  preacher_region_access: Int!
 }
 
 type User {
@@ -1551,12 +1613,55 @@ type User {
   availabilities: [Availability!]
   availability_recurrence_rules: [AvailabilityRecurrenceRule!]
   assignments: [Assignment!]
+  assignment_requests: [AssignmentRequest!]
+  preacher_region_access: [PreacherRegionAccess!]
   _count: UserCount!
 }
 
 enum GenderType {
   MALE
   FEMALE
+}
+
+"""
+R6 — reach: LOCAL = home Region only (no row needed here), REGIONAL = every Region with a
+row here, NATIONAL = every Region in the Institution (no row needed here either — see
+PreacherRegionAccessScope on the resolver layer for how the three levels are told apart).
+"""
+type PreacherRegionAccess {
+  id: ID!
+  institution_id: String!
+  user_id: String!
+  region_id: String!
+  created_at: DateTime!
+  created_by: String!
+  institution: Institution!
+  user: User!
+  region: Region!
+}
+
+type RegionCount {
+  churches: Int!
+  preacher_region_access: Int!
+}
+
+type Region {
+  id: ID!
+  description: String
+  name: String!
+  territory: JSON
+  color: String
+  created_at: DateTime!
+  updated_at: DateTime!
+  created_by: String!
+  updated_by: String!
+  is_deleted: Boolean!
+  deleted_at: DateTime
+  deleted_by: String
+  churches: [Church!]
+  preacher_region_access: [PreacherRegionAccess!]
+  _count: RegionCount!
+  kpiData: RegionKPIData!
 }
 
 type ChurchServiceCalendar {
@@ -1585,6 +1690,7 @@ enum ServiceCalendarSource {
 }
 
 type ChurchCount {
+  assignment_requests: Int!
   departments: Int!
   users: Int!
   subsidy_requests: Int!
@@ -1615,6 +1721,7 @@ type Church {
   region: Region
   contact: Contact
   leader: User
+  assignment_requests: [AssignmentRequest!]
   departments: [Department!]
   users: [User!]
   subsidy_requests: [SubsidyRequest!]
@@ -1678,6 +1785,9 @@ type InstitutionCount {
   church_service_calendar_entries: Int!
   assignments: Int!
   gap_report_snapshots: Int!
+  assignment_requests: Int!
+  preacher_region_access: Int!
+  assignment_invite_templates: Int!
 }
 
 type Institution {
@@ -1711,6 +1821,9 @@ type Institution {
   church_service_calendar_entries: [ChurchServiceCalendar!]
   assignments: [Assignment!]
   gap_report_snapshots: [GapReportSnapshot!]
+  assignment_requests: [AssignmentRequest!]
+  preacher_region_access: [PreacherRegionAccess!]
+  assignment_invite_templates: [AssignmentInviteTemplate!]
   _count: InstitutionCount!
   churches_count: Int!
   departments_count: Int!
@@ -2128,6 +2241,12 @@ type GapReport {
   computedAt: DateTime!
 }
 
+type OpenSlotForPreacher {
+  churchId: String!
+  churchName: String!
+  date: DateTime!
+}
+
 type MarkAllReadResult {
   count: Int!
 }
@@ -2227,6 +2346,11 @@ type Query {
   churchServiceCalendar(church_id: String!, month: String!): [ChurchServiceCalendar!]!
   scheduleOverview(month: String!): [Assignment!]!
   gapReport(month: String!): GapReport!
+  assignmentInviteTemplates: [AssignmentInviteTemplate!]!
+  myAssignmentRequests: [AssignmentRequest!]!
+  openSlotsForPreacher(month: String!): [OpenSlotForPreacher!]!
+  eligiblePreachersForSlot(church_id: String!, date: DateTime!): [User!]!
+  myPreacherRegionAccess: [PreacherRegionAccess!]!
 
   """
   Get city and province information for a Dutch postal code (ZIP code) and house number
@@ -2599,6 +2723,8 @@ input UserWhereInput {
   availabilities: AvailabilityListRelationFilter
   availability_recurrence_rules: AvailabilityRecurrenceRuleListRelationFilter
   assignments: AssignmentListRelationFilter
+  assignment_requests: AssignmentRequestListRelationFilter
+  preacher_region_access: PreacherRegionAccessListRelationFilter
 }
 
 input EnumGenderTypeNullableFilter {
@@ -2705,6 +2831,9 @@ input InstitutionWhereInput {
   church_service_calendar_entries: ChurchServiceCalendarListRelationFilter
   assignments: AssignmentListRelationFilter
   gap_report_snapshots: GapReportSnapshotListRelationFilter
+  assignment_requests: AssignmentRequestListRelationFilter
+  preacher_region_access: PreacherRegionAccessListRelationFilter
+  assignment_invite_templates: AssignmentInviteTemplateListRelationFilter
 }
 
 input ChurchListRelationFilter {
@@ -2737,6 +2866,7 @@ input ChurchWhereInput {
   region: RegionNullableScalarRelationFilter
   contact: ContactNullableScalarRelationFilter
   leader: UserNullableScalarRelationFilter
+  assignment_requests: AssignmentRequestListRelationFilter
   departments: DepartmentListRelationFilter
   users: UserListRelationFilter
   subsidy_requests: SubsidyRequestListRelationFilter
@@ -2809,6 +2939,127 @@ input RegionWhereInput {
   deleted_at: DateTimeNullableFilter
   deleted_by: StringNullableFilter
   churches: ChurchListRelationFilter
+  preacher_region_access: PreacherRegionAccessListRelationFilter
+}
+
+input PreacherRegionAccessListRelationFilter {
+  every: PreacherRegionAccessWhereInput
+  some: PreacherRegionAccessWhereInput
+  none: PreacherRegionAccessWhereInput
+}
+
+input PreacherRegionAccessWhereInput {
+  AND: [PreacherRegionAccessWhereInput!]
+  OR: [PreacherRegionAccessWhereInput!]
+  NOT: [PreacherRegionAccessWhereInput!]
+  id: StringFilter
+  institution_id: StringFilter
+  user_id: StringFilter
+  region_id: StringFilter
+  created_at: DateTimeFilter
+  created_by: StringFilter
+  institution: InstitutionScalarRelationFilter
+  user: UserScalarRelationFilter
+  region: RegionScalarRelationFilter
+}
+
+input UserScalarRelationFilter {
+  is: UserWhereInput
+  isNot: UserWhereInput
+}
+
+input RegionScalarRelationFilter {
+  is: RegionWhereInput
+  isNot: RegionWhereInput
+}
+
+input AssignmentRequestListRelationFilter {
+  every: AssignmentRequestWhereInput
+  some: AssignmentRequestWhereInput
+  none: AssignmentRequestWhereInput
+}
+
+input AssignmentRequestWhereInput {
+  AND: [AssignmentRequestWhereInput!]
+  OR: [AssignmentRequestWhereInput!]
+  NOT: [AssignmentRequestWhereInput!]
+  id: StringFilter
+  institution_id: StringFilter
+  church_id: StringFilter
+  date: DateTimeFilter
+  user_id: StringFilter
+  type: EnumRequestTypeFilter
+  status: EnumRequestStatusFilter
+  template_id: StringNullableFilter
+  created_at: DateTimeFilter
+  decided_at: DateTimeNullableFilter
+  created_by: StringFilter
+  updated_by: StringFilter
+  is_deleted: BoolFilter
+  deleted_at: DateTimeNullableFilter
+  deleted_by: StringNullableFilter
+  institution: InstitutionScalarRelationFilter
+  church: ChurchScalarRelationFilter
+  user: UserScalarRelationFilter
+  template: AssignmentInviteTemplateNullableScalarRelationFilter
+}
+
+input EnumRequestTypeFilter {
+  equals: RequestType
+  in: [RequestType!]
+  notIn: [RequestType!]
+  not: NestedEnumRequestTypeFilter
+}
+
+input NestedEnumRequestTypeFilter {
+  equals: RequestType
+  in: [RequestType!]
+  notIn: [RequestType!]
+  not: NestedEnumRequestTypeFilter
+}
+
+input EnumRequestStatusFilter {
+  equals: RequestStatus
+  in: [RequestStatus!]
+  notIn: [RequestStatus!]
+  not: NestedEnumRequestStatusFilter
+}
+
+input NestedEnumRequestStatusFilter {
+  equals: RequestStatus
+  in: [RequestStatus!]
+  notIn: [RequestStatus!]
+  not: NestedEnumRequestStatusFilter
+}
+
+input ChurchScalarRelationFilter {
+  is: ChurchWhereInput
+  isNot: ChurchWhereInput
+}
+
+input AssignmentInviteTemplateNullableScalarRelationFilter {
+  is: AssignmentInviteTemplateWhereInput
+  isNot: AssignmentInviteTemplateWhereInput
+}
+
+input AssignmentInviteTemplateWhereInput {
+  AND: [AssignmentInviteTemplateWhereInput!]
+  OR: [AssignmentInviteTemplateWhereInput!]
+  NOT: [AssignmentInviteTemplateWhereInput!]
+  id: StringFilter
+  institution_id: StringFilter
+  name: StringFilter
+  subject: StringFilter
+  body: StringFilter
+  created_at: DateTimeFilter
+  updated_at: DateTimeFilter
+  created_by: StringFilter
+  updated_by: StringFilter
+  is_deleted: BoolFilter
+  deleted_at: DateTimeNullableFilter
+  deleted_by: StringNullableFilter
+  institution: InstitutionScalarRelationFilter
+  requests: AssignmentRequestListRelationFilter
 }
 
 input DepartmentListRelationFilter {
@@ -2887,11 +3138,6 @@ input SubsidyStatusWhereInput {
 input DepartmentScalarRelationFilter {
   is: DepartmentWhereInput
   isNot: DepartmentWhereInput
-}
-
-input UserScalarRelationFilter {
-  is: UserWhereInput
-  isNot: UserWhereInput
 }
 
 input SubsidyRequestListRelationFilter {
@@ -3902,11 +4148,6 @@ input NestedEnumServiceCalendarSourceFilter {
   not: NestedEnumServiceCalendarSourceFilter
 }
 
-input ChurchScalarRelationFilter {
-  is: ChurchWhereInput
-  isNot: ChurchWhereInput
-}
-
 input AssignmentListRelationFilter {
   every: AssignmentWhereInput
   some: AssignmentWhereInput
@@ -4429,6 +4670,12 @@ input JsonFilter {
   not: JSON
 }
 
+input AssignmentInviteTemplateListRelationFilter {
+  every: AssignmentInviteTemplateWhereInput
+  some: AssignmentInviteTemplateWhereInput
+  none: AssignmentInviteTemplateWhereInput
+}
+
 input EventListRelationFilter {
   every: EventWhereInput
   some: EventWhereInput
@@ -4577,6 +4824,8 @@ input UserOrderByWithRelationInput {
   availabilities: AvailabilityOrderByRelationAggregateInput
   availability_recurrence_rules: AvailabilityRecurrenceRuleOrderByRelationAggregateInput
   assignments: AssignmentOrderByRelationAggregateInput
+  assignment_requests: AssignmentRequestOrderByRelationAggregateInput
+  preacher_region_access: PreacherRegionAccessOrderByRelationAggregateInput
 }
 
 input ContactOrderByWithRelationInput {
@@ -4639,6 +4888,9 @@ input InstitutionOrderByWithRelationInput {
   church_service_calendar_entries: ChurchServiceCalendarOrderByRelationAggregateInput
   assignments: AssignmentOrderByRelationAggregateInput
   gap_report_snapshots: GapReportSnapshotOrderByRelationAggregateInput
+  assignment_requests: AssignmentRequestOrderByRelationAggregateInput
+  preacher_region_access: PreacherRegionAccessOrderByRelationAggregateInput
+  assignment_invite_templates: AssignmentInviteTemplateOrderByRelationAggregateInput
 }
 
 input ChurchOrderByRelationAggregateInput {
@@ -4705,6 +4957,18 @@ input GapReportSnapshotOrderByRelationAggregateInput {
   _count: SortOrder
 }
 
+input AssignmentRequestOrderByRelationAggregateInput {
+  _count: SortOrder
+}
+
+input PreacherRegionAccessOrderByRelationAggregateInput {
+  _count: SortOrder
+}
+
+input AssignmentInviteTemplateOrderByRelationAggregateInput {
+  _count: SortOrder
+}
+
 input EventOrderByRelationAggregateInput {
   _count: SortOrder
 }
@@ -4730,6 +4994,7 @@ input ChurchOrderByWithRelationInput {
   region: RegionOrderByWithRelationInput
   contact: ContactOrderByWithRelationInput
   leader: UserOrderByWithRelationInput
+  assignment_requests: AssignmentRequestOrderByRelationAggregateInput
   departments: DepartmentOrderByRelationAggregateInput
   users: UserOrderByRelationAggregateInput
   subsidy_requests: SubsidyRequestOrderByRelationAggregateInput
@@ -4753,6 +5018,7 @@ input RegionOrderByWithRelationInput {
   deleted_at: SortOrderInput
   deleted_by: SortOrderInput
   churches: ChurchOrderByRelationAggregateInput
+  preacher_region_access: PreacherRegionAccessOrderByRelationAggregateInput
 }
 
 input DepartmentOrderByWithRelationInput {
@@ -5039,6 +5305,16 @@ type Mutation {
   setChurchServiceCalendarBulk(input: SetServiceCalendarBulkInput!): [ChurchServiceCalendar!]!
   setAssignment(input: SetAssignmentInput!): Assignment!
   setAssignmentAny(input: SetAssignmentInput!): Assignment!
+  createAssignmentInviteTemplate(input: CreateAssignmentInviteTemplateInput!): AssignmentInviteTemplate!
+  updateAssignmentInviteTemplate(id: String!, input: UpdateAssignmentInviteTemplateInput!): AssignmentInviteTemplate!
+  deleteAssignmentInviteTemplate(id: String!): Boolean!
+  requestAssignment(church_id: String!, date: DateTime!): AssignmentRequest!
+  inviteToAssignment(church_id: String!, date: DateTime!, user_id: String!, template_id: String): AssignmentRequest!
+  inviteToAssignmentAny(church_id: String!, date: DateTime!, user_id: String!, template_id: String): AssignmentRequest!
+  respondToAssignmentRequest(id: String!, accept: Boolean!): AssignmentRequest!
+  respondToAssignmentRequestAny(id: String!, accept: Boolean!): AssignmentRequest!
+  grantPreacherRegionAccess(user_id: String!, region_id: String!): PreacherRegionAccess!
+  revokePreacherRegionAccess(id: String!): Boolean!
 }
 
 input LoginInput {
@@ -5712,6 +5988,18 @@ input SetAssignmentInput {
   date: DateTime!
   user_id: String
   status: AssignmentStatus
+}
+
+input CreateAssignmentInviteTemplateInput {
+  name: String!
+  subject: String!
+  body: String!
+}
+
+input UpdateAssignmentInviteTemplateInput {
+  name: String
+  subject: String
+  body: String
 }
 
 type Subscription {

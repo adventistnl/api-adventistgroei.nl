@@ -6,6 +6,7 @@ import { GraphQLJSON } from 'graphql-type-json';
 import { DateTimeFieldUpdateOperationsInput } from '../prisma/date-time-field-update-operations.input';
 import { BoolFieldUpdateOperationsInput } from '../prisma/bool-field-update-operations.input';
 import { NullableDateTimeFieldUpdateOperationsInput } from '../prisma/nullable-date-time-field-update-operations.input';
+import { PreacherRegionAccessUncheckedUpdateManyWithoutRegionNestedInput } from '../preacher-region-access/preacher-region-access-unchecked-update-many-without-region-nested.input';
 
 @InputType()
 export class RegionUncheckedUpdateWithoutChurchesInput {
@@ -45,4 +46,7 @@ export class RegionUncheckedUpdateWithoutChurchesInput {
 
     @Field(() => NullableStringFieldUpdateOperationsInput, {nullable:true})
     deleted_by?: NullableStringFieldUpdateOperationsInput;
+
+    @Field(() => PreacherRegionAccessUncheckedUpdateManyWithoutRegionNestedInput, {nullable:true})
+    preacher_region_access?: PreacherRegionAccessUncheckedUpdateManyWithoutRegionNestedInput;
 }

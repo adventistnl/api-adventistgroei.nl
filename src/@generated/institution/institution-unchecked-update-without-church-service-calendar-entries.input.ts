@@ -22,6 +22,9 @@ import { AvailabilityUncheckedUpdateManyWithoutInstitutionNestedInput } from '..
 import { AvailabilityRecurrenceRuleUncheckedUpdateManyWithoutInstitutionNestedInput } from '../availability-recurrence-rule/availability-recurrence-rule-unchecked-update-many-without-institution-nested.input';
 import { AssignmentUncheckedUpdateManyWithoutInstitutionNestedInput } from '../assignment/assignment-unchecked-update-many-without-institution-nested.input';
 import { GapReportSnapshotUncheckedUpdateManyWithoutInstitutionNestedInput } from '../gap-report-snapshot/gap-report-snapshot-unchecked-update-many-without-institution-nested.input';
+import { AssignmentRequestUncheckedUpdateManyWithoutInstitutionNestedInput } from '../assignment-request/assignment-request-unchecked-update-many-without-institution-nested.input';
+import { PreacherRegionAccessUncheckedUpdateManyWithoutInstitutionNestedInput } from '../preacher-region-access/preacher-region-access-unchecked-update-many-without-institution-nested.input';
+import { AssignmentInviteTemplateUncheckedUpdateManyWithoutInstitutionNestedInput } from '../assignment-invite-template/assignment-invite-template-unchecked-update-many-without-institution-nested.input';
 
 @InputType()
 export class InstitutionUncheckedUpdateWithoutChurch_service_calendar_entriesInput {
@@ -116,4 +119,13 @@ export class InstitutionUncheckedUpdateWithoutChurch_service_calendar_entriesInp
 
     @Field(() => GapReportSnapshotUncheckedUpdateManyWithoutInstitutionNestedInput, {nullable:true})
     gap_report_snapshots?: GapReportSnapshotUncheckedUpdateManyWithoutInstitutionNestedInput;
+
+    @Field(() => AssignmentRequestUncheckedUpdateManyWithoutInstitutionNestedInput, {nullable:true})
+    assignment_requests?: AssignmentRequestUncheckedUpdateManyWithoutInstitutionNestedInput;
+
+    @Field(() => PreacherRegionAccessUncheckedUpdateManyWithoutInstitutionNestedInput, {nullable:true})
+    preacher_region_access?: PreacherRegionAccessUncheckedUpdateManyWithoutInstitutionNestedInput;
+
+    @Field(() => AssignmentInviteTemplateUncheckedUpdateManyWithoutInstitutionNestedInput, {nullable:true})
+    assignment_invite_templates?: AssignmentInviteTemplateUncheckedUpdateManyWithoutInstitutionNestedInput;
 }

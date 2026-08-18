@@ -59,15 +59,15 @@ export class ChurchServiceCalendarRepository {
     date: Date;
     hasService: boolean;
     userId: string;
-  }): Promise<void> {
+  }): Promise<ChurchServiceCalendar | null> {
     const { institutionId, churchId, date, hasService, userId } = params;
     const existing = await this.findOne(churchId, date);
 
     if (existing?.source === ServiceCalendarSource.CHURCH_CONFIRMED) {
-      return;
+      return null;
     }
 
-    await this.prisma.churchServiceCalendar.upsert({
+    return this.prisma.churchServiceCalendar.upsert({
       where: { church_id_date: { church_id: churchId, date } },
       create: {
         institution: { connect: { id: institutionId } },

@@ -32,3 +32,6 @@ export * from './availability-recurrence-rule.repository';
 export * from './church-service-calendar.repository';
 export * from './assignment.repository';
 export * from './gap-report.repository';
+export * from './preacher-region-access.repository';
+export * from './assignment-request.repository';
+export * from './assignment-invite-template.repository';

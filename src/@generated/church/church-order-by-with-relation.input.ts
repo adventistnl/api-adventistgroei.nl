@@ -7,6 +7,7 @@ import { Type } from 'class-transformer';
 import { RegionOrderByWithRelationInput } from '../region/region-order-by-with-relation.input';
 import { ContactOrderByWithRelationInput } from '../contact/contact-order-by-with-relation.input';
 import { UserOrderByWithRelationInput } from '../user/user-order-by-with-relation.input';
+import { AssignmentRequestOrderByRelationAggregateInput } from '../assignment-request/assignment-request-order-by-relation-aggregate.input';
 import { DepartmentOrderByRelationAggregateInput } from '../department/department-order-by-relation-aggregate.input';
 import { UserOrderByRelationAggregateInput } from '../user/user-order-by-relation-aggregate.input';
 import { SubsidyRequestOrderByRelationAggregateInput } from '../subsidy-request/subsidy-request-order-by-relation-aggregate.input';
@@ -80,6 +81,9 @@ export class ChurchOrderByWithRelationInput {
     @Field(() => UserOrderByWithRelationInput, {nullable:true})
     @Type(() => UserOrderByWithRelationInput)
     leader?: UserOrderByWithRelationInput;
+
+    @Field(() => AssignmentRequestOrderByRelationAggregateInput, {nullable:true})
+    assignment_requests?: AssignmentRequestOrderByRelationAggregateInput;
 
     @Field(() => DepartmentOrderByRelationAggregateInput, {nullable:true})
     @Type(() => DepartmentOrderByRelationAggregateInput)

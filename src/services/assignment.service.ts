@@ -2,6 +2,7 @@ import { Injectable, BadRequestException, ForbiddenException, NotFoundException 
 import { AssignmentRepository } from '../repositories/assignment.repository';
 import { ChurchRepository } from '../repositories/church.repository';
 import { UserRepository } from '../repositories/user.repository';
+import { PrismaService } from './prisma.service';
 import { Assignment } from '../@generated/assignment/assignment.model';
 import { AssignmentOrigin } from '../@generated/prisma/assignment-origin.enum';
 import { AssignmentStatus } from '../@generated/prisma/assignment-status.enum';
@@ -23,6 +24,7 @@ export class AssignmentService {
     private readonly assignmentRepository: AssignmentRepository,
     private readonly churchRepository: ChurchRepository,
     private readonly userRepository: UserRepository,
+    private readonly prisma: PrismaService,
   ) {}
 
   async scheduleOverview(userId: string, month: string): Promise<Assignment[]> {
@@ -63,6 +65,7 @@ export class AssignmentService {
     origin: AssignmentOrigin,
     userId: string,
   ): Promise<Assignment> {
+    await this.assertServiceScheduled(input.church_id, input.date);
     const before = await this.assignmentRepository.findOne(input.church_id, input.date);
     const status = input.status ?? (input.user_id ? AssignmentStatus.CONFIRMED : AssignmentStatus.DRAFT);
 
@@ -85,5 +88,15 @@ export class AssignmentService {
     });
 
     return result;
+  }
+
+  /** R1/R4 — an Assignment only ever exists for a date the church actually has a scheduled service. */
+  private async assertServiceScheduled(churchId: string, date: Date): Promise<void> {
+    const serviceEntry = await this.prisma.churchServiceCalendar.findUnique({
+      where: { church_id_date: { church_id: churchId, date } },
+    });
+    if (!serviceEntry?.has_service) {
+      throw new BadRequestException('This church has no scheduled service on this date');
+    }
   }
 }

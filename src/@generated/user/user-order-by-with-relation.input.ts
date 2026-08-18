@@ -28,6 +28,8 @@ import { InstitutionPositionOrderByRelationAggregateInput } from '../institution
 import { AvailabilityOrderByRelationAggregateInput } from '../availability/availability-order-by-relation-aggregate.input';
 import { AvailabilityRecurrenceRuleOrderByRelationAggregateInput } from '../availability-recurrence-rule/availability-recurrence-rule-order-by-relation-aggregate.input';
 import { AssignmentOrderByRelationAggregateInput } from '../assignment/assignment-order-by-relation-aggregate.input';
+import { AssignmentRequestOrderByRelationAggregateInput } from '../assignment-request/assignment-request-order-by-relation-aggregate.input';
+import { PreacherRegionAccessOrderByRelationAggregateInput } from '../preacher-region-access/preacher-region-access-order-by-relation-aggregate.input';
 
 @InputType()
 export class UserOrderByWithRelationInput {
@@ -185,4 +187,10 @@ export class UserOrderByWithRelationInput {
 
     @Field(() => AssignmentOrderByRelationAggregateInput, {nullable:true})
     assignments?: AssignmentOrderByRelationAggregateInput;
+
+    @Field(() => AssignmentRequestOrderByRelationAggregateInput, {nullable:true})
+    assignment_requests?: AssignmentRequestOrderByRelationAggregateInput;
+
+    @Field(() => PreacherRegionAccessOrderByRelationAggregateInput, {nullable:true})
+    preacher_region_access?: PreacherRegionAccessOrderByRelationAggregateInput;
 }
