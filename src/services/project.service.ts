@@ -293,11 +293,11 @@ export class ProjectService {
 
     // 4. Notifications on Status Change
     if (data.status && data.status !== existingProject.status) {
-      this.handleStatusChangeNotifications(updatedProject).catch(e => {
+      await this.handleStatusChangeNotifications(updatedProject).catch(e => {
         console.error('Failed to send status change notifications:', e);
       });
 
-      this.projectHistoryService.logEvent(
+      await this.projectHistoryService.logEvent(
         id,
         userId,
         ProjectHistoryType.STATUS_CHANGED,
@@ -478,12 +478,32 @@ export class ProjectService {
         );
       }
       await this.projectRepository.update(projectId, { status: ProjectStatus.DRAFT }, userId);
-      console.log(`📋 Project ${projectId} reverted to DRAFT (no activities)`);
+
     }
   }
 
   async delete(id: string, userId: string): Promise<Project> {
-    console.log(`🗑️  Starting soft delete for project ${id}`);
+
+
+    const project = await this.projectRepository.findById(id);
+    if (!project) {
+      throw new CustomGraphQLError('Project not found', ErrorCode.NOT_FOUND, 404);
+    }
+
+    const isOwner = project.owner_id === userId;
+    const userRoles = await this.prisma.userRole.findMany({
+      where: { user_id: userId, role: { is_deleted: false } },
+      include: { role: true },
+    });
+    const isAdmin = userRoles.some(ur => ur.role.key_code === 'ADMIN');
+
+    if (!isOwner && !isAdmin) {
+      throw new CustomGraphQLError(
+        'User does not have permission to delete this project',
+        ErrorCode.UNAUTHORIZED,
+        403
+      );
+    }
 
     // 1. Find all subsidies for this project
     const subsidies = await this.prisma.subsidyRequest.findMany({
@@ -496,7 +516,7 @@ export class ProjectService {
       },
     });
 
-    console.log(`📋 Found ${subsidies.length} subsidy requests for project`);
+
 
     // 2. Validate: Block if any subsidy is APPROVED or CLOSED
     if (subsidies.length > 0) {
@@ -517,7 +537,7 @@ export class ProjectService {
     }
 
     // 3. Delete all subsidies (uses existing service with validation)
-    console.log(`🔄 Deleting ${subsidies.length} subsidy requests...`);
+
     for (const subsidy of subsidies) {
       await this.subsidyRequestService.delete(subsidy.id, userId);
     }
@@ -530,13 +550,13 @@ export class ProjectService {
       },
     });
 
-    console.log(`🔄 Deleting ${activities.length} activities...`);
+
     for (const activity of activities) {
       await this.projectActivityService.softDelete(activity.id, userId);
     }
 
     // 5. Soft delete special projects
-    console.log(`📄 Soft deleting special projects...`);
+
     await this.prisma.specialProjects.updateMany({
       where: {
         project_id: id,
@@ -550,7 +570,7 @@ export class ProjectService {
     });
 
     // 6. Delete voluntary users (hard delete - join table)
-    console.log(`👥 Deleting voluntary users...`);
+
     await this.prisma.voluntariesOnProjects.deleteMany({
       where: { project_id: id },
     });
@@ -563,7 +583,7 @@ export class ProjectService {
 
     if (projectData?.department_id && projectData.subsidized_budget && projectData.status === ProjectStatus.IN_PROGRESS) {
       const projectYear = new Date(projectData.start_at).getFullYear();
-      console.log(`💰 Releasing subsidized_budget ${Number(projectData.subsidized_budget)} from annual budget (year: ${projectYear})...`);
+
       await this.annualBudgetService.updateBudgetFinancials(
         projectData.department_id,
         projectYear,
@@ -579,17 +599,15 @@ export class ProjectService {
     }
 
     // 8. Log deletion event before removing relationships
-    this.projectHistoryService.logEvent(
+    await this.projectHistoryService.logEvent(
       id,
       userId,
       ProjectHistoryType.DELETED,
     ).catch(e => console.error('Failed to log project deletion history:', e));
 
     // 9. Soft delete the project
-    console.log(`🎯 Soft deleting project...`);
     const deletedProject = await this.projectRepository.softDelete(id, userId);
 
-    console.log(`✅ Project ${id} soft deleted successfully`);
     return deletedProject;
   }
 

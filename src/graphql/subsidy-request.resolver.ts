@@ -164,7 +164,7 @@ export class SubsidyRequestResolver {
 
   @Mutation(() => SubsidyRequest)
   @UseGuards(PermissionsGuard)
-  @Permission()
+  @Permission('updateSubsidyRequest')
   async requestSubsidyRefund(
     @Args('id') id: string,
     @Args('refundAmount', { type: () => Float }) refundAmount: number,
@@ -178,7 +178,7 @@ export class SubsidyRequestResolver {
 
   @Mutation(() => SubsidyRequest)
   @UseGuards(PermissionsGuard)
-  @Permission()
+  @Permission('updateSubsidyRequest')
   async rejectSubsidyRefund(
     @Args('id') id: string,
     @Args('reason') reason: string,
@@ -190,7 +190,7 @@ export class SubsidyRequestResolver {
 
   @Mutation(() => SubsidyRequest)
   @UseGuards(PermissionsGuard)
-  @Permission()
+  @Permission('updateSubsidyRequest')
   async confirmRefundDone(
     @Args('id') id: string,
     @Args('language', { type: () => LanguagePreference, nullable: true, defaultValue: LanguagePreference.en }) language: LanguagePreference,
@@ -201,7 +201,7 @@ export class SubsidyRequestResolver {
 
   @Query(() => [SubsidyRequest])
   @UseGuards(PermissionsGuard)
-  @Permission()
+  @Permission('subsidyRequests')
   async getSubsidiesWaitingRefund(
     @Args('institutionId', { type: () => String, nullable: true }) institutionId?: string,
   ): Promise<SubsidyRequest[]> {

@@ -1883,7 +1883,7 @@ type UserModel {
   department_id: String
   name: String!
   email: String!
-  language_preference: String!
+  language_preference: LanguagePreference!
   contact_id: String
   created_at: DateTime!
   updated_at: DateTime!
@@ -1906,7 +1906,7 @@ type UserWithRoles {
   department_id: String
   name: String!
   email: String!
-  language_preference: String!
+  language_preference: LanguagePreference!
   contact_id: String
   created_at: DateTime!
   updated_at: DateTime!
@@ -5486,13 +5486,34 @@ input CommunicationCreateDto {
   institution_id: String!
   title: String!
   content: String!
-  type: String!
-  priority: String!
-  status: String!
+  type: CommunicationType!
+  priority: CommunicationPriority!
+  status: CommunicationStatus!
   language_preference: LanguagePreference!
   schedule_at: DateTime!
   published_at: DateTime!
   author_id: String!
+}
+
+enum CommunicationType {
+  EMAIL
+  SMS
+  PUSH_NOTIFICATION
+  IN_APP_MESSAGE
+}
+
+enum CommunicationPriority {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+enum CommunicationStatus {
+  DRAFT
+  SCHEDULED
+  SENT
+  FAILED
 }
 
 input CommunicationUpdateDto {
@@ -5514,7 +5535,7 @@ input DirectMessageCreateDto {
   recipient_id: String!
   institution_id: String!
   title: String!
-  status: String!
+  status: EventRegistrationStatus!
 }
 
 input DirectMessageUpdateDto {

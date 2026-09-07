@@ -1,6 +1,7 @@
 import { Resolver, Query, Mutation, Args, Context, ID } from '@nestjs/graphql';
 import { UseGuards } from '@nestjs/common';
-import { GraphQLUpload, FileUpload } from 'graphql-upload-minimal';
+import { GraphQLUpload } from 'graphql-upload-minimal';
+import type { FileUpload } from 'graphql-upload-minimal';
 import { PermissionsGuard } from '../middlewares/permissions.guard';
 import { Permission } from 'src/middlewares';
 import { SubsidyReceipt } from 'src/@generated/subsidy-receipt/subsidy-receipt.model';

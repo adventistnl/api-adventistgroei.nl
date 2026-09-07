@@ -28,7 +28,9 @@ export async function getUserIdFromRequest(req: { headers: Record<string, string
       // You can extend the returned context with user roles or other info if needed
       return { userId, userRoles: userRoles.map(ur => ur.role.key_code) };
     } catch {
-      console.error('Failed to verify token', token);
+      if (process.env.NODE_ENV !== 'test') {
+        console.error('Failed to verify token', token);
+      }
       throw new CustomGraphQLError('Failed to verify token', ErrorCode.UNAUTHORIZED, 401);
     }
   }

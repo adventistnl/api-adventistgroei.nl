@@ -1,6 +1,6 @@
 import { InputType, Field } from '@nestjs/graphql';
-import { EventRegistrationStatus } from '@prisma/client';
-import { IsOptional, IsString } from 'class-validator';
+import { EventRegistrationStatus } from 'src/@generated/prisma/event-registration-status.enum';
+import { IsOptional, IsString, IsEnum } from 'class-validator';
 
 @InputType()
 export class DirectMessageCreateDto {
@@ -24,8 +24,8 @@ export class DirectMessageCreateDto {
   @IsString()
   title: string;
 
-  @Field()
-  @IsString()
+  @Field(() => EventRegistrationStatus)
+  @IsEnum(EventRegistrationStatus)
   status: EventRegistrationStatus;
 }
 

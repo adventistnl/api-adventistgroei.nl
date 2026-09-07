@@ -19,7 +19,7 @@ export class ProjectActivityResolver {
   @Query(() => [ProjectActivity], { name: 'projectActivities' })
   @UseGuards(PermissionsGuard)
   @Permission()
-  async findManyByFilters(@Args('filters', { type: () => String, nullable: true }) filters: string | undefined) {
+  async projectActivities(@Args('filters', { type: () => String, nullable: true }) filters: string | undefined) {
     const parsedFilters: Partial<Record<string, any>> = filters ? JSON.parse(filters) : {};
     return this.service.findManyByFilters(parsedFilters);
   }
@@ -27,7 +27,7 @@ export class ProjectActivityResolver {
   @Query(() => ProjectActivity, { name: 'projectActivity' })
   @UseGuards(PermissionsGuard)
   @Permission()
-  async findById(@Args('id', { type: () => ID }) id: string) {
+  async projectActivity(@Args('id', { type: () => ID }) id: string) {
     return this.service.findById(id);
   }
 

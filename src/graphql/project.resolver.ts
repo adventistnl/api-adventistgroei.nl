@@ -102,7 +102,7 @@ export class ProjectResolver {
 
   @Mutation(() => Project)
   @UseGuards(PermissionsGuard)
-  @Permission()
+  @Permission('updateProject')
   async updateProjectCoOwner(
     @Args('id') id: string,
     @Args('data') data: ProjectUpdateCoOwnerDto,
@@ -113,7 +113,7 @@ export class ProjectResolver {
 
   @Mutation(() => Project)
   @UseGuards(PermissionsGuard)
-  @Permission()
+  @Permission('deleteProject')
   async deleteProject(
     @Args('id') id: string,
     @Context() context: { userId: string },
@@ -123,7 +123,7 @@ export class ProjectResolver {
 
   @Query(() => ProjectKPIs)
   @UseGuards(PermissionsGuard)
-  @Permission()
+  @Permission('projects')
   async projectKPIs(
     @Args('institutionId', { nullable: true }) institutionId?: string
   ): Promise<ProjectKPIs> {
@@ -132,7 +132,7 @@ export class ProjectResolver {
 
   @Query(() => [ProjectsByDepartment])
   @UseGuards(PermissionsGuard)
-  @Permission()
+  @Permission('projects')
   async projectsByDepartment(
     @Args('institutionId', { nullable: true }) institutionId?: string
   ): Promise<ProjectsByDepartment[]> {
@@ -141,7 +141,7 @@ export class ProjectResolver {
 
   @Query(() => [SubsidyStatusDistribution])
   @UseGuards(PermissionsGuard)
-  @Permission()
+  @Permission('projects')
   async subsidyStatusDistribution(
     @Args('institutionId', { nullable: true }) institutionId?: string
   ): Promise<SubsidyStatusDistribution[]> {
@@ -150,7 +150,7 @@ export class ProjectResolver {
 
   @Query(() => [ProjectsTimeline])
   @UseGuards(PermissionsGuard)
-  @Permission()
+  @Permission('projects')
   async projectsTimeline(
     @Args('institutionId', { nullable: true }) institutionId?: string
   ): Promise<ProjectsTimeline[]> {

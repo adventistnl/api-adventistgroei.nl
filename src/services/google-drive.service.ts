@@ -27,7 +27,7 @@ export class GoogleDriveService {
     this.folderCache = new Map();
     this.rootFolderId = rootFolder;
 
-    console.log(`Google Drive initialized for Shared Drive: ${rootFolder}`);
+
   }
 
   /**

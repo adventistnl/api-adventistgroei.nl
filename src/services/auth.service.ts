@@ -7,6 +7,7 @@ import { UserWithRoles } from 'src/models';
 import { CustomGraphQLError, ErrorCode } from 'src/common/errors/custom-graphql-error';
 import { translate } from '../../i18n.config';
 import { LanguagePreference } from 'src/@generated/prisma/language-preference.enum';
+import * as bcrypt from 'bcryptjs';
 
 @Injectable()
 export class AuthService {
@@ -22,7 +23,6 @@ export class AuthService {
     const user = await this.userService.findByEmail(email.toLowerCase());
     if (!user) return null;
     if (!user.password) return null
-    const bcrypt = await import('bcryptjs');
     const isValid = await bcrypt.compare(password, user.password);
     if (isValid) {
       const { password, ...result } = user;
@@ -56,7 +56,6 @@ export class AuthService {
       );
     }
 
-    const bcrypt = await import('bcryptjs');
     const isValid = await bcrypt.compare(input.password, user.password);
 
     if (!isValid) {

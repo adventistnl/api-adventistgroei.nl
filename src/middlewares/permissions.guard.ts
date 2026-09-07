@@ -60,12 +60,11 @@ export class PermissionsGuard implements CanActivate {
     const hasPermission = requiredPermissions.some((p) => userPermissions.includes(p));
 
     if (!hasPermission) {
-      // Caso especial: se a permissão necessária é 'updateUser' 
-      // e o usuário possui 'updateOwnUser', verificar se está tentando atualizar a si mesmo
+      // Verificação especial para self-update
       if (requiredPermissions.includes('updateUser' as PermissionResolverName) && userPermissions.includes('updateOwnUser' as PermissionResolverName)) {
         const targetUserId = this.extractTargetUserId(context);
         if (targetUserId === userId) {
-          return true; // Permite atualizar seu próprio perfil
+          return true; // Permite se for o próprio usuário
         }
       }
       

@@ -63,6 +63,10 @@ export class LoggerService implements NestLoggerService {
   }
 
   private writeLog(logEntry: LogEntry): void {
+    if (this.environment === 'test') {
+      return;
+    }
+    
     const logLine = JSON.stringify(logEntry, this.getCircularReplacer(), 2);
 
     switch (logEntry.level) {

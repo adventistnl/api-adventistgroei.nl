@@ -42,6 +42,8 @@ const roles = [
       { key_code: 'PROJECT_CREATE', is_essential: true },
       { key_code: 'PROJECT_UPDATE', is_essential: true },
       { key_code: 'PROJECT_DELETE', is_essential: true },
+      { key_code: 'PROJECT_VOLUNTARY_ADD', is_essential: true },
+      { key_code: 'PROJECT_VOLUNTARY_REMOVE', is_essential: true },
       { key_code: 'ROLE_CREATE', is_essential: true },
       { key_code: 'ROLE_UPDATE', is_essential: true },
       { key_code: 'ROLE_DELETE', is_essential: true },

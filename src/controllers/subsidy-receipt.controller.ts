@@ -15,7 +15,7 @@ import {
   Query,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { Response } from 'express';
+import type { Response } from 'express';
 import { SubsidyReceiptService } from '../services/subsidy-receipt.service';
 import { JwtAuthGuard } from '../middlewares/jwt-auth.guard';
 import { PermissionsGuard } from '../middlewares/permissions.guard';
