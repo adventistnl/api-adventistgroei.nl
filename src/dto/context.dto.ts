@@ -4,5 +4,7 @@ export class ContextDto {
   userRoles: string[];
   req: {
     headers: Record<string, string>;
+    cookies?: Record<string, string>;
   };
+  res?: any;
 }

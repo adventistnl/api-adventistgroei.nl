@@ -212,6 +212,44 @@ export class UserRepository {
     });
   }
 
+  async anonymizeUser(id: string, userId: string): Promise<Omit<User, 'password'>> {
+    const user = await this.prisma.user.findUnique({ where: { id }, include: { contact: true } });
+    if (!user) throw new CustomGraphQLError('User not found', ErrorCode.NOT_FOUND, 404);
+
+    const anonymousEmail = `deleted-${id}@adventistgroei.local`;
+
+    if (user.contact_id) {
+      await this.prisma.contact.update({
+        where: { id: user.contact_id },
+        data: {
+          name: 'Anon User',
+          email: anonymousEmail,
+          phone: null,
+          mobile: null,
+          address: null,
+          full_address: null,
+          postal_code: null,
+          is_deleted: true,
+          deleted_at: new Date(),
+          deleted_by: userId,
+        }
+      });
+    }
+
+    return await this.prisma.user.update({
+      where: { id },
+      data: {
+        name: 'Anon User',
+        email: anonymousEmail,
+        password: '',
+        is_deleted: true,
+        deleted_at: new Date(),
+        deleted_by: userId,
+        updated_by: userId,
+      },
+    });
+  }
+
   async findAll(): Promise<Omit<User, 'password'>[]> {
     return await this.prisma.user.findMany({ where: { is_deleted: false } });
   }
