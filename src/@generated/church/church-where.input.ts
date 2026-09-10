@@ -12,11 +12,14 @@ import { Type } from 'class-transformer';
 import { RegionNullableScalarRelationFilter } from '../region/region-nullable-scalar-relation-filter.input';
 import { ContactNullableScalarRelationFilter } from '../contact/contact-nullable-scalar-relation-filter.input';
 import { UserNullableScalarRelationFilter } from '../user/user-nullable-scalar-relation-filter.input';
+import { AssignmentRequestListRelationFilter } from '../assignment-request/assignment-request-list-relation-filter.input';
 import { DepartmentListRelationFilter } from '../department/department-list-relation-filter.input';
 import { UserListRelationFilter } from '../user/user-list-relation-filter.input';
 import { SubsidyRequestListRelationFilter } from '../subsidy-request/subsidy-request-list-relation-filter.input';
 import { AnnualBudgetListRelationFilter } from '../annual-budget/annual-budget-list-relation-filter.input';
 import { ProjectListRelationFilter } from '../project/project-list-relation-filter.input';
+import { ChurchServiceCalendarListRelationFilter } from '../church-service-calendar/church-service-calendar-list-relation-filter.input';
+import { AssignmentListRelationFilter } from '../assignment/assignment-list-relation-filter.input';
 
 @InputType()
 export class ChurchWhereInput {
@@ -93,6 +96,9 @@ export class ChurchWhereInput {
     @Type(() => UserNullableScalarRelationFilter)
     leader?: UserNullableScalarRelationFilter;
 
+    @Field(() => AssignmentRequestListRelationFilter, {nullable:true})
+    assignment_requests?: AssignmentRequestListRelationFilter;
+
     @Field(() => DepartmentListRelationFilter, {nullable:true})
     @Type(() => DepartmentListRelationFilter)
     departments?: DepartmentListRelationFilter;
@@ -112,4 +118,10 @@ export class ChurchWhereInput {
     @Field(() => ProjectListRelationFilter, {nullable:true})
     @Type(() => ProjectListRelationFilter)
     projects?: ProjectListRelationFilter;
+
+    @Field(() => ChurchServiceCalendarListRelationFilter, {nullable:true})
+    service_calendar?: ChurchServiceCalendarListRelationFilter;
+
+    @Field(() => AssignmentListRelationFilter, {nullable:true})
+    assignments?: AssignmentListRelationFilter;
 }

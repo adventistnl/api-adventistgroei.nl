@@ -1,0 +1,49 @@
+# Preacher scheduling module — Phase 5 (Monthly close, notifications, audit)
+# Extracted from the real, auto-generated schema.gql after implementing this phase.
+# See preacher-scheduling-blueprint/docs/01-corrected-blueprint.md for the full spec.
+#
+# R10 — automatic monthly close:
+#   (a) auto-confirms every still-PENDING AssignmentRequest in the target month
+#   (b) locks every Assignment in the target month (Assignment.locked_at set; DRAFT rows
+#       additionally move to AssignmentStatus.LOCKED, CONFIRMED rows keep their status)
+#   (c) sends pre-close reminders a few days before close: open-slot reminders to church
+#       leaders, incomplete-availability reminders to preachers who've used the module before
+#
+# Runs daily via MonthlyLockService (cron), driven per-institution by a configurable close day
+# (Setting key "monthly_close_day", 1-28, default 10 — the month closed on close day D is always
+# D's next calendar month). triggerMonthlyClose is the manual/testing entry point for the same
+# logic, scoped to the caller's own institution — no *Any variant exists because there's no
+# "any institution" concept anywhere else in this module either.
+#
+# Lock enforcement (R10): once Assignment.locked_at is set, setAssignment (own scope) and
+# respondToAssignmentRequest(Any=false) (own scope) reject further edits to that slot.
+# setAssignmentAny and respondToAssignmentRequestAny remain unrestricted — the "explicit admin
+# flow" the blueprint calls out as the intended override path.
+#
+# R13 (audit trail) for the lock itself is recorded as an AssignmentHistory row with
+# field_name "locked_at", changed_by "system" for the cron path or the calling admin's id for
+# the manual-trigger path — mirroring the existing status-change history convention.
+#
+# Retroactive Phase 4 correction: AssignmentRequestService's notification calls previously
+# stored raw English sentences directly in Notification.message. The established convention
+# (see ProjectHistoryService.buildNotificationPayload) is for title/message to hold i18next
+# translation keys with metadata carrying interpolation data, so the frontend renders each
+# notification in the recipient's own language. Phase 4's four notification call sites
+# (request received, invite received, request accepted, request declined) were switched to
+# this pattern as part of this phase; the one exception is a custom AssignmentInviteTemplate's
+# Mustache-rendered body, which is admin-authored free text and is passed through via a
+# 'notifications.custom_text' passthrough key rather than a fixed translation key.
+
+type Mutation {
+  """
+  R10 — manually closes a month for the caller's own institution: auto-confirms every
+  pending assignment request and locks every assignment in that month. Requires the
+  MONTHLY_CLOSE_TRIGGER permission (Admin + both department-leader roles).
+  """
+  triggerMonthlyClose(month: String!): MonthlyCloseResult!
+}
+
+type MonthlyCloseResult {
+  autoAccepted: Float!
+  locked: Float!
+}

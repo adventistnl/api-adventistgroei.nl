@@ -12,11 +12,14 @@ import { Type } from 'class-transformer';
 import { RegionUpdateOneWithoutChurchesNestedInput } from '../region/region-update-one-without-churches-nested.input';
 import { ContactUpdateOneWithoutChurchNestedInput } from '../contact/contact-update-one-without-church-nested.input';
 import { UserUpdateOneWithoutLed_churchNestedInput } from '../user/user-update-one-without-led-church-nested.input';
+import { AssignmentRequestUpdateManyWithoutChurchNestedInput } from '../assignment-request/assignment-request-update-many-without-church-nested.input';
 import { DepartmentUpdateManyWithoutChurchNestedInput } from '../department/department-update-many-without-church-nested.input';
 import { UserUpdateManyWithoutChurchNestedInput } from '../user/user-update-many-without-church-nested.input';
 import { SubsidyRequestUpdateManyWithoutChurchNestedInput } from '../subsidy-request/subsidy-request-update-many-without-church-nested.input';
 import { AnnualBudgetUpdateManyWithoutChurchNestedInput } from '../annual-budget/annual-budget-update-many-without-church-nested.input';
 import { ProjectUpdateManyWithoutChurchNestedInput } from '../project/project-update-many-without-church-nested.input';
+import { ChurchServiceCalendarUpdateManyWithoutChurchNestedInput } from '../church-service-calendar/church-service-calendar-update-many-without-church-nested.input';
+import { AssignmentUpdateManyWithoutChurchNestedInput } from '../assignment/assignment-update-many-without-church-nested.input';
 
 @InputType()
 export class ChurchUpdateInput {
@@ -72,6 +75,9 @@ export class ChurchUpdateInput {
     @Type(() => UserUpdateOneWithoutLed_churchNestedInput)
     leader?: UserUpdateOneWithoutLed_churchNestedInput;
 
+    @Field(() => AssignmentRequestUpdateManyWithoutChurchNestedInput, {nullable:true})
+    assignment_requests?: AssignmentRequestUpdateManyWithoutChurchNestedInput;
+
     @Field(() => DepartmentUpdateManyWithoutChurchNestedInput, {nullable:true})
     @Type(() => DepartmentUpdateManyWithoutChurchNestedInput)
     departments?: DepartmentUpdateManyWithoutChurchNestedInput;
@@ -91,4 +97,10 @@ export class ChurchUpdateInput {
     @Field(() => ProjectUpdateManyWithoutChurchNestedInput, {nullable:true})
     @Type(() => ProjectUpdateManyWithoutChurchNestedInput)
     projects?: ProjectUpdateManyWithoutChurchNestedInput;
+
+    @Field(() => ChurchServiceCalendarUpdateManyWithoutChurchNestedInput, {nullable:true})
+    service_calendar?: ChurchServiceCalendarUpdateManyWithoutChurchNestedInput;
+
+    @Field(() => AssignmentUpdateManyWithoutChurchNestedInput, {nullable:true})
+    assignments?: AssignmentUpdateManyWithoutChurchNestedInput;
 }

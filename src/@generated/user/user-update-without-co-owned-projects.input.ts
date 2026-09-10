@@ -31,6 +31,11 @@ import { DepartmentUpdateManyWithoutLeaderNestedInput } from '../department/depa
 import { ChurchUpdateOneWithoutLeaderNestedInput } from '../church/church-update-one-without-leader-nested.input';
 import { ProjectHistoryUpdateManyWithoutUserNestedInput } from '../project-history/project-history-update-many-without-user-nested.input';
 import { InstitutionPositionUpdateManyWithoutUserNestedInput } from '../institution-position/institution-position-update-many-without-user-nested.input';
+import { AvailabilityUpdateManyWithoutUserNestedInput } from '../availability/availability-update-many-without-user-nested.input';
+import { AvailabilityRecurrenceRuleUpdateManyWithoutUserNestedInput } from '../availability-recurrence-rule/availability-recurrence-rule-update-many-without-user-nested.input';
+import { AssignmentUpdateManyWithoutUserNestedInput } from '../assignment/assignment-update-many-without-user-nested.input';
+import { AssignmentRequestUpdateManyWithoutUserNestedInput } from '../assignment-request/assignment-request-update-many-without-user-nested.input';
+import { PreacherRegionAccessUpdateManyWithoutUserNestedInput } from '../preacher-region-access/preacher-region-access-update-many-without-user-nested.input';
 
 @InputType()
 export class UserUpdateWithoutCo_owned_projectsInput {
@@ -163,4 +168,19 @@ export class UserUpdateWithoutCo_owned_projectsInput {
 
     @Field(() => InstitutionPositionUpdateManyWithoutUserNestedInput, {nullable:true})
     institution_positions?: InstitutionPositionUpdateManyWithoutUserNestedInput;
+
+    @Field(() => AvailabilityUpdateManyWithoutUserNestedInput, {nullable:true})
+    availabilities?: AvailabilityUpdateManyWithoutUserNestedInput;
+
+    @Field(() => AvailabilityRecurrenceRuleUpdateManyWithoutUserNestedInput, {nullable:true})
+    availability_recurrence_rules?: AvailabilityRecurrenceRuleUpdateManyWithoutUserNestedInput;
+
+    @Field(() => AssignmentUpdateManyWithoutUserNestedInput, {nullable:true})
+    assignments?: AssignmentUpdateManyWithoutUserNestedInput;
+
+    @Field(() => AssignmentRequestUpdateManyWithoutUserNestedInput, {nullable:true})
+    assignment_requests?: AssignmentRequestUpdateManyWithoutUserNestedInput;
+
+    @Field(() => PreacherRegionAccessUpdateManyWithoutUserNestedInput, {nullable:true})
+    preacher_region_access?: PreacherRegionAccessUpdateManyWithoutUserNestedInput;
 }

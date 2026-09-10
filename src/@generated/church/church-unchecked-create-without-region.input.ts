@@ -2,12 +2,15 @@ import { Field } from '@nestjs/graphql';
 import { InputType } from '@nestjs/graphql';
 import { ChurchType } from '../prisma/church-type.enum';
 import { Int } from '@nestjs/graphql';
+import { AssignmentRequestUncheckedCreateNestedManyWithoutChurchInput } from '../assignment-request/assignment-request-unchecked-create-nested-many-without-church.input';
 import { DepartmentUncheckedCreateNestedManyWithoutChurchInput } from '../department/department-unchecked-create-nested-many-without-church.input';
 import { Type } from 'class-transformer';
 import { UserUncheckedCreateNestedManyWithoutChurchInput } from '../user/user-unchecked-create-nested-many-without-church.input';
 import { SubsidyRequestUncheckedCreateNestedManyWithoutChurchInput } from '../subsidy-request/subsidy-request-unchecked-create-nested-many-without-church.input';
 import { AnnualBudgetUncheckedCreateNestedManyWithoutChurchInput } from '../annual-budget/annual-budget-unchecked-create-nested-many-without-church.input';
 import { ProjectUncheckedCreateNestedManyWithoutChurchInput } from '../project/project-unchecked-create-nested-many-without-church.input';
+import { ChurchServiceCalendarUncheckedCreateNestedManyWithoutChurchInput } from '../church-service-calendar/church-service-calendar-unchecked-create-nested-many-without-church.input';
+import { AssignmentUncheckedCreateNestedManyWithoutChurchInput } from '../assignment/assignment-unchecked-create-nested-many-without-church.input';
 
 @InputType()
 export class ChurchUncheckedCreateWithoutRegionInput {
@@ -57,6 +60,9 @@ export class ChurchUncheckedCreateWithoutRegionInput {
     @Field(() => String, {nullable:true})
     deleted_by?: string;
 
+    @Field(() => AssignmentRequestUncheckedCreateNestedManyWithoutChurchInput, {nullable:true})
+    assignment_requests?: AssignmentRequestUncheckedCreateNestedManyWithoutChurchInput;
+
     @Field(() => DepartmentUncheckedCreateNestedManyWithoutChurchInput, {nullable:true})
     @Type(() => DepartmentUncheckedCreateNestedManyWithoutChurchInput)
     departments?: DepartmentUncheckedCreateNestedManyWithoutChurchInput;
@@ -76,4 +82,10 @@ export class ChurchUncheckedCreateWithoutRegionInput {
     @Field(() => ProjectUncheckedCreateNestedManyWithoutChurchInput, {nullable:true})
     @Type(() => ProjectUncheckedCreateNestedManyWithoutChurchInput)
     projects?: ProjectUncheckedCreateNestedManyWithoutChurchInput;
+
+    @Field(() => ChurchServiceCalendarUncheckedCreateNestedManyWithoutChurchInput, {nullable:true})
+    service_calendar?: ChurchServiceCalendarUncheckedCreateNestedManyWithoutChurchInput;
+
+    @Field(() => AssignmentUncheckedCreateNestedManyWithoutChurchInput, {nullable:true})
+    assignments?: AssignmentUncheckedCreateNestedManyWithoutChurchInput;
 }

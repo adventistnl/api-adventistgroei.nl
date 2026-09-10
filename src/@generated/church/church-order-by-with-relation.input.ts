@@ -7,11 +7,14 @@ import { Type } from 'class-transformer';
 import { RegionOrderByWithRelationInput } from '../region/region-order-by-with-relation.input';
 import { ContactOrderByWithRelationInput } from '../contact/contact-order-by-with-relation.input';
 import { UserOrderByWithRelationInput } from '../user/user-order-by-with-relation.input';
+import { AssignmentRequestOrderByRelationAggregateInput } from '../assignment-request/assignment-request-order-by-relation-aggregate.input';
 import { DepartmentOrderByRelationAggregateInput } from '../department/department-order-by-relation-aggregate.input';
 import { UserOrderByRelationAggregateInput } from '../user/user-order-by-relation-aggregate.input';
 import { SubsidyRequestOrderByRelationAggregateInput } from '../subsidy-request/subsidy-request-order-by-relation-aggregate.input';
 import { AnnualBudgetOrderByRelationAggregateInput } from '../annual-budget/annual-budget-order-by-relation-aggregate.input';
 import { ProjectOrderByRelationAggregateInput } from '../project/project-order-by-relation-aggregate.input';
+import { ChurchServiceCalendarOrderByRelationAggregateInput } from '../church-service-calendar/church-service-calendar-order-by-relation-aggregate.input';
+import { AssignmentOrderByRelationAggregateInput } from '../assignment/assignment-order-by-relation-aggregate.input';
 
 @InputType()
 export class ChurchOrderByWithRelationInput {
@@ -79,6 +82,9 @@ export class ChurchOrderByWithRelationInput {
     @Type(() => UserOrderByWithRelationInput)
     leader?: UserOrderByWithRelationInput;
 
+    @Field(() => AssignmentRequestOrderByRelationAggregateInput, {nullable:true})
+    assignment_requests?: AssignmentRequestOrderByRelationAggregateInput;
+
     @Field(() => DepartmentOrderByRelationAggregateInput, {nullable:true})
     @Type(() => DepartmentOrderByRelationAggregateInput)
     departments?: DepartmentOrderByRelationAggregateInput;
@@ -98,4 +104,10 @@ export class ChurchOrderByWithRelationInput {
     @Field(() => ProjectOrderByRelationAggregateInput, {nullable:true})
     @Type(() => ProjectOrderByRelationAggregateInput)
     projects?: ProjectOrderByRelationAggregateInput;
+
+    @Field(() => ChurchServiceCalendarOrderByRelationAggregateInput, {nullable:true})
+    service_calendar?: ChurchServiceCalendarOrderByRelationAggregateInput;
+
+    @Field(() => AssignmentOrderByRelationAggregateInput, {nullable:true})
+    assignments?: AssignmentOrderByRelationAggregateInput;
 }

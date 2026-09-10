@@ -61,4 +61,19 @@ export class UserCount {
 
     @Field(() => Int, {nullable:false})
     institution_positions?: number;
+
+    @Field(() => Int, {nullable:false})
+    availabilities?: number;
+
+    @Field(() => Int, {nullable:false})
+    availability_recurrence_rules?: number;
+
+    @Field(() => Int, {nullable:false})
+    assignments?: number;
+
+    @Field(() => Int, {nullable:false})
+    assignment_requests?: number;
+
+    @Field(() => Int, {nullable:false})
+    preacher_region_access?: number;
 }

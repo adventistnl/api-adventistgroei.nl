@@ -15,6 +15,7 @@ import { RefundRequestedEmailDto } from '../../dto/refund-requested-email.dto';
 import { ProjectStatusChangedEmailDto } from '../../dto/project-status-changed-email.dto';
 import { SubsidyStatusChangedEmailDto } from '../../dto/subsidy-status-changed-email.dto';
 import { EmailVerificationDto } from '../../dto/email-verification.dto';
+import { ScheduleNotificationEmailDto, ScheduleNotificationEventType } from '../../dto/schedule-notification-email.dto';
 
 @Injectable()
 export class NodemailerEmailRepository {
@@ -300,5 +301,41 @@ export class NodemailerEmailRepository {
       };
 
       await this.sendEmail(data.to, subject, 'project-status-changed', templateData);
+    }
+
+    /**
+     * R6.1 item 7 (blueprint) — email notification for every scheduling event that requires
+     * user action. One shared template/method for all scheduling event types (matching the
+     * subsidyStatusChanged finance methods' precedent of reusing a single visual template
+     * across distinct notification types), differentiated by `eventType`'s emails.json key
+     * prefix. Respects the user's email preference — none of these events are account-critical.
+     */
+    async sendScheduleNotificationEmail(data: ScheduleNotificationEmailDto): Promise<void> {
+      const language = data.language || LanguagePreference.en;
+      await loadNamespaces(['emails']);
+
+      const keyPrefixByEvent: Record<ScheduleNotificationEventType, string> = {
+        ASSIGNMENT_REQUEST_RECEIVED: 'scheduleAssignmentRequestReceived',
+        ASSIGNMENT_INVITE_RECEIVED: 'scheduleAssignmentInviteReceived',
+        ASSIGNMENT_REQUEST_ACCEPTED: 'scheduleAssignmentRequestAccepted',
+        ASSIGNMENT_REQUEST_DECLINED: 'scheduleAssignmentRequestDeclined',
+        MONTHLY_CLOSE_OPEN_SLOTS: 'scheduleMonthlyCloseOpenSlots',
+        MONTHLY_CLOSE_INCOMPLETE_AVAILABILITY: 'scheduleMonthlyCloseIncompleteAvailability',
+        MONTHLY_CLOSE_AUTO_CONFIRMED: 'scheduleMonthlyCloseAutoConfirmed',
+      };
+      const keyPrefix = keyPrefixByEvent[data.eventType];
+      const interpolation = { ns: 'emails', ...data.vars };
+
+      const subject = translate(`${keyPrefix}.subject`, language, interpolation) || data.eventType;
+      const templateData = {
+        subject,
+        greeting: translate('scheduleGreeting', language, { ns: 'emails', name: data.recipientName }) || `Hello ${data.recipientName},`,
+        body: translate(`${keyPrefix}.body`, language, interpolation) || '',
+        cta: translate('scheduleCta', language, { ns: 'emails' }) || 'Open Schedule',
+        ctaUrl: data.ctaUrl,
+        footer: translate('scheduleFooter', language, { ns: 'emails' }) || '',
+      };
+
+      await this.sendEmail(data.to, subject, 'schedule-notification', templateData);
     }
 }

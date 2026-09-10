@@ -20,6 +20,14 @@ import { DirectMessageListRelationFilter } from '../direct-message/direct-messag
 import { SubsidyRequestListRelationFilter } from '../subsidy-request/subsidy-request-list-relation-filter.input';
 import { AnnualBudgetListRelationFilter } from '../annual-budget/annual-budget-list-relation-filter.input';
 import { InstitutionPositionListRelationFilter } from '../institution-position/institution-position-list-relation-filter.input';
+import { AvailabilityListRelationFilter } from '../availability/availability-list-relation-filter.input';
+import { AvailabilityRecurrenceRuleListRelationFilter } from '../availability-recurrence-rule/availability-recurrence-rule-list-relation-filter.input';
+import { ChurchServiceCalendarListRelationFilter } from '../church-service-calendar/church-service-calendar-list-relation-filter.input';
+import { AssignmentListRelationFilter } from '../assignment/assignment-list-relation-filter.input';
+import { GapReportSnapshotListRelationFilter } from '../gap-report-snapshot/gap-report-snapshot-list-relation-filter.input';
+import { AssignmentRequestListRelationFilter } from '../assignment-request/assignment-request-list-relation-filter.input';
+import { PreacherRegionAccessListRelationFilter } from '../preacher-region-access/preacher-region-access-list-relation-filter.input';
+import { AssignmentInviteTemplateListRelationFilter } from '../assignment-invite-template/assignment-invite-template-list-relation-filter.input';
 
 @InputType()
 export class InstitutionWhereUniqueInput {
@@ -115,4 +123,28 @@ export class InstitutionWhereUniqueInput {
 
     @Field(() => InstitutionPositionListRelationFilter, {nullable:true})
     positions?: InstitutionPositionListRelationFilter;
+
+    @Field(() => AvailabilityListRelationFilter, {nullable:true})
+    availabilities?: AvailabilityListRelationFilter;
+
+    @Field(() => AvailabilityRecurrenceRuleListRelationFilter, {nullable:true})
+    availability_recurrence_rules?: AvailabilityRecurrenceRuleListRelationFilter;
+
+    @Field(() => ChurchServiceCalendarListRelationFilter, {nullable:true})
+    church_service_calendar_entries?: ChurchServiceCalendarListRelationFilter;
+
+    @Field(() => AssignmentListRelationFilter, {nullable:true})
+    assignments?: AssignmentListRelationFilter;
+
+    @Field(() => GapReportSnapshotListRelationFilter, {nullable:true})
+    gap_report_snapshots?: GapReportSnapshotListRelationFilter;
+
+    @Field(() => AssignmentRequestListRelationFilter, {nullable:true})
+    assignment_requests?: AssignmentRequestListRelationFilter;
+
+    @Field(() => PreacherRegionAccessListRelationFilter, {nullable:true})
+    preacher_region_access?: PreacherRegionAccessListRelationFilter;
+
+    @Field(() => AssignmentInviteTemplateListRelationFilter, {nullable:true})
+    assignment_invite_templates?: AssignmentInviteTemplateListRelationFilter;
 }

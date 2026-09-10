@@ -27,6 +27,11 @@ import { SubsidyStatusHistoryUncheckedUpdateManyWithoutUserNestedInput } from '.
 import { DepartmentUncheckedUpdateManyWithoutLeaderNestedInput } from '../department/department-unchecked-update-many-without-leader-nested.input';
 import { ChurchUncheckedUpdateOneWithoutLeaderNestedInput } from '../church/church-unchecked-update-one-without-leader-nested.input';
 import { InstitutionPositionUncheckedUpdateManyWithoutUserNestedInput } from '../institution-position/institution-position-unchecked-update-many-without-user-nested.input';
+import { AvailabilityUncheckedUpdateManyWithoutUserNestedInput } from '../availability/availability-unchecked-update-many-without-user-nested.input';
+import { AvailabilityRecurrenceRuleUncheckedUpdateManyWithoutUserNestedInput } from '../availability-recurrence-rule/availability-recurrence-rule-unchecked-update-many-without-user-nested.input';
+import { AssignmentUncheckedUpdateManyWithoutUserNestedInput } from '../assignment/assignment-unchecked-update-many-without-user-nested.input';
+import { AssignmentRequestUncheckedUpdateManyWithoutUserNestedInput } from '../assignment-request/assignment-request-unchecked-update-many-without-user-nested.input';
+import { PreacherRegionAccessUncheckedUpdateManyWithoutUserNestedInput } from '../preacher-region-access/preacher-region-access-unchecked-update-many-without-user-nested.input';
 
 @InputType()
 export class UserUncheckedUpdateWithoutProject_historyInput {
@@ -155,4 +160,19 @@ export class UserUncheckedUpdateWithoutProject_historyInput {
 
     @Field(() => InstitutionPositionUncheckedUpdateManyWithoutUserNestedInput, {nullable:true})
     institution_positions?: InstitutionPositionUncheckedUpdateManyWithoutUserNestedInput;
+
+    @Field(() => AvailabilityUncheckedUpdateManyWithoutUserNestedInput, {nullable:true})
+    availabilities?: AvailabilityUncheckedUpdateManyWithoutUserNestedInput;
+
+    @Field(() => AvailabilityRecurrenceRuleUncheckedUpdateManyWithoutUserNestedInput, {nullable:true})
+    availability_recurrence_rules?: AvailabilityRecurrenceRuleUncheckedUpdateManyWithoutUserNestedInput;
+
+    @Field(() => AssignmentUncheckedUpdateManyWithoutUserNestedInput, {nullable:true})
+    assignments?: AssignmentUncheckedUpdateManyWithoutUserNestedInput;
+
+    @Field(() => AssignmentRequestUncheckedUpdateManyWithoutUserNestedInput, {nullable:true})
+    assignment_requests?: AssignmentRequestUncheckedUpdateManyWithoutUserNestedInput;
+
+    @Field(() => PreacherRegionAccessUncheckedUpdateManyWithoutUserNestedInput, {nullable:true})
+    preacher_region_access?: PreacherRegionAccessUncheckedUpdateManyWithoutUserNestedInput;
 }
