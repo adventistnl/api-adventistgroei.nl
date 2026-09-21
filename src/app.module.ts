@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { JwtModule } from '@nestjs/jwt';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { ScheduleModule } from '@nestjs/schedule';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { APP_FILTER, APP_INTERCEPTOR, APP_GUARD } from '@nestjs/core';
@@ -24,7 +24,6 @@ import { ActivityDocumentsController } from './controllers/activity-documents.co
 import { SubsidyReceiptController } from './controllers/subsidy-receipt.controller';
 import { ZipCodeModule } from './modules/zip-code.module';
 
-const JWT_SECRET = process.env.JWT_SECRET;
 
 @Module({
   imports: [
@@ -101,9 +100,13 @@ const JWT_SECRET = process.env.JWT_SECRET;
         };
       },
     }),
-    JwtModule.register({
-      secret: JWT_SECRET,
-      signOptions: { expiresIn: '30d' },
+    JwtModule.registerAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => ({
+        secret: configService.get<string>('JWT_SECRET'),
+        signOptions: { expiresIn: '30d' },
+      }),
     }),
   ],
   controllers: [ActivityDocumentsController, SubsidyReceiptController],
