@@ -31,7 +31,23 @@ export class SendgridEmailRepository {
     const inviter = await this.userService.getUserById(data.inviter_id);
     if (!inviter) throw new CustomGraphQLError('Inviter not found', ErrorCode.NOT_FOUND, 404);
     
-    const language = inviter.language_preference as LanguagePreference || LanguagePreference.en;
+    let language = (inviter.language_preference as LanguagePreference) || LanguagePreference.en;
+    
+    try {
+      const urlObj = new URL(data.url);
+      const token = urlObj.searchParams.get('invite');
+      if (token) {
+        const payloadBase64 = token.split('.')[1];
+        if (payloadBase64) {
+          const payload = JSON.parse(Buffer.from(payloadBase64, 'base64').toString('utf-8'));
+          if (payload.language_preference) {
+            language = payload.language_preference as LanguagePreference;
+          }
+        }
+      }
+    } catch (e) {
+      // Ignore errors in decoding token and fallback to inviter language
+    }
     await loadNamespaces(['emails']);
 
     const subject = this.getTranslation('subject', language);
