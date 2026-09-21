@@ -5199,6 +5199,7 @@ input LedgerHistoryFilterInput {
 
 type Mutation {
   login(input: LoginInput!): AuthModel!
+  logout: Boolean!
   createChurch(data: ChurchCreateDto!): Church!
   updateChurch(id: String!, data: ChurchUpdateDto!): Church!
   deleteChurch(id: String!): Church!

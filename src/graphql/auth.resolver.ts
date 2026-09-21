@@ -27,4 +27,20 @@ export class AuthResolver {
 
     return authResult;
   }
+
+  @Mutation(() => Boolean)
+  async logout(
+    @Context() context: ContextDto,
+  ): Promise<boolean> {
+    if (context.res) {
+      context.res.cookie('auth-token', '', {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+        maxAge: 0, // Expira imediatamente
+        path: '/',
+      });
+    }
+    return true;
+  }
 }
