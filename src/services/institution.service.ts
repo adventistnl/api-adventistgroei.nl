@@ -8,6 +8,7 @@ import { CustomGraphQLError, ErrorCode } from '../common/errors/custom-graphql-e
 import { ContactRepository, ChurchRepository, CommunicationRepository, DepartmentRepository, InstitutionRepository, ProjectRepository, NotificationRepository, RegionRepository, SettingRepository, SubsidyRequestRepository, UserRepository, AnnualBudgetRepository } from 'src/repositories';
 import { DirectMessageRepository } from 'src/repositories/direct-message.repository';
 import { ChurchChartData, ChurchActivityData } from '../models/church.model';
+import { AvailableYearsEntity } from '../models/institution.model';
 import { DecimalHelper } from 'src/common/helpers/decimal.helper';
 import { Decimal } from '@prisma/client/runtime/library';
 import { PrismaService } from './prisma.service';
@@ -50,40 +51,74 @@ export class InstitutionService {
     return await this.institutionRepository.cascadeSoftDelete(id, userId);
   }
 
-  async getDashboardAvailableYears(institution_id?: string): Promise<number[]> {
+  async getAvailableYears(entities: AvailableYearsEntity[], institution_id?: string): Promise<number[]> {
     const currentYear = new Date().getFullYear();
     let minYear = currentYear;
 
-    const instFilter = institution_id ? { id: institution_id } : {};
-    const projFilter = institution_id ? { institution_id } : {};
-    const userFilter = institution_id ? { institution_id } : {};
+    const queries: Promise<any>[] = [];
 
-    const [minInst, minProj, minUser] = await Promise.all([
-      this.prisma.institution.findFirst({
-        where: instFilter,
+    if (entities.includes(AvailableYearsEntity.INSTITUTION)) {
+      queries.push(this.prisma.institution.findFirst({
+        where: institution_id ? { id: institution_id } : {},
         orderBy: { created_at: 'asc' },
         select: { created_at: true },
-      }),
-      this.prisma.project.findFirst({
-        where: projFilter,
-        orderBy: { created_at: 'asc' },
-        select: { created_at: true },
-      }),
-      this.prisma.user.findFirst({
-        where: userFilter,
-        orderBy: { created_at: 'asc' },
-        select: { created_at: true },
-      })
-    ]);
+      }));
+    }
 
-    if (minInst?.created_at && minInst.created_at.getFullYear() < minYear) {
-      minYear = minInst.created_at.getFullYear();
+    if (entities.includes(AvailableYearsEntity.PROJECT)) {
+      queries.push(this.prisma.project.findFirst({
+        where: institution_id ? { institution_id } : {},
+        orderBy: { created_at: 'asc' },
+        select: { created_at: true },
+      }));
     }
-    if (minProj?.created_at && minProj.created_at.getFullYear() < minYear) {
-      minYear = minProj.created_at.getFullYear();
+
+    if (entities.includes(AvailableYearsEntity.USER)) {
+      queries.push(this.prisma.user.findFirst({
+        where: institution_id ? { institution_id } : {},
+        orderBy: { created_at: 'asc' },
+        select: { created_at: true },
+      }));
     }
-    if (minUser?.created_at && minUser.created_at.getFullYear() < minYear) {
-      minYear = minUser.created_at.getFullYear();
+
+    if (entities.includes(AvailableYearsEntity.CHURCH)) {
+      queries.push(this.prisma.church.findFirst({
+        where: institution_id ? { institution_id } : {},
+        orderBy: { created_at: 'asc' },
+        select: { created_at: true },
+      }));
+    }
+
+    if (entities.includes(AvailableYearsEntity.DEPARTMENT)) {
+      queries.push(this.prisma.department.findFirst({
+        where: institution_id ? { institution_id } : {},
+        orderBy: { created_at: 'asc' },
+        select: { created_at: true },
+      }));
+    }
+
+    if (entities.includes(AvailableYearsEntity.SUBSIDY_REQUEST)) {
+      queries.push(this.prisma.subsidyRequest.findFirst({
+        where: institution_id ? { institution_id } : {},
+        orderBy: { created_at: 'asc' },
+        select: { created_at: true },
+      }));
+    }
+
+    if (entities.includes(AvailableYearsEntity.ANNUAL_BUDGET)) {
+      queries.push(this.prisma.annualBudget.findFirst({
+        where: institution_id ? { institution_id } : {},
+        orderBy: { created_at: 'asc' },
+        select: { created_at: true },
+      }));
+    }
+
+    const results = await Promise.all(queries);
+
+    for (const result of results) {
+      if (result?.created_at && result.created_at.getFullYear() < minYear) {
+        minYear = result.created_at.getFullYear();
+      }
     }
 
     if (minYear < 2000) minYear = 2000;

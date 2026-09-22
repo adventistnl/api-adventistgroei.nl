@@ -6,6 +6,21 @@ registerEnumType(LanguagePreference, {
   description: 'Idioma preferencial da instituição',
 });
 
+export enum AvailableYearsEntity {
+  INSTITUTION = 'INSTITUTION',
+  PROJECT = 'PROJECT',
+  USER = 'USER',
+  CHURCH = 'CHURCH',
+  DEPARTMENT = 'DEPARTMENT',
+  SUBSIDY_REQUEST = 'SUBSIDY_REQUEST',
+  ANNUAL_BUDGET = 'ANNUAL_BUDGET'
+}
+
+registerEnumType(AvailableYearsEntity, {
+  name: 'AvailableYearsEntity',
+  description: 'Entities available for minimum year query'
+});
+
 @ObjectType()
 export class InstitutionModel {
   @Field()

@@ -2281,7 +2281,7 @@ type Query {
   church(id: String!): Church
   churchActivityTimeline(institution_id: String, selectedYear: Float): [JSON!]!
   institutions: [Institution!]!
-  dashboardAvailableYears(institution_id: String): [Int!]!
+  availableYears(entities: [AvailableYearsEntity!]!, institution_id: String): [Int!]!
   institution(id: String!): Institution
   regions: [Region!]!
   region(id: String!): Region
@@ -2369,6 +2369,17 @@ type Query {
     """House number"""
     houseNumber: Int!
   ): ZipInfo!
+}
+
+"""Entities available for minimum year query"""
+enum AvailableYearsEntity {
+  INSTITUTION
+  PROJECT
+  USER
+  CHURCH
+  DEPARTMENT
+  SUBSIDY_REQUEST
+  ANNUAL_BUDGET
 }
 
 input GetSubsidyReceiptsDto {

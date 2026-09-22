@@ -17,7 +17,7 @@ import { SubsidyRequest } from 'src/@generated/subsidy-request/subsidy-request.m
 import { Contact } from 'src/@generated/contact/contact.model';
 import { AnnualBudget } from 'src/@generated/annual-budget/annual-budget.model';
 import { ChurchKPIData, ChurchChartData, ChurchActivityData } from 'src/models/church.model';
-import { InstitutionChartsData } from 'src/models/institution.model';
+import { AvailableYearsEntity, InstitutionChartsData } from 'src/models/institution.model';
 import { PrismaService } from '../services/prisma.service';
 
 
@@ -46,12 +46,13 @@ export class InstitutionResolver {
   }
 
   // A public (authenticated) query to dynamically get the years available in the system
-  // for the dashboard date filter. It finds the oldest record's year and returns up to current.
+  // for the date filter. It finds the oldest record's year among requested entities and returns up to current.
   @Query(() => [Int])
-  async dashboardAvailableYears(
+  async availableYears(
+    @Args('entities', { type: () => [AvailableYearsEntity] }) entities: AvailableYearsEntity[],
     @Args('institution_id', { type: () => String, nullable: true }) institution_id?: string,
   ): Promise<number[]> {
-    return await this.institutionService.getDashboardAvailableYears(institution_id);
+    return await this.institutionService.getAvailableYears(entities, institution_id);
   }
 
   // @Permission()
