@@ -79,7 +79,7 @@ const permissionsEnabledToClient = [
   { name: 'update user', description: 'Update a user', resolver_name: 'updateUser' as PermissionResolverName, group: 'USER' as PermissionGroup, key_code: 'USER_UPDATE', disabled_to_client: false },
   { name: 'delete user', description: 'Delete a user', resolver_name: 'deleteUser' as PermissionResolverName, group: 'USER' as PermissionGroup, key_code: 'USER_DELETE', disabled_to_client: false },
   { name: 'update institution', description: 'Update an institution', resolver_name: 'updateInstitution' as PermissionResolverName, group: 'INSTITUTION' as PermissionGroup, key_code: 'INSTITUTION_UPDATE', disabled_to_client: false },
-  { name: 'delete institution', description: 'Delete an institution', resolver_name: 'deleteInstitution' as PermissionResolverName, group: 'INSTITUTION' as PermissionGroup, key_code: 'INSTITUTION_DELETE', disabled_to_client: false },
+  { name: 'delete institution', description: 'Delete an institution', resolver_name: 'deleteInstitution' as PermissionResolverName, group: 'INSTITUTION' as PermissionGroup, key_code: 'INSTITUTION_DELETE', disabled_to_client: true },
   { name: 'update region', description: 'Update a region', resolver_name: 'updateRegion' as PermissionResolverName, group: 'REGION' as PermissionGroup, key_code: 'REGION_UPDATE', disabled_to_client: false },
   { name: 'delete region', description: 'Delete a region', resolver_name: 'deleteRegion' as PermissionResolverName, group: 'REGION' as PermissionGroup, key_code: 'REGION_DELETE', disabled_to_client: false },
   { name: 'update church', description: 'Update a church', resolver_name: 'updateChurch' as PermissionResolverName, group: 'CHURCH' as PermissionGroup, key_code: 'CHURCH_UPDATE', disabled_to_client: false },

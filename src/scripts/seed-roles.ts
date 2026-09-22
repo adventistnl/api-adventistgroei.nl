@@ -57,7 +57,6 @@ const roles = [
       { key_code: 'USER_ROLE_REMOVE', is_essential: true },
       { key_code: 'INSTITUTION_CREATE', is_essential: true },
       { key_code: 'INSTITUTION_UPDATE', is_essential: true },
-      { key_code: 'INSTITUTION_DELETE', is_essential: true },
       { key_code: 'REGION_CREATE', is_essential: true },
       { key_code: 'REGION_UPDATE', is_essential: true },
       { key_code: 'REGION_DELETE', is_essential: true },
