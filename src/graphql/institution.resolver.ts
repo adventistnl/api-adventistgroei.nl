@@ -45,6 +45,15 @@ export class InstitutionResolver {
     return await this.institutionService.getInstitutions();
   }
 
+  // A public (authenticated) query to dynamically get the years available in the system
+  // for the dashboard date filter. It finds the oldest record's year and returns up to current.
+  @Query(() => [Int])
+  async dashboardAvailableYears(
+    @Args('institution_id', { type: () => String, nullable: true }) institution_id?: string,
+  ): Promise<number[]> {
+    return await this.institutionService.getDashboardAvailableYears(institution_id);
+  }
+
   // @Permission()
   @Query(() => Institution, { nullable: true })
   async institution(@Args('id') id: string): Promise<Institution | null> {

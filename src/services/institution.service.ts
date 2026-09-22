@@ -10,6 +10,7 @@ import { DirectMessageRepository } from 'src/repositories/direct-message.reposit
 import { ChurchChartData, ChurchActivityData } from '../models/church.model';
 import { DecimalHelper } from 'src/common/helpers/decimal.helper';
 import { Decimal } from '@prisma/client/runtime/library';
+import { PrismaService } from './prisma.service';
 
 @Injectable()
 export class InstitutionService {
@@ -27,6 +28,7 @@ export class InstitutionService {
     private readonly subsidyRequestRepository: SubsidyRequestRepository,
     private readonly contactRepository: ContactRepository,
     private readonly annualBudgetRepository: AnnualBudgetRepository,
+    private readonly prisma: PrismaService,
   ) {}
 
   async createInstitution(
@@ -46,6 +48,51 @@ export class InstitutionService {
 
   async deleteInstitution(id: string, userId: string): Promise<Institution> {
     return await this.institutionRepository.cascadeSoftDelete(id, userId);
+  }
+
+  async getDashboardAvailableYears(institution_id?: string): Promise<number[]> {
+    const currentYear = new Date().getFullYear();
+    let minYear = currentYear;
+
+    const instFilter = institution_id ? { id: institution_id } : {};
+    const projFilter = institution_id ? { institution_id } : {};
+    const userFilter = institution_id ? { institution_id } : {};
+
+    const [minInst, minProj, minUser] = await Promise.all([
+      this.prisma.institution.findFirst({
+        where: instFilter,
+        orderBy: { created_at: 'asc' },
+        select: { created_at: true },
+      }),
+      this.prisma.project.findFirst({
+        where: projFilter,
+        orderBy: { created_at: 'asc' },
+        select: { created_at: true },
+      }),
+      this.prisma.user.findFirst({
+        where: userFilter,
+        orderBy: { created_at: 'asc' },
+        select: { created_at: true },
+      })
+    ]);
+
+    if (minInst?.created_at && minInst.created_at.getFullYear() < minYear) {
+      minYear = minInst.created_at.getFullYear();
+    }
+    if (minProj?.created_at && minProj.created_at.getFullYear() < minYear) {
+      minYear = minProj.created_at.getFullYear();
+    }
+    if (minUser?.created_at && minUser.created_at.getFullYear() < minYear) {
+      minYear = minUser.created_at.getFullYear();
+    }
+
+    if (minYear < 2000) minYear = 2000;
+
+    const years: number[] = [];
+    for (let y = currentYear; y >= minYear; y--) {
+      years.push(y);
+    }
+    return years;
   }
 
   async getInstitutions(): Promise<Institution[]> {
