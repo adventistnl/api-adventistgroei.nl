@@ -67,6 +67,14 @@ export class PermissionsGuard implements CanActivate {
           return true; // Permite se for o próprio usuário
         }
       }
+
+      // Verificação especial para ler próprio perfil
+      if (requiredPermissions.includes('user' as PermissionResolverName) || requiredPermissions.includes('userWithRoles' as PermissionResolverName)) {
+        const targetUserId = this.extractTargetUserId(context);
+        if (targetUserId === userId) {
+          return true; // Permite se for o próprio usuário
+        }
+      }
       
       throw new UnauthorizedException('User does not have permission to access this resource');
     }
