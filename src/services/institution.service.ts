@@ -12,6 +12,7 @@ import { AvailableYearsEntity } from '../models/institution.model';
 import { DecimalHelper } from 'src/common/helpers/decimal.helper';
 import { Decimal } from '@prisma/client/runtime/library';
 import { PrismaService } from './prisma.service';
+import { DashboardKPIs, MonthlyUserRegistration } from '../dto/dashboard-analytics.dto';
 
 @Injectable()
 export class InstitutionService {
@@ -463,16 +464,125 @@ export class InstitutionService {
   }
 
   async getInstitutionChartsData(institutionId: string) {
-    const [usersByRoleData, monthlyUserGrowth, churchesByRegionData] = await Promise.all([
+    const [usersByRoleData, monthlyUserGrowth, churchesByRegionData, monthlyUserRegistrations] = await Promise.all([
       this.userRepository.getUsersByRoleForInstitution(institutionId),
       this.userRepository.getMonthlyUserGrowthForInstitution(institutionId),
-      this.userRepository.getChurchesByRegionForInstitution(institutionId)
+      this.userRepository.getChurchesByRegionForInstitution(institutionId),
+      this.userRepository.getMonthlyUserRegistrationsForInstitution(institutionId),
     ]);
 
     return {
       usersByRole: usersByRoleData,
       monthlyUserGrowth,
-      churchesByRegion: churchesByRegionData
+      churchesByRegion: churchesByRegionData,
+      monthlyUserRegistrations,
+    };
+  }
+
+  async getDashboardKPIs(institutionId: string, year: number, month?: number): Promise<DashboardKPIs> {
+    const yearStart = new Date(year, 0, 1);
+    const yearEnd = new Date(year + 1, 0, 1);
+    const prevYearStart = new Date(year - 1, 0, 1);
+
+    // Determine date range for month filter
+    const periodStart = month !== undefined ? new Date(year, month, 1) : yearStart;
+    const periodEnd = month !== undefined ? new Date(year, month + 1, 1) : yearEnd;
+
+    // --- USERS ---
+    const [totalUsers, newUsersThisYear, previousYearUsers] = await Promise.all([
+      this.prisma.user.count({
+        where: { institution_id: institutionId, is_deleted: false },
+      }),
+      this.prisma.user.count({
+        where: {
+          institution_id: institutionId,
+          is_deleted: false,
+          created_at: { gte: periodStart, lt: periodEnd },
+        },
+      }),
+      this.prisma.user.count({
+        where: {
+          institution_id: institutionId,
+          is_deleted: false,
+          created_at: { gte: prevYearStart, lt: yearStart },
+        },
+      }),
+    ]);
+
+    const userGrowthRate = previousYearUsers > 0
+      ? Math.round(((newUsersThisYear - previousYearUsers) / previousYearUsers) * 100)
+      : newUsersThisYear > 0 ? 100 : 0;
+
+    // --- PROJECTS ---
+    const [newProjectsThisYear, previousYearProjects] = await Promise.all([
+      this.prisma.project.count({
+        where: {
+          is_deleted: false,
+          department: { institution_id: institutionId },
+          created_at: { gte: periodStart, lt: periodEnd },
+        },
+      }),
+      this.prisma.project.count({
+        where: {
+          is_deleted: false,
+          department: { institution_id: institutionId },
+          created_at: { gte: prevYearStart, lt: yearStart },
+        },
+      }),
+    ]);
+
+    const totalProjects = await this.prisma.project.count({
+      where: {
+        is_deleted: false,
+        department: { institution_id: institutionId },
+        created_at: { lt: periodEnd },
+      },
+    });
+
+    const projectGrowthRate = previousYearProjects > 0
+      ? Math.round(((newProjectsThisYear - previousYearProjects) / previousYearProjects) * 100)
+      : newProjectsThisYear > 0 ? 100 : 0;
+
+    // --- STRUCTURE ---
+    const [institutionDepartments, churchDepartments, activeChurches, totalRegions] = await Promise.all([
+      // Institution departments = departments with NO church_id
+      this.prisma.department.count({
+        where: { institution_id: institutionId, church_id: null, is_deleted: false },
+      }),
+      // Church departments = departments belonging to churches of this institution
+      this.prisma.department.count({
+        where: {
+          is_deleted: false,
+          church: { institution_id: institutionId, is_deleted: false },
+          church_id: { not: null },
+        },
+      }),
+      this.prisma.church.count({
+        where: { institution_id: institutionId, is_deleted: false },
+      }),
+      // Regions linked to this institution via churches
+      this.prisma.region.count({
+        where: {
+          is_deleted: false,
+          churches: { some: { institution_id: institutionId, is_deleted: false } },
+        },
+      }),
+    ]);
+
+    return {
+      totalUsers,
+      newUsersThisYear,
+      previousYearUsers,
+      userGrowthRate,
+      totalProjects,
+      newProjectsThisYear,
+      previousYearProjects,
+      projectGrowthRate,
+      institutionDepartments,
+      churchDepartments,
+      totalDepartments: institutionDepartments + churchDepartments,
+      activeChurches,
+      totalRegions,
     };
   }
 }

@@ -635,10 +635,15 @@ export class ProjectService {
     return this.projectRepository.findCollaboratorsByProjectId(projectId);
   }
 
-  async getProjectKPIs(institutionId?: string): Promise<ProjectKPIs> {
+  async getProjectKPIs(institutionId?: string, year?: number): Promise<ProjectKPIs> {
+    const yearFilter = year
+      ? { created_at: { gte: new Date(year, 0, 1), lt: new Date(year + 1, 0, 1) } }
+      : {};
+
     const projectsData = await this.prisma.project.findMany({
       where: {
         is_deleted: false,
+        ...yearFilter,
         ...(institutionId && {
           department: {
             institution_id: institutionId,

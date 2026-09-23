@@ -1,4 +1,4 @@
-import { Resolver, Query, Mutation, Args, Context, ResolveField, Parent } from '@nestjs/graphql';
+import { Resolver, Query, Mutation, Args, Context, ResolveField, Parent, Int } from '@nestjs/graphql';
 import { UseGuards } from '@nestjs/common';
 import { ProjectService } from '../services/project.service';
 import { Project } from '../@generated/project/project.model';
@@ -125,9 +125,10 @@ export class ProjectResolver {
   @UseGuards(PermissionsGuard)
   @Permission('projects')
   async projectKPIs(
-    @Args('institutionId', { nullable: true }) institutionId?: string
+    @Args('institutionId', { nullable: true }) institutionId?: string,
+    @Args('year', { type: () => Int, nullable: true }) year?: number,
   ): Promise<ProjectKPIs> {
-    return this.projectService.getProjectKPIs(institutionId);
+    return this.projectService.getProjectKPIs(institutionId, year);
   }
 
   @Query(() => [ProjectsByDepartment])

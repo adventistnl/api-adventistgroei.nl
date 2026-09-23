@@ -19,6 +19,7 @@ import { AnnualBudget } from 'src/@generated/annual-budget/annual-budget.model';
 import { ChurchKPIData, ChurchChartData, ChurchActivityData } from 'src/models/church.model';
 import { AvailableYearsEntity, InstitutionChartsData } from 'src/models/institution.model';
 import { PrismaService } from '../services/prisma.service';
+import { DashboardKPIs } from '../dto/dashboard-analytics.dto';
 
 
 @Resolver(() => Institution)
@@ -43,6 +44,15 @@ export class InstitutionResolver {
   @Query(() => [Institution])
   async institutions(): Promise<Institution[]> {
     return await this.institutionService.getInstitutions();
+  }
+
+  @Query(() => DashboardKPIs)
+  async dashboardKPIs(
+    @Args('institutionId') institutionId: string,
+    @Args('year', { type: () => Int }) year: number,
+    @Args('month', { type: () => Int, nullable: true }) month?: number,
+  ): Promise<DashboardKPIs> {
+    return this.institutionService.getDashboardKPIs(institutionId, year, month);
   }
 
   // A public (authenticated) query to dynamically get the years available in the system

@@ -657,4 +657,38 @@ export class UserRepository {
       return []; // Return empty array as fallback
     }
   }
+
+  async getMonthlyUserRegistrationsForInstitution(
+    institutionId: string,
+    year?: number,
+  ): Promise<{ month: string; count: number }[]> {
+    const targetYear = year ?? new Date().getFullYear();
+    const yearStart = new Date(targetYear, 0, 1);
+    const yearEnd = new Date(targetYear + 1, 0, 1);
+
+    const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+    try {
+      const users = await this.prisma.user.findMany({
+        where: {
+          institution_id: institutionId,
+          is_deleted: false,
+          created_at: { gte: yearStart, lt: yearEnd },
+        },
+        select: { created_at: true },
+      });
+
+      // Bucket by month index
+      const counts: number[] = new Array(12).fill(0);
+      for (const user of users) {
+        const m = new Date(user.created_at).getMonth();
+        counts[m]++;
+      }
+
+      return MONTHS.map((month, index) => ({ month, count: counts[index] }));
+    } catch (error) {
+      console.error('Error getting monthly user registrations:', error);
+      return MONTHS.map(month => ({ month, count: 0 }));
+    }
+  }
 }
