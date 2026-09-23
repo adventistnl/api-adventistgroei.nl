@@ -66,9 +66,10 @@ import { ZipCodeModule } from './modules/zip-code.module';
               return {
                 userId: userCtx?.userId ?? '',
                 userRoles: userCtx?.userRoles ?? [],
+                userPermissions: userCtx?.userPermissions ?? [],
               };
             }
-            return { userId: '', userRoles: [] };
+            return { userId: '', userRoles: [], userPermissions: [] };
           },
         },
       },
@@ -80,6 +81,7 @@ import { ZipCodeModule } from './modules/zip-code.module';
             res,
             userId: (extra).userId ?? '',
             userRoles: (extra).userRoles ?? [],
+            userPermissions: (extra).userPermissions ?? [],
           };
         }
         // Contexto HTTP (query/mutation)
@@ -97,6 +99,7 @@ import { ZipCodeModule } from './modules/zip-code.module';
           res,
           userId: ctx?.userId ?? '',
           userRoles: ctx?.userRoles ?? [],
+          userPermissions: ctx?.userPermissions ?? [],
         };
       },
     }),

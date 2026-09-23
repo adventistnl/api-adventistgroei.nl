@@ -50,9 +50,11 @@ export class InstitutionResolver {
   async dashboardKPIs(
     @Args('institutionId') institutionId: string,
     @Args('year', { type: () => Int }) year: number,
-    @Args('month', { type: () => Int, nullable: true }) month?: number,
+    @Args('month', { type: () => Int, nullable: true }) month: number | undefined,
+    @Context() context: { userId: string; userPermissions: string[] },
   ): Promise<DashboardKPIs> {
-    return this.institutionService.getDashboardKPIs(institutionId, year, month);
+    const userPermissions = context.userPermissions || [];
+    return this.institutionService.getDashboardKPIs(institutionId, year, month, userPermissions);
   }
 
   // A public (authenticated) query to dynamically get the years available in the system

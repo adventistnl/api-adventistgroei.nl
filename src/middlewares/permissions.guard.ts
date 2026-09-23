@@ -29,32 +29,46 @@ export class PermissionsGuard implements CanActivate {
       throw new UnauthorizedException('User not authenticated');
     }
 
-    // Busca as permissões do usuário via Prisma
-    const user = await this.prisma.user.findUnique({
-      where: { id: userId },
-      include: {
-        user_roles: {
-          where: { is_deleted: false },
-          include: {
-            role: {
-              include: {
-                role_permissions: {
-                  include: { permission: true },
+    let userPermissions: PermissionResolverName[] = [];
+
+    // Tenta obter permissões direto do contexto (GraphQL já carrega isso no getUserIdFromRequest)
+    const contextType = context.getType<string>();
+    if (contextType === 'graphql') {
+      const gqlContext = GqlExecutionContext.create(context);
+      const ctx = gqlContext.getContext<any>();
+      if (ctx.userPermissions && ctx.userPermissions.length > 0) {
+        userPermissions = ctx.userPermissions as PermissionResolverName[];
+      }
+    }
+
+    // Fallback: se as permissões não estiverem no contexto (ex: rota HTTP/REST), busca no Prisma
+    if (userPermissions.length === 0) {
+      const user = await this.prisma.user.findUnique({
+        where: { id: userId },
+        include: {
+          user_roles: {
+            where: { is_deleted: false },
+            include: {
+              role: {
+                include: {
+                  role_permissions: {
+                    include: { permission: true },
+                  },
                 },
               },
             },
           },
         },
-      },
-    });
+      });
 
-    if (!user) {
-      throw new UnauthorizedException('User not found');
+      if (!user) {
+        throw new UnauthorizedException('User not found');
+      }
+
+      userPermissions = user.user_roles
+        .flatMap((ur) => ur.role.role_permissions)
+        .map((rp) => rp.permission.resolver_name as PermissionResolverName);
     }
-
-    const userPermissions: PermissionResolverName[] = user.user_roles
-      .flatMap((ur) => ur.role.role_permissions)
-      .map((rp) => rp.permission.resolver_name);
 
     // Verifica se o usuário tem as permissões necessárias
     const hasPermission = requiredPermissions.some((p) => userPermissions.includes(p));

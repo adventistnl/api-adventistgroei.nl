@@ -12,44 +12,44 @@ export class MonthlyUserRegistration {
 @ObjectType()
 export class DashboardKPIs {
   // Users
-  @Field(() => Int)
-  totalUsers: number;
+  @Field(() => Int, { nullable: true })
+  totalUsers?: number;
 
-  @Field(() => Int)
-  newUsersThisYear: number;
+  @Field(() => Int, { nullable: true })
+  newUsersThisYear?: number;
 
-  @Field(() => Int)
-  previousYearUsers: number;
+  @Field(() => Int, { nullable: true })
+  previousYearUsers?: number;
 
-  @Field(() => Float)
-  userGrowthRate: number;
+  @Field(() => Float, { nullable: true })
+  userGrowthRate?: number;
 
   // Projects
-  @Field(() => Int)
-  totalProjects: number;
+  @Field(() => Int, { nullable: true })
+  totalProjects?: number;
 
-  @Field(() => Int)
-  newProjectsThisYear: number;
+  @Field(() => Int, { nullable: true })
+  newProjectsThisYear?: number;
 
-  @Field(() => Int)
-  previousYearProjects: number;
+  @Field(() => Int, { nullable: true })
+  previousYearProjects?: number;
 
-  @Field(() => Float)
-  projectGrowthRate: number;
+  @Field(() => Float, { nullable: true })
+  projectGrowthRate?: number;
 
   // Structure
-  @Field(() => Int)
-  institutionDepartments: number;
+  @Field(() => Int, { nullable: true })
+  institutionDepartments?: number;
 
-  @Field(() => Int)
-  churchDepartments: number;
+  @Field(() => Int, { nullable: true })
+  churchDepartments?: number;
 
-  @Field(() => Int)
-  totalDepartments: number;
+  @Field(() => Int, { nullable: true })
+  totalDepartments?: number;
 
-  @Field(() => Int)
-  activeChurches: number;
+  @Field(() => Int, { nullable: true })
+  activeChurches?: number;
 
-  @Field(() => Int)
-  totalRegions: number;
+  @Field(() => Int, { nullable: true })
+  totalRegions?: number;
 }
