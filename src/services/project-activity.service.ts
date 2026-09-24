@@ -19,8 +19,8 @@ import { ProjectHistoryType } from '../@generated/prisma/project-history-type.en
 
 @Injectable()
 export class ProjectActivityService {
-  private log(...args: any[]) { if (process.env.NODE_ENV !== 'test') this.log(...args); }
-  private err(...args: any[]) { if (process.env.NODE_ENV !== 'test') this.err(...args); }
+  private log(...args: any[]) { if (process.env.NODE_ENV !== 'test') console.log(...args); }
+  private err(...args: any[]) { if (process.env.NODE_ENV !== 'test') console.error(...args); }
 
   constructor(
     private readonly repository: ProjectActivityRepository,
@@ -129,7 +129,7 @@ export class ProjectActivityService {
       if (error instanceof CustomGraphQLError) {
         throw error;
       }
-      throw new CustomGraphQLError('Erro ao atualizar atividade do projeto', ErrorCode.INTERNAL_SERVER_ERROR, error);
+      console.error("DEBUG_ERROR:", error); throw new CustomGraphQLError('Erro ao atualizar atividade do projeto', ErrorCode.INTERNAL_SERVER_ERROR, error);
     }
   }
 
