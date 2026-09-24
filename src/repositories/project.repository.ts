@@ -203,7 +203,7 @@ export class ProjectRepository {
           justification_note: data.special_case_reason,
           budget: data.special_budget ? new Decimal(data.special_budget) : null,
           subsidy_status_id: subsidyStatus.id,
-          type: data.location_church_plant ? 'CHURCH_PLANTING' : 'SPECIAL',
+          type: data.special_case_type || (data.location_church_plant ? 'CHURCH_PLANTING' : 'SPECIAL'),
           location_church_plant: data.location_church_plant,
           created_by: userId,
           updated_by: userId,

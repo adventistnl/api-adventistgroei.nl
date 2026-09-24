@@ -5602,6 +5602,7 @@ input ProjectCreateDto {
   event: EventCreateDto
   activities: [ProjectActivityCreateWithoutProjectDto!]
   is_special_case: Boolean! = false
+  special_case_type: String
   special_case_reason: String
   location_church_plant: String
   special_budget: Float

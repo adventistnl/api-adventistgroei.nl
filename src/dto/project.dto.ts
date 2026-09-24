@@ -140,6 +140,11 @@ export class ProjectCreateDto {
   @Field({ nullable: true })
   @IsOptional()
   @IsString()
+  special_case_type?: string;
+
+  @Field({ nullable: true })
+  @IsOptional()
+  @IsString()
   special_case_reason?: string;
 
   @Field({ nullable: true })
