@@ -172,7 +172,9 @@ export class ProjectService {
           );
         }
       } else if (toStatus === 'IN_REVIEW' || toStatus === 'IN_PROGRESS' || toStatus === 'ADJUSTMENTS_NEEDED') {
-        if (!isAdmin && !isOwner) {
+        const isResolvingAdjustments = fromStatus === 'ADJUSTMENTS_NEEDED' && toStatus === 'IN_REVIEW';
+        
+        if (!isAdmin && !isOwner && !(isResolvingAdjustments && isCoOwner)) {
           throw new CustomGraphQLError(
             'Only administrators can perform this approval',
             ErrorCode.UNAUTHORIZED,
@@ -209,12 +211,13 @@ export class ProjectService {
     }
 
     // 2. Edit Limit for Co-Owner
-    if (isCoOwner && !isOwner && existingProject.status !== ProjectStatus.DRAFT) {
+    const allowedEditStatuses = [ProjectStatus.DRAFT, ProjectStatus.ADJUSTMENTS_NEEDED];
+    if (isCoOwner && !isOwner && !allowedEditStatuses.includes(existingProject.status as ProjectStatus)) {
       // Allow them to update co_owner_id or other non-financial fields if needed, 
-      // but "só pode editar valores e atividades enquanto o projeto estiver em modo Draft"
+      // but "só pode editar valores e atividades enquanto o projeto estiver em modo Draft ou Ajustes Necessários"
       if (data.budget !== undefined || data.title !== undefined || data.description !== undefined || data.subsidized_budget !== undefined) {
          throw new CustomGraphQLError(
-           'Members can only edit project details while it is in DRAFT status',
+           'Members can only edit project details while it is in DRAFT or ADJUSTMENTS_NEEDED status',
            ErrorCode.BAD_REQUEST,
            400,
            { additional: { errorCode: 'EDIT_LOCKED_NOT_DRAFT' } }
