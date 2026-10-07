@@ -300,6 +300,8 @@ export class ProjectService {
         console.error('Failed to send status change notifications:', e);
       });
 
+      const isApproval = existingProject.status === 'IN_REVIEW' && updatedProject.status === 'IN_PROGRESS';
+
       await this.projectHistoryService.logEvent(
         id,
         userId,
@@ -308,9 +310,28 @@ export class ProjectService {
           field_name: 'status',
           old_value: existingProject.status,
           new_value: updatedProject.status,
+          comment: isApproval ? 'The project was approved successfully.' : undefined,
           metadata: { newStatus: updatedProject.status }
         }
       ).catch(e => console.error('Failed to log project status change history:', e));
+    }
+
+    // 5. Notifications on Budget Change
+    if (data.subsidized_budget !== undefined && Number(data.subsidized_budget) !== Number(existingProject.subsidized_budget)) {
+      await this.projectHistoryService.logEvent(
+        id,
+        userId,
+        ProjectHistoryType.BUDGET_UPDATED,
+        {
+          field_name: 'subsidized_budget',
+          old_value: existingProject.subsidized_budget?.toString() || '0',
+          new_value: data.subsidized_budget.toString(),
+          metadata: {
+            oldValue: existingProject.subsidized_budget?.toString() || '0',
+            newValue: data.subsidized_budget.toString()
+          }
+        }
+      ).catch(e => console.error('Failed to log budget update history:', e));
     }
 
     return updatedProject;
