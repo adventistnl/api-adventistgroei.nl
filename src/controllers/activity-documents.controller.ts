@@ -14,7 +14,7 @@ import {
   HttpStatus,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { Response } from 'express';
+import type { Response } from 'express';
 import { ActivityDocumentsService } from '../services/activity-documents.service';
 import { JwtAuthGuard } from '../middlewares/jwt-auth.guard';
 import { PermissionsGuard } from '../middlewares/permissions.guard';

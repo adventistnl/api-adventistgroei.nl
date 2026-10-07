@@ -172,7 +172,9 @@ export class ProjectService {
           );
         }
       } else if (toStatus === 'IN_REVIEW' || toStatus === 'IN_PROGRESS' || toStatus === 'ADJUSTMENTS_NEEDED') {
-        if (!isAdmin && !isOwner) {
+        const isResolvingAdjustments = fromStatus === 'ADJUSTMENTS_NEEDED' && toStatus === 'IN_REVIEW';
+        
+        if (!isAdmin && !isOwner && !(isResolvingAdjustments && isCoOwner)) {
           throw new CustomGraphQLError(
             'Only administrators can perform this approval',
             ErrorCode.UNAUTHORIZED,
@@ -209,12 +211,13 @@ export class ProjectService {
     }
 
     // 2. Edit Limit for Co-Owner
-    if (isCoOwner && !isOwner && existingProject.status !== ProjectStatus.DRAFT) {
+    const allowedEditStatuses = [ProjectStatus.DRAFT, ProjectStatus.ADJUSTMENTS_NEEDED];
+    if (isCoOwner && !isOwner && !allowedEditStatuses.includes(existingProject.status as ProjectStatus)) {
       // Allow them to update co_owner_id or other non-financial fields if needed, 
-      // but "só pode editar valores e atividades enquanto o projeto estiver em modo Draft"
+      // but "só pode editar valores e atividades enquanto o projeto estiver em modo Draft ou Ajustes Necessários"
       if (data.budget !== undefined || data.title !== undefined || data.description !== undefined || data.subsidized_budget !== undefined) {
          throw new CustomGraphQLError(
-           'Members can only edit project details while it is in DRAFT status',
+           'Members can only edit project details while it is in DRAFT or ADJUSTMENTS_NEEDED status',
            ErrorCode.BAD_REQUEST,
            400,
            { additional: { errorCode: 'EDIT_LOCKED_NOT_DRAFT' } }
@@ -293,11 +296,13 @@ export class ProjectService {
 
     // 4. Notifications on Status Change
     if (data.status && data.status !== existingProject.status) {
-      this.handleStatusChangeNotifications(updatedProject).catch(e => {
+      await this.handleStatusChangeNotifications(updatedProject).catch(e => {
         console.error('Failed to send status change notifications:', e);
       });
 
-      this.projectHistoryService.logEvent(
+      const isApproval = existingProject.status === 'IN_REVIEW' && updatedProject.status === 'IN_PROGRESS';
+
+      await this.projectHistoryService.logEvent(
         id,
         userId,
         ProjectHistoryType.STATUS_CHANGED,
@@ -305,9 +310,28 @@ export class ProjectService {
           field_name: 'status',
           old_value: existingProject.status,
           new_value: updatedProject.status,
+          comment: isApproval ? 'The project was approved successfully.' : undefined,
           metadata: { newStatus: updatedProject.status }
         }
       ).catch(e => console.error('Failed to log project status change history:', e));
+    }
+
+    // 5. Notifications on Budget Change
+    if (data.subsidized_budget !== undefined && Number(data.subsidized_budget) !== Number(existingProject.subsidized_budget)) {
+      await this.projectHistoryService.logEvent(
+        id,
+        userId,
+        ProjectHistoryType.BUDGET_UPDATED,
+        {
+          field_name: 'subsidized_budget',
+          old_value: existingProject.subsidized_budget?.toString() || '0',
+          new_value: data.subsidized_budget.toString(),
+          metadata: {
+            oldValue: existingProject.subsidized_budget?.toString() || '0',
+            newValue: data.subsidized_budget.toString()
+          }
+        }
+      ).catch(e => console.error('Failed to log budget update history:', e));
     }
 
     return updatedProject;
@@ -478,12 +502,32 @@ export class ProjectService {
         );
       }
       await this.projectRepository.update(projectId, { status: ProjectStatus.DRAFT }, userId);
-      console.log(`📋 Project ${projectId} reverted to DRAFT (no activities)`);
+
     }
   }
 
   async delete(id: string, userId: string): Promise<Project> {
-    console.log(`🗑️  Starting soft delete for project ${id}`);
+
+
+    const project = await this.projectRepository.findById(id);
+    if (!project) {
+      throw new CustomGraphQLError('Project not found', ErrorCode.NOT_FOUND, 404);
+    }
+
+    const isOwner = project.owner_id === userId;
+    const userRoles = await this.prisma.userRole.findMany({
+      where: { user_id: userId, role: { is_deleted: false } },
+      include: { role: true },
+    });
+    const isAdmin = userRoles.some(ur => ur.role.key_code === 'ADMIN');
+
+    if (!isOwner && !isAdmin) {
+      throw new CustomGraphQLError(
+        'User does not have permission to delete this project',
+        ErrorCode.UNAUTHORIZED,
+        403
+      );
+    }
 
     // 1. Find all subsidies for this project
     const subsidies = await this.prisma.subsidyRequest.findMany({
@@ -496,7 +540,7 @@ export class ProjectService {
       },
     });
 
-    console.log(`📋 Found ${subsidies.length} subsidy requests for project`);
+
 
     // 2. Validate: Block if any subsidy is APPROVED or CLOSED
     if (subsidies.length > 0) {
@@ -517,7 +561,7 @@ export class ProjectService {
     }
 
     // 3. Delete all subsidies (uses existing service with validation)
-    console.log(`🔄 Deleting ${subsidies.length} subsidy requests...`);
+
     for (const subsidy of subsidies) {
       await this.subsidyRequestService.delete(subsidy.id, userId);
     }
@@ -530,13 +574,13 @@ export class ProjectService {
       },
     });
 
-    console.log(`🔄 Deleting ${activities.length} activities...`);
+
     for (const activity of activities) {
       await this.projectActivityService.softDelete(activity.id, userId);
     }
 
     // 5. Soft delete special projects
-    console.log(`📄 Soft deleting special projects...`);
+
     await this.prisma.specialProjects.updateMany({
       where: {
         project_id: id,
@@ -550,7 +594,7 @@ export class ProjectService {
     });
 
     // 6. Delete voluntary users (hard delete - join table)
-    console.log(`👥 Deleting voluntary users...`);
+
     await this.prisma.voluntariesOnProjects.deleteMany({
       where: { project_id: id },
     });
@@ -563,7 +607,7 @@ export class ProjectService {
 
     if (projectData?.department_id && projectData.subsidized_budget && projectData.status === ProjectStatus.IN_PROGRESS) {
       const projectYear = new Date(projectData.start_at).getFullYear();
-      console.log(`💰 Releasing subsidized_budget ${Number(projectData.subsidized_budget)} from annual budget (year: ${projectYear})...`);
+
       await this.annualBudgetService.updateBudgetFinancials(
         projectData.department_id,
         projectYear,
@@ -579,17 +623,15 @@ export class ProjectService {
     }
 
     // 8. Log deletion event before removing relationships
-    this.projectHistoryService.logEvent(
+    await this.projectHistoryService.logEvent(
       id,
       userId,
       ProjectHistoryType.DELETED,
     ).catch(e => console.error('Failed to log project deletion history:', e));
 
     // 9. Soft delete the project
-    console.log(`🎯 Soft deleting project...`);
     const deletedProject = await this.projectRepository.softDelete(id, userId);
 
-    console.log(`✅ Project ${id} soft deleted successfully`);
     return deletedProject;
   }
 
@@ -617,10 +659,15 @@ export class ProjectService {
     return this.projectRepository.findCollaboratorsByProjectId(projectId);
   }
 
-  async getProjectKPIs(institutionId?: string): Promise<ProjectKPIs> {
+  async getProjectKPIs(institutionId?: string, year?: number): Promise<ProjectKPIs> {
+    const yearFilter = year
+      ? { created_at: { gte: new Date(year, 0, 1), lt: new Date(year + 1, 0, 1) } }
+      : {};
+
     const projectsData = await this.prisma.project.findMany({
       where: {
         is_deleted: false,
+        ...yearFilter,
         ...(institutionId && {
           department: {
             institution_id: institutionId,

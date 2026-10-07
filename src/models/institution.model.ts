@@ -1,9 +1,24 @@
-import { ObjectType, Field, registerEnumType, Float } from '@nestjs/graphql';
+import { ObjectType, Field, registerEnumType, Float, Int } from '@nestjs/graphql';
 import { LanguagePreference } from 'src/@generated/prisma/language-preference.enum';
 
 registerEnumType(LanguagePreference, {
   name: 'LanguagePreference',
   description: 'Idioma preferencial da instituição',
+});
+
+export enum AvailableYearsEntity {
+  INSTITUTION = 'INSTITUTION',
+  PROJECT = 'PROJECT',
+  USER = 'USER',
+  CHURCH = 'CHURCH',
+  DEPARTMENT = 'DEPARTMENT',
+  SUBSIDY_REQUEST = 'SUBSIDY_REQUEST',
+  ANNUAL_BUDGET = 'ANNUAL_BUDGET'
+}
+
+registerEnumType(AvailableYearsEntity, {
+  name: 'AvailableYearsEntity',
+  description: 'Entities available for minimum year query'
 });
 
 @ObjectType()
@@ -82,6 +97,15 @@ export class ChurchesByRegionData {
 }
 
 @ObjectType()
+export class MonthlyUserRegistration {
+  @Field()
+  month: string;
+
+  @Field(() => Int)
+  count: number;
+}
+
+@ObjectType()
 export class InstitutionChartsData {
   @Field(() => [UsersByRoleData])
   usersByRole: UsersByRoleData[];
@@ -91,4 +115,7 @@ export class InstitutionChartsData {
 
   @Field(() => [ChurchesByRegionData])
   churchesByRegion: ChurchesByRegionData[];
+
+  @Field(() => [MonthlyUserRegistration])
+  monthlyUserRegistrations: MonthlyUserRegistration[];
 }

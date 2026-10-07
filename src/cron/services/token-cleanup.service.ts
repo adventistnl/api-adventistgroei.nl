@@ -9,6 +9,8 @@ export class TokenCleanupService {
   // Define um cron job que roda diariamente à meia-noite
   @Cron('0 0 * * *') // Formato CRON: minuto, hora, dia do mês, mês, dia da semana
   async cleanupExpiredTokens() {
+    if (process.env.NODE_ENV === 'test') return;
+
     const now = new Date();
     console.info(`Cleaning up tokens from: ${now.toISOString()}`);
 

@@ -48,10 +48,16 @@ type ChurchesByRegionData {
   fill: String!
 }
 
+type MonthlyUserRegistration {
+  month: String!
+  count: Int!
+}
+
 type InstitutionChartsData {
   usersByRole: [UsersByRoleData!]!
   monthlyUserGrowth: Float
   churchesByRegion: [ChurchesByRegionData!]!
+  monthlyUserRegistrations: [MonthlyUserRegistration!]!
 }
 
 type RegionKPIData {
@@ -1883,7 +1889,7 @@ type UserModel {
   department_id: String
   name: String!
   email: String!
-  language_preference: String!
+  language_preference: LanguagePreference!
   contact_id: String
   created_at: DateTime!
   updated_at: DateTime!
@@ -1906,7 +1912,7 @@ type UserWithRoles {
   department_id: String
   name: String!
   email: String!
-  language_preference: String!
+  language_preference: LanguagePreference!
   contact_id: String
   created_at: DateTime!
   updated_at: DateTime!
@@ -1971,6 +1977,22 @@ type AuthModel {
   accessToken: String!
   expiresIn: Float!
   user: UserWithRoles!
+}
+
+type DashboardKPIs {
+  totalUsers: Int
+  newUsersThisYear: Int
+  previousYearUsers: Int
+  userGrowthRate: Float
+  totalProjects: Int
+  newProjectsThisYear: Int
+  previousYearProjects: Int
+  projectGrowthRate: Float
+  institutionDepartments: Int
+  churchDepartments: Int
+  totalDepartments: Int
+  activeChurches: Int
+  totalRegions: Int
 }
 
 type DeleteBudgetResponse {
@@ -2281,6 +2303,8 @@ type Query {
   church(id: String!): Church
   churchActivityTimeline(institution_id: String, selectedYear: Float): [JSON!]!
   institutions: [Institution!]!
+  dashboardKPIs(institutionId: String!, year: Int!, month: Int): DashboardKPIs!
+  availableYears(entities: [AvailableYearsEntity!]!, institution_id: String): [Int!]!
   institution(id: String!): Institution
   regions: [Region!]!
   region(id: String!): Region
@@ -2301,7 +2325,7 @@ type Query {
   projects(institutionId: String): [Project!]!
   myProjects: [Project!]!
   project(id: String!): Project
-  projectKPIs(institutionId: String): ProjectKPIs!
+  projectKPIs(institutionId: String, year: Int): ProjectKPIs!
   projectsByDepartment(institutionId: String): [ProjectsByDepartment!]!
   subsidyStatusDistribution(institutionId: String): [SubsidyStatusDistribution!]!
   projectsTimeline(institutionId: String): [ProjectsTimeline!]!
@@ -2368,6 +2392,17 @@ type Query {
     """House number"""
     houseNumber: Int!
   ): ZipInfo!
+}
+
+"""Entities available for minimum year query"""
+enum AvailableYearsEntity {
+  INSTITUTION
+  PROJECT
+  USER
+  CHURCH
+  DEPARTMENT
+  SUBSIDY_REQUEST
+  ANNUAL_BUDGET
 }
 
 input GetSubsidyReceiptsDto {
@@ -5199,6 +5234,7 @@ input LedgerHistoryFilterInput {
 
 type Mutation {
   login(input: LoginInput!): AuthModel!
+  logout: Boolean!
   createChurch(data: ChurchCreateDto!): Church!
   updateChurch(id: String!, data: ChurchUpdateDto!): Church!
   deleteChurch(id: String!): Church!
@@ -5486,13 +5522,34 @@ input CommunicationCreateDto {
   institution_id: String!
   title: String!
   content: String!
-  type: String!
-  priority: String!
-  status: String!
+  type: CommunicationType!
+  priority: CommunicationPriority!
+  status: CommunicationStatus!
   language_preference: LanguagePreference!
   schedule_at: DateTime!
   published_at: DateTime!
   author_id: String!
+}
+
+enum CommunicationType {
+  EMAIL
+  SMS
+  PUSH_NOTIFICATION
+  IN_APP_MESSAGE
+}
+
+enum CommunicationPriority {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+enum CommunicationStatus {
+  DRAFT
+  SCHEDULED
+  SENT
+  FAILED
 }
 
 input CommunicationUpdateDto {
@@ -5514,7 +5571,7 @@ input DirectMessageCreateDto {
   recipient_id: String!
   institution_id: String!
   title: String!
-  status: String!
+  status: EventRegistrationStatus!
 }
 
 input DirectMessageUpdateDto {
@@ -5545,6 +5602,7 @@ input ProjectCreateDto {
   event: EventCreateDto
   activities: [ProjectActivityCreateWithoutProjectDto!]
   is_special_case: Boolean! = false
+  special_case_type: String
   special_case_reason: String
   location_church_plant: String
   special_budget: Float

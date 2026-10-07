@@ -218,7 +218,7 @@ export class AnnualBudgetResolver {
   }
 
   @Mutation(() => RecalculateAllocatedAmountsResponse)
-  @Permission()
+  @Permission('updateInstitutionBudget')
   async recalculateInstitutionAllocatedAmounts(): Promise<RecalculateAllocatedAmountsResponse> {
     return this.annualBudgetService.recalculateAllAllocatedAmounts();
   }

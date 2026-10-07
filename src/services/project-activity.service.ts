@@ -19,6 +19,9 @@ import { ProjectHistoryType } from '../@generated/prisma/project-history-type.en
 
 @Injectable()
 export class ProjectActivityService {
+  private log(...args: any[]) { if (process.env.NODE_ENV !== 'test') console.log(...args); }
+  private err(...args: any[]) { if (process.env.NODE_ENV !== 'test') console.error(...args); }
+
   constructor(
     private readonly repository: ProjectActivityRepository,
     private readonly projectRepository: ProjectRepository,
@@ -33,12 +36,12 @@ export class ProjectActivityService {
 
   private async recalculateProjectBudget(projectId: string, userId: string): Promise<void> {
     try {
-      console.log(`💰 Recalculating budget and balance for project ${projectId}...`);
+      this.log(`💰 Recalculating budget and balance for project ${projectId}...`);
       
       // Get project to know subsidized_budget
       const project = await this.projectRepository.findById(projectId);
       if (!project) {
-        console.error(`❌ Project ${projectId} not found`);
+        this.err(`❌ Project ${projectId} not found`);
         return;
       }
 
@@ -65,12 +68,12 @@ export class ProjectActivityService {
         userId
       );
       
-      console.log(`✅ Project ${projectId} updated:`);
-      console.log(`   - Total budget (activities sum): ${totalBudget.toNumber()}`);
-      console.log(`   - Subsidized budget: ${subsidizedBudget.toNumber()}`);
-      console.log(`   - Balance (church contribution): ${balance.toNumber()}`);
+      this.log(`✅ Project ${projectId} updated:`);
+      this.log(`   - Total budget (activities sum): ${totalBudget.toNumber()}`);
+      this.log(`   - Subsidized budget: ${subsidizedBudget.toNumber()}`);
+      this.log(`   - Balance (church contribution): ${balance.toNumber()}`);
     } catch (error) {
-      console.error(`❌ Error recalculating project budget:`, error);
+      this.err(`❌ Error recalculating project budget:`, error);
       // We don't throw here to avoid blocking the main operation if budget update fails
     }
   }
@@ -99,8 +102,8 @@ export class ProjectActivityService {
   async update(input: ProjectActivityUpdateDto, userId: string): Promise<ProjectActivity> {
     try {
       // Debug log
-      console.log('📝 ProjectActivityService.update - Input received:', JSON.stringify(input, null, 2));
-      console.log('👥 assignee_ids received:', input.assignee_ids);
+      this.log('📝 ProjectActivityService.update - Input received:', JSON.stringify(input, null, 2));
+      this.log('👥 assignee_ids received:', input.assignee_ids);
 
       // Get old data before update
       const oldActivity = await this.repository.findById(input.id);
@@ -126,7 +129,7 @@ export class ProjectActivityService {
       if (error instanceof CustomGraphQLError) {
         throw error;
       }
-      throw new CustomGraphQLError('Erro ao atualizar atividade do projeto', ErrorCode.INTERNAL_SERVER_ERROR, error);
+      console.error("DEBUG_ERROR:", error); throw new CustomGraphQLError('Erro ao atualizar atividade do projeto', ErrorCode.INTERNAL_SERVER_ERROR, error);
     }
   }
 
@@ -139,7 +142,7 @@ export class ProjectActivityService {
   }
 
   async softDelete(id: string, userId: string): Promise<ProjectActivity> {
-    console.log(`🗑️  Starting soft delete for activity ${id}`);
+    this.log(`🗑️  Starting soft delete for activity ${id}`);
 
     // Get activity first to know projectId
     const activity = await this.repository.findById(id);
@@ -152,7 +155,7 @@ export class ProjectActivityService {
     // 1. Find all subsidy requests linked to this activity
     const subsidyRequestIds = await this.subsidyRequestItemRepository.findSubsidyRequestsByActivityId(id);
     
-    console.log(`📋 Found ${subsidyRequestIds.length} subsidy requests linked to activity`);
+    this.log(`📋 Found ${subsidyRequestIds.length} subsidy requests linked to activity`);
 
     // 2. Validate: Check if any subsidy has APPROVED or CLOSED status
     if (subsidyRequestIds.length > 0) {
@@ -183,22 +186,22 @@ export class ProjectActivityService {
     }
 
     // 3. Delete all subsidy requests (uses existing service with validation)
-    console.log(`🔄 Deleting ${subsidyRequestIds.length} subsidy requests...`);
+    this.log(`🔄 Deleting ${subsidyRequestIds.length} subsidy requests...`);
     for (const subsidyRequestId of subsidyRequestIds) {
       await this.subsidyRequestService.delete(subsidyRequestId, userId);
     }
 
     // 4. Soft delete activity documents
-    console.log(`📄 Soft deleting activity documents...`);
+    this.log(`📄 Soft deleting activity documents...`);
     await this.activityDocumentsRepository.softDeleteByActivityId(id, userId);
 
     // 5. Soft delete the activity (repository handles funding, logs, assignees)
-    console.log(`🎯 Soft deleting activity...`);
+    this.log(`🎯 Soft deleting activity...`);
     const deletedActivity = await this.repository.softDelete(id, userId);
 
     // 6. Rename Google Drive folder (outside critical path)
     try {
-      console.log(`📁 Attempting to rename Google Drive folder...`);
+      this.log(`📁 Attempting to rename Google Drive folder...`);
       
       const document = await this.prisma.activityDocuments.findFirst({
         where: {
@@ -213,15 +216,15 @@ export class ProjectActivityService {
         if (fileMetadata.parents && fileMetadata.parents.length > 0) {
           const folderId = fileMetadata.parents[0];
           await this.driveService.renameFolderWithPrefix(folderId, '[DELETED] ');
-          console.log(`✅ Renamed Google Drive folder for activity ${id}`);
+          this.log(`✅ Renamed Google Drive folder for activity ${id}`);
         } else {
-          console.log(`⚠️  No parent folder found for activity ${id}`);
+          this.log(`⚠️  No parent folder found for activity ${id}`);
         }
       } else {
-        console.log(`⚠️  No documents with drive_file_id found for activity ${id}`);
+        this.log(`⚠️  No documents with drive_file_id found for activity ${id}`);
       }
     } catch (error) {
-      console.error(`❌ Error renaming Google Drive folder for activity ${id}:`, error);
+      this.err(`❌ Error renaming Google Drive folder for activity ${id}:`, error);
     }
 
     // Log deletion and notify collaborators
@@ -233,7 +236,7 @@ export class ProjectActivityService {
       userId,
       ProjectHistoryType.UPDATED,
       { metadata: { action: 'activity_deleted', activityName: activity.name } },
-    ).catch((e) => console.error('[ProjectActivityService.softDelete] logEvent failed:', e));
+    ).catch((e) => this.err('[ProjectActivityService.softDelete] logEvent failed:', e));
 
     // Recalculate project budget
     await this.recalculateProjectBudget(activity.project_id, userId);
@@ -241,7 +244,7 @@ export class ProjectActivityService {
     // Check if project should revert to DRAFT (no more activities)
     await this.checkAndRevertProjectToDraft(activity.project_id, userId);
 
-    console.log(`✅ Activity ${id} soft deleted successfully`);
+    this.log(`✅ Activity ${id} soft deleted successfully`);
     return deletedActivity;
   }
 
@@ -264,7 +267,7 @@ export class ProjectActivityService {
 
     if (activeActivities === 0 && project.status !== 'DRAFT') {
       await this.projectRepository.update(projectId, { status: 'DRAFT' as any }, userId);
-      console.log(`📋 Project ${projectId} reverted to DRAFT (no activities)`);
+      this.log(`📋 Project ${projectId} reverted to DRAFT (no activities)`);
     }
   }
 

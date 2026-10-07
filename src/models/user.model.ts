@@ -33,7 +33,7 @@ export class UserModel {
   @Field()
   email: string;
 
-  @Field()
+  @Field(() => LanguagePreference)
   language_preference: LanguagePreference;
 
   @Field(() => String, { nullable: true })

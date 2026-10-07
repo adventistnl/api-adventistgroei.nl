@@ -1,0 +1,286 @@
+
+> api-adventistgroei.nl@0.0.1 test:e2e /Users/maykel/projects/dan/api-adventistgroei.nl
+> NODE_OPTIONS=--max-old-space-size=8192 jest --config ./test/jest-e2e.json --runInBand --silent
+
+PASS test/subsidy-request.e2e-spec.ts (9.816 s)
+FAIL test/scheduling-permissions.e2e-spec.ts (18.646 s)
+  ● Preacher scheduling — R11 permission scope (e2e) › R10 lock: after monthly close, own-scope edit is rejected but the admin override still works
+
+    expect(received).toMatch(expected)
+
+    Expected pattern: /month has been closed/i
+    Received string:  "Failed to verify token"
+
+      270 |
+      271 |     const ownScopeDenied = await gql(tokenFor(ids.churchLeaderA1), SET_ASSIGNMENT, { church_id: ids.churchA1, date: '2027-02-01T00:00:00.000Z' });
+    > 272 |     expect(ownScopeDenied.errors?.[0]?.message).toMatch(/month has been closed/i);
+          |                                                 ^
+      273 |
+      274 |     const anyScopeAllowed = await gql(tokenFor(ids.adminA), SET_ASSIGNMENT_ANY, { church_id: ids.churchA1, date: '2027-02-01T00:00:00.000Z' });
+      275 |     expect(anyScopeAllowed.errors).toBeUndefined();
+
+      at Object.<anonymous> (test/scheduling-permissions.e2e-spec.ts:272:49)
+
+  ● Preacher scheduling — R11 permission scope (e2e) › triggerMonthlyClose is rejected at the guard layer for a plain Church Member
+
+    expect(received).toMatch(expected)
+
+    Expected pattern: /does not have permission/i
+    Received string:  "Failed to verify token"
+
+      278 |   it('triggerMonthlyClose is rejected at the guard layer for a plain Church Member', async () => {
+      279 |     const res = await gql(tokenFor(ids.churchMemberA), TRIGGER_CLOSE, { month: '2027-03' });
+    > 280 |     expect(res.errors?.[0]?.message).toMatch(/does not have permission/i);
+          |                                      ^
+      281 |   });
+      282 | });
+      283 |
+
+      at Object.<anonymous> (test/scheduling-permissions.e2e-spec.ts:280:38)
+
+PASS test/subsidy-refund.e2e-spec.ts (22.427 s)
+PASS test/annual-budget.e2e-spec.ts
+FAIL test/project-activity.e2e-spec.ts
+  ● Project Activities (e2e) › Admin can create a project activity
+
+    expect(received).toBeUndefined()
+
+    Received: [{"extensions": {"code": "BAD_USER_INPUT"}, "locations": [{"column": 29, "line": 2}], "message": "Variable \"$input\" got invalid value \"OTHER\" at \"input.tags[0]\"; Value \"OTHER\" does not exist in \"ActivityTags\" enum."}, {"extensions": {"code": "BAD_USER_INPUT"}, "locations": [{"column": 29, "line": 2}], "message": "Variable \"$input\" got invalid value \"PROJECT\" at \"input.activity_funding.entity_type\"; Value \"PROJECT\" does not exist in \"EntityType\" enum."}]
+
+      180 |       },
+      181 |     });
+    > 182 |     expect(res.errors).toBeUndefined();
+          |                        ^
+      183 |     ids.activityId = res.data!.createProjectActivity.id;
+      184 |     expect(ids.activityId).toBeTruthy();
+      185 |     expect(res.data!.createProjectActivity.status).toBe('TODO');
+
+      at Object.<anonymous> (test/project-activity.e2e-spec.ts:182:24)
+
+  ● Project Activities (e2e) › Admin can create a second activity
+
+    expect(received).toBeUndefined()
+
+    Received: [{"extensions": {"code": "BAD_USER_INPUT"}, "locations": [{"column": 29, "line": 2}], "message": "Variable \"$input\" got invalid value \"OTHER\" at \"input.tags[0]\"; Value \"OTHER\" does not exist in \"ActivityTags\" enum."}, {"extensions": {"code": "BAD_USER_INPUT"}, "locations": [{"column": 29, "line": 2}], "message": "Variable \"$input\" got invalid value \"PROJECT\" at \"input.activity_funding.entity_type\"; Value \"PROJECT\" does not exist in \"EntityType\" enum."}]
+
+      204 |       },
+      205 |     });
+    > 206 |     expect(res.errors).toBeUndefined();
+          |                        ^
+      207 |     ids.activity2Id = res.data!.createProjectActivity.id;
+      208 |   });
+      209 |
+
+      at Object.<anonymous> (test/project-activity.e2e-spec.ts:206:24)
+
+  ● Project Activities (e2e) › Collaborator can create an activity
+
+    expect(received).toBeUndefined()
+
+    Received: [{"extensions": {"code": "BAD_USER_INPUT"}, "locations": [{"column": 29, "line": 2}], "message": "Variable \"$input\" got invalid value \"OTHER\" at \"input.tags[0]\"; Value \"OTHER\" does not exist in \"ActivityTags\" enum."}, {"extensions": {"code": "BAD_USER_INPUT"}, "locations": [{"column": 29, "line": 2}], "message": "Variable \"$input\" got invalid value \"PROJECT\" at \"input.activity_funding.entity_type\"; Value \"PROJECT\" does not exist in \"EntityType\" enum."}]
+
+      226 |       },
+      227 |     });
+    > 228 |     expect(res.errors).toBeUndefined();
+          |                        ^
+      229 |   });
+      230 |
+      231 |   it('Church Member without PROJECT_ACTIVITY_CREATE cannot create activities', async () => {
+
+      at Object.<anonymous> (test/project-activity.e2e-spec.ts:228:24)
+
+  ● Project Activities (e2e) › Church Member without PROJECT_ACTIVITY_CREATE cannot create activities
+
+    expect(received).toMatch(expected)
+
+    Expected pattern: /permission/i
+    Received string:  "Variable \"$input\" got invalid value \"OTHER\" at \"input.tags[0]\"; Value \"OTHER\" does not exist in \"ActivityTags\" enum."
+
+      248 |     });
+      249 |     expect(res.errors).toBeDefined();
+    > 250 |     expect(res.errors![0].message).toMatch(/permission/i);
+          |                                    ^
+      251 |   });
+      252 |
+      253 |   // ─── Read ────────────────────────────────────────────────────────────────
+
+      at Object.<anonymous> (test/project-activity.e2e-spec.ts:250:36)
+
+  ● Project Activities (e2e) › Admin can list project activities by filter
+
+    expect(received).toBeUndefined()
+
+    Received: [{"extensions": {"code": "UNAUTHORIZED", "correlationId": "1788448837776-bwbuzf0gw", "status": 401, "timestamp": "2026-09-03T15:20:37.776Z"}, "locations": [{"column": 7, "line": 3}], "message": "User does not have permission to access this resource", "path": ["projectActivities"]}]
+
+      257 |       filters: JSON.stringify({ project_id: ids.projectId }),
+      258 |     });
+    > 259 |     expect(res.errors).toBeUndefined();
+          |                        ^
+      260 |     const found = res.data!.projectActivities.find((a: any) => a.id === ids.activityId);
+      261 |     expect(found).toBeDefined();
+      262 |   });
+
+      at Object.<anonymous> (test/project-activity.e2e-spec.ts:259:24)
+
+  ● Project Activities (e2e) › Admin can update an activity to IN_PROGRESS
+
+    expect(received).toBeUndefined()
+
+    Received: [{"extensions": {"code": "NOT_FOUND", "correlationId": "1788448837832-hsmq3jsba", "status": 404, "timestamp": "2026-09-03T15:20:37.832Z"}, "locations": [{"column": 7, "line": 3}], "message": "Atividade não encontrada", "path": ["updateProjectActivity"]}]
+
+      268 |       input: { id: ids.activityId, name: 'E2E Activity 1 (updated)', status: 'IN_PROGRESS' },
+      269 |     });
+    > 270 |     expect(res.errors).toBeUndefined();
+          |                        ^
+      271 |     expect(res.data!.updateProjectActivity.status).toBe('IN_PROGRESS');
+      272 |   });
+      273 |
+
+      at Object.<anonymous> (test/project-activity.e2e-spec.ts:270:24)
+
+  ● Project Activities (e2e) › Admin can mark an activity as COMPLETED
+
+    expect(received).toBeUndefined()
+
+    Received: [{"extensions": {"code": "NOT_FOUND", "correlationId": "1788448837893-baxmgyh4a", "status": 404, "timestamp": "2026-09-03T15:20:37.893Z"}, "locations": [{"column": 7, "line": 3}], "message": "Atividade não encontrada", "path": ["updateProjectActivity"]}]
+
+      276 |       input: { id: ids.activityId, status: 'COMPLETED' },
+      277 |     });
+    > 278 |     expect(res.errors).toBeUndefined();
+          |                        ^
+      279 |     expect(res.data!.updateProjectActivity.status).toBe('COMPLETED');
+      280 |   });
+      281 |
+
+      at Object.<anonymous> (test/project-activity.e2e-spec.ts:278:24)
+
+  ● Project Activities (e2e) › Admin can read activity audit logs
+
+    expect(received).toBeGreaterThanOrEqual(expected)
+
+    Expected: >= 1
+    Received:    0
+
+      286 |     expect(res.errors).toBeUndefined();
+      287 |     // Should have at least 1 log for the status change
+    > 288 |     expect(res.data!.projectActivityLogs.length).toBeGreaterThanOrEqual(1);
+          |                                                  ^
+      289 |     const statusLog = res.data!.projectActivityLogs.find((l: any) => l.field_name === 'status');
+      290 |     expect(statusLog).toBeDefined();
+      291 |   });
+
+      at Object.<anonymous> (test/project-activity.e2e-spec.ts:288:50)
+
+  ● Project Activities (e2e) › Admin can batch update multiple activities
+
+    expect(received).toBe(expected) // Object.is equality
+
+    Expected: 2
+    Received: 0
+
+      301 |     });
+      302 |     expect(res.errors).toBeUndefined();
+    > 303 |     expect(res.data!.batchUpdateProjectActivities.length).toBe(2);
+          |                                                           ^
+      304 |   });
+      305 |
+      306 |   // ─── Delete ──────────────────────────────────────────────────────────────
+
+      at Object.<anonymous> (test/project-activity.e2e-spec.ts:303:59)
+
+  ● Project Activities (e2e) › Admin can soft-delete a project activity
+
+    expect(received).toBeUndefined()
+
+    Received: [{"extensions": {"code": "NOT_FOUND", "correlationId": "1788448838048-42kwu6voq", "status": 404, "timestamp": "2026-09-03T15:20:38.048Z"}, "locations": [{"column": 7, "line": 3}], "message": "Activity not found", "path": ["deleteProjectActivity"]}]
+
+      308 |   it('Admin can soft-delete a project activity', async () => {
+      309 |     const res = await gql(tokenFor(ids.adminUser), DELETE_ACTIVITY, { id: ids.activity2Id });
+    > 310 |     expect(res.errors).toBeUndefined();
+          |                        ^
+      311 |     expect(res.data!.deleteProjectActivity.is_deleted).toBe(true);
+      312 |     ids.activity2Id = '';
+      313 |   });
+
+      at Object.<anonymous> (test/project-activity.e2e-spec.ts:310:24)
+
+FAIL test/project.e2e-spec.ts
+  ● Projects (e2e) › Church Member cannot delete a project they do not own
+
+    expect(received).toMatch(expected)
+
+    Expected pattern: /permission/i
+    Received string:  "Internal server error"
+
+      261 |     // memberUser has PROJECT_CREATE but not PROJECT_DELETE on others' projects
+      262 |     expect(res.errors).toBeDefined();
+    > 263 |     expect(res.errors![0].message).toMatch(/permission/i);
+          |                                    ^
+      264 |   });
+      265 |
+      266 |   it('Department Leader can delete their own project', async () => {
+
+      at Object.<anonymous> (test/project.e2e-spec.ts:263:36)
+
+  ● Projects (e2e) › Department Leader can delete their own project
+
+    expect(received).toBeUndefined()
+
+    Received: [{"extensions": {"code": "INTERNAL_SERVER_ERROR", "correlationId": "1788448840827-heng56gyp", "status": 500, "timestamp": "2026-09-03T15:20:40.827Z"}, "locations": [{"column": 7, "line": 3}], "message": "Internal server error", "path": ["deleteProject"]}]
+
+      266 |   it('Department Leader can delete their own project', async () => {
+      267 |     const res = await gql(tokenFor(ids.deptLeader), DELETE_PROJECT, { id: ids.projectId });
+    > 268 |     expect(res.errors).toBeUndefined();
+          |                        ^
+      269 |     expect(res.data!.deleteProject.is_deleted).toBe(true);
+      270 |     ids.projectId = '';
+      271 |   });
+
+      at Object.<anonymous> (test/project.e2e-spec.ts:268:24)
+
+FAIL test/subsidy-transitions.e2e-spec.ts
+  ● Subsidy Status Transitions & Business Rules (e2e) › Second subsidy for same activity is rejected when total exceeds cap
+
+    expect(received).toBeDefined()
+
+    Received: undefined
+
+      291 |       language: 'en',
+      292 |     });
+    > 293 |     expect(res.errors).toBeDefined();
+          |                        ^
+      294 |     expect(res.errors![0].message).toMatch(/cap|budget.*exceeded|exceeds/i);
+      295 |   });
+      296 | });
+
+      at Object.<anonymous> (test/subsidy-transitions.e2e-spec.ts:293:24)
+
+PASS test/users-roles.e2e-spec.ts
+PASS test/structure.e2e-spec.ts
+PASS test/permissions-guard.e2e-spec.ts
+FAIL test/auth.e2e-spec.ts
+  ● Auth (e2e) › returns a JWT token for valid credentials
+
+    expect(received).toBeUndefined()
+
+    Received: [{"extensions": {"code": "INTERNAL_SERVER_ERROR", "correlationId": "1788448854158-14guqiswo", "status": 500, "timestamp": "2026-09-03T15:20:54.158Z"}, "locations": [{"column": 7, "line": 3}], "message": "Internal server error", "path": ["login"]}]
+
+      74 |   it('returns a JWT token for valid credentials', async () => {
+      75 |     const res = await gql(LOGIN, { input: { email: TEST_EMAIL, password: TEST_PASSWORD } });
+    > 76 |     expect(res.errors).toBeUndefined();
+         |                        ^
+      77 |     expect(res.data!.login.accessToken).toBeTruthy();
+      78 |     expect(res.data!.login.user.email).toBe(TEST_EMAIL);
+      79 |   });
+
+      at Object.<anonymous> (test/auth.e2e-spec.ts:76:24)
+
+Test Suites: 5 failed, 6 passed, 11 total
+Tests:       16 failed, 109 passed, 125 total
+Snapshots:   0 total
+Time:        72.734 s
+Jest did not exit one second after the test run has completed.
+
+'This usually means that there are asynchronous operations that weren't stopped in your tests. Consider running Jest with `--detectOpenHandles` to troubleshoot this issue.
+ ELIFECYCLE  Command failed with exit code 1.
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                ELIFECYCLE  Command failed.

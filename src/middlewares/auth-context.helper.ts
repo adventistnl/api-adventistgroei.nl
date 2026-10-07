@@ -2,7 +2,7 @@ import * as jwt from 'jsonwebtoken';
 import { CustomGraphQLError, ErrorCode } from 'src/common/errors/custom-graphql-error';
 import { PrismaService } from '../services/prisma.service';
 
-export async function getUserIdFromRequest(req: { headers: Record<string, string> }): Promise<{ userId: string; userRoles: string[] } | undefined> {
+export async function getUserIdFromRequest(req: { headers: Record<string, string> }): Promise<{ userId: string; userRoles: string[]; userPermissions: string[] } | undefined> {
   const JWT_SECRET = process.env.JWT_SECRET;
   const authHeader = req.headers['authorization'];
   if (authHeader && authHeader.startsWith('Bearer ')) {
@@ -20,15 +20,38 @@ export async function getUserIdFromRequest(req: { headers: Record<string, string
       }
       const userRoles = await prisma.userRole.findMany({
         where: { user_id: userId, role: { is_deleted: false } },
-        select: { role: { select: { key_code: true } } },
+        select: { 
+          role: { 
+            select: { 
+              key_code: true,
+              role_permissions: {
+                select: {
+                  permission: {
+                    select: { resolver_name: true }
+                  }
+                }
+              }
+            } 
+          } 
+        },
       });
       if (!userRoles || userRoles.length === 0) {
         throw new CustomGraphQLError('User has no Role', ErrorCode.UNAUTHORIZED, 401);
       }
-      // You can extend the returned context with user roles or other info if needed
-      return { userId, userRoles: userRoles.map(ur => ur.role.key_code) };
+      
+      const permissions = userRoles
+        .flatMap((ur) => ur.role.role_permissions)
+        .map((rp) => rp.permission.resolver_name);
+
+      return { 
+        userId, 
+        userRoles: userRoles.map(ur => ur.role.key_code),
+        userPermissions: Array.from(new Set(permissions))
+      };
     } catch {
-      console.error('Failed to verify token', token);
+      if (process.env.NODE_ENV !== 'test') {
+        console.error('Failed to verify token', token);
+      }
       throw new CustomGraphQLError('Failed to verify token', ErrorCode.UNAUTHORIZED, 401);
     }
   }

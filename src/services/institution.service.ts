@@ -8,8 +8,11 @@ import { CustomGraphQLError, ErrorCode } from '../common/errors/custom-graphql-e
 import { ContactRepository, ChurchRepository, CommunicationRepository, DepartmentRepository, InstitutionRepository, ProjectRepository, NotificationRepository, RegionRepository, SettingRepository, SubsidyRequestRepository, UserRepository, AnnualBudgetRepository } from 'src/repositories';
 import { DirectMessageRepository } from 'src/repositories/direct-message.repository';
 import { ChurchChartData, ChurchActivityData } from '../models/church.model';
+import { AvailableYearsEntity } from '../models/institution.model';
 import { DecimalHelper } from 'src/common/helpers/decimal.helper';
 import { Decimal } from '@prisma/client/runtime/library';
+import { PrismaService } from './prisma.service';
+import { DashboardKPIs } from '../dto/dashboard-analytics.dto';
 
 @Injectable()
 export class InstitutionService {
@@ -27,6 +30,7 @@ export class InstitutionService {
     private readonly subsidyRequestRepository: SubsidyRequestRepository,
     private readonly contactRepository: ContactRepository,
     private readonly annualBudgetRepository: AnnualBudgetRepository,
+    private readonly prisma: PrismaService,
   ) {}
 
   async createInstitution(
@@ -46,6 +50,85 @@ export class InstitutionService {
 
   async deleteInstitution(id: string, userId: string): Promise<Institution> {
     return await this.institutionRepository.cascadeSoftDelete(id, userId);
+  }
+
+  async getAvailableYears(entities: AvailableYearsEntity[], institution_id?: string): Promise<number[]> {
+    const currentYear = new Date().getFullYear();
+    let minYear = currentYear;
+
+    const queries: Promise<any>[] = [];
+
+    if (entities.includes(AvailableYearsEntity.INSTITUTION)) {
+      queries.push(this.prisma.institution.findFirst({
+        where: institution_id ? { id: institution_id } : {},
+        orderBy: { created_at: 'asc' },
+        select: { created_at: true },
+      }));
+    }
+
+    if (entities.includes(AvailableYearsEntity.PROJECT)) {
+      queries.push(this.prisma.project.findFirst({
+        where: institution_id ? { institution_id } : {},
+        orderBy: { created_at: 'asc' },
+        select: { created_at: true },
+      }));
+    }
+
+    if (entities.includes(AvailableYearsEntity.USER)) {
+      queries.push(this.prisma.user.findFirst({
+        where: institution_id ? { institution_id } : {},
+        orderBy: { created_at: 'asc' },
+        select: { created_at: true },
+      }));
+    }
+
+    if (entities.includes(AvailableYearsEntity.CHURCH)) {
+      queries.push(this.prisma.church.findFirst({
+        where: institution_id ? { institution_id } : {},
+        orderBy: { created_at: 'asc' },
+        select: { created_at: true },
+      }));
+    }
+
+    if (entities.includes(AvailableYearsEntity.DEPARTMENT)) {
+      queries.push(this.prisma.department.findFirst({
+        where: institution_id ? { institution_id } : {},
+        orderBy: { created_at: 'asc' },
+        select: { created_at: true },
+      }));
+    }
+
+    if (entities.includes(AvailableYearsEntity.SUBSIDY_REQUEST)) {
+      queries.push(this.prisma.subsidyRequest.findFirst({
+        where: institution_id ? { institution_id } : {},
+        orderBy: { created_at: 'asc' },
+        select: { created_at: true },
+      }));
+    }
+
+    if (entities.includes(AvailableYearsEntity.ANNUAL_BUDGET)) {
+      queries.push(this.prisma.annualBudget.findFirst({
+        where: institution_id ? { institution_id } : {},
+        orderBy: { created_at: 'asc' },
+        select: { created_at: true },
+      }));
+    }
+
+    const results = await Promise.all(queries);
+
+    for (const result of results) {
+      if (result?.created_at && result.created_at.getFullYear() < minYear) {
+        minYear = result.created_at.getFullYear();
+      }
+    }
+
+    if (minYear < 2000) minYear = 2000;
+
+    const years: number[] = [];
+    for (let y = currentYear; y >= minYear; y--) {
+      years.push(y);
+    }
+    return years;
   }
 
   async getInstitutions(): Promise<Institution[]> {
@@ -381,16 +464,166 @@ export class InstitutionService {
   }
 
   async getInstitutionChartsData(institutionId: string) {
-    const [usersByRoleData, monthlyUserGrowth, churchesByRegionData] = await Promise.all([
+    const [usersByRoleData, monthlyUserGrowth, churchesByRegionData, monthlyUserRegistrations] = await Promise.all([
       this.userRepository.getUsersByRoleForInstitution(institutionId),
       this.userRepository.getMonthlyUserGrowthForInstitution(institutionId),
-      this.userRepository.getChurchesByRegionForInstitution(institutionId)
+      this.userRepository.getChurchesByRegionForInstitution(institutionId),
+      this.userRepository.getMonthlyUserRegistrationsForInstitution(institutionId),
     ]);
 
     return {
       usersByRole: usersByRoleData,
       monthlyUserGrowth,
-      churchesByRegion: churchesByRegionData
+      churchesByRegion: churchesByRegionData,
+      monthlyUserRegistrations,
+    };
+  }
+
+  async getDashboardKPIs(institutionId: string, year: number, month?: number, userPermissions: string[] = []): Promise<DashboardKPIs> {
+    const yearStart = new Date(year, 0, 1);
+    const yearEnd = new Date(year + 1, 0, 1);
+    const prevYearStart = new Date(year - 1, 0, 1);
+
+    // Determine date range for month filter
+    const periodStart = month !== undefined ? new Date(year, month, 1) : yearStart;
+    const periodEnd = month !== undefined ? new Date(year, month + 1, 1) : yearEnd;
+
+    const hasUsersPerm = userPermissions.includes('users');
+    const hasProjectsPerm = userPermissions.includes('projects') || userPermissions.includes('departments');
+    const hasInstDeptPerm = userPermissions.includes('institutionalDepartmentsKPIs') || userPermissions.includes('departments');
+    const hasChurchDeptPerm = userPermissions.includes('departmentKPIs') || userPermissions.includes('departments');
+    const hasChurchesPerm = userPermissions.includes('churches');
+    const hasRegionsPerm = userPermissions.includes('regions');
+
+    // --- USERS ---
+    let totalUsers: number | undefined;
+    let newUsersThisYear: number | undefined;
+    let previousYearUsers: number | undefined;
+    let userGrowthRate: number | undefined;
+
+    if (hasUsersPerm) {
+      [totalUsers, newUsersThisYear, previousYearUsers] = await Promise.all([
+        this.prisma.user.count({
+          where: { institution_id: institutionId, is_deleted: false },
+        }),
+        this.prisma.user.count({
+          where: {
+            institution_id: institutionId,
+            is_deleted: false,
+            created_at: { gte: periodStart, lt: periodEnd },
+          },
+        }),
+        this.prisma.user.count({
+          where: {
+            institution_id: institutionId,
+            is_deleted: false,
+            created_at: { gte: prevYearStart, lt: yearStart },
+          },
+        }),
+      ]);
+
+      userGrowthRate = previousYearUsers > 0
+        ? Math.round(((newUsersThisYear - previousYearUsers) / previousYearUsers) * 100)
+        : newUsersThisYear > 0 ? 100 : 0;
+    }
+
+    // --- PROJECTS ---
+    let totalProjects: number | undefined;
+    let newProjectsThisYear: number | undefined;
+    let previousYearProjects: number | undefined;
+    let projectGrowthRate: number | undefined;
+
+    if (hasProjectsPerm) {
+      [newProjectsThisYear, previousYearProjects] = await Promise.all([
+        this.prisma.project.count({
+          where: {
+            is_deleted: false,
+            department: { institution_id: institutionId },
+            created_at: { gte: periodStart, lt: periodEnd },
+          },
+        }),
+        this.prisma.project.count({
+          where: {
+            is_deleted: false,
+            department: { institution_id: institutionId },
+            created_at: { gte: prevYearStart, lt: yearStart },
+          },
+        }),
+      ]);
+
+      totalProjects = await this.prisma.project.count({
+        where: {
+          is_deleted: false,
+          department: { institution_id: institutionId },
+          created_at: { lt: periodEnd },
+        },
+      });
+
+      projectGrowthRate = previousYearProjects > 0
+        ? Math.round(((newProjectsThisYear - previousYearProjects) / previousYearProjects) * 100)
+        : newProjectsThisYear > 0 ? 100 : 0;
+    }
+
+    // --- STRUCTURE ---
+    let institutionDepartments: number | undefined;
+    let churchDepartments: number | undefined;
+    let activeChurches: number | undefined;
+    let totalRegions: number | undefined;
+    let totalDepartments: number | undefined;
+
+    if (hasInstDeptPerm) {
+      institutionDepartments = await this.prisma.department.count({
+        where: { institution_id: institutionId, church_id: null, is_deleted: false },
+      });
+    }
+
+    if (hasChurchDeptPerm) {
+      churchDepartments = await this.prisma.department.count({
+        where: {
+          is_deleted: false,
+          church: { institution_id: institutionId, is_deleted: false },
+          church_id: { not: null },
+        },
+      });
+    }
+
+    if (hasInstDeptPerm && hasChurchDeptPerm) {
+      totalDepartments = (institutionDepartments || 0) + (churchDepartments || 0);
+    } else if (hasInstDeptPerm) {
+      totalDepartments = institutionDepartments;
+    } else if (hasChurchDeptPerm) {
+      totalDepartments = churchDepartments;
+    }
+
+    if (hasChurchesPerm) {
+      activeChurches = await this.prisma.church.count({
+        where: { institution_id: institutionId, is_deleted: false },
+      });
+    }
+
+    if (hasRegionsPerm) {
+      totalRegions = await this.prisma.region.count({
+        where: {
+          is_deleted: false,
+          churches: { some: { institution_id: institutionId, is_deleted: false } },
+        },
+      });
+    }
+
+    return {
+      totalUsers,
+      newUsersThisYear,
+      previousYearUsers,
+      userGrowthRate,
+      totalProjects,
+      newProjectsThisYear,
+      previousYearProjects,
+      projectGrowthRate,
+      institutionDepartments,
+      churchDepartments,
+      totalDepartments,
+      activeChurches,
+      totalRegions,
     };
   }
 }

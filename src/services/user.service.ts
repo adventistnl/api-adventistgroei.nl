@@ -17,7 +17,7 @@ export class UserService {
   }
 
   async deleteUser(id: string, userId: string): Promise<Omit<User, 'password'>> {
-    return await this.userRepository.softDelete(id, userId);
+    return await this.userRepository.anonymizeUser(id, userId);
   }
 
   async getUsers(): Promise<Omit<User, 'password'>[]> {

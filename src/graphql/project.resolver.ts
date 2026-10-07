@@ -1,4 +1,4 @@
-import { Resolver, Query, Mutation, Args, Context, ResolveField, Parent } from '@nestjs/graphql';
+import { Resolver, Query, Mutation, Args, Context, ResolveField, Parent, Int } from '@nestjs/graphql';
 import { UseGuards } from '@nestjs/common';
 import { ProjectService } from '../services/project.service';
 import { Project } from '../@generated/project/project.model';
@@ -102,7 +102,7 @@ export class ProjectResolver {
 
   @Mutation(() => Project)
   @UseGuards(PermissionsGuard)
-  @Permission()
+  @Permission('updateProject')
   async updateProjectCoOwner(
     @Args('id') id: string,
     @Args('data') data: ProjectUpdateCoOwnerDto,
@@ -113,7 +113,7 @@ export class ProjectResolver {
 
   @Mutation(() => Project)
   @UseGuards(PermissionsGuard)
-  @Permission()
+  @Permission('deleteProject')
   async deleteProject(
     @Args('id') id: string,
     @Context() context: { userId: string },
@@ -123,16 +123,17 @@ export class ProjectResolver {
 
   @Query(() => ProjectKPIs)
   @UseGuards(PermissionsGuard)
-  @Permission()
+  @Permission('projects')
   async projectKPIs(
-    @Args('institutionId', { nullable: true }) institutionId?: string
+    @Args('institutionId', { nullable: true }) institutionId?: string,
+    @Args('year', { type: () => Int, nullable: true }) year?: number,
   ): Promise<ProjectKPIs> {
-    return this.projectService.getProjectKPIs(institutionId);
+    return this.projectService.getProjectKPIs(institutionId, year);
   }
 
   @Query(() => [ProjectsByDepartment])
   @UseGuards(PermissionsGuard)
-  @Permission()
+  @Permission('projects')
   async projectsByDepartment(
     @Args('institutionId', { nullable: true }) institutionId?: string
   ): Promise<ProjectsByDepartment[]> {
@@ -141,7 +142,7 @@ export class ProjectResolver {
 
   @Query(() => [SubsidyStatusDistribution])
   @UseGuards(PermissionsGuard)
-  @Permission()
+  @Permission('projects')
   async subsidyStatusDistribution(
     @Args('institutionId', { nullable: true }) institutionId?: string
   ): Promise<SubsidyStatusDistribution[]> {
@@ -150,7 +151,7 @@ export class ProjectResolver {
 
   @Query(() => [ProjectsTimeline])
   @UseGuards(PermissionsGuard)
-  @Permission()
+  @Permission('projects')
   async projectsTimeline(
     @Args('institutionId', { nullable: true }) institutionId?: string
   ): Promise<ProjectsTimeline[]> {

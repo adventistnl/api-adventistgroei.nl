@@ -16,26 +16,13 @@ export class SubsidyRequestRepository {
   ) {}
 
   async create(data: SubsidyRequestCreateDto, userId: string): Promise<SubsidyRequest> {
-    const { institution_id, requester_id, department_id, church_id, items, subsidy_status_id, project_id, notes, request_type, is_for_advance: _is_for_advance, advance_amount, ...rest } = data;
+    const { institution_id, requester_id, department_id, church_id, items, subsidy_status_id, project_id, notes, request_type, is_for_advance: _is_for_advance, advance_amount, start_as_draft, ...rest } = data;
 
     // ADVANCE não requer items; WITHOUT_DOCUMENT e WITH_DOCUMENT exigem ao menos um item
     const resolvedType = request_type ?? SubsidyRequestType.WITH_DOCUMENT;
     const isAdvance = resolvedType === SubsidyRequestType.ADVANCE;
 
-    console.log('🔵 [SubsidyRequestRepository.create] START', {
-      resolvedType,
-      isAdvance,
-      project_id,
-      department_id,
-      institution_id,
-      requester_id,
-      subsidy_status_id,
-      items_count: items?.length ?? 0,
-      rest_keys: Object.keys(rest),
-    });
-
     if (!isAdvance && (!items || items.length === 0)) {
-      console.error('🔴 [SubsidyRequestRepository.create] BLOCKED: no items for non-ADVANCE type');
       throw new CustomGraphQLError('At least one item must be associated with the SubsidyRequest.', ErrorCode.BAD_REQUEST, 400);
     }
 
@@ -58,11 +45,7 @@ export class SubsidyRequestRepository {
       if (projectActivities.length !== activityIds.length) {
         throw new CustomGraphQLError(`One or more ProjectActivities do not exist or have been deleted.`, ErrorCode.NOT_FOUND, 404);
       }
-
-      console.log('🔵 [SubsidyRequestRepository.create] Activity existence check passed');
     }
-
-    console.log('� [SubsidyRequestRepository.create] Calling prisma.subsidyRequest.create...');
 
     let subsidyRequest: any;
     try {
@@ -85,17 +68,8 @@ export class SubsidyRequestRepository {
         },
       });
     } catch (prismaError) {
-      console.error('🔴 [SubsidyRequestRepository.create] prisma.create FAILED:', {
-        message: prismaError?.message,
-        code: prismaError?.code,
-        meta: prismaError?.meta,
-        clientVersion: prismaError?.clientVersion,
-        stack: prismaError?.stack,
-      });
       throw prismaError;
     }
-
-    console.log('🟢 [SubsidyRequestRepository.create] Prisma create OK — id:', subsidyRequest.id);
 
     // Criar items apenas para tipos que os requerem
     if (!isAdvance && items && items.length > 0) {

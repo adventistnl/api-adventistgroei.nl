@@ -1,7 +1,11 @@
-import { InputType, Field } from '@nestjs/graphql';
+import { InputType, Field, registerEnumType } from '@nestjs/graphql';
 import { CommunicationPriority, CommunicationStatus, CommunicationType } from '@prisma/client';
 import { IsOptional, IsString, IsEnum, IsDate } from 'class-validator';
 import { LanguagePreference } from 'src/@generated/prisma/language-preference.enum';
+
+registerEnumType(CommunicationType, { name: 'CommunicationType' });
+registerEnumType(CommunicationPriority, { name: 'CommunicationPriority' });
+registerEnumType(CommunicationStatus, { name: 'CommunicationStatus' });
 
 @InputType()
 export class CommunicationCreateDto {
@@ -17,16 +21,16 @@ export class CommunicationCreateDto {
   @IsString()
   content: string;
 
-  @Field()
-  @IsString()
+  @Field(() => CommunicationType)
+  @IsEnum(CommunicationType)
   type: CommunicationType;
 
-  @Field()
-  @IsString()
+  @Field(() => CommunicationPriority)
+  @IsEnum(CommunicationPriority)
   priority: CommunicationPriority;
 
-  @Field()
-  @IsString()
+  @Field(() => CommunicationStatus)
+  @IsEnum(CommunicationStatus)
   status: CommunicationStatus;
 
   @Field(() => LanguagePreference)
